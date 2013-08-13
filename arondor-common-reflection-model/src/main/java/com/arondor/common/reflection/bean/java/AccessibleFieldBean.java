@@ -27,33 +27,33 @@ public class AccessibleFieldBean implements AccessibleField
     /**
      * Attribute name
      */
-    protected String name;
+    private String name;
 
     /**
      * Attribute description
      */
-    protected String description;
+    private String description;
 
     /**
      * Attribute class
      */
-    protected String className;
+    private String className;
 
     /**
      * Is this attribute readable : does it have a getter
      */
-    protected boolean readable;
+    private boolean readable;
 
     /**
      * Is this attribute writable : does it have a setter
      */
-    protected boolean writable;
+    private boolean writable;
 
     /**
      * If this attribute is a boolean, does its getter have a 'is' prefix
      * instead of a 'get' prefix
      */
-    protected boolean is = false;
+    private boolean is = false;
 
     /**
      * Attribute description constructor
