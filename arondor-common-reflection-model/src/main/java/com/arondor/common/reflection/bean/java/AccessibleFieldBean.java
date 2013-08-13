@@ -121,7 +121,7 @@ public class AccessibleFieldBean implements AccessibleField
 
     public void setIs(boolean is)
     {
-        // this.is = is;
+        this.is = is;
     }
 
     public boolean getReadable()
