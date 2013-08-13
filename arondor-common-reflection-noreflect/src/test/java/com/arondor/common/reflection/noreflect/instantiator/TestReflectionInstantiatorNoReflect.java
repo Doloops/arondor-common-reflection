@@ -18,7 +18,6 @@ import com.arondor.common.reflection.model.config.FieldConfiguration;
 import com.arondor.common.reflection.model.config.FieldConfiguration.FieldConfigurationType;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
-import com.arondor.common.reflection.noreflect.instantiator.ReflectionInstantiatorNoReflect;
 import com.arondor.common.reflection.noreflect.model.FieldSetter;
 import com.arondor.common.reflection.noreflect.model.ObjectConstructor;
 import com.arondor.common.reflection.noreflect.model.ReflectionInstantiatorCatalog;
@@ -74,7 +73,6 @@ public class TestReflectionInstantiatorNoReflect
 
         catalog.registerFieldSetter(TestClassA.class.getName(), "property2", new FieldSetter()
         {
-
             public void set(Object object, Object value)
             {
                 ((TestClassA) object).setProperty2(Long.parseLong((String) value));

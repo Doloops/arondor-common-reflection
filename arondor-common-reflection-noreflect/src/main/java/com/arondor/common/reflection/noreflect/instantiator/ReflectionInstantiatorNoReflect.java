@@ -170,6 +170,19 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
             throw new IllegalArgumentException("No configuraition for beanName=" + beanName + ", desiredClass="
                     + desiredClass.getName());
         }
-        return instanciateObject(objectConfiguration, desiredClass, context);
+        if (objectConfiguration.isSingleton())
+        {
+            Object singleton = context.getSharedObject(beanName);
+            if (singleton != null)
+            {
+                return (T) singleton;
+            }
+        }
+        T result = instanciateObject(objectConfiguration, desiredClass, context);
+        if (objectConfiguration.isSingleton())
+        {
+            context.putSharedObject(beanName, result);
+        }
+        return result;
     }
 }

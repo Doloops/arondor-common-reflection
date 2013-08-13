@@ -1,5 +1,11 @@
 package com.arondor.common.reflection.noreflect.instantiator;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -12,7 +18,6 @@ import java.util.List;
 import javax.management.ReflectionException;
 
 import org.apache.log4j.Logger;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,11 +29,11 @@ import com.arondor.common.reflection.model.config.FieldConfiguration;
 import com.arondor.common.reflection.model.config.FieldConfiguration.FieldConfigurationType;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
+import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.arondor.common.reflection.noreflect.generator.NoReflectRegistrarGenerator;
-import com.arondor.common.reflection.noreflect.instantiator.ReflectionInstantiatorNoReflect;
-import com.arondor.common.reflection.noreflect.model.ReflectionInstantiatorRegistrar;
 import com.arondor.common.reflection.noreflect.model.ReflectionInstantiatorCatalog;
+import com.arondor.common.reflection.noreflect.model.ReflectionInstantiatorRegistrar;
 import com.arondor.common.reflection.noreflect.runtime.SimpleReflectionInstantiatorCatalog;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassA;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassB;
@@ -128,7 +133,6 @@ public class TestNoReflectRegistrarGenerator
         configuration.getFields().put("property1", fieldConf1);
 
         FieldConfiguration fieldConf2 = objectConfigurationFactory.createFieldConfiguration();
-        ;
         fieldConf2.setFieldConfigurationType(FieldConfigurationType.Primitive_Single);
         fieldConf2.setValue("82377");
 
@@ -136,13 +140,13 @@ public class TestNoReflectRegistrarGenerator
 
         Object objectA = reflectionInstantiator.instanciateObject(configuration, Object.class, instantationContext);
 
-        Assert.assertEquals(TestClassA.class, objectA.getClass());
-        Assert.assertTrue(objectA instanceof TestClassA);
+        assertEquals(TestClassA.class, objectA.getClass());
+        assertTrue(objectA instanceof TestClassA);
 
         TestClassA classA = (TestClassA) objectA;
 
-        Assert.assertEquals("Value for property1", classA.getProperty1());
-        Assert.assertEquals(82377, classA.getProperty2());
+        assertEquals("Value for property1", classA.getProperty1());
+        assertEquals(82377, classA.getProperty2());
 
     }
 
@@ -169,13 +173,13 @@ public class TestNoReflectRegistrarGenerator
 
         Object objectA = reflectionInstantiator.instanciateObject(configuration, Object.class, instantationContext);
 
-        Assert.assertEquals(TestClassA.class, objectA.getClass());
-        Assert.assertTrue(objectA instanceof TestClassA);
+        assertEquals(TestClassA.class, objectA.getClass());
+        assertTrue(objectA instanceof TestClassA);
 
         TestClassA classA = (TestClassA) objectA;
 
-        Assert.assertEquals("Value for property1", classA.getProperty1());
-        Assert.assertEquals(82377, classA.getProperty2());
+        assertEquals("Value for property1", classA.getProperty1());
+        assertEquals(82377, classA.getProperty2());
 
     }
 
@@ -187,14 +191,14 @@ public class TestNoReflectRegistrarGenerator
         configurationA.setFields(new HashMap<String, FieldConfiguration>());
 
         FieldConfiguration fieldConf1 = objectConfigurationFactory.createFieldConfiguration();
-        ;
+
         fieldConf1.setFieldConfigurationType(FieldConfigurationType.Primitive_Single);
         fieldConf1.setValue("Value for property1 : B");
 
         configurationA.getFields().put("property1", fieldConf1);
 
         FieldConfiguration fieldConf2 = objectConfigurationFactory.createFieldConfiguration();
-        ;
+
         fieldConf2.setFieldConfigurationType(FieldConfigurationType.Primitive_Single);
         fieldConf2.setValue("82378");
 
@@ -213,18 +217,18 @@ public class TestNoReflectRegistrarGenerator
 
         Object objectB = reflectionInstantiator.instanciateObject(configurationB, Object.class, instantationContext);
 
-        Assert.assertNotNull(objectB);
+        assertNotNull(objectB);
 
-        Assert.assertTrue(objectB instanceof TestClassB);
+        assertTrue(objectB instanceof TestClassB);
 
         TestClassB classB = (TestClassB) objectB;
 
-        Assert.assertNotNull(classB.getNestedClassA());
+        assertNotNull(classB.getNestedClassA());
 
         TestClassA classA = classB.getNestedClassA();
 
-        Assert.assertEquals("Value for property1 : B", classA.getProperty1());
-        Assert.assertEquals(82378, classA.getProperty2());
+        assertEquals("Value for property1 : B", classA.getProperty1());
+        assertEquals(82378, classA.getProperty2());
 
     }
 
@@ -252,12 +256,12 @@ public class TestNoReflectRegistrarGenerator
         configurationC.getFields().put("enumValue", fieldConfEnum);
 
         Object objectC = reflectionInstantiator.instanciateObject(configurationC, Object.class, instantationContext);
-        Assert.assertNotNull(objectC);
-        Assert.assertTrue(objectC instanceof TestClassC);
+        assertNotNull(objectC);
+        assertTrue(objectC instanceof TestClassC);
 
         TestClassC classC = (TestClassC) objectC;
 
-        Assert.assertEquals(TestClassC.EnumValue.BLUE, classC.getEnumValue());
+        assertEquals(TestClassC.EnumValue.BLUE, classC.getEnumValue());
 
     }
 
@@ -286,12 +290,12 @@ public class TestNoReflectRegistrarGenerator
         configurationC.getConstructorArguments().add(fieldConfEnum);
 
         Object objectC = reflectionInstantiator.instanciateObject(configurationC, Object.class, instantationContext);
-        Assert.assertNotNull(objectC);
-        Assert.assertTrue(objectC instanceof TestClassC);
+        assertNotNull(objectC);
+        assertTrue(objectC instanceof TestClassC);
 
         TestClassC classC = (TestClassC) objectC;
 
-        Assert.assertEquals(TestClassC.EnumValue.BLUE, classC.getEnumValue());
+        assertEquals(TestClassC.EnumValue.BLUE, classC.getEnumValue());
 
     }
 
@@ -330,20 +334,97 @@ public class TestNoReflectRegistrarGenerator
 
         Object objectD = reflectionInstantiator.instanciateObject(configurationD, Object.class, instantationContext);
 
-        Assert.assertNotNull(objectD);
+        assertNotNull(objectD);
 
-        Assert.assertTrue(objectD instanceof TestClassD);
+        assertTrue(objectD instanceof TestClassD);
 
         TestClassD classD = (TestClassD) objectD;
 
-        Assert.assertNotNull(classD.getListClassA());
+        assertNotNull(classD.getListClassA());
 
-        Assert.assertEquals(10, classD.getListClassA().size());
+        assertEquals(10, classD.getListClassA().size());
 
         for (int idx = 0; idx < classD.getListClassA().size(); idx++)
         {
-            Assert.assertEquals(10000 + idx, classD.getListClassA().get(idx).getProperty2());
+            assertEquals(10000 + idx, classD.getListClassA().get(idx).getProperty2());
         }
     }
 
+    @Test
+    public void testClassA_NonSingleton()
+    {
+        ObjectConfiguration configuration = objectConfigurationFactory.createObjectConfiguration();
+        configuration.setSingleton(false);
+        configuration.setClassName(TestClassA.class.getName());
+        configuration.setFields(new HashMap<String, FieldConfiguration>());
+
+        FieldConfiguration fieldConf1 = objectConfigurationFactory.createFieldConfiguration();
+        fieldConf1.setFieldConfigurationType(FieldConfigurationType.Primitive_Single);
+        fieldConf1.setValue("Value for property1");
+
+        configuration.getFields().put("property1", fieldConf1);
+
+        FieldConfiguration fieldConf2 = objectConfigurationFactory.createFieldConfiguration();
+        fieldConf2.setFieldConfigurationType(FieldConfigurationType.Primitive_Single);
+        fieldConf2.setValue("82377");
+        configuration.getFields().put("property2", fieldConf2);
+
+        ObjectConfigurationMap configurationMap = objectConfigurationFactory.createObjectConfigurationMap();
+        String objectName = "myClassA";
+        configurationMap.put(objectName, configuration);
+        instantationContext.setSharedObjectConfigurations(configurationMap);
+
+        assertNull("Object shall not exist !", instantationContext.getSharedObject(objectName));
+
+        Object objectA = reflectionInstantiator.instanciateObject(objectName, Object.class, instantationContext);
+        assertNotNull("Object shall not be null !", objectA);
+
+        Object objectA2 = reflectionInstantiator.instanciateObject(objectName, Object.class, instantationContext);
+        assertNotSame(objectA, objectA2);
+
+    }
+
+    @Test
+    public void testClassA_Singleton()
+    {
+        ObjectConfiguration configuration = objectConfigurationFactory.createObjectConfiguration();
+        configuration.setSingleton(true);
+        configuration.setClassName(TestClassA.class.getName());
+        configuration.setFields(new HashMap<String, FieldConfiguration>());
+
+        FieldConfiguration fieldConf1 = objectConfigurationFactory.createFieldConfiguration();
+        fieldConf1.setFieldConfigurationType(FieldConfigurationType.Primitive_Single);
+        fieldConf1.setValue("Value for property1");
+
+        configuration.getFields().put("property1", fieldConf1);
+
+        FieldConfiguration fieldConf2 = objectConfigurationFactory.createFieldConfiguration();
+        fieldConf2.setFieldConfigurationType(FieldConfigurationType.Primitive_Single);
+        fieldConf2.setValue("82377");
+        configuration.getFields().put("property2", fieldConf2);
+
+        ObjectConfigurationMap configurationMap = objectConfigurationFactory.createObjectConfigurationMap();
+        String objectName = "myClassA";
+        configurationMap.put(objectName, configuration);
+        instantationContext.setSharedObjectConfigurations(configurationMap);
+
+        assertNull("Object shall not exist !", instantationContext.getSharedObject(objectName));
+
+        Object objectA = reflectionInstantiator.instanciateObject(objectName, Object.class, instantationContext);
+        assertNotNull("Object shall not be null !", objectA);
+
+        Object objectA2 = reflectionInstantiator.instanciateObject(objectName, Object.class, instantationContext);
+        assertEquals(objectA, objectA2);
+
+        /**
+         * Now check that we are really dealing with the same objects
+         */
+
+        TestClassA tca = (TestClassA) objectA;
+        TestClassA tca2 = (TestClassA) objectA2;
+
+        tca.setProperty2(99976);
+
+        assertEquals(tca.getProperty2(), tca2.getProperty2());
+    }
 }
