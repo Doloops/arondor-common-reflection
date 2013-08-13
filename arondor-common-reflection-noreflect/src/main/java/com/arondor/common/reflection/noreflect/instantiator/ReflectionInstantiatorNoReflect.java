@@ -59,22 +59,9 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
         {
             throw new IllegalArgumentException("Null objectConfiguration !");
         }
-        if (objectConfiguration.getClassName() == null && objectConfiguration.getReferenceName() != null)
+        if (isSharedObjectReference(objectConfiguration))
         {
-            Object resolvedObject = context.getSharedObject(objectConfiguration.getReferenceName());
-
-            if (resolvedObject != null)
-            {
-                return castObject(resolvedObject, desiredClass);
-            }
-            ObjectConfiguration resolvedConfiguration = context.getSharedObjectConfiguration(objectConfiguration
-                    .getReferenceName());
-            if (resolvedConfiguration != null)
-            {
-                return instanciateObject(resolvedConfiguration, desiredClass, context);
-            }
-            throw new IllegalArgumentException("Could not resolve reference : "
-                    + objectConfiguration.getReferenceName());
+            return getSharedObjectReference(objectConfiguration, desiredClass, context);
         }
         ObjectConstructor objectConstructor = reflectionInstantiatorCatalog.getObjectConstructor(objectConfiguration
                 .getClassName());
@@ -82,6 +69,28 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
         {
             throw new IllegalArgumentException("No class name found : " + objectConfiguration.getClassName());
         }
+        List<Object> constructorArguments = instanciateObjectConstructorArguments(objectConfiguration, context);
+        Object object = objectConstructor.create(constructorArguments);
+
+        instanciateObjectFields(objectConfiguration, context, object);
+        return castObject(object, desiredClass);
+    }
+
+    private void instanciateObjectFields(ObjectConfiguration objectConfiguration, InstantiationContext context, Object object)
+    {
+        if (objectConfiguration.getFields() != null)
+        {
+            for (Map.Entry<String, FieldConfiguration> entry : objectConfiguration.getFields().entrySet())
+            {
+                instanciateObjectField(object, objectConfiguration.getClassName(), entry.getKey(), entry.getValue(),
+                        context);
+            }
+        }
+    }
+
+    private List<Object> instanciateObjectConstructorArguments(ObjectConfiguration objectConfiguration,
+            InstantiationContext context)
+    {
         List<Object> constructorArguments = new ArrayList<Object>();
         if (objectConfiguration.getConstructorArguments() != null
                 && !objectConfiguration.getConstructorArguments().isEmpty())
@@ -91,17 +100,31 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
                 constructorArguments.add(instanciateObjectField(field, context));
             }
         }
-        Object object = objectConstructor.create(constructorArguments);
+        return constructorArguments;
+    }
 
-        if (objectConfiguration.getFields() != null)
+    private <T> T getSharedObjectReference(ObjectConfiguration objectConfiguration, Class<T> desiredClass,
+            InstantiationContext context)
+    {
+        Object resolvedObject = context.getSharedObject(objectConfiguration.getReferenceName());
+
+        if (resolvedObject != null)
         {
-            for (Map.Entry<String, FieldConfiguration> entry : objectConfiguration.getFields().entrySet())
-            {
-                instanciateObjectField(object, objectConfiguration.getClassName(), entry.getKey(), entry.getValue(),
-                        context);
-            }
+            return castObject(resolvedObject, desiredClass);
         }
-        return castObject(object, desiredClass);
+        ObjectConfiguration resolvedConfiguration = context.getSharedObjectConfiguration(objectConfiguration
+                .getReferenceName());
+        if (resolvedConfiguration != null)
+        {
+            return instanciateObject(resolvedConfiguration, desiredClass, context);
+        }
+        throw new IllegalArgumentException("Could not resolve reference : "
+                + objectConfiguration.getReferenceName());
+    }
+
+    private boolean isSharedObjectReference(ObjectConfiguration objectConfiguration)
+    {
+        return objectConfiguration.getClassName() == null && objectConfiguration.getReferenceName() != null;
     }
 
     private Object instanciateObjectField(FieldConfiguration fieldConfiguration, InstantiationContext context)
