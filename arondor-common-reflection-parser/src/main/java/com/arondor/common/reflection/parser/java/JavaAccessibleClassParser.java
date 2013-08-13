@@ -100,7 +100,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         return "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
     }
 
-    public static final Class<?> PRIMITIVES[] = { java.lang.String.class, java.lang.Long.class,
+    private static final Class<?> PRIMITIVES[] = { java.lang.String.class, java.lang.Long.class,
             java.lang.Integer.class, java.lang.Float.class, java.lang.Boolean.class, java.lang.Double.class,
             java.lang.Character.class, boolean.class, int.class, long.class, double.class, float.class, char.class };
 
