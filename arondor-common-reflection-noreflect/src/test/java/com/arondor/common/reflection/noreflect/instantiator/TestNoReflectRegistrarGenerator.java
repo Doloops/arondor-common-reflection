@@ -79,6 +79,7 @@ public class TestNoReflectRegistrarGenerator
         // String path = "src/test/java/testing/" + .java";
         new File("target/" + packageName).mkdir();
         String path = "target/" + packageName + "/" + className + ".java";
+        String completeClassName = packageName + "." + className;
 
         OutputStream os = new FileOutputStream(path);
         PrintStream out = new PrintStream(os);
@@ -86,17 +87,7 @@ public class TestNoReflectRegistrarGenerator
         gen.generate(out, classes);
         out.close();
 
-        javax.tools.JavaCompiler javaCompiler = javax.tools.ToolProvider.getSystemJavaCompiler();
-
-        int result = javaCompiler.run(null, null, null, "-d", "target/classes/", path);
-
-        LOG.info("Compile result : " + result);
-
-        ClassLoader classLoader = javax.tools.ToolProvider.getSystemToolClassLoader();
-
-        Class<?> clazz = classLoader.loadClass(packageName + "." + className);
-
-        LOG.info("Loaded class : " + clazz.getName());
+        Class<?> clazz = runtimeCompileAndLoadClass(path, completeClassName);
 
         ReflectionInstantiatorRegistrar registrar = (ReflectionInstantiatorRegistrar) clazz.newInstance();
 
@@ -109,6 +100,21 @@ public class TestNoReflectRegistrarGenerator
 
         this.reflectionInstantiator = noReflect;
         this.instantationContext = noReflect.createDefaultInstantiationContext();
+    }
+
+    private Class<?> runtimeCompileAndLoadClass(String path, String completeClassName) throws ClassNotFoundException
+    {
+        @SuppressWarnings("restriction")
+        javax.tools.JavaCompiler javaCompiler = javax.tools.ToolProvider.getSystemJavaCompiler();
+        @SuppressWarnings("restriction")
+        int result = javaCompiler.run(null, null, null, "-d", "target/classes/", path);
+        LOG.info("Compile result : " + result);
+        @SuppressWarnings("restriction")
+        ClassLoader classLoader = javax.tools.ToolProvider.getSystemToolClassLoader();
+
+        Class<?> clazz = classLoader.loadClass(completeClassName);
+        LOG.info("Loaded class : " + clazz.getName());
+        return clazz;
     }
 
     @Before
