@@ -136,7 +136,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
      *            the class to check
      * @return true if this class is considered exposable, false otherwise
      */
-    public boolean isExposable(Class<?> clazz, boolean includeNonPrimitive)
+    public boolean isExposableType(Class<?> clazz, boolean includeNonPrimitive)
     {
         if (isPrimitiveType(clazz))
         {
@@ -168,7 +168,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         }
         for (int i = 0; i < parameterTypes.length; i++)
         {
-            if (!isExposable(parameterTypes[i], includeNonPrimitive))
+            if (!isExposableType(parameterTypes[i], includeNonPrimitive))
             {
                 return false;
             }
@@ -208,133 +208,35 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
             if (DEBUG)
             {
                 LOG.debug("Method : " + method.getName() + ", return=" + method.getReturnType().getName()
-                        + " (exposable=" + isExposable(method.getReturnType(), includeNonPrimitive) + ")" + ", args="
-                        + method.getParameterTypes().length);
+                        + " (exposable=" + isExposableType(method.getReturnType(), includeNonPrimitive) + ")"
+                        + ", args=" + method.getParameterTypes().length);
             }
-            if (!Modifier.isPublic(method.getModifiers()))
+            if (isIgnoredMethod(method))
             {
-                if (DEBUG)
-                {
-                    LOG.debug("Method : " + method.getName() + " is not public, skipping.");
-                }
                 continue;
             }
-            if (Modifier.isStatic(method.getModifiers()))
-            {
-                if (DEBUG)
-                {
-                    LOG.debug("Method : " + method.getName() + " is static, skipping.");
-                }
-                continue;
-            }
-            if (method.getName().equals("wait") || method.getName().equals("notify")
-                    || method.getName().equals("notifyAll") || method.getName().equals("finalize")
-                    || method.getName().equals("getClass"))
-            {
-                if (DEBUG)
-                {
-                    LOG.debug("Skipping java.lang.Object method : " + method.getName());
-                }
-                continue;
-            }
-            if ((method.getName().startsWith("get") || method.getName().startsWith("is"))
-                    && (isExposable(method.getReturnType(), includeNonPrimitive))
-                    && method.getParameterTypes().length == 0)
+            if (isGetterMethod(includeNonPrimitive, method))
             {
                 String prop = getterToAttribute(method.getName());
-                if (DEBUG)
-                {
-                    LOG.debug("** Exposable GET field : " + prop + " (from " + method.getName() + ")");
-                }
-                AccessibleFieldBean attributeInfo = (AccessibleFieldBean) exposedAttributes.get(prop);
-                if (attributeInfo == null)
-                {
-                    Class<?> ptyClass = method.getReturnType();
-                    attributeInfo = new AccessibleFieldBean(prop, prop, ptyClass, true, false);
-                    exposedAttributes.put(prop, attributeInfo);
-                    if (DEBUG)
-                    {
-                        LOG.debug("New exposed attribute (R) : " + attributeInfo.getName());
-                    }
-                }
-                else
-                {
-                    if (DEBUG)
-                    {
-                        LOG.debug("Set readable attribute : " + attributeInfo.getName());
-                    }
-                    attributeInfo.setReadable();
-                }
+                Class<?> ptyClass = method.getReturnType();
+                AccessibleFieldBean attributeInfo = getBeanFromMethod(exposedAttributes, ptyClass, prop);
+                attributeInfo.setReadable();
                 if (method.getName().startsWith("is"))
                 {
                     attributeInfo.setIs(true);
                 }
             }
-            else if (method.getName().startsWith("set") && method.getParameterTypes().length == 1
-                    && (isExposableSignature(method.getParameterTypes(), includeNonPrimitive))
-                    && isVoid(method.getReturnType()))
+            else if (isSetterMethod(includeNonPrimitive, method))
             {
                 String prop = getterToAttribute(method.getName());
-                if (DEBUG)
-                {
-                    LOG.debug("** Exposable SET field : " + prop + " (from " + method.getName() + ")");
-                    LOG.debug("** ** Param : " + method.getParameterTypes()[0]);
-                }
                 Class<?> parameterType = method.getParameterTypes()[0];
-                AccessibleFieldBean attributeInfo = (AccessibleFieldBean) exposedAttributes.get(prop);
-                if (attributeInfo == null)
-                {
-                    attributeInfo = new AccessibleFieldBean(prop, prop, parameterType, false, true);
-                    if (DEBUG)
-                    {
-                        LOG.debug("New exposed attribute (W) : " + attributeInfo.getName());
-                    }
-                    exposedAttributes.put(prop, attributeInfo);
-                }
-                else
-                {
-                    if (DEBUG)
-                    {
-                        LOG.debug("Setting writable : " + attributeInfo.getName());
-                    }
-                    if (!parameterType.getName().equals(attributeInfo.getClassName()))
-                    {
-                        LOG.warn("Diverging classes at setter for property " + prop + " : was "
-                                + attributeInfo.getClassName() + ", now is " + parameterType.getName());
-                    }
-                    else
-                    {
-                        attributeInfo.setWritable();
-                    }
-                }
-                if (java.util.Map.class.isAssignableFrom(parameterType))
-                {
-                    Type genericParameterType = method.getGenericParameterTypes()[0];
-                    if (genericParameterType instanceof ParameterizedType)
-                    {
-                        ParameterizedType parameterizedType = (ParameterizedType) genericParameterType;
-
-                        List<String> genericParameterClassList = new ArrayList<String>();
-                        for (Type argument : parameterizedType.getActualTypeArguments())
-                        {
-                            String argumentClassName = ((Class<?>) argument).getName();
-                            if (DEBUG)
-                            {
-                                LOG.debug("* Type argument : " + argumentClassName);
-                            }
-                            genericParameterClassList.add(argumentClassName);
-                        }
-                        attributeInfo.setGenericParameterClassList(genericParameterClassList);
-                    }
-                }
+                AccessibleFieldBean attributeInfo = getBeanFromMethod(exposedAttributes, parameterType, prop);
+                attributeInfo.setWritable();
+                handleObjectMultipleMethod(method, parameterType, attributeInfo);
             }
-            else if ((isVoid(method.getReturnType()) || (isExposable(method.getReturnType(), includeNonPrimitive)))
+            else if ((isVoid(method.getReturnType()) || (isExposableType(method.getReturnType(), includeNonPrimitive)))
                     && (isExposableSignature(method.getParameterTypes(), includeNonPrimitive)))
             {
-                if (DEBUG)
-                {
-                    LOG.debug("Exposing : " + method.getName() + ",modifiers=" + method.getModifiers());
-                }
                 exposedMethods.add(method);
             }
             else
@@ -346,6 +248,90 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
                 }
             }
         }
+    }
+
+    private void handleObjectMultipleMethod(Method method, Class<?> parameterType, AccessibleFieldBean attributeInfo)
+    {
+        if (java.util.Map.class.isAssignableFrom(parameterType))
+        {
+            Type genericParameterType = method.getGenericParameterTypes()[0];
+            if (genericParameterType instanceof ParameterizedType)
+            {
+                ParameterizedType parameterizedType = (ParameterizedType) genericParameterType;
+
+                List<String> genericParameterClassList = new ArrayList<String>();
+                for (Type argument : parameterizedType.getActualTypeArguments())
+                {
+                    String argumentClassName = ((Class<?>) argument).getName();
+                    if (DEBUG)
+                    {
+                        LOG.debug("* Type argument : " + argumentClassName);
+                    }
+                    genericParameterClassList.add(argumentClassName);
+                }
+                attributeInfo.setGenericParameterClassList(genericParameterClassList);
+            }
+        }
+    }
+
+    private boolean isIgnoredMethod(Method method)
+    {
+        return !Modifier.isPublic(method.getModifiers()) || Modifier.isStatic(method.getModifiers())
+                || method.getName().equals("wait") || method.getName().equals("notify")
+                || method.getName().equals("notifyAll") || method.getName().equals("finalize")
+                || method.getName().equals("getClass");
+    }
+
+    /**
+     * Check whether this mehod is a setter method
+     * 
+     * @param includeNonPrimitive
+     * @param method
+     * @return
+     */
+    private boolean isSetterMethod(boolean includeNonPrimitive, Method method)
+    {
+        return method.getName().startsWith("set") && method.getParameterTypes().length == 1
+                && (isExposableSignature(method.getParameterTypes(), includeNonPrimitive))
+                && isVoid(method.getReturnType());
+    }
+
+    /**
+     * Check whether this mehod is a getter method
+     * 
+     * @param includeNonPrimitive
+     * @param method
+     * @return
+     */
+    private boolean isGetterMethod(boolean includeNonPrimitive, Method method)
+    {
+        return (method.getName().startsWith("get") || method.getName().startsWith("is"))
+                && (isExposableType(method.getReturnType(), includeNonPrimitive))
+                && method.getParameterTypes().length == 0;
+    }
+
+    private AccessibleFieldBean getBeanFromMethod(Map<String, AccessibleField> exposedAttributes,
+            Class<?> propertyClass, String propertyName)
+    {
+        AccessibleFieldBean attributeInfo = (AccessibleFieldBean) exposedAttributes.get(propertyName);
+        if (attributeInfo == null)
+        {
+            attributeInfo = new AccessibleFieldBean(propertyName, propertyName, propertyClass, true, false);
+            exposedAttributes.put(propertyName, attributeInfo);
+            if (DEBUG)
+            {
+                LOG.debug("New exposed attribute (R) : " + attributeInfo.getName());
+            }
+        }
+        else
+        {
+            if (!propertyClass.getName().equals(attributeInfo.getClassName()))
+            {
+                LOG.warn("Diverging classes at setter for property " + propertyName + " : was "
+                        + attributeInfo.getClassName() + ", now is " + propertyClass.getName());
+            }
+        }
+        return attributeInfo;
     }
 
     private String getClassDescription(Class<?> clazz)
