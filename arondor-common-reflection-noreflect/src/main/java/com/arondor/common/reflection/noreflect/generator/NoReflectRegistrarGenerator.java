@@ -19,6 +19,10 @@ import com.arondor.common.reflection.parser.java.JavaAccessibleClassParser;
 
 public class NoReflectRegistrarGenerator
 {
+    private static final String PACKAGE_KEYWORD = "package ";
+
+    private static final String IMPORT_KEYWORD = "import ";
+
     private final static Logger LOG = Logger.getLogger(NoReflectRegistrarGenerator.class);
 
     private String packageName;
@@ -43,14 +47,14 @@ public class NoReflectRegistrarGenerator
 
     public void generate(PrintStream out, Collection<AccessibleClass> accessibleClasses)
     {
-        out.println("package " + getPackageName() + ";");
+        out.println(PACKAGE_KEYWORD + getPackageName() + ";");
         out.println("");
-        out.println("import " + ReflectionInstantiatorCatalog.class.getName() + ";");
-        out.println("import " + ObjectConstructor.class.getName() + ";");
-        out.println("import " + FieldSetter.class.getName() + ";");
-        out.println("import " + PrimitiveStringConverter.class.getName() + ";");
-        out.println("import " + ReflectionInstantiatorRegistrar.class.getName() + ";");
-        out.println("import " + List.class.getName() + ";");
+        out.println(IMPORT_KEYWORD + ReflectionInstantiatorCatalog.class.getName() + ";");
+        out.println(IMPORT_KEYWORD + ObjectConstructor.class.getName() + ";");
+        out.println(IMPORT_KEYWORD + FieldSetter.class.getName() + ";");
+        out.println(IMPORT_KEYWORD + PrimitiveStringConverter.class.getName() + ";");
+        out.println(IMPORT_KEYWORD + ReflectionInstantiatorRegistrar.class.getName() + ";");
+        out.println(IMPORT_KEYWORD + List.class.getName() + ";");
 
         out.println("public class " + getClassName() + " implements ReflectionInstantiatorRegistrar");
         out.println("{");
@@ -114,7 +118,7 @@ public class NoReflectRegistrarGenerator
 
             out.println(");}");
         }
-        out.println("throw new RuntimeException(\"Invalid constructor arguments : \" + constructorArguments);");
+        out.println("throw new IllegalArgumentException(\"Invalid constructor arguments : \" + constructorArguments);");
     }
 
     private void generateCast(PrintStream out, String className, String valueLabel)
