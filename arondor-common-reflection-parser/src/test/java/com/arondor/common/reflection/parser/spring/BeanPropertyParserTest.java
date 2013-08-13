@@ -1,6 +1,8 @@
 package com.arondor.common.reflection.parser.spring;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -14,9 +16,12 @@ import org.springframework.beans.factory.support.ManagedList;
 
 import com.arondor.common.reflection.api.hash.NoHashHelper;
 import com.arondor.common.reflection.bean.config.ObjectConfigurationFactoryBean;
-import com.arondor.common.reflection.model.config.FieldConfiguration;
-import com.arondor.common.reflection.model.config.FieldConfiguration.FieldConfigurationType;
+import com.arondor.common.reflection.model.config.ElementConfiguration;
+import com.arondor.common.reflection.model.config.ElementConfiguration.ElementConfigurationType;
+import com.arondor.common.reflection.model.config.ListConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
+import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
+import com.arondor.common.reflection.model.config.ReferenceConfiguration;
 
 public class BeanPropertyParserTest
 {
@@ -28,6 +33,7 @@ public class BeanPropertyParserTest
     public void setUp() throws Exception
     {
         objectConfigurationMock = mock(ObjectConfiguration.class);
+        when(objectConfigurationMock.getFieldConfigurationType()).thenReturn(ElementConfigurationType.Object);
         beanPropertyParser = new BeanPropertyParser(new NoHashHelper(), new ObjectConfigurationFactoryBean())
         {
             @Override
@@ -39,8 +45,7 @@ public class BeanPropertyParserTest
             @Override
             public ObjectConfiguration parseBeanDefinition(String beanDefinitionName)
             {
-                // TODO Auto-generated method stub
-                return null;
+                return objectConfigurationMock;
             }
         };
     }
@@ -56,23 +61,25 @@ public class BeanPropertyParserTest
     {
         TypedStringValue enumPropertyValue = mockTypedStringValue("my enum type", "my enum type value");
 
-        FieldConfiguration parsedEnumFieldConfiguration = beanPropertyParser.parseProperty(enumPropertyValue);
+        ElementConfiguration parsedEnumFieldConfiguration = beanPropertyParser.parseProperty(enumPropertyValue);
 
-        assertEquals(FieldConfigurationType.Object_Single, parsedEnumFieldConfiguration.getFieldConfigurationType());
-        ObjectConfiguration enumObjectConfiguration = parsedEnumFieldConfiguration.getObjectConfiguration();
+        assertEquals(ElementConfigurationType.Object, parsedEnumFieldConfiguration.getFieldConfigurationType());
+        assertTrue(parsedEnumFieldConfiguration instanceof ObjectConfiguration);
+        ObjectConfiguration enumObjectConfiguration = (ObjectConfiguration) parsedEnumFieldConfiguration;
         assertEquals(enumPropertyValue.getTargetTypeName(), enumObjectConfiguration.getClassName());
-        FieldConfiguration actual = enumObjectConfiguration.getConstructorArguments().get(0);
-        assertEquals(FieldConfigurationType.Primitive_Single, actual.getFieldConfigurationType());
-        assertEquals(enumPropertyValue.getValue(), actual.getValue());
+        ElementConfiguration actual = enumObjectConfiguration.getConstructorArguments().get(0);
+        assertEquals(ElementConfigurationType.Primitive, actual.getFieldConfigurationType());
+        PrimitiveConfiguration primitiveConfiguration = (PrimitiveConfiguration) actual;
+        assertEquals(enumPropertyValue.getValue(), primitiveConfiguration.getValue());
     }
 
     @Test
     public void testParsePropertyClassic() throws Exception
     {
         TypedStringValue property = mockTypedStringValue(null, "my string value");
-        FieldConfiguration parsedFieldConfiguration = beanPropertyParser.parseProperty(property);
-        assertEquals(FieldConfigurationType.Primitive_Single, parsedFieldConfiguration.getFieldConfigurationType());
-        assertEquals(property.getValue(), parsedFieldConfiguration.getValue());
+        ElementConfiguration parsedFieldConfiguration = beanPropertyParser.parseProperty(property);
+        assertEquals(ElementConfigurationType.Primitive, parsedFieldConfiguration.getFieldConfigurationType());
+        assertEquals(property.getValue(), ((PrimitiveConfiguration) parsedFieldConfiguration).getValue());
     }
 
     @Test
@@ -83,21 +90,31 @@ public class BeanPropertyParserTest
         list.add(mockTypedStringValue(null, "my first value"));
         list.add(mockTypedStringValue(null, "my second value"));
 
-        FieldConfiguration parsedFieldConfiguration = beanPropertyParser.parseProperty(list);
-        assertEquals(FieldConfigurationType.Primitive_Multiple, parsedFieldConfiguration.getFieldConfigurationType());
-        assertEquals(2, parsedFieldConfiguration.getValues().size());
-        assertEquals(list.get(0).getValue(), parsedFieldConfiguration.getValues().get(0));
-        assertEquals(list.get(1).getValue(), parsedFieldConfiguration.getValues().get(1));
+        ElementConfiguration parsedFieldConfiguration = beanPropertyParser.parseProperty(list);
+        assertEquals(ElementConfigurationType.List, parsedFieldConfiguration.getFieldConfigurationType());
+        ListConfiguration listConfiguration = (ListConfiguration) parsedFieldConfiguration;
+
+        assertEquals(2, listConfiguration.getListConfiguration().size());
+
+        assertEquals(ElementConfigurationType.Primitive, listConfiguration.getListConfiguration().get(0)
+                .getFieldConfigurationType());
+        assertEquals(ElementConfigurationType.Primitive, listConfiguration.getListConfiguration().get(1)
+                .getFieldConfigurationType());
+        assertEquals(list.get(0).getValue(),
+                ((PrimitiveConfiguration) listConfiguration.getListConfiguration().get(0)).getValue());
+        assertEquals(list.get(1).getValue(),
+                ((PrimitiveConfiguration) listConfiguration.getListConfiguration().get(1)).getValue());
     }
 
     @Test
     public void testParsePropertyBean() throws Exception
     {
         RuntimeBeanReference beanReference = mockRuntimeBeanReference("my referenced bean name");
-        FieldConfiguration parsedFieldConfiguration = beanPropertyParser.parseProperty(beanReference);
+        ElementConfiguration parsedFieldConfiguration = beanPropertyParser.parseProperty(beanReference);
 
-        assertEquals(FieldConfigurationType.Object_Single, parsedFieldConfiguration.getFieldConfigurationType());
-        assertEquals(beanReference.getBeanName(), parsedFieldConfiguration.getObjectConfiguration().getReferenceName());
+        assertEquals(ElementConfigurationType.Reference, parsedFieldConfiguration.getFieldConfigurationType());
+        assertEquals(beanReference.getBeanName(),
+                ((ReferenceConfiguration) parsedFieldConfiguration).getReferenceName());
     }
 
     @Test
@@ -106,10 +123,12 @@ public class BeanPropertyParserTest
         ManagedList<RuntimeBeanReference> list = new ManagedList<RuntimeBeanReference>();
         list.add(mockRuntimeBeanReference("my referenced bean name 1"));
         list.add(mockRuntimeBeanReference("my referenced bean name 2"));
-        FieldConfiguration parsedFieldConfiguration = beanPropertyParser.parseProperty(list);
+        ElementConfiguration parsedFieldConfiguration = beanPropertyParser.parseProperty(list);
 
-        assertEquals(FieldConfigurationType.Object_Multiple, parsedFieldConfiguration.getFieldConfigurationType());
-        assertEquals(2, parsedFieldConfiguration.getObjectConfigurations().size());
+        assertEquals(ElementConfigurationType.List, parsedFieldConfiguration.getFieldConfigurationType());
+        ListConfiguration listConfiguration = (ListConfiguration) parsedFieldConfiguration;
+
+        assertEquals(2, listConfiguration.getListConfiguration().size());
     }
 
     @Test
@@ -117,9 +136,10 @@ public class BeanPropertyParserTest
     {
         BeanDefinitionHolder beanReference = mock(BeanDefinitionHolder.class);
         when(beanReference.getBeanName()).thenReturn("my referenced bean name");
-        FieldConfiguration parsedFieldConfiguration = beanPropertyParser.parseProperty(beanReference);
-        assertEquals(FieldConfigurationType.Object_Single, parsedFieldConfiguration.getFieldConfigurationType());
-        assertEquals(objectConfigurationMock, parsedFieldConfiguration.getObjectConfiguration());
+        ElementConfiguration parsedFieldConfiguration = beanPropertyParser.parseProperty(beanReference);
+        assertNotNull(parsedFieldConfiguration);
+        assertEquals(ElementConfigurationType.Object, parsedFieldConfiguration.getFieldConfigurationType());
+        assertEquals(objectConfigurationMock, (ObjectConfiguration) parsedFieldConfiguration);
     }
 
     private TypedStringValue mockTypedStringValue(String typeName, String value)

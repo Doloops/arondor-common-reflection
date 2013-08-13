@@ -6,8 +6,11 @@ import java.util.Map;
 
 import com.arondor.common.reflection.api.instantiator.InstantiationContext;
 import com.arondor.common.reflection.api.instantiator.ReflectionInstantiator;
-import com.arondor.common.reflection.model.config.FieldConfiguration;
+import com.arondor.common.reflection.model.config.ElementConfiguration;
+import com.arondor.common.reflection.model.config.ListConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
+import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
+import com.arondor.common.reflection.model.config.ReferenceConfiguration;
 import com.arondor.common.reflection.noreflect.exception.NoReflectRuntimeException;
 import com.arondor.common.reflection.noreflect.model.FieldSetter;
 import com.arondor.common.reflection.noreflect.model.ObjectConstructor;
@@ -59,10 +62,6 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
         {
             throw new IllegalArgumentException("Null objectConfiguration !");
         }
-        if (isSharedObjectReference(objectConfiguration))
-        {
-            return getSharedObjectReference(objectConfiguration, desiredClass, context);
-        }
         ObjectConstructor objectConstructor = reflectionInstantiatorCatalog.getObjectConstructor(objectConfiguration
                 .getClassName());
         if (objectConstructor == null)
@@ -76,11 +75,12 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
         return castObject(object, desiredClass);
     }
 
-    private void instanciateObjectFields(ObjectConfiguration objectConfiguration, InstantiationContext context, Object object)
+    private void instanciateObjectFields(ObjectConfiguration objectConfiguration, InstantiationContext context,
+            Object object)
     {
         if (objectConfiguration.getFields() != null)
         {
-            for (Map.Entry<String, FieldConfiguration> entry : objectConfiguration.getFields().entrySet())
+            for (Map.Entry<String, ElementConfiguration> entry : objectConfiguration.getFields().entrySet())
             {
                 instanciateObjectField(object, objectConfiguration.getClassName(), entry.getKey(), entry.getValue(),
                         context);
@@ -95,7 +95,7 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
         if (objectConfiguration.getConstructorArguments() != null
                 && !objectConfiguration.getConstructorArguments().isEmpty())
         {
-            for (FieldConfiguration field : objectConfiguration.getConstructorArguments())
+            for (ElementConfiguration field : objectConfiguration.getConstructorArguments())
             {
                 constructorArguments.add(instanciateObjectField(field, context));
             }
@@ -103,80 +103,72 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
         return constructorArguments;
     }
 
-    private <T> T getSharedObjectReference(ObjectConfiguration objectConfiguration, Class<T> desiredClass,
+    private Object instantiateSharedObjectReference(ReferenceConfiguration referenceConfiguration,
             InstantiationContext context)
     {
-        Object resolvedObject = context.getSharedObject(objectConfiguration.getReferenceName());
+        Object resolvedObject = context.getSharedObject(referenceConfiguration.getReferenceName());
 
         if (resolvedObject != null)
         {
-            return castObject(resolvedObject, desiredClass);
+            return resolvedObject;
         }
-        ObjectConfiguration resolvedConfiguration = context.getSharedObjectConfiguration(objectConfiguration
+        ObjectConfiguration resolvedConfiguration = context.getSharedObjectConfiguration(referenceConfiguration
                 .getReferenceName());
         if (resolvedConfiguration != null)
         {
-            return instanciateObject(resolvedConfiguration, desiredClass, context);
+            return instanciateObjectField(resolvedConfiguration, context);
         }
-        throw new IllegalArgumentException("Could not resolve reference : "
-                + objectConfiguration.getReferenceName());
+        throw new IllegalArgumentException("Could not resolve reference : " + referenceConfiguration.getReferenceName());
+
     }
 
-    private boolean isSharedObjectReference(ObjectConfiguration objectConfiguration)
+    private <T> T getSharedObjectReference(ReferenceConfiguration referenceConfiguration, Class<T> desiredClass,
+            InstantiationContext context)
     {
-        return objectConfiguration.getClassName() == null && objectConfiguration.getReferenceName() != null;
+        return castObject(instantiateSharedObjectReference(referenceConfiguration, context), desiredClass);
     }
 
-    private Object instanciateObjectField(FieldConfiguration fieldConfiguration, InstantiationContext context)
+    private Object instanciateObjectField(ElementConfiguration fieldConfiguration, InstantiationContext context)
     {
         switch (fieldConfiguration.getFieldConfigurationType())
         {
-        case Primitive_Single:
+        case Primitive:
         {
-            return fieldConfiguration.getValue();
+            return ((PrimitiveConfiguration) fieldConfiguration).getValue();
         }
-        case Object_Single:
+        case Object:
         {
-            if (fieldConfiguration.getObjectConfiguration() == null)
-            {
-                throw new IllegalArgumentException(
-                        "Can not instanciate fieldConfiguration, no ObjectConfiguration provided");
-            }
-            Object value = instanciateObject(fieldConfiguration.getObjectConfiguration(), Object.class, context);
+            Object value = instanciateObject((ObjectConfiguration) fieldConfiguration, Object.class, context);
             return value;
         }
-        case Object_Multiple:
+        case List:
         {
-            if (fieldConfiguration.getObjectConfigurations() == null)
-            {
-                throw new IllegalArgumentException(
-                        "Can not instanciate fieldConfiguration, no ObjectConfigurations provided");
-            }
-            List<FieldConfiguration> list = fieldConfiguration.getObjectConfigurations();
+            List<ElementConfiguration> list = ((ListConfiguration) fieldConfiguration).getListConfiguration();
             if (list.isEmpty())
             {
                 return null;
             }
 
             List<Object> objectList = new ArrayList<Object>();
-            for (FieldConfiguration childFieldConfiguration : list)
+            for (ElementConfiguration childFieldConfiguration : list)
             {
-                if (childFieldConfiguration.getValue() != null)
-                {
-                    throw new NoReflectRuntimeException("NOT IMPLEMENTED : valued list is supposed to be a map !");
-                }
                 objectList.add(instanciateObjectField(childFieldConfiguration, context));
             }
             return objectList;
         }
+        case Reference:
+        {
+            return instantiateSharedObjectReference((ReferenceConfiguration) fieldConfiguration, context);
+        }
         default:
-            throw new NoReflectRuntimeException("Not implemented yet !");
+            throw new NoReflectRuntimeException("Not implemented yet : ElementConfiguration type:"
+                    + fieldConfiguration.getFieldConfigurationType());
         }
 
     }
 
     private void instanciateObjectField(Object object, String className, String propertyName,
-            FieldConfiguration fieldConfiguration, InstantiationContext context)
+            ElementConfiguration fieldConfiguration, InstantiationContext context)
     {
         FieldSetter fieldSetter = reflectionInstantiatorCatalog.getFieldSetter(className, propertyName);
         if (fieldSetter == null)

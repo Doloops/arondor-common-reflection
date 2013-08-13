@@ -1,7 +1,6 @@
 package com.arondor.common.reflection.parser.spring;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -11,10 +10,12 @@ import org.springframework.beans.factory.config.TypedStringValue;
 import org.springframework.beans.factory.support.ManagedList;
 
 import com.arondor.common.reflection.api.hash.HashHelper;
-import com.arondor.common.reflection.model.config.FieldConfiguration;
-import com.arondor.common.reflection.model.config.FieldConfiguration.FieldConfigurationType;
+import com.arondor.common.reflection.model.config.ElementConfiguration;
+import com.arondor.common.reflection.model.config.ListConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
+import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
+import com.arondor.common.reflection.model.config.ReferenceConfiguration;
 
 abstract class BeanPropertyParser
 {
@@ -30,102 +31,102 @@ abstract class BeanPropertyParser
         this.objectConfigurationFactory = objectConfigurationFactory;
     }
 
-    public FieldConfiguration parseProperty(Object value)
+    public ElementConfiguration parseProperty(Object value)
     {
-        FieldConfiguration field = objectConfigurationFactory.createFieldConfiguration();
         LOGGER.debug("value : " + value);
         if (value instanceof TypedStringValue)
         {
             TypedStringValue stringValue = (TypedStringValue) value;
             if (stringValue.getTargetTypeName() != null)
             {
-                field.setFieldConfigurationType(FieldConfigurationType.Object_Single);
                 ObjectConfiguration enumObjectConfiguration = getEnumObjectConfiguration(stringValue);
-                field.setObjectConfiguration(enumObjectConfiguration);
+                return enumObjectConfiguration;
             }
-
             else
             {
-                field.setFieldConfigurationType(FieldConfigurationType.Primitive_Single);
-                field.setValue(stringValue.getValue());
+                PrimitiveConfiguration primitiveConfiguration = objectConfigurationFactory
+                        .createPrimitiveConfiguration();
+                primitiveConfiguration.setValue(stringValue.getValue());
+                return primitiveConfiguration;
             }
         }
         else if (value instanceof RuntimeBeanReference)
         {
-            field.setFieldConfigurationType(FieldConfigurationType.Object_Single);
             RuntimeBeanReference beanReference = (RuntimeBeanReference) value;
-            field.setObjectConfiguration(objectConfigurationFactory.createObjectConfiguration());
-            field.getObjectConfiguration().setReferenceName(beanReference.getBeanName());
+            ReferenceConfiguration referenceConfiguration = objectConfigurationFactory.createReferenceConfiguration();
+            referenceConfiguration.setReferenceName(beanReference.getBeanName());
+            return referenceConfiguration;
         }
         else if (value instanceof ManagedList<?>)
         {
-            parseValueList(field, (ManagedList<?>) value);
+            return parseValueList((ManagedList<?>) value);
         }
         else if (value instanceof BeanDefinitionHolder)
         {
-            field.setFieldConfigurationType(FieldConfigurationType.Object_Single);
             BeanDefinitionHolder beanDefinitionHolder = (BeanDefinitionHolder) value;
-            field.setObjectConfiguration(parseBeanDefinition(beanDefinitionHolder.getBeanDefinition()));
+            return parseBeanDefinition(beanDefinitionHolder.getBeanDefinition());
         }
         else
         {
             throw new RuntimeException("The type of property value is not suppported : " + value + " (class : "
                     + value.getClass().getName() + ")");
         }
-        return field;
     }
 
     private ObjectConfiguration getEnumObjectConfiguration(TypedStringValue stringValue)
     {
         ObjectConfiguration enumObjectConfiguration = objectConfigurationFactory.createObjectConfiguration();
         enumObjectConfiguration.setClassName(hashHelper.hashClassName(stringValue.getTargetTypeName()));
-        enumObjectConfiguration.setConstructorArguments(new ArrayList<FieldConfiguration>());
+        enumObjectConfiguration.setConstructorArguments(new ArrayList<ElementConfiguration>());
 
-        FieldConfiguration enumFieldConfiguration = objectConfigurationFactory.createFieldConfiguration();
-        enumFieldConfiguration.setFieldConfigurationType(FieldConfigurationType.Primitive_Single);
-        enumFieldConfiguration.setValue(stringValue.getValue());
+        PrimitiveConfiguration enumFieldConfiguration = objectConfigurationFactory
+                .createPrimitiveConfiguration(stringValue.getValue());
         enumObjectConfiguration.getConstructorArguments().add(enumFieldConfiguration);
         return enumObjectConfiguration;
     }
 
-    private void parseValueList(FieldConfiguration field, ManagedList<?> value)
+    private ElementConfiguration parseValueList(ManagedList<?> value)
     {
         try
         {
-            parseFieldList(value, field);
+            return parseFieldList(value);
         }
         catch (ClassCastException e)
         {
-            parseBeanList(value, field);
+            return parseBeanList(value);
         }
     }
 
-    private void parseFieldList(ManagedList<?> value, FieldConfiguration field)
+    private ElementConfiguration parseFieldList(ManagedList<?> value)
     {
         @SuppressWarnings("unchecked")
         ManagedList<TypedStringValue> stringValueList = (ManagedList<TypedStringValue>) value;
-        field.setFieldConfigurationType(FieldConfigurationType.Primitive_Multiple);
-        field.setValues(new ArrayList<String>());
+
+        ListConfiguration listConfiguration = objectConfigurationFactory.createListConfiguration();
+        listConfiguration.setListConfiguration(new ArrayList<ElementConfiguration>());
+
         for (TypedStringValue stringValue : stringValueList)
         {
-            field.getValues().add(stringValue.getValue());
+            ElementConfiguration primitiveConfiguration = objectConfigurationFactory
+                    .createPrimitiveConfiguration(stringValue.getValue());
+            listConfiguration.getListConfiguration().add(primitiveConfiguration);
         }
+        return listConfiguration;
     }
 
-    private void parseBeanList(ManagedList<?> value, FieldConfiguration field)
+    private ElementConfiguration parseBeanList(ManagedList<?> value)
     {
         @SuppressWarnings("unchecked")
         ManagedList<RuntimeBeanReference> beanReferences = (ManagedList<RuntimeBeanReference>) value;
-        field.setFieldConfigurationType(FieldConfigurationType.Object_Multiple);
-        List<FieldConfiguration> objectConfigurations = new ArrayList<FieldConfiguration>();
-        field.setObjectConfigurations(objectConfigurations);
+
+        ListConfiguration listConfiguration = objectConfigurationFactory.createListConfiguration();
+        listConfiguration.setListConfiguration(new ArrayList<ElementConfiguration>());
+
         for (RuntimeBeanReference beanReference : beanReferences)
         {
-            FieldConfiguration subField = objectConfigurationFactory.createFieldConfiguration();
-            subField.setFieldConfigurationType(FieldConfigurationType.Object_Single);
-            subField.setObjectConfiguration(parseBeanDefinition(beanReference.getBeanName()));
-            field.getObjectConfigurations().add(subField);
+            listConfiguration.getListConfiguration().add(parseBeanDefinition(beanReference.getBeanName()));
         }
+        return listConfiguration;
     }
 
     public abstract ObjectConfiguration parseBeanDefinition(String beanDefinitionName);

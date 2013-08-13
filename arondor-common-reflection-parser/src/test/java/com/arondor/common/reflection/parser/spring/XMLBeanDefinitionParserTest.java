@@ -3,7 +3,6 @@ package com.arondor.common.reflection.parser.spring;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -12,10 +11,14 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.arondor.common.reflection.model.config.FieldConfiguration;
-import com.arondor.common.reflection.model.config.FieldConfiguration.FieldConfigurationType;
+import com.arondor.common.reflection.bean.config.ListConfigurationBean;
+import com.arondor.common.reflection.model.config.ElementConfiguration;
+import com.arondor.common.reflection.model.config.ElementConfiguration.ElementConfigurationType;
+import com.arondor.common.reflection.model.config.ListConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
+import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
+import com.arondor.common.reflection.model.config.ReferenceConfiguration;
 
 public class XMLBeanDefinitionParserTest
 {
@@ -49,13 +52,12 @@ public class XMLBeanDefinitionParserTest
     public void testParseBeanWithSingleObjectValue()
     {
         ObjectConfiguration objectConfiguration = getAndCheckParsedObjectConfiguration("beanWithSingleObjectValue");
-        Map<String, FieldConfiguration> fields = objectConfiguration.getFields();
+        Map<String, ElementConfiguration> fields = objectConfiguration.getFields();
         assertEquals(1, fields.size());
-        FieldConfiguration field = fields.get("object");
-        assertEquals(FieldConfigurationType.Object_Single, field.getFieldConfigurationType());
-        assertNotNull(field.getObjectConfiguration());
-        assertEquals("beanWithSinglePrimitiveValue", field.getObjectConfiguration().getReferenceName());
-        // checkIsValidObjectConfigurationForBeanWithSinglePrimitiveProperty(field.getObjectConfiguration());
+        ElementConfiguration field = fields.get("object");
+        assertNotNull(field);
+        assertEquals(ElementConfigurationType.Reference, field.getFieldConfigurationType());
+        assertEquals("beanWithSinglePrimitiveValue", ((ReferenceConfiguration) field).getReferenceName());
     }
 
     @Test
@@ -63,18 +65,16 @@ public class XMLBeanDefinitionParserTest
     {
         ObjectConfiguration objectConfiguration = getAndCheckParsedObjectConfiguration("beanWithMultipleObjectValue");
 
-        Map<String, FieldConfiguration> fields = objectConfiguration.getFields();
+        Map<String, ElementConfiguration> fields = objectConfiguration.getFields();
         assertEquals(1, fields.size());
 
-        FieldConfiguration field = fields.get("objects");
-        assertEquals(FieldConfigurationType.Object_Multiple, field.getFieldConfigurationType());
+        ElementConfiguration field = fields.get("objects");
+        assertEquals(ElementConfigurationType.List, field.getFieldConfigurationType());
 
-        List<FieldConfiguration> objectConfigurations = field.getObjectConfigurations();
+        List<ElementConfiguration> objectConfigurations = ((ListConfiguration) field).getListConfiguration();
         assertNotNull(objectConfigurations);
-        checkIsValidObjectConfigurationForBeanWithSinglePrimitiveProperty(objectConfigurations.get(0)
-                .getObjectConfiguration());
-        checkIsValidObjectConfigurationForBeanWithMultiplePrimitiveValue(objectConfigurations.get(1)
-                .getObjectConfiguration());
+        checkIsValidObjectConfigurationForBeanWithSinglePrimitiveProperty(objectConfigurations.get(0));
+        checkIsValidObjectConfigurationForBeanWithMultiplePrimitiveValue(objectConfigurations.get(1));
     }
 
     @Test
@@ -83,8 +83,10 @@ public class XMLBeanDefinitionParserTest
         ObjectConfiguration objectConfiguration = getAndCheckParsedObjectConfiguration("beanWithPrimitiveConstructorArgs");
         assertEquals(0, objectConfiguration.getFields().size());
         assertEquals(2, objectConfiguration.getConstructorArguments().size());
-        assertEquals("my arg 1", objectConfiguration.getConstructorArguments().get(0).getValue());
-        assertEquals("my arg 2", objectConfiguration.getConstructorArguments().get(1).getValue());
+        assertEquals("my arg 1",
+                ((PrimitiveConfiguration) objectConfiguration.getConstructorArguments().get(0)).getValue());
+        assertEquals("my arg 2",
+                ((PrimitiveConfiguration) objectConfiguration.getConstructorArguments().get(1)).getValue());
     }
 
     @Test
@@ -93,47 +95,53 @@ public class XMLBeanDefinitionParserTest
         ObjectConfiguration objectConfiguration = getAndCheckParsedObjectConfiguration("beanWithBothPrimitiveAndObjectConstructorArgs");
         assertEquals(0, objectConfiguration.getFields().size());
         assertEquals(3, objectConfiguration.getConstructorArguments().size());
-        assertEquals("beanWithSinglePrimitiveValue", objectConfiguration.getConstructorArguments().get(0)
-                .getObjectConfiguration().getReferenceName());
-        assertEquals("my arg 1", objectConfiguration.getConstructorArguments().get(1).getValue());
+        assertEquals("beanWithSinglePrimitiveValue", ((ReferenceConfiguration) objectConfiguration
+                .getConstructorArguments().get(0)).getReferenceName());
+        assertEquals("my arg 1",
+                ((PrimitiveConfiguration) objectConfiguration.getConstructorArguments().get(1)).getValue());
 
-        assertEquals("com.arondor.viewer.client.toppanel.behavior.document.DocumentPrintHandler", objectConfiguration
-                .getConstructorArguments().get(2).getObjectConfiguration().getClassName());
+        assertEquals("com.arondor.viewer.client.toppanel.behavior.document.DocumentPrintHandler",
+                ((ObjectConfiguration) objectConfiguration.getConstructorArguments().get(2)).getClassName());
     }
 
     private ObjectConfiguration getAndCheckParsedObjectConfiguration(String beanName)
     {
         ObjectConfigurationMap parsedObjectConfiguration = parser.parse();
         ObjectConfiguration objectConfiguration = parsedObjectConfiguration.get(beanName);
-        assertEquals(beanName, objectConfiguration.getReferenceName());
+        assertEquals(beanName, objectConfiguration.getObjectName());
         assertNotNull(objectConfiguration);
         assertEquals(className, objectConfiguration.getClassName());
         return objectConfiguration;
     }
 
     private void checkIsValidObjectConfigurationForBeanWithSinglePrimitiveProperty(
-            ObjectConfiguration objectConfiguration)
+            ElementConfiguration elementConfiguration)
     {
-        Map<String, FieldConfiguration> fields = objectConfiguration.getFields();
+        assertTrue(elementConfiguration instanceof ObjectConfiguration);
+        ObjectConfiguration objectConfiguration = (ObjectConfiguration) elementConfiguration;
+        Map<String, ElementConfiguration> fields = objectConfiguration.getFields();
         assertEquals(1, fields.size());
-        FieldConfiguration field = fields.get("name");
-        assertEquals(FieldConfigurationType.Primitive_Single, field.getFieldConfigurationType());
-        assertEquals("my object name", field.getValue());
+        ElementConfiguration field = fields.get("name");
+        assertEquals(ElementConfigurationType.Primitive, field.getFieldConfigurationType());
+        assertEquals("my object name", ((PrimitiveConfiguration) field).getValue());
     }
 
     private void checkIsValidObjectConfigurationForBeanWithMultiplePrimitiveValue(
-            ObjectConfiguration objectConfiguration)
+            ElementConfiguration elementConfiguration)
     {
-        Map<String, FieldConfiguration> fields = objectConfiguration.getFields();
+        assertTrue(elementConfiguration instanceof ObjectConfiguration);
+        ObjectConfiguration objectConfiguration = (ObjectConfiguration) elementConfiguration;
+        Map<String, ElementConfiguration> fields = objectConfiguration.getFields();
         assertEquals(1, fields.size());
-        FieldConfiguration field = fields.get("names");
-        assertEquals(FieldConfigurationType.Primitive_Multiple, field.getFieldConfigurationType());
-        assertNull(field.getValue());
-        assertNotNull(field.getValues());
-        assertEquals(3, field.getValues().size());
-        assertEquals("name1", field.getValues().get(0));
-        assertEquals("name2", field.getValues().get(1));
-        assertEquals("name3", field.getValues().get(2));
+        ElementConfiguration field = fields.get("names");
+        assertEquals(ElementConfigurationType.List, field.getFieldConfigurationType());
+
+        ListConfiguration listConfiguration = (ListConfigurationBean) field;
+        assertNotNull(listConfiguration);
+        assertEquals(3, listConfiguration.getListConfiguration().size());
+        assertEquals("name1", ((PrimitiveConfiguration) listConfiguration.getListConfiguration().get(0)).getValue());
+        assertEquals("name2", ((PrimitiveConfiguration) listConfiguration.getListConfiguration().get(1)).getValue());
+        assertEquals("name3", ((PrimitiveConfiguration) listConfiguration.getListConfiguration().get(2)).getValue());
     }
 
     @Test
@@ -144,24 +152,24 @@ public class XMLBeanDefinitionParserTest
 
         assertNotNull(objectConfiguration);
         assertEquals("com.arondor.viewer.client.toppanel.presenter.ButtonPresenter", objectConfiguration.getClassName());
-        assertEquals("printButton", objectConfiguration.getReferenceName());
+        assertEquals("printButton", objectConfiguration.getObjectName());
         assertNotNull(objectConfiguration.getConstructorArguments());
         assertEquals(3, objectConfiguration.getConstructorArguments().size());
 
-        assertEquals(FieldConfigurationType.Object_Single, objectConfiguration.getConstructorArguments().get(0)
+        assertEquals(ElementConfigurationType.Reference, objectConfiguration.getConstructorArguments().get(0)
                 .getFieldConfigurationType());
-        assertNull(objectConfiguration.getConstructorArguments().get(0).getObjectConfiguration().getClassName());
-        assertEquals("images#printDocument", objectConfiguration.getConstructorArguments().get(0)
-                .getObjectConfiguration().getReferenceName());
+        assertEquals("images#printDocument", ((ReferenceConfiguration) objectConfiguration.getConstructorArguments()
+                .get(0)).getReferenceName());
 
-        assertEquals(FieldConfigurationType.Primitive_Single, objectConfiguration.getConstructorArguments().get(1)
+        assertEquals(ElementConfigurationType.Primitive, objectConfiguration.getConstructorArguments().get(1)
                 .getFieldConfigurationType());
-        assertEquals("Print", objectConfiguration.getConstructorArguments().get(1).getValue());
+        assertEquals("Print",
+                ((PrimitiveConfiguration) objectConfiguration.getConstructorArguments().get(1)).getValue());
 
-        assertEquals(FieldConfigurationType.Object_Single, objectConfiguration.getConstructorArguments().get(2)
+        assertEquals(ElementConfigurationType.Object, objectConfiguration.getConstructorArguments().get(2)
                 .getFieldConfigurationType());
-        assertEquals("com.arondor.viewer.client.toppanel.behavior.document.DocumentPrintHandler", objectConfiguration
-                .getConstructorArguments().get(2).getObjectConfiguration().getClassName());
+        assertEquals("com.arondor.viewer.client.toppanel.behavior.document.DocumentPrintHandler",
+                ((ObjectConfiguration) objectConfiguration.getConstructorArguments().get(2)).getClassName());
 
     }
 
@@ -176,19 +184,19 @@ public class XMLBeanDefinitionParserTest
                 objectConfiguration.getClassName());
         assertEquals(1, objectConfiguration.getConstructorArguments().size());
 
-        assertEquals(FieldConfigurationType.Object_Single, objectConfiguration.getConstructorArguments().get(0)
+        assertEquals(ElementConfigurationType.Object, objectConfiguration.getConstructorArguments().get(0)
                 .getFieldConfigurationType());
 
-        ObjectConfiguration enumConfig = objectConfiguration.getConstructorArguments().get(0).getObjectConfiguration();
+        ObjectConfiguration enumConfig = (ObjectConfiguration) objectConfiguration.getConstructorArguments().get(0);
         assertNotNull(enumConfig);
         assertEquals("com.arondor.viewer.client.events.downupload.AskDocumentUploadEvent.Behavior",
                 enumConfig.getClassName());
 
         assertEquals(1, enumConfig.getConstructorArguments().size());
 
-        assertEquals(FieldConfigurationType.Primitive_Single, enumConfig.getConstructorArguments().get(0)
+        assertEquals(ElementConfigurationType.Primitive, enumConfig.getConstructorArguments().get(0)
                 .getFieldConfigurationType());
-        assertEquals("UPLOAD_FILE", enumConfig.getConstructorArguments().get(0).getValue());
+        assertEquals("UPLOAD_FILE", ((PrimitiveConfiguration) enumConfig.getConstructorArguments().get(0)).getValue());
     }
 
     @Test

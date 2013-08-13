@@ -10,7 +10,15 @@ public interface ObjectConfigurationFactory
 {
     ObjectConfiguration createObjectConfiguration();
 
-    FieldConfiguration createFieldConfiguration();
+    PrimitiveConfiguration createPrimitiveConfiguration();
+
+    PrimitiveConfiguration createPrimitiveConfiguration(String value);
+
+    ListConfiguration createListConfiguration();
+
+    MapConfiguration createMapConfiguration();
 
     ObjectConfigurationMap createObjectConfigurationMap();
+
+    ReferenceConfiguration createReferenceConfiguration();
 }

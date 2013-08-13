@@ -12,7 +12,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.arondor.common.reflection.model.config.FieldConfiguration;
+import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 
 @Entity
@@ -24,6 +24,11 @@ public class ObjectConfigurationBean implements ObjectConfiguration
      * 
      */
     private static final long serialVersionUID = 5011548715444426003L;
+
+    public ElementConfigurationType getFieldConfigurationType()
+    {
+        return ElementConfigurationType.Object;
+    }
 
     @Id
     @GeneratedValue
@@ -56,16 +61,16 @@ public class ObjectConfigurationBean implements ObjectConfiguration
         this.className = className;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, targetEntity = FieldConfigurationBean.class)
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = ElementConfigurationBean.class)
     @JoinTable(name = "FieldConfigMap", joinColumns = @JoinColumn(name = "objectConfigId"), inverseJoinColumns = @JoinColumn(name = "fieldConfigId"))
-    private Map<String, FieldConfiguration> fields;
+    private Map<String, ElementConfiguration> fields;
 
-    public Map<String, FieldConfiguration> getFields()
+    public Map<String, ElementConfiguration> getFields()
     {
         return fields;
     }
 
-    public void setFields(Map<String, FieldConfiguration> fields)
+    public void setFields(Map<String, ElementConfiguration> fields)
     {
         this.fields = fields;
     }
@@ -82,15 +87,15 @@ public class ObjectConfigurationBean implements ObjectConfiguration
         this.referenceName = referenceName;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, targetEntity = FieldConfigurationBean.class)
-    private List<FieldConfiguration> constructorArguments;
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = ElementConfigurationBean.class)
+    private List<ElementConfiguration> constructorArguments;
 
-    public List<FieldConfiguration> getConstructorArguments()
+    public List<ElementConfiguration> getConstructorArguments()
     {
         return constructorArguments;
     }
 
-    public void setConstructorArguments(List<FieldConfiguration> constructorArguments)
+    public void setConstructorArguments(List<ElementConfiguration> constructorArguments)
     {
         this.constructorArguments = constructorArguments;
     }
@@ -105,5 +110,17 @@ public class ObjectConfigurationBean implements ObjectConfiguration
     public boolean isSingleton()
     {
         return singleton;
+    }
+
+    private String objectName;
+
+    public String getObjectName()
+    {
+        return objectName;
+    }
+
+    public void setObjectName(String objectName)
+    {
+        this.objectName = objectName;
     }
 }

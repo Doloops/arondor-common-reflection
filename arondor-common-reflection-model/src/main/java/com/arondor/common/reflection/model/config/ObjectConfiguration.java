@@ -1,26 +1,25 @@
 package com.arondor.common.reflection.model.config;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public interface ObjectConfiguration extends Serializable
+public interface ObjectConfiguration extends ElementConfiguration
 {
     String getClassName();
 
     void setClassName(String className);
 
-    List<FieldConfiguration> getConstructorArguments();
+    List<ElementConfiguration> getConstructorArguments();
 
-    void setConstructorArguments(List<FieldConfiguration> constructorArguments);
+    void setConstructorArguments(List<ElementConfiguration> constructorArguments);
 
-    String getReferenceName();
+    String getObjectName();
 
-    void setReferenceName(String referenceName);
+    void setObjectName(String objectName);
 
-    Map<String, FieldConfiguration> getFields();
+    Map<String, ElementConfiguration> getFields();
 
-    void setFields(Map<String, FieldConfiguration> fields);
+    void setFields(Map<String, ElementConfiguration> fields);
 
     void setSingleton(boolean singleton);
 

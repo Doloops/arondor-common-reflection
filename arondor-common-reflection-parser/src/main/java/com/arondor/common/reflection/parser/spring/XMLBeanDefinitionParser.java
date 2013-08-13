@@ -18,7 +18,7 @@ import com.arondor.common.reflection.api.hash.HashHelper;
 import com.arondor.common.reflection.api.hash.NoHashHelper;
 import com.arondor.common.reflection.api.parser.ObjectConfigurationMapParser;
 import com.arondor.common.reflection.bean.config.ObjectConfigurationFactoryBean;
-import com.arondor.common.reflection.model.config.FieldConfiguration;
+import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
@@ -77,7 +77,7 @@ public class XMLBeanDefinitionParser implements ObjectConfigurationMapParser
         {
             LOGGER.debug("Bean defintion name : " + beanDefinitionName);
             ObjectConfiguration objectConfiguration = parseBeanDefinition(beanDefinitionName);
-            objectConfiguration.setReferenceName(beanDefinitionName);
+            objectConfiguration.setObjectName(beanDefinitionName);
             parsedObjectConfiguration.put(beanDefinitionName, objectConfiguration);
         }
         return parsedObjectConfiguration;
@@ -95,20 +95,20 @@ public class XMLBeanDefinitionParser implements ObjectConfigurationMapParser
         objectConfiguration.setClassName(hashHelper.hashClassName(beanDefinition.getBeanClassName()));
         objectConfiguration.setSingleton(beanDefinition.isSingleton());
 
-        Map<String, FieldConfiguration> fields = new HashMap<String, FieldConfiguration>();
+        Map<String, ElementConfiguration> fields = new HashMap<String, ElementConfiguration>();
         objectConfiguration.setFields(fields);
 
         for (PropertyValue ppt : beanDefinition.getPropertyValues().getPropertyValueList())
         {
-            FieldConfiguration fieldConfiguration = beanPropertyParser.parseProperty(ppt.getValue());
+            ElementConfiguration fieldConfiguration = beanPropertyParser.parseProperty(ppt.getValue());
             fields.put(hashHelper.hashFieldName(beanDefinition.getBeanClassName(), ppt.getName()), fieldConfiguration);
         }
 
-        List<FieldConfiguration> constructorArguments = new ArrayList<FieldConfiguration>();
+        List<ElementConfiguration> constructorArguments = new ArrayList<ElementConfiguration>();
         objectConfiguration.setConstructorArguments(constructorArguments);
         for (ValueHolder va : beanDefinition.getConstructorArgumentValues().getGenericArgumentValues())
         {
-            FieldConfiguration constructorAgrument = beanPropertyParser.parseProperty(va.getValue());
+            ElementConfiguration constructorAgrument = beanPropertyParser.parseProperty(va.getValue());
             constructorArguments.add(constructorAgrument);
         }
         return objectConfiguration;
