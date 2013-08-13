@@ -199,7 +199,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
      * @param exposedMethods
      *            list of exposed methods
      */
-    protected void parseExposedMethodAndAttributes(Method[] methods, Map<String, AccessibleField> exposedAttributes,
+    private void parseExposedMethodAndAttributes(Method[] methods, Map<String, AccessibleField> exposedAttributes,
             List<Method> exposedMethods, boolean includeNonPrimitive)
     {
         for (int mth = 0; mth < methods.length; mth++)
@@ -280,16 +280,16 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
     {
         if (!Modifier.isPublic(method.getModifiers()) || Modifier.isStatic(method.getModifiers()))
         {
-            return false;
+            return true;
         }
         for (String mth : IGNORED_METHODS)
         {
             if (method.getName().equals(mth))
             {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     /**
