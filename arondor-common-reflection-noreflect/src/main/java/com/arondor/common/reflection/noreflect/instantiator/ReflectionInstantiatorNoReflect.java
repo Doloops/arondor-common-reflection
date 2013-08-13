@@ -122,12 +122,6 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
 
     }
 
-    private <T> T getSharedObjectReference(ReferenceConfiguration referenceConfiguration, Class<T> desiredClass,
-            InstantiationContext context)
-    {
-        return castObject(instantiateSharedObjectReference(referenceConfiguration, context), desiredClass);
-    }
-
     private Object instanciateObjectField(ElementConfiguration fieldConfiguration, InstantiationContext context)
     {
         switch (fieldConfiguration.getFieldConfigurationType())
