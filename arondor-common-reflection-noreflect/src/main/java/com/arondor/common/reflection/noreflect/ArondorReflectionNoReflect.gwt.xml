@@ -5,6 +5,7 @@
 	<source path='model' />
 	<source path='runtime' />
 	<source path='instantiator' />
+	<source path='exception' />
 	
 	<inherits name="com.arondor.common.reflection.api.ArondorReflectionAPI"/>
 	

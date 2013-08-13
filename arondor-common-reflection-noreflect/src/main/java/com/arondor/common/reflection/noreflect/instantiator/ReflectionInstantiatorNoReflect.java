@@ -8,6 +8,7 @@ import com.arondor.common.reflection.api.instantiator.InstantiationContext;
 import com.arondor.common.reflection.api.instantiator.ReflectionInstantiator;
 import com.arondor.common.reflection.model.config.FieldConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
+import com.arondor.common.reflection.noreflect.exception.NoReflectRuntimeException;
 import com.arondor.common.reflection.noreflect.model.FieldSetter;
 import com.arondor.common.reflection.noreflect.model.ObjectConstructor;
 import com.arondor.common.reflection.noreflect.model.ReflectionInstantiatorCatalog;
@@ -133,14 +134,14 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
             {
                 if (childFieldConfiguration.getValue() != null)
                 {
-                    throw new IllegalArgumentException("NOT IMPLEMNETED : valued list is supposed to be a map !");
+                    throw new NoReflectRuntimeException("NOT IMPLEMENTED : valued list is supposed to be a map !");
                 }
                 objectList.add(instanciateObjectField(childFieldConfiguration, context));
             }
             return objectList;
         }
         default:
-            throw new RuntimeException("Not implemented yet !");
+            throw new NoReflectRuntimeException("Not implemented yet !");
         }
 
     }
@@ -151,7 +152,8 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
         FieldSetter fieldSetter = reflectionInstantiatorCatalog.getFieldSetter(className, propertyName);
         if (fieldSetter == null)
         {
-            throw new RuntimeException("No setter found : className:" + className + ", propertyName:" + propertyName);
+            throw new NoReflectRuntimeException("No setter found : className:" + className + ", propertyName:"
+                    + propertyName);
         }
         Object value = instanciateObjectField(fieldConfiguration, context);
         fieldSetter.set(object, value);
@@ -159,7 +161,7 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
 
     public Object instanciatePrimite(String value, Class<?> targetClass)
     {
-        throw new RuntimeException("Not implemented : instanciatePrimite()");
+        throw new NoReflectRuntimeException("Not implemented : instanciatePrimite()");
     }
 
     public <T> T instanciateObject(String beanName, Class<T> desiredClass, InstantiationContext context)
@@ -167,7 +169,7 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
         ObjectConfiguration objectConfiguration = context.getSharedObjectConfiguration(beanName);
         if (objectConfiguration == null)
         {
-            throw new IllegalArgumentException("No configuraition for beanName=" + beanName + ", desiredClass="
+            throw new NoReflectRuntimeException("No configuration for beanName=" + beanName + ", desiredClass="
                     + desiredClass.getName());
         }
         if (objectConfiguration.isSingleton())
