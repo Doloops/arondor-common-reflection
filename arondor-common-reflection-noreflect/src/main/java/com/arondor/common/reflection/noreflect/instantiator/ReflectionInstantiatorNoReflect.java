@@ -36,14 +36,20 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
 
     private ReflectionInstantiatorCatalog reflectionInstantiatorCatalog;
 
-    public ReflectionInstantiatorCatalog getReflectionInstantiatorCatalog()
+    public final ReflectionInstantiatorCatalog getReflectionInstantiatorCatalog()
     {
         return reflectionInstantiatorCatalog;
     }
 
-    public void setReflectionInstantiatorCatalog(ReflectionInstantiatorCatalog reflectionInstantiatorCatalog)
+    public final void setReflectionInstantiatorCatalog(ReflectionInstantiatorCatalog reflectionInstantiatorCatalog)
     {
         this.reflectionInstantiatorCatalog = reflectionInstantiatorCatalog;
+    }
+
+    @SuppressWarnings("unchecked")
+    private final <T> T castObject(Object object, Class<T> desiredClass)
+    {
+        return (T) object;
     }
 
     public <T> T instanciateObject(ObjectConfiguration objectConfiguration, Class<T> desiredClass,
@@ -56,9 +62,10 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
         if (objectConfiguration.getClassName() == null && objectConfiguration.getReferenceName() != null)
         {
             Object resolvedObject = context.getSharedObject(objectConfiguration.getReferenceName());
+
             if (resolvedObject != null)
             {
-                return (T) resolvedObject;
+                return castObject(resolvedObject, desiredClass);
             }
             ObjectConfiguration resolvedConfiguration = context.getSharedObjectConfiguration(objectConfiguration
                     .getReferenceName());
@@ -94,8 +101,7 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
                         context);
             }
         }
-
-        return (T) object;
+        return castObject(object, desiredClass);
     }
 
     private Object instanciateObjectField(FieldConfiguration fieldConfiguration, InstantiationContext context)
@@ -177,7 +183,7 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
             Object singleton = context.getSharedObject(beanName);
             if (singleton != null)
             {
-                return (T) singleton;
+                return castObject(singleton, desiredClass);
             }
         }
         T result = instanciateObject(objectConfiguration, desiredClass, context);
