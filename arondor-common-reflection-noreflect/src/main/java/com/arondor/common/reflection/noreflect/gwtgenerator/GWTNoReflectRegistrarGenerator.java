@@ -33,34 +33,19 @@ public abstract class GWTNoReflectRegistrarGenerator extends Generator
         String className = getClassName();
         String completeName = packageName + "." + className;
 
-        // try
-        // {
         PrintWriter src = context.tryCreate(logger, packageName, className);
 
         if (src == null)
         {
+            LOGGER.finest("Already generated for : " + completeName);
             return completeName;
         }
-
-        // String resource = "exposedClasses.txt";
-        // AccessibleClassesParser accessibleClassesParser = new
-        // AccessibleClassesParser();
-        // Collection<String> classNames =
-        // accessibleClassesParser.parseClassNames(this.getClass().getClassLoader()
-        // .getResourceAsStream(resource));
-        //
-        // LOGGER.info("Parsed classNames : " + classNames.size());
-
-        // Collection<AccessibleClass> accessibleClasses =
-        // accessibleClassesParser.parseAccessibleClasses(this
-        // .getClass().getClassLoader(), classNames);
 
         Collection<AccessibleClass> accessibleClasses = getAccessibleClasses();
 
         NoReflectRegistrarGenerator noReflect = new NoReflectRegistrarGenerator();
         noReflect.setClassName(className);
         noReflect.setPackageName(packageName);
-        // noReflect.setHashMethod(HASH_METHOD);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(baos);
@@ -78,17 +63,6 @@ public abstract class GWTNoReflectRegistrarGenerator extends Generator
         context.commit(logger, src);
 
         return completeName;
-
-        // }
-        // catch (IOException e)
-        // {
-        // LOGGER.log(Level.SEVERE, "IOException", e);
-        // }
-        // catch (ClassNotFoundException e)
-        // {
-        // LOGGER.log(Level.SEVERE, "ClassNotFoundException", e);
-        // }
-        // return null;
     }
 
 }
