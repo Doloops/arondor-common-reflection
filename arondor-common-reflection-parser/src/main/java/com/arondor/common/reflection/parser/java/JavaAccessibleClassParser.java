@@ -238,6 +238,13 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
             String prop = getterToAttribute(method.getName());
             Class<?> parameterType = method.getParameterTypes()[0];
             AccessibleFieldBean attributeInfo = getBeanFromMethod(exposedAttributes, parameterType, prop);
+            if (!attributeInfo.getClassName().equals(parameterType.getName()))
+            {
+                LOG.warn("Incompatible setter type ! getter said " + attributeInfo.getClassName() + ", setter said "
+                        + parameterType.getName());
+                LOG.warn("Overriding getter type to the setter type " + parameterType.getName());
+                attributeInfo.setClassName(parameterType.getName());
+            }
             attributeInfo.setWritable();
             handleObjectMultipleMethod(method, parameterType, attributeInfo);
         }

@@ -1,9 +1,11 @@
 package com.arondor.common.reflection.parser.java;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.junit.Assert;
 import org.junit.Test;
 
 import com.arondor.common.management.mbean.annotation.Description;
@@ -42,10 +44,9 @@ public class TestJavaAccessibleClassParser
     public void testSimpleClass()
     {
         AccessibleClassParser parser = new JavaAccessibleClassParser();
-
         AccessibleClass clazz = parser.parseAccessibleClass(SimpleClass.class);
 
-        Assert.assertNotNull(clazz);
+        assertNotNull(clazz);
         log.info("Class : " + clazz.getClassBaseName());
 
         for (String fieldName : clazz.getAccessibleFields().keySet())
@@ -54,27 +55,58 @@ public class TestJavaAccessibleClassParser
             log.info("* Field : " + fieldName + ", class=" + field.getClassName());
         }
 
-        Assert.assertEquals(1, clazz.getAccessibleFields().size());
+        assertEquals(1, clazz.getAccessibleFields().size());
 
         AccessibleField field = clazz.getAccessibleFields().get("map");
-        Assert.assertNotNull(field);
+        assertNotNull(field);
 
-        Assert.assertEquals("map", field.getName());
-        Assert.assertEquals("java.util.Map", field.getClassName());
-        Assert.assertEquals(2, field.getGenericParameterClassList().size());
-        Assert.assertEquals("java.lang.String", field.getGenericParameterClassList().get(0));
-        Assert.assertEquals("java.lang.Long", field.getGenericParameterClassList().get(1));
+        assertEquals("map", field.getName());
+        assertEquals("java.util.Map", field.getClassName());
+        assertEquals(2, field.getGenericParameterClassList().size());
+        assertEquals("java.lang.String", field.getGenericParameterClassList().get(0));
+        assertEquals("java.lang.Long", field.getGenericParameterClassList().get(1));
 
-        Assert.assertEquals("Dummy map", field.getDescription());
+        assertEquals("Dummy map", field.getDescription());
 
-        Assert.assertNotNull(clazz.getAccessibleMethods());
+        assertNotNull(clazz.getAccessibleMethods());
         for (AccessibleMethod mth : clazz.getAccessibleMethods())
         {
             log.info("Method : " + mth.getName());
         }
 
-        Assert.assertEquals(1, clazz.getAccessibleMethods().size());
-        Assert.assertEquals("myLittleMethod", clazz.getAccessibleMethods().get(0).getName());
+        assertEquals(1, clazz.getAccessibleMethods().size());
+        assertEquals("myLittleMethod", clazz.getAccessibleMethods().get(0).getName());
     }
 
+    public static class ClassWithIncompatibleGetterAndSetter
+    {
+        private int field;
+
+        public int getField()
+        {
+            return field;
+        }
+
+        public void setField(String value)
+        {
+            this.field = Integer.parseInt(value);
+        }
+    }
+
+    @Test
+    public void testClassWithIncompatibleGetterAndSetter()
+    {
+        AccessibleClassParser parser = new JavaAccessibleClassParser();
+        AccessibleClass clazz = parser.parseAccessibleClass(ClassWithIncompatibleGetterAndSetter.class);
+
+        assertNotNull(clazz);
+        log.info("Class : " + clazz.getClassBaseName());
+
+        assertEquals(1, clazz.getAccessibleFields().size());
+
+        AccessibleField field = clazz.getAccessibleFields().get("field");
+        assertNotNull(field);
+
+        assertEquals(String.class.getName(), field.getClassName());
+    }
 }
