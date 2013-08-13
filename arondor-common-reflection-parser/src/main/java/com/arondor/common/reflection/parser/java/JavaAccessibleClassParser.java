@@ -274,12 +274,22 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         }
     }
 
+    private static final String[] IGNORED_METHODS = { "wait", "notifyAll", "notify", "finalize", "getClass" };
+
     private boolean isIgnoredMethod(Method method)
     {
-        return !Modifier.isPublic(method.getModifiers()) || Modifier.isStatic(method.getModifiers())
-                || method.getName().equals("wait") || method.getName().equals("notify")
-                || method.getName().equals("notifyAll") || method.getName().equals("finalize")
-                || method.getName().equals("getClass");
+        if (!Modifier.isPublic(method.getModifiers()) || Modifier.isStatic(method.getModifiers()))
+        {
+            return false;
+        }
+        for (String mth : IGNORED_METHODS)
+        {
+            if (method.getName().equals(mth))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
