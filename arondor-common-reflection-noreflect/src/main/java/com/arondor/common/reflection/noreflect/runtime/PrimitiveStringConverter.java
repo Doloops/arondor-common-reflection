@@ -7,7 +7,7 @@ package com.arondor.common.reflection.noreflect.runtime;
  * @author francois
  * 
  */
-public class PrimitiveStringConverter
+public final class PrimitiveStringConverter
 {
     /**
      * Utility classes should not have a public or default constructor.
