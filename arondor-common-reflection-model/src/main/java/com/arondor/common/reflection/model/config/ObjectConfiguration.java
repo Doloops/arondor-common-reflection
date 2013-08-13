@@ -6,19 +6,23 @@ import java.util.Map;
 
 public interface ObjectConfiguration extends Serializable
 {
-    public String getClassName();
+    String getClassName();
 
-    public void setClassName(String className);
+    void setClassName(String className);
 
-    public List<FieldConfiguration> getConstructorArguments();
+    List<FieldConfiguration> getConstructorArguments();
 
-    public void setConstructorArguments(List<FieldConfiguration> constructorArguments);
+    void setConstructorArguments(List<FieldConfiguration> constructorArguments);
 
-    public String getReferenceName();
+    String getReferenceName();
 
-    public void setReferenceName(String referenceName);
+    void setReferenceName(String referenceName);
 
-    public Map<String, FieldConfiguration> getFields();
+    Map<String, FieldConfiguration> getFields();
 
-    public void setFields(Map<String, FieldConfiguration> fields);
+    void setFields(Map<String, FieldConfiguration> fields);
+
+    void setSingleton(boolean singleton);
+
+    boolean isSingleton();
 }

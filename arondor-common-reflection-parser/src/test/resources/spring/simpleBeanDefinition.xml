@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
-<beans default-lazy-init="false" default-autowire="no"
+<beans default-lazy-init="true" default-autowire="no"
 	default-dependency-check="none">
 
 	<bean id="beanWithSinglePrimitiveValue" class="com.arondor.test.TestBean"
@@ -61,24 +61,39 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="printButton" class="com.arondor.viewer.client.toppanel.presenter.ButtonPresenter" singleton="false">
-	  <constructor-arg><ref bean="images#printDocument"/></constructor-arg>
-	  <constructor-arg><value>Print</value></constructor-arg>
-	  <constructor-arg>
-	  	<bean class="com.arondor.viewer.client.toppanel.behavior.document.DocumentPrintHandler">
-		  <constructor-arg>
-		  	<bean class="com.arondor.viewer.client.events.print.ShowPrintDialogBoxEvent"/>
-		  </constructor-arg>
-	  	</bean>
-	  </constructor-arg>
+	<bean id="printButton"
+		class="com.arondor.viewer.client.toppanel.presenter.ButtonPresenter"
+		singleton="false">
+		<constructor-arg>
+			<ref bean="images#printDocument" />
+		</constructor-arg>
+		<constructor-arg>
+			<value>Print</value>
+		</constructor-arg>
+		<constructor-arg>
+			<bean
+				class="com.arondor.viewer.client.toppanel.behavior.document.DocumentPrintHandler">
+				<constructor-arg>
+					<bean
+						class="com.arondor.viewer.client.events.print.ShowPrintDialogBoxEvent" />
+				</constructor-arg>
+			</bean>
+		</constructor-arg>
 	</bean>
 
-  	<bean name="typedEnum" class="com.arondor.viewer.client.events.downupload.AskDocumentUploadEvent" singleton="false">
-  		<constructor-arg>
-  			<value type="com.arondor.viewer.client.events.downupload.AskDocumentUploadEvent.Behavior">UPLOAD_FILE</value>
-  		</constructor-arg>
-  	</bean>
+	<bean name="typedEnum"
+		class="com.arondor.viewer.client.events.downupload.AskDocumentUploadEvent"
+		singleton="false">
+		<constructor-arg>
+			<value
+				type="com.arondor.viewer.client.events.downupload.AskDocumentUploadEvent.Behavior">UPLOAD_FILE</value>
+		</constructor-arg>
+	</bean>
 
+	<bean name="singletonObject" class="IAmASingleton" singleton="true" />
+
+	<bean name="nonSingletonObject" class="IAmNotASingleton"
+		singleton="false" />
 
 </beans>
 	

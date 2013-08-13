@@ -1,8 +1,10 @@
 package com.arondor.common.reflection.parser.spring;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Map;
@@ -188,4 +190,24 @@ public class XMLBeanDefinitionParserTest
                 .getFieldConfigurationType());
         assertEquals("UPLOAD_FILE", enumConfig.getConstructorArguments().get(0).getValue());
     }
+
+    @Test
+    public void testSingleton()
+    {
+        ObjectConfigurationMap parsedObjectConfiguration = parser.parse();
+        ObjectConfiguration objectConfiguration = parsedObjectConfiguration.get("singletonObject");
+
+        assertTrue("Shall be singleton !", objectConfiguration.isSingleton());
+
+    }
+
+    @Test
+    public void testNotSingleton()
+    {
+        ObjectConfigurationMap parsedObjectConfiguration = parser.parse();
+        ObjectConfiguration objectConfiguration = parsedObjectConfiguration.get("nonSingletonObject");
+
+        assertFalse("Shall be non-singleton !", objectConfiguration.isSingleton());
+    }
+
 }

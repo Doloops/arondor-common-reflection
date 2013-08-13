@@ -95,4 +95,15 @@ public class ObjectConfigurationBean implements ObjectConfiguration
         this.constructorArguments = constructorArguments;
     }
 
+    private boolean singleton = false;
+
+    public void setSingleton(boolean singleton)
+    {
+        this.singleton = singleton;
+    }
+
+    public boolean isSingleton()
+    {
+        return singleton;
+    }
 }

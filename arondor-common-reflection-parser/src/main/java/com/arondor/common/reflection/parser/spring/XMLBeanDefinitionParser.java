@@ -93,6 +93,7 @@ public class XMLBeanDefinitionParser implements ObjectConfigurationMapParser
     {
         ObjectConfiguration objectConfiguration = objectConfigurationFactory.createObjectConfiguration();
         objectConfiguration.setClassName(hashHelper.hashClassName(beanDefinition.getBeanClassName()));
+        objectConfiguration.setSingleton(beanDefinition.isSingleton());
 
         Map<String, FieldConfiguration> fields = new HashMap<String, FieldConfiguration>();
         objectConfiguration.setFields(fields);
