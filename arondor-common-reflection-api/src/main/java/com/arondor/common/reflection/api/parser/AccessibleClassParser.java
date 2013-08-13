@@ -30,10 +30,30 @@ public interface AccessibleClassParser
     boolean isPrimitiveType(String className);
 
     /**
-     * Give the setter method name according the
+     * Give the setter method name according to the field name
      * 
      * @param name
-     * @return
+     *            the filed name
+     * @return the setter name
      */
     String attributeToSetter(String name);
+
+    /**
+     * Give the getter method name according to the field name
+     * 
+     * @param name
+     *            the field name
+     * @return the getter name
+     */
+    String attributeToGetter(String name);
+
+    /**
+     * Give the getter method name according to the field name for boolean
+     * values (is*())
+     * 
+     * @param name
+     *            the boolean field name
+     * @return the getter name
+     */
+    String booleanAttributeToGetter(String arg0);
 }
