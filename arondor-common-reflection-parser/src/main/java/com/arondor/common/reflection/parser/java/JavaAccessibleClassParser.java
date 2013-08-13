@@ -215,37 +215,43 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
             {
                 continue;
             }
-            if (isGetterMethod(includeNonPrimitive, method))
+            parsedExposedMethod(exposedAttributes, exposedMethods, includeNonPrimitive, method);
+        }
+    }
+
+    private void parsedExposedMethod(Map<String, AccessibleField> exposedAttributes, List<Method> exposedMethods,
+            boolean includeNonPrimitive, Method method)
+    {
+        if (isGetterMethod(includeNonPrimitive, method))
+        {
+            String prop = getterToAttribute(method.getName());
+            Class<?> ptyClass = method.getReturnType();
+            AccessibleFieldBean attributeInfo = getBeanFromMethod(exposedAttributes, ptyClass, prop);
+            attributeInfo.setReadable();
+            if (method.getName().startsWith("is"))
             {
-                String prop = getterToAttribute(method.getName());
-                Class<?> ptyClass = method.getReturnType();
-                AccessibleFieldBean attributeInfo = getBeanFromMethod(exposedAttributes, ptyClass, prop);
-                attributeInfo.setReadable();
-                if (method.getName().startsWith("is"))
-                {
-                    attributeInfo.setIs(true);
-                }
+                attributeInfo.setIs(true);
             }
-            else if (isSetterMethod(includeNonPrimitive, method))
+        }
+        else if (isSetterMethod(includeNonPrimitive, method))
+        {
+            String prop = getterToAttribute(method.getName());
+            Class<?> parameterType = method.getParameterTypes()[0];
+            AccessibleFieldBean attributeInfo = getBeanFromMethod(exposedAttributes, parameterType, prop);
+            attributeInfo.setWritable();
+            handleObjectMultipleMethod(method, parameterType, attributeInfo);
+        }
+        else if ((isVoid(method.getReturnType()) || (isExposableType(method.getReturnType(), includeNonPrimitive)))
+                && (isExposableSignature(method.getParameterTypes(), includeNonPrimitive)))
+        {
+            exposedMethods.add(method);
+        }
+        else
+        {
+            if (DEBUG)
             {
-                String prop = getterToAttribute(method.getName());
-                Class<?> parameterType = method.getParameterTypes()[0];
-                AccessibleFieldBean attributeInfo = getBeanFromMethod(exposedAttributes, parameterType, prop);
-                attributeInfo.setWritable();
-                handleObjectMultipleMethod(method, parameterType, attributeInfo);
-            }
-            else if ((isVoid(method.getReturnType()) || (isExposableType(method.getReturnType(), includeNonPrimitive)))
-                    && (isExposableSignature(method.getParameterTypes(), includeNonPrimitive)))
-            {
-                exposedMethods.add(method);
-            }
-            else
-            {
-                if (DEBUG)
-                {
-                    LOG.debug("Skipping method :" + method.getName() + ", modifiers="
-                            + Modifier.toString(method.getModifiers()));
-                }
+                LOG.debug("Skipping method :" + method.getName() + ", modifiers="
+                        + Modifier.toString(method.getModifiers()));
             }
         }
     }
@@ -370,60 +376,43 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         {
             LOG.debug("Parsing accessible class : " + clazz.getName());
         }
-        AccessibleClassBean accessClass = new AccessibleClassBean();
-        accessClass.setName(clazz.getName().replace('$', '.'));
-        accessClass.setDescription(getClassDescription(clazz));
+        AccessibleClassBean accessClass = createBaseAccessibleClass(clazz);
 
-        if (clazz.getSuperclass() == null)
-        {
-            LOG.warn("No superclass for class : '" + clazz.getName() + "'");
-        }
-        else
-        {
-            accessClass.setSuperclass(clazz.getSuperclass().getName());
-        }
+        setAccessibleClassInheritance(clazz, accessClass);
 
-        accessClass.setAllInterfaces(new ArrayList<String>());
-        accessClass.setInterfaces(new ArrayList<String>());
-        accessClass.setConstructors(new ArrayList<AccessibleConstructor>());
-
-        accessClass.getInterfaces().add(java.lang.Object.class.getName());
-        accessClass.getAllInterfaces().add(java.lang.Object.class.getName());
-
-        for (Class<?> itf : clazz.getInterfaces())
-        {
-            accessClass.getInterfaces().add(itf.getName());
-        }
-
-        for (Class<?> superClass = clazz; superClass != null; superClass = superClass.getSuperclass())
-        {
-            for (Class<?> itf : superClass.getInterfaces())
-            {
-                accessClass.getAllInterfaces().add(itf.getName());
-            }
-        }
-
-        for (Constructor<?> constructor : clazz.getConstructors())
-        {
-            AccessibleConstructorBean mConstructor = new AccessibleConstructorBean();
-            mConstructor.setArgumentTypes(new ArrayList<String>());
-            for (Class<?> arg : constructor.getParameterTypes())
-            {
-                mConstructor.getArgumentTypes().add(arg.getName().replace('$', '.'));
-            }
-            accessClass.getConstructors().add(mConstructor);
-        }
-
-        LOG.debug("Class '" + clazz.getName() + "', interfaces=" + accessClass.getInterfaces() + ", allInterfaces="
-                + accessClass.getAllInterfaces());
+        setAccessibleClassConstructors(clazz, accessClass);
 
         Map<String, AccessibleField> exposedAttributes = new HashMap<String, AccessibleField>();
         List<Method> exposedMethods = new ArrayList<Method>();
 
-        Method[] methods = clazz.getMethods();
+        parseExposedMethodAndAttributes(clazz.getMethods(), exposedAttributes, exposedMethods, true);
 
-        this.parseExposedMethodAndAttributes(methods, exposedAttributes, exposedMethods, true);
+        setAccessibleFieldsDescriptions(accessClass, clazz, exposedAttributes);
 
+        setAccessibleMethods(accessClass, exposedMethods);
+        return accessClass;
+    }
+
+    private void setAccessibleMethods(AccessibleClassBean accessClass, List<Method> exposedMethods)
+    {
+        List<AccessibleMethod> accessibleMethods = new ArrayList<AccessibleMethod>();
+        for (Method method : exposedMethods)
+        {
+            if (isIgnoredMethod(method))
+            {
+                continue;
+            }
+            AccessibleMethodBean accessibleMethod = new AccessibleMethodBean();
+            accessibleMethod.setName(method.getName());
+            accessibleMethods.add(accessibleMethod);
+        }
+
+        accessClass.setAccessibleMethods(accessibleMethods);
+    }
+
+    private void setAccessibleFieldsDescriptions(AccessibleClassBean accessibleClass, Class<?> clazz,
+            Map<String, AccessibleField> exposedAttributes)
+    {
         for (AccessibleField accessibleField : exposedAttributes.values())
         {
             accessibleField.setClassName(accessibleField.getClassName().replace('$', '.'));
@@ -447,24 +436,59 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
                 }
             }
         }
+        accessibleClass.setAccessibleFields(exposedAttributes);
+    }
 
-        accessClass.setAccessibleFields(exposedAttributes);
-
-        List<AccessibleMethod> accessibleMethods = new ArrayList<AccessibleMethod>();
-        for (Method method : exposedMethods)
+    private void setAccessibleClassConstructors(Class<?> clazz, AccessibleClassBean accessClass)
+    {
+        for (Constructor<?> constructor : clazz.getConstructors())
         {
-            String name = method.getName();
-            if (name.equals("equals") || name.equals("toString") || name.equals("hashCode"))
+            AccessibleConstructorBean mConstructor = new AccessibleConstructorBean();
+            mConstructor.setArgumentTypes(new ArrayList<String>());
+            for (Class<?> arg : constructor.getParameterTypes())
             {
-                continue;
+                mConstructor.getArgumentTypes().add(arg.getName().replace('$', '.'));
             }
-            AccessibleMethodBean aMethod = new AccessibleMethodBean();
-            aMethod.setName(name);
-            accessibleMethods.add(aMethod);
+            accessClass.getConstructors().add(mConstructor);
+        }
+    }
+
+    private void setAccessibleClassInheritance(Class<?> clazz, AccessibleClassBean accessClass)
+    {
+        for (Class<?> itf : clazz.getInterfaces())
+        {
+            accessClass.getInterfaces().add(itf.getName());
         }
 
-        accessClass.setAccessibleMethods(accessibleMethods);
+        for (Class<?> superClass = clazz; superClass != null; superClass = superClass.getSuperclass())
+        {
+            for (Class<?> itf : superClass.getInterfaces())
+            {
+                accessClass.getAllInterfaces().add(itf.getName());
+            }
+        }
+    }
 
+    private AccessibleClassBean createBaseAccessibleClass(Class<?> clazz)
+    {
+        AccessibleClassBean accessClass = new AccessibleClassBean();
+        accessClass.setAllInterfaces(new ArrayList<String>());
+        accessClass.setInterfaces(new ArrayList<String>());
+        accessClass.setConstructors(new ArrayList<AccessibleConstructor>());
+
+        accessClass.getInterfaces().add(java.lang.Object.class.getName());
+        accessClass.getAllInterfaces().add(java.lang.Object.class.getName());
+        accessClass.setName(clazz.getName().replace('$', '.'));
+        accessClass.setDescription(getClassDescription(clazz));
+
+        if (clazz.getSuperclass() == null)
+        {
+            LOG.warn("No superclass for class : '" + clazz.getName() + "'");
+        }
+        else
+        {
+            accessClass.setSuperclass(clazz.getSuperclass().getName());
+        }
         return accessClass;
     }
 }
