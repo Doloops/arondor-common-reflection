@@ -4,6 +4,16 @@ import com.arondor.common.reflection.model.java.AccessibleMethod;
 
 public class AccessibleMethodBean implements AccessibleMethod
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5994956120291175935L;
+
+    public AccessibleMethodBean()
+    {
+
+    }
+
     private String name;
 
     public String getName()
