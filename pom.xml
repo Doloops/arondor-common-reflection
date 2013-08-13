@@ -13,10 +13,12 @@
 		<module>arondor-common-reflection-parser</module>
 		<module>arondor-common-reflection-noreflect</module>
 	</modules>
-	
+
 	<properties>
-			<org.springframework.version>3.0.5.RELEASE</org.springframework.version>
-			<gwt.version>2.5.0</gwt.version>
+		<maven.compiler.source>1.5</maven.compiler.source>
+		<maven.compiler.target>1.5</maven.compiler.target>
+		<org.springframework.version>3.0.5.RELEASE</org.springframework.version>
+		<gwt.version>2.5.0</gwt.version>
 	</properties>
 
 	<dependencies>
@@ -38,6 +40,6 @@
 			<artifactId>mockito-all</artifactId>
 			<version>1.9.0</version>
 			<scope>test</scope>
-		</dependency>		
+		</dependency>
 	</dependencies>
 </project>
