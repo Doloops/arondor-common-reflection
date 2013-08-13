@@ -57,7 +57,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         }
         else
         {
-            throw new RuntimeException("Invalid call to getterToAttribute('" + getterName + "')");
+            throw new IllegalArgumentException("Invalid call to getterToAttribute('" + getterName + "')");
         }
         String rName = getterName.substring(offset, offset + 1);
         String rgName = getterName.substring(offset + 1);
