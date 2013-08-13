@@ -1,7 +1,22 @@
 package com.arondor.common.reflection.noreflect.runtime;
 
+/**
+ * Utility class to convert any string-based primitive representation to a
+ * primitive value
+ * 
+ * @author francois
+ * 
+ */
 public class PrimitiveStringConverter
 {
+    /**
+     * Utility classes should not have a public or default constructor.
+     */
+    private PrimitiveStringConverter()
+    {
+
+    }
+
     public static String getConvertionMethodFromClassName(String className)
     {
         return "to" + className.replace(".", "");
