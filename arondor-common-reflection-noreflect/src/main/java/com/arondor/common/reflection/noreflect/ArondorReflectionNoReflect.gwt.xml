@@ -15,5 +15,9 @@
 	
 	 <replace-with class="com.arondor.common.reflection.noreflect.runtime.SimpleReflectionInstantiatorCatalog">
 		<when-type-assignable class="com.arondor.common.reflection.noreflect.model.ReflectionInstantiatorCatalog" />
-	</replace-with> 
+	</replace-with>
+	
+	 <replace-with class="com.arondor.common.reflection.noreflect.runtime.SimpleInstantiationContext">
+		<when-type-assignable class="com.arondor.common.reflection.api.instantiator.InstantiationContext" />
+	</replace-with> 	 
 </module>
