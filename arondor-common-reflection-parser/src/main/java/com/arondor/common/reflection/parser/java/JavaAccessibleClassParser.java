@@ -280,7 +280,8 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         }
     }
 
-    private static final String[] IGNORED_METHODS = { "wait", "notifyAll", "notify", "finalize", "getClass" };
+    private static final String[] IGNORED_METHODS = { "wait", "notifyAll", "notify", "finalize", "getClass", "equals",
+            "toString", "hashCode" };
 
     private boolean isIgnoredMethod(Method method)
     {
