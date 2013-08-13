@@ -132,8 +132,7 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
         }
         case Object:
         {
-            Object value = instanciateObject((ObjectConfiguration) fieldConfiguration, Object.class, context);
-            return value;
+            return instanciateObject((ObjectConfiguration) fieldConfiguration, Object.class, context);
         }
         case List:
         {

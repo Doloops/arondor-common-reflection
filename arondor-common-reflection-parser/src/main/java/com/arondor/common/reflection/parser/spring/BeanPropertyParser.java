@@ -39,8 +39,7 @@ abstract class BeanPropertyParser
             TypedStringValue stringValue = (TypedStringValue) value;
             if (stringValue.getTargetTypeName() != null)
             {
-                ObjectConfiguration enumObjectConfiguration = getEnumObjectConfiguration(stringValue);
-                return enumObjectConfiguration;
+                return getEnumObjectConfiguration(stringValue);
             }
             else
             {
