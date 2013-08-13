@@ -60,7 +60,9 @@ public class AccessibleClassBean implements AccessibleClass
     {
         int idx = name.lastIndexOf('.');
         if (idx != -1)
+        {
             return name.substring(idx + 1);
+        }
         return name;
     }
 
@@ -68,7 +70,9 @@ public class AccessibleClassBean implements AccessibleClass
     {
         int idx = name.lastIndexOf('.');
         if (idx != -1)
+        {
             return name.substring(0, idx);
+        }
         return "";
     }
 
