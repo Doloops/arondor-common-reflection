@@ -2,62 +2,67 @@ package com.arondor.common.reflection.noreflect.runtime;
 
 public class PrimitiveStringConverter
 {
-    public static String to_java_lang_String(String value)
+    public static String getConvertionMethodFromClassName(String className)
+    {
+        return "to" + className.replace(".", "");
+    }
+
+    public static String tojavalangString(String value)
     {
         return value;
     }
 
-    public static int to_int(String value)
+    public static int toint(String value)
     {
         return Integer.parseInt(value);
     }
 
-    public static int to_java_lang_Integer(String value)
+    public static int tojavalangInteger(String value)
     {
-        return to_int(value);
+        return toint(value);
     }
 
-    public static long to_long(String value)
+    public static long tolong(String value)
     {
         return Long.parseLong(value);
     }
 
-    public static long to_java_lang_Long(String value)
+    public static long tojavalangLong(String value)
     {
-        return to_long(value);
+        return tolong(value);
     }
 
-    public static boolean to_boolean(String value)
+    public static boolean toboolean(String value)
     {
         return Boolean.parseBoolean(value);
     }
 
-    public static boolean to_java_lang_Boolean(String value)
+    public static boolean tojavalangBoolean(String value)
     {
-        return to_boolean(value);
+        return toboolean(value);
     }
 
-    public static float to_float(String value)
+    public static float tofloat(String value)
     {
         return Float.parseFloat(value);
     }
 
-    public static float to_java_lang_Float(String value)
+    public static float tojavalangFloat(String value)
     {
-        return to_float(value);
+        return tofloat(value);
     }
 
-    public static double to_double(String value)
+    public static double todouble(String value)
     {
         return Double.parseDouble(value);
     }
 
-    public static double to_java_lang_Double(String value)
+    public static double tojavalangDouble(String value)
     {
-        return to_double(value);
+        return todouble(value);
     }
 
-    public static char to_char(String value)
+    public static char tochar(String value)
     {
         return value.charAt(0);
     }

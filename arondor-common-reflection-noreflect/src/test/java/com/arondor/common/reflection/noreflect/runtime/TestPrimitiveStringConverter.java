@@ -12,10 +12,10 @@ public class TestPrimitiveStringConverter
     @Test
     public void testStandardPrimitives()
     {
-        assertEquals("Value", PrimitiveStringConverter.to_java_lang_String("Value"));
-        assertEquals(true, PrimitiveStringConverter.to_boolean("true"));
-        assertEquals(false, PrimitiveStringConverter.to_boolean("false"));
-        assertEquals(false, PrimitiveStringConverter.to_boolean("Hector"));
+        assertEquals("Value", PrimitiveStringConverter.tojavalangString("Value"));
+        assertEquals(true, PrimitiveStringConverter.toboolean("true"));
+        assertEquals(false, PrimitiveStringConverter.toboolean("false"));
+        assertEquals(false, PrimitiveStringConverter.toboolean("Hector"));
     }
 
     private static class TypedExample
@@ -65,7 +65,8 @@ public class TestPrimitiveStringConverter
 
         for (TypedExample example : examples)
         {
-            String methodName = "to_" + example.getObjectClass().getName().replace('.', '_');
+            String methodName = PrimitiveStringConverter.getConvertionMethodFromClassName(example.getObjectClass()
+                    .getName());
             Method converterMethod = PrimitiveStringConverter.class.getMethod(methodName, parameterTypes);
 
             Object result = converterMethod.invoke(null, example.getStringValue());

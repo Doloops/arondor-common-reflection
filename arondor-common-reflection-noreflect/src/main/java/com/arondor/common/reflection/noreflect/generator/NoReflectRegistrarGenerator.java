@@ -123,8 +123,8 @@ public class NoReflectRegistrarGenerator
 
         if (primitive)
         {
-            String primitiveSuffix = className.replace('.', '_');
-            out.println("  PrimitiveStringConverter.to_" + primitiveSuffix + "((String)" + valueLabel + ")");
+            String primitiveMethod = PrimitiveStringConverter.getConvertionMethodFromClassName(className);
+            out.println("  PrimitiveStringConverter." + primitiveMethod + "((String)" + valueLabel + ")");
         }
         else
         {
