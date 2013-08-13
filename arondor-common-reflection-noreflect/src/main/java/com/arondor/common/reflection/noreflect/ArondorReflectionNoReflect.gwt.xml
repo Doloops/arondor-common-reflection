@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module PUBLIC "//gwt-module/" "http://google-web-toolkit.googlecode.com/svn/tags/1.6.2/distro-source/core/src/gwt-module.dtd">
+
+<module>
+	<source path='model' />
+	<source path='runtime' />
+	<source path='instantiator' />
+	
+	<inherits name="com.arondor.common.reflection.api.ArondorReflectionAPI"/>
+	
+	<replace-with class="com.arondor.common.reflection.noreflect.instantiator.ReflectionInstantiatorNoReflect">
+		<when-type-assignable class="com.arondor.common.reflection.api.instantiator.ReflectionInstantiator" />
+	</replace-with>
+	
+	 <replace-with class="com.arondor.common.reflection.noreflect.runtime.SimpleReflectionInstantiatorCatalog">
+		<when-type-assignable class="com.arondor.common.reflection.noreflect.model.ReflectionInstantiatorCatalog" />
+	</replace-with> 
+</module>
