@@ -68,8 +68,8 @@ abstract class BeanPropertyParser
         }
         else
         {
-            throw new RuntimeException("The type of property value is not suppported : " + value + " (class : "
-                    + value.getClass().getName() + ")");
+            throw new UnsupportedOperationException("The type of property value is not suppported : " + value
+                    + " (class : " + value.getClass().getName() + ")");
         }
     }
 
