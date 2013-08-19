@@ -17,7 +17,7 @@ import com.arondor.common.reflection.noreflect.model.ObjectConstructor;
 import com.arondor.common.reflection.noreflect.model.ReflectionInstantiatorCatalog;
 import com.arondor.common.reflection.noreflect.model.ReflectionInstantiatorRegistrar;
 import com.arondor.common.reflection.noreflect.runtime.SimpleInstantiationContext;
-import com.google.gwt.core.shared.GWT;
+import com.google.gwt.core.client.GWT;
 
 public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
 {
