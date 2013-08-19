@@ -11,46 +11,13 @@ import org.junit.Test;
 
 import com.arondor.common.reflection.api.catalog.AccessibleClassCatalog;
 import com.arondor.common.reflection.api.parser.AccessibleClassParser;
-import com.arondor.common.reflection.catalog.SimpleAccessibleClassCatalog;
 import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.arondor.common.reflection.parser.java.JavaAccessibleClassParser;
+import com.arondor.common.reflection.parser.java.testing.ClassA;
+import com.arondor.common.reflection.parser.java.testing.InterfaceA;
 
 public class TestSimpleAccessibleCatalog
 {
-    public static interface InterfaceA
-    {
-        int getMyInt();
-
-        String getMyString();
-    }
-
-    public static class ClassA implements InterfaceA
-    {
-        private int myInt;
-
-        private String myString;
-
-        public int getMyInt()
-        {
-            return myInt;
-        }
-
-        public void setMyInt(int myInt)
-        {
-            this.myInt = myInt;
-        }
-
-        public String getMyString()
-        {
-            return myString;
-        }
-
-        public void setMyString(String myString)
-        {
-            this.myString = myString;
-        }
-    }
-
     private AccessibleClassParser accessibleClassParser;
 
     private AccessibleClassCatalog accessibleClassCatalog;

@@ -2,6 +2,7 @@ package com.arondor.common.reflection.parser.java;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 
@@ -47,6 +48,11 @@ public class TestJavaAccessibleClassParser
         AccessibleClass clazz = parser.parseAccessibleClass(SimpleClass.class);
 
         assertNotNull(clazz);
+
+        String className = clazz.getName();
+        assertEquals(SimpleClass.class.getName(), className);
+        assertTrue("This inner class shall contain '$'", className.contains("$"));
+
         log.info("Class : " + clazz.getClassBaseName());
 
         for (String fieldName : clazz.getAccessibleFields().keySet())

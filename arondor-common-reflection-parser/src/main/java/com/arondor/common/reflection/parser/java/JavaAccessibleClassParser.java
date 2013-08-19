@@ -26,9 +26,6 @@ import com.arondor.common.reflection.model.java.AccessibleMethod;
 
 public class JavaAccessibleClassParser implements AccessibleClassParser
 {
-    /**
-     * Logger stuff
-     */
     private static final Logger LOG = Logger.getLogger(JavaAccessibleClassParser.class);
 
     /**
@@ -493,7 +490,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
 
         if (clazz.getSuperclass() == null)
         {
-            LOG.warn("No superclass for class : '" + clazz.getName() + "'");
+            LOG.debug("No superclass for class : '" + clazz.getName() + "'");
         }
         else
         {
