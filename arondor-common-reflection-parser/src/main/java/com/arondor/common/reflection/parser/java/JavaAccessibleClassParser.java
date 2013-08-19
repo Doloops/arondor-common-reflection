@@ -36,6 +36,8 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
      */
     private static final boolean DEBUG = LOG.isDebugEnabled();
 
+    private boolean replaceDollarByPointForEmbeddedClasses = false;
+
     /**
      * Convert a getter method name to an attribute name, in Java naming
      * conventions
@@ -423,7 +425,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
     {
         for (AccessibleField accessibleField : exposedAttributes.values())
         {
-            accessibleField.setClassName(accessibleField.getClassName().replace('$', '.'));
+            accessibleField.setClassName(normalizeClassName(accessibleField.getClassName()));
 
             for (Class<?> superclass = clazz; superclass != null; superclass = superclass.getSuperclass())
             {
@@ -455,7 +457,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
             mConstructor.setArgumentTypes(new ArrayList<String>());
             for (Class<?> arg : constructor.getParameterTypes())
             {
-                mConstructor.getArgumentTypes().add(arg.getName().replace('$', '.'));
+                mConstructor.getArgumentTypes().add(normalizeClassName(arg.getName()));
             }
             accessClass.getConstructors().add(mConstructor);
         }
@@ -465,14 +467,14 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
     {
         for (Class<?> itf : clazz.getInterfaces())
         {
-            accessClass.getInterfaces().add(itf.getName());
+            accessClass.getInterfaces().add(normalizeClassName(itf.getName()));
         }
 
         for (Class<?> superClass = clazz; superClass != null; superClass = superClass.getSuperclass())
         {
             for (Class<?> itf : superClass.getInterfaces())
             {
-                accessClass.getAllInterfaces().add(itf.getName());
+                accessClass.getAllInterfaces().add(normalizeClassName(itf.getName()));
             }
         }
     }
@@ -486,7 +488,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
 
         accessClass.getInterfaces().add(java.lang.Object.class.getName());
         accessClass.getAllInterfaces().add(java.lang.Object.class.getName());
-        accessClass.setName(clazz.getName().replace('$', '.'));
+        accessClass.setName(normalizeClassName(clazz.getName()));
         accessClass.setDescription(getClassDescription(clazz));
 
         if (clazz.getSuperclass() == null)
@@ -498,5 +500,27 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
             accessClass.setSuperclass(clazz.getSuperclass().getName());
         }
         return accessClass;
+    }
+
+    public boolean isReplaceDollarByPointForEmbeddedClasses()
+    {
+        return replaceDollarByPointForEmbeddedClasses;
+    }
+
+    public void setReplaceDollarByPointForEmbeddedClasses(boolean replaceDollarByPointForEmbeddedClasses)
+    {
+        this.replaceDollarByPointForEmbeddedClasses = replaceDollarByPointForEmbeddedClasses;
+    }
+
+    private String normalizeClassName(final String className)
+    {
+        if (isReplaceDollarByPointForEmbeddedClasses())
+        {
+            return className.replace('$', '.');
+        }
+        else
+        {
+            return className;
+        }
     }
 }

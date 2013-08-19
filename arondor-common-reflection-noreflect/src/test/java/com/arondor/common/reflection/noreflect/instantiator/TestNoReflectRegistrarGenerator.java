@@ -221,7 +221,7 @@ public class TestNoReflectRegistrarGenerator
         configurationC.setFields(new HashMap<String, ElementConfiguration>());
 
         ObjectConfiguration confEnum = objectConfigurationFactory.createObjectConfiguration();
-        confEnum.setClassName(EnumValue.class.getName().replace('$', '.'));
+        confEnum.setClassName(EnumValue.class.getName());
         confEnum.setConstructorArguments(new ArrayList<ElementConfiguration>());
 
         ElementConfiguration fieldConfEnumValue = objectConfigurationFactory.createPrimitiveConfiguration("BLUE");
@@ -248,7 +248,7 @@ public class TestNoReflectRegistrarGenerator
         configurationC.setConstructorArguments(new ArrayList<ElementConfiguration>());
 
         ObjectConfiguration confEnum = objectConfigurationFactory.createObjectConfiguration();
-        confEnum.setClassName(EnumValue.class.getName().replace('$', '.'));
+        confEnum.setClassName(EnumValue.class.getName());
         confEnum.setConstructorArguments(new ArrayList<ElementConfiguration>());
 
         ElementConfiguration fieldConfEnumValue = objectConfigurationFactory.createPrimitiveConfiguration("BLUE");

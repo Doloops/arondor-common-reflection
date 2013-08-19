@@ -98,7 +98,7 @@ public class NoReflectRegistrarGenerator
             out.println("{ throw new RuntimeException(\"Invalid constructor arguments : \" + constructorArguments); }");
 
             out.println("String value = (String) constructorArguments.get(0);");
-            out.println("return " + accessibleClass.getName() + ".valueOf(value);");
+            out.println("return " + normalizeClassName(accessibleClass.getName()) + ".valueOf(value);");
             return;
         }
         for (AccessibleConstructor constructor : accessibleClass.getConstructors())
@@ -132,7 +132,7 @@ public class NoReflectRegistrarGenerator
         }
         else
         {
-            out.println("(" + className + ") " + valueLabel);
+            out.println("(" + normalizeClassName(className) + ") " + valueLabel);
         }
 
     }
@@ -178,6 +178,11 @@ public class NoReflectRegistrarGenerator
     public void setClassName(String className)
     {
         this.className = className;
+    }
+
+    private String normalizeClassName(final String className)
+    {
+        return className.replace('$', '.');
     }
 
 }
