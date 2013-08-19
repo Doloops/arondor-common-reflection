@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.arondor.common.reflection.api.accessiblecatalog.AccessibleClassCatalog;
+import com.arondor.common.reflection.api.catalog.AccessibleClassCatalog;
 import com.arondor.common.reflection.model.java.AccessibleClass;
 
 /**

@@ -1,4 +1,4 @@
-package com.arondor.common.reflection.api.accessiblecatalog;
+package com.arondor.common.reflection.api.catalog;
 
 import java.util.Collection;
 

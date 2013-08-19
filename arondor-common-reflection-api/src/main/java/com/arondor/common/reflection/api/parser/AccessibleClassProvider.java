@@ -1,6 +1,6 @@
 package com.arondor.common.reflection.api.parser;
 
-import com.arondor.common.reflection.api.accessiblecatalog.AccessibleClassCatalog;
+import com.arondor.common.reflection.api.catalog.AccessibleClassCatalog;
 
 public interface AccessibleClassProvider
 {
