@@ -9,10 +9,6 @@
 	<groupId>com.arondor.common.reflection</groupId>
 	<artifactId>arondor-common-reflection-gwt</artifactId>
 	
-	<properties>
-		<gwt.version>2.5.0</gwt.version>
-	</properties>
-	
 	<dependencies>
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>

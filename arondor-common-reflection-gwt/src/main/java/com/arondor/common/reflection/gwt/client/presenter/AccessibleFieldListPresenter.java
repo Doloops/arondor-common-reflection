@@ -8,12 +8,10 @@ import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
 import com.arondor.common.reflection.model.java.AccessibleField;
-import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.RootPanel;
 
-public class AccessibleFieldListPresenter implements Presenter
+public class AccessibleFieldListPresenter
 {
     private static final Logger LOG = Logger.getLogger(AccessibleFieldListPresenter.class.getName());
 
@@ -33,16 +31,13 @@ public class AccessibleFieldListPresenter implements Presenter
         FlexTable getFields();
     }
 
-    private final HandlerManager eventBus;
-
     private final Display display;
 
-    public AccessibleFieldListPresenter(HandlerManager eventBus, Display view)
+    public AccessibleFieldListPresenter(Display view)
     {
-        this.eventBus = eventBus;
         this.display = view;
         bind();
-        RootPanel.get().add(display.asWidget());
+        // RootPanel.get().add(display.asWidget());
     }
 
     public Display getDisplay()
@@ -60,7 +55,7 @@ public class AccessibleFieldListPresenter implements Presenter
         this.accessibleFieldList = accessibleFields;
         for (AccessibleField accessibleField : accessibleFields.values())
         {
-            AccessibleFieldPresenter fieldPresenter = new AccessibleFieldPresenter(eventBus, new AccessibleFieldView(
+            AccessibleFieldPresenter fieldPresenter = new AccessibleFieldPresenter(new AccessibleFieldView(
                     display.getFields()));
             display.addAccessibleFieldView(accessibleField, (AccessibleFieldView) fieldPresenter.getDisplay());
             display.getAccessibleFieldViewList().get(accessibleField).setName(accessibleField.getName());
@@ -70,8 +65,18 @@ public class AccessibleFieldListPresenter implements Presenter
             {
                 ElementConfiguration elementConfiguration = objectConfiguration.getFields().get(
                         accessibleField.getName());
-                display.getAccessibleFieldViewList().get(accessibleField)
-                        .setInputValue(((PrimitiveConfiguration) elementConfiguration).getValue());
+                if (elementConfiguration != null)
+                {
+                    switch (elementConfiguration.getFieldConfigurationType())
+                    {
+                    case Primitive:
+                        display.getAccessibleFieldViewList().get(accessibleField)
+                                .setInputValue(((PrimitiveConfiguration) elementConfiguration).getValue());
+                    default:
+                        display.getAccessibleFieldViewList().get(accessibleField)
+                                .setInputValue("Not supported : " + elementConfiguration.getFieldConfigurationType());
+                    }
+                }
             }
 
         }

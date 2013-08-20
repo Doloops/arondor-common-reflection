@@ -1,7 +1,7 @@
 package com.arondor.common.reflection.gwt.server;
 
 import com.arondor.common.reflection.api.parser.AccessibleClassParser;
-import com.arondor.common.reflection.gwt.client.AccessibleClassService;
+import com.arondor.common.reflection.gwt.client.service.AccessibleClassService;
 import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.arondor.common.reflection.parser.java.JavaAccessibleClassParser;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;

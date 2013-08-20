@@ -1,6 +1,6 @@
 package com.arondor.common.reflection.gwt.client.view;
 
-import com.arondor.common.reflection.gwt.client.presenter.AccessibleClassPresenter;
+import com.arondor.common.reflection.gwt.client.presenter.SimpleAccessibleClassPresenter;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AccessibleClassView extends Composite implements AccessibleClassPresenter.Display
+public class AccessibleClassView extends Composite implements SimpleAccessibleClassPresenter.Display
 {
     private AccessibleFieldListView accessibleFieldListView;
 
@@ -16,9 +16,10 @@ public class AccessibleClassView extends Composite implements AccessibleClassPre
 
     private HTML className;
 
+    private AbsolutePanel content = new AbsolutePanel();
+
     public AccessibleClassView()
     {
-        AbsolutePanel content = new AbsolutePanel();
         initWidget(content);
 
         content.add(new Label("Accessible Class :"));
@@ -53,6 +54,7 @@ public class AccessibleClassView extends Composite implements AccessibleClassPre
     public void setAccessibleFieldListView(AccessibleFieldListView accessibleFieldListView)
     {
         this.accessibleFieldListView = accessibleFieldListView;
+        content.add(accessibleFieldListView);
     }
 
     public void setObjectConfiguration(ObjectConfiguration objectConfiguration)

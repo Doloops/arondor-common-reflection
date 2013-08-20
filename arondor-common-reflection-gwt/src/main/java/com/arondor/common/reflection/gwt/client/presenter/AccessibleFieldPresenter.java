@@ -3,12 +3,10 @@ package com.arondor.common.reflection.gwt.client.presenter;
 import java.util.logging.Logger;
 
 import com.arondor.common.reflection.model.java.AccessibleField;
-import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.RootPanel;
 
-public class AccessibleFieldPresenter implements Presenter
+public class AccessibleFieldPresenter
 {
     private static final Logger LOG = Logger.getLogger(AccessibleFieldPresenter.class.getName());
 
@@ -27,16 +25,13 @@ public class AccessibleFieldPresenter implements Presenter
         void setInputValue(String value);
     }
 
-    private final HandlerManager eventBus;
-
     private final Display display;
 
-    public AccessibleFieldPresenter(HandlerManager eventBus, Display view)
+    public AccessibleFieldPresenter(Display view)
     {
-        this.eventBus = eventBus;
         this.display = view;
         bind();
-        RootPanel.get().add(display.asWidget());
+        // RootPanel.get().add(display.asWidget());
     }
 
     public Display getDisplay()
