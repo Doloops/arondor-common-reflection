@@ -31,7 +31,6 @@ public class AccessibleFieldPresenter
     {
         this.display = view;
         bind();
-        // RootPanel.get().add(display.asWidget());
     }
 
     public Display getDisplay()

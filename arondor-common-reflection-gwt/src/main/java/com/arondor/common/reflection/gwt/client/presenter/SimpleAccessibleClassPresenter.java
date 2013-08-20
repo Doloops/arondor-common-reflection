@@ -102,7 +102,7 @@ public class SimpleAccessibleClassPresenter implements AccessibleClassPresenter
         ObjectConfigurationFactory objectConfigurationFactory = new ObjectConfigurationFactoryBean();
 
         ObjectConfiguration configuration = objectConfigurationFactory.createObjectConfiguration();
-        configuration.setClassName(accessibleClass.getClassBaseName());
+        configuration.setClassName(accessibleClass.getName());
 
         configuration.setFields(new HashMap<String, ElementConfiguration>());
 

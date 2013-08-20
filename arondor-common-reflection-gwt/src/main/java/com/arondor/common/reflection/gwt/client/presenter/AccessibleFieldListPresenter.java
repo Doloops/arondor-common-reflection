@@ -72,6 +72,7 @@ public class AccessibleFieldListPresenter
                     case Primitive:
                         display.getAccessibleFieldViewList().get(accessibleField)
                                 .setInputValue(((PrimitiveConfiguration) elementConfiguration).getValue());
+                        break;
                     default:
                         display.getAccessibleFieldViewList().get(accessibleField)
                                 .setInputValue("Not supported : " + elementConfiguration.getFieldConfigurationType());
