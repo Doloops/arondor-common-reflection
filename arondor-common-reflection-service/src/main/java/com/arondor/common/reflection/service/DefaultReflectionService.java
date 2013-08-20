@@ -2,9 +2,11 @@ package com.arondor.common.reflection.service;
 
 import java.rmi.RemoteException;
 import java.util.Collection;
+import java.util.List;
 
 import com.arondor.common.reflection.api.catalog.AccessibleClassCatalog;
 import com.arondor.common.reflection.api.parser.AccessibleClassParser;
+import com.arondor.common.reflection.api.parser.AccessibleClassProvider;
 import com.arondor.common.reflection.api.service.ReflectionService;
 import com.arondor.common.reflection.model.java.AccessibleClass;
 
@@ -61,5 +63,13 @@ public class DefaultReflectionService implements ReflectionService
     public Collection<AccessibleClass> getImplementingAccessibleClasses(String name) throws RemoteException
     {
         return getAccessibleClassCatalog().getImplementingAccessibleClasses(name);
+    }
+
+    public void setAccessibleClassProviders(List<AccessibleClassProvider> providers)
+    {
+        for (AccessibleClassProvider provider : providers)
+        {
+            provider.provideClasses(getAccessibleClassCatalog());
+        }
     }
 }

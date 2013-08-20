@@ -274,12 +274,19 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
                 List<String> genericParameterClassList = new ArrayList<String>();
                 for (Type argument : parameterizedType.getActualTypeArguments())
                 {
-                    String argumentClassName = ((Class<?>) argument).getName();
-                    if (DEBUG)
+                    if (Class.class.isAssignableFrom(argument.getClass()))
                     {
-                        LOG.debug("* Type argument : " + argumentClassName);
+                        String argumentClassName = ((Class<?>) argument).getName();
+                        if (DEBUG)
+                        {
+                            LOG.debug("* Type argument : " + argumentClassName);
+                        }
+                        genericParameterClassList.add(argumentClassName);
                     }
-                    genericParameterClassList.add(argumentClassName);
+                    else
+                    {
+                        genericParameterClassList.add("{Unkown type:" + argument + "}");
+                    }
                 }
                 attributeInfo.setGenericParameterClassList(genericParameterClassList);
             }
