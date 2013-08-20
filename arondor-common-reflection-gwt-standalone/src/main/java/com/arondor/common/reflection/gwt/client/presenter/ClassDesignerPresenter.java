@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 import com.arondor.common.reflection.bean.config.ObjectConfigurationFactoryBean;
-import com.arondor.common.reflection.gwt.client.service.AccessibleClassService;
-import com.arondor.common.reflection.gwt.client.service.AccessibleClassServiceAsync;
+import com.arondor.common.reflection.gwt.client.service.GWTReflectionService;
+import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.gwt.client.view.AccessibleClassView;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
@@ -41,7 +41,7 @@ public class ClassDesignerPresenter
 
         bind();
         classPresenter = new SimpleAccessibleClassPresenter(
-                (AccessibleClassServiceAsync) GWT.create(AccessibleClassService.class), new AccessibleClassView());
+                (GWTReflectionServiceAsync) GWT.create(GWTReflectionService.class), new AccessibleClassView());
         display.setAccessibleClassView((AccessibleClassView) classPresenter.getDisplay());
         classPresenter.setObjectClassName("com.arondor.common.reflection.gwt.server.samples.TestClass");
     }

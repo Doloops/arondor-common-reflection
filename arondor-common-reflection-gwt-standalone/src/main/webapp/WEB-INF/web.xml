@@ -5,13 +5,13 @@
 <web-app>
 
 	<servlet>
-		<servlet-name>accessibleClassServiceServlet</servlet-name>
-		<servlet-class>com.arondor.common.reflection.gwt.server.AccessibleClassServiceImpl</servlet-class>
+		<servlet-name>reflectionService</servlet-name>
+		<servlet-class>com.arondor.common.reflection.gwt.server.DefaultGWTReflectionService</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>accessibleClassServiceServlet</servlet-name>
-		<url-pattern>/ArondorReflectionGWT/accessibleClassService</url-pattern>
+		<servlet-name>reflectionService</servlet-name>
+		<url-pattern>/ArondorReflectionGWT/reflectionService</url-pattern>
 	</servlet-mapping>
 
 	<!-- Default page to serve -->

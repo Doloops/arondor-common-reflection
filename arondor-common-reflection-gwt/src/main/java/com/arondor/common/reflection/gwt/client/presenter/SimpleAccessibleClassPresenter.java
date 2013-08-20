@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 import com.arondor.common.reflection.bean.config.ObjectConfigurationFactoryBean;
-import com.arondor.common.reflection.gwt.client.service.AccessibleClassServiceAsync;
+import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.gwt.client.view.AccessibleFieldListView;
 import com.arondor.common.reflection.gwt.client.view.AccessibleFieldView;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
@@ -37,13 +37,13 @@ public class SimpleAccessibleClassPresenter implements AccessibleClassPresenter
         void setAccessibleFieldListView(AccessibleFieldListView accessibleFieldView);
     }
 
-    private final AccessibleClassServiceAsync rpcService;
+    private final GWTReflectionServiceAsync rpcService;
 
     private final Display display;
 
     private AccessibleFieldListPresenter fieldListPresenter;
 
-    public SimpleAccessibleClassPresenter(AccessibleClassServiceAsync rpcService, Display view)
+    public SimpleAccessibleClassPresenter(GWTReflectionServiceAsync rpcService, Display view)
     {
         this.rpcService = rpcService;
         this.display = view;
