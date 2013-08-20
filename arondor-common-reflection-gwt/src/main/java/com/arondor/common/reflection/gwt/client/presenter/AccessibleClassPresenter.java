@@ -12,9 +12,6 @@ import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.arondor.common.reflection.model.java.AccessibleField;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -27,13 +24,15 @@ public class AccessibleClassPresenter implements Presenter
 
     private AccessibleClass accessibleClass;
 
+    private ObjectConfiguration objectConfiguration;
+
     public interface Display extends IsWidget
     {
         void setName(String name);
 
         void setClassname(String classname);
 
-        HasClickHandlers getSaveButton();
+        void setObjectConfiguration(ObjectConfiguration objectConfiguration);
 
         AccessibleFieldListView getAccessibleFieldListView();
 
@@ -55,22 +54,20 @@ public class AccessibleClassPresenter implements Presenter
         this.display = view;
 
         bind();
-        RootPanel.get().clear();
         RootPanel.get().add(display.asWidget());
-        fetchAccessibleClass();
+        fetchAccessibleClass("com.arondor.common.reflection.gwt.server.samples.TestClass");
         fieldListPresenter = new AccessibleFieldListPresenter(eventBus, new AccessibleFieldListView());
         display.setAccessibleFieldListView((AccessibleFieldListView) fieldListPresenter.getDisplay());
+        display.setObjectConfiguration(objectConfiguration);
     }
 
     public void bind()
     {
-        display.getSaveButton().addClickHandler(new ClickHandler()
-        {
-            public void onClick(ClickEvent event)
-            {
-                doSave();
-            }
-        });
+    }
+
+    public Display getDisplay()
+    {
+        return display;
     }
 
     public void setAccessibleClass(AccessibleClass accessibleClass)
@@ -78,29 +75,28 @@ public class AccessibleClassPresenter implements Presenter
         this.accessibleClass = accessibleClass;
     }
 
-    private void fetchAccessibleClass()
+    private void fetchAccessibleClass(String className)
     {
-        rpcService.getAccessibleClass("com.arondor.common.reflection.gwt.server.samples.TestClass",
-                new AsyncCallback<AccessibleClass>()
-                {
+        rpcService.getAccessibleClass(className, new AsyncCallback<AccessibleClass>()
+        {
 
-                    public void onSuccess(AccessibleClass result)
-                    {
-                        setAccessibleClass(result);
-                        accessibleClass = result;
-                        display.setName(result.getName());
-                        display.setClassname(result.getClassBaseName());
-                        fieldListPresenter.setAccessibleFieldList(result.getAccessibleFields());
-                    }
+            public void onSuccess(AccessibleClass result)
+            {
+                setAccessibleClass(result);
+                accessibleClass = result;
+                display.setName(result.getName());
+                display.setClassname(result.getClassBaseName());
+                fieldListPresenter.setAccessibleFieldList(result.getAccessibleFields());
+            }
 
-                    public void onFailure(Throwable caught)
-                    {
-                        Window.alert("Error fetching Accessible Classes");
-                    }
-                });
+            public void onFailure(Throwable caught)
+            {
+                Window.alert("Error fetching Accessible Classes");
+            }
+        });
     }
 
-    private void doSave()
+    public void doSave()
     {
 
         ObjectConfigurationFactory objectConfigurationFactory = new ObjectConfigurationFactoryBean();
@@ -120,5 +116,22 @@ public class AccessibleClassPresenter implements Presenter
             LOG.finest(accessibleField.getName() + " : " + value);
         }
 
+        setObjectConfiguration(configuration);
+    }
+
+    public ObjectConfiguration getObjectConfiguration()
+    {
+        return objectConfiguration;
+    }
+
+    public void setObjectConfiguration(ObjectConfiguration objectConfiguration)
+    {
+        this.objectConfiguration = objectConfiguration;
+        for (int i = display.getAccessibleFieldListView().getFields().getRowCount() - 1; i > 0; i--)
+        {
+            display.getAccessibleFieldListView().getFields().removeRow(i);
+        }
+        fetchAccessibleClass(objectConfiguration.getClassName());
+        fieldListPresenter.setObjectConfiguration(objectConfiguration);
     }
 }

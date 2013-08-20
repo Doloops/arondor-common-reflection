@@ -1,5 +1,7 @@
 package com.arondor.common.reflection.gwt.client.view;
 
+import java.util.logging.Logger;
+
 import com.arondor.common.reflection.gwt.client.presenter.AccessibleFieldPresenter;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
@@ -13,6 +15,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class AccessibleFieldView extends Composite implements AccessibleFieldPresenter.Display
 {
+    private static final Logger LOG = Logger.getLogger(AccessibleFieldView.class.getName());
 
     private HTML name;
 
@@ -34,6 +37,7 @@ public class AccessibleFieldView extends Composite implements AccessibleFieldPre
         description = new HTML();
 
         inputValue = new TextBox();
+        inputValue.setValue("init");
 
         int row = fields.getRowCount();
         fields.setWidget(row, 0, name);
@@ -66,5 +70,11 @@ public class AccessibleFieldView extends Composite implements AccessibleFieldPre
     public HasValue<String> getInputValue()
     {
         return inputValue;
+    }
+
+    public void setInputValue(String value)
+    {
+        inputValue.setValue(value);
+        LOG.finest(name + " : " + value + " - " + inputValue);
     }
 }

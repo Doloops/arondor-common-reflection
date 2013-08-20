@@ -1,9 +1,8 @@
 package com.arondor.common.reflection.gwt.client.view;
 
 import com.arondor.common.reflection.gwt.client.presenter.AccessibleClassPresenter;
-import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
@@ -17,8 +16,6 @@ public class AccessibleClassView extends Composite implements AccessibleClassPre
 
     private HTML className;
 
-    private Button saveButton;
-
     public AccessibleClassView()
     {
         AbsolutePanel content = new AbsolutePanel();
@@ -26,14 +23,9 @@ public class AccessibleClassView extends Composite implements AccessibleClassPre
 
         content.add(new Label("Accessible Class :"));
 
-        saveButton = new Button("Save");
-        saveButton.setStyleName("btn");
-        saveButton.addStyleName("btn-primary");
-
         name = new HTML();
         className = new HTML();
 
-        content.add(saveButton);
         content.add(name);
         content.add(className);
     }
@@ -53,11 +45,6 @@ public class AccessibleClassView extends Composite implements AccessibleClassPre
         className.setText("Classname : " + classname);
     }
 
-    public HasClickHandlers getSaveButton()
-    {
-        return saveButton;
-    }
-
     public AccessibleFieldListView getAccessibleFieldListView()
     {
         return accessibleFieldListView;
@@ -66,6 +53,12 @@ public class AccessibleClassView extends Composite implements AccessibleClassPre
     public void setAccessibleFieldListView(AccessibleFieldListView accessibleFieldListView)
     {
         this.accessibleFieldListView = accessibleFieldListView;
+    }
+
+    public void setObjectConfiguration(ObjectConfiguration objectConfiguration)
+    {
+        // TODO Auto-generated method stub
+
     }
 
 }
