@@ -20,6 +20,8 @@ public class ClassDesignerPresenter
 {
     private static final Logger LOG = Logger.getLogger(ClassDesignerPresenter.class.getName());
 
+    private final ObjectConfigurationFactory objectConfigurationFactory = new ObjectConfigurationFactoryBean();
+
     public interface Display extends IsWidget
     {
         HasClickHandlers getGetConfigButton();
@@ -43,7 +45,8 @@ public class ClassDesignerPresenter
         classPresenter = new SimpleAccessibleClassPresenter(
                 (GWTReflectionServiceAsync) GWT.create(GWTReflectionService.class), new AccessibleClassView());
         display.setAccessibleClassView((AccessibleClassView) classPresenter.getDisplay());
-        classPresenter.setObjectClassName("com.arondor.common.reflection.gwt.server.samples.TestClass");
+        classPresenter.setBaseClassName("com.arondor.common.reflection.gwt.server.samples.TestClass");
+
     }
 
     public void bind()
@@ -73,7 +76,10 @@ public class ClassDesignerPresenter
         {
             public void onClick(ClickEvent event)
             {
-                classPresenter.doSave();
+                ObjectConfiguration objectConfiguration = classPresenter
+                        .getObjectConfiguration(objectConfigurationFactory);
+                LOG.info("objectConfiguration=> " + objectConfiguration);
+                classPresenter.setObjectConfiguration(objectConfiguration);
             }
         });
     }

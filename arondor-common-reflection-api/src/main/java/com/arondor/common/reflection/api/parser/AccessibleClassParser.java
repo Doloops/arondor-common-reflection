@@ -1,6 +1,7 @@
 package com.arondor.common.reflection.api.parser;
 
 import com.arondor.common.reflection.model.java.AccessibleClass;
+import com.arondor.common.reflection.util.PrimitiveTypeUtil;
 
 /**
  * Parse a Java-loaded class to an AccessibleClass
@@ -26,7 +27,9 @@ public interface AccessibleClassParser
      * @param className
      *            the class name
      * @return true if the type is primitive, false otherwise
+     * @deprecated @see {@link PrimitiveTypeUtil}
      */
+    @Deprecated
     boolean isPrimitiveType(String className);
 
     /**

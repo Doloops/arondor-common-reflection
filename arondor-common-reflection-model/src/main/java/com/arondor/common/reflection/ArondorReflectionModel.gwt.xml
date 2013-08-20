@@ -4,4 +4,5 @@
 <module>
 	<source path='model' />
 	<source path='bean' />
+	<source path='util' />
 </module>

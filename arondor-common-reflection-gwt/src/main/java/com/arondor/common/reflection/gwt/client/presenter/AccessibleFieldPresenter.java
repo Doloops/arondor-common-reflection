@@ -2,7 +2,11 @@ package com.arondor.common.reflection.gwt.client.presenter;
 
 import java.util.logging.Logger;
 
+import com.arondor.common.reflection.model.config.ElementConfiguration;
+import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
+import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
 import com.arondor.common.reflection.model.java.AccessibleField;
+import com.arondor.common.reflection.util.PrimitiveTypeUtil;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -10,7 +14,7 @@ public class AccessibleFieldPresenter
 {
     private static final Logger LOG = Logger.getLogger(AccessibleFieldPresenter.class.getName());
 
-    private AccessibleField accessibleField;
+    private final AccessibleField accessibleField;
 
     public interface Display extends IsWidget
     {
@@ -27,10 +31,15 @@ public class AccessibleFieldPresenter
 
     private final Display display;
 
-    public AccessibleFieldPresenter(Display view)
+    public AccessibleFieldPresenter(AccessibleField accessibleField, Display view)
     {
+        this.accessibleField = accessibleField;
         this.display = view;
         bind();
+
+        display.setName(accessibleField.getName());
+        display.setClassName(accessibleField.getClassName());
+        display.setDescription(accessibleField.getDescription());
     }
 
     public Display getDisplay()
@@ -42,12 +51,31 @@ public class AccessibleFieldPresenter
     {
     }
 
-    public void setAccessibleField(AccessibleField accessibleField)
+    public void setElementConfiguration(ElementConfiguration elementConfiguration)
     {
-        this.accessibleField = accessibleField;
-        display.setName(accessibleField.getName());
-        display.setClassName(accessibleField.getClassName());
-        display.setDescription(accessibleField.getDescription());
+        switch (elementConfiguration.getFieldConfigurationType())
+        {
+        case Primitive:
+            display.setInputValue(((PrimitiveConfiguration) elementConfiguration).getValue());
+            break;
+        default:
+            display.setInputValue("Not supported : " + elementConfiguration.getFieldConfigurationType());
+        }
+
     }
 
+    public ElementConfiguration getElementConfiguration(ObjectConfigurationFactory objectConfigurationFactory)
+    {
+        if (PrimitiveTypeUtil.isPrimitiveType(accessibleField.getClassName()))
+        {
+            String input = display.getInputValue().getValue();
+            LOG.finest("field=" + accessibleField.getName() + ", class=" + accessibleField.getClassName() + ", value="
+                    + input);
+            if (!input.trim().isEmpty())
+            {
+                return objectConfigurationFactory.createPrimitiveConfiguration(input);
+            }
+        }
+        return null;
+    }
 }

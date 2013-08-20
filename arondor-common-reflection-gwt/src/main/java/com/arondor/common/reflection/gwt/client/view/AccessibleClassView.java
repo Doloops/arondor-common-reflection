@@ -1,7 +1,7 @@
 package com.arondor.common.reflection.gwt.client.view;
 
+import com.arondor.common.reflection.gwt.client.presenter.AccessibleFieldMapPresenter;
 import com.arondor.common.reflection.gwt.client.presenter.SimpleAccessibleClassPresenter;
-import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
@@ -10,16 +10,16 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class AccessibleClassView extends Composite implements SimpleAccessibleClassPresenter.Display
 {
-    private AccessibleFieldListView accessibleFieldListView;
-
     private HTML name;
 
     private HTML className;
 
-    private AbsolutePanel content = new AbsolutePanel();
+    private AccessibleFieldMapPresenter.Display fieldMapDisplay = new AccessibleFieldMapView();
 
     public AccessibleClassView()
     {
+        AbsolutePanel content = new AbsolutePanel();
+
         initWidget(content);
 
         content.add(new Label("Accessible Class :"));
@@ -29,6 +29,7 @@ public class AccessibleClassView extends Composite implements SimpleAccessibleCl
 
         content.add(name);
         content.add(className);
+        content.add(fieldMapDisplay);
     }
 
     public Widget asWidget()
@@ -46,21 +47,9 @@ public class AccessibleClassView extends Composite implements SimpleAccessibleCl
         className.setText("Classname : " + classname);
     }
 
-    public AccessibleFieldListView getAccessibleFieldListView()
+    public AccessibleFieldMapPresenter.Display getFieldMapDisplay()
     {
-        return accessibleFieldListView;
-    }
-
-    public void setAccessibleFieldListView(AccessibleFieldListView accessibleFieldListView)
-    {
-        this.accessibleFieldListView = accessibleFieldListView;
-        content.add(accessibleFieldListView);
-    }
-
-    public void setObjectConfiguration(ObjectConfiguration objectConfiguration)
-    {
-        // TODO Auto-generated method stub
-
+        return fieldMapDisplay;
     }
 
 }

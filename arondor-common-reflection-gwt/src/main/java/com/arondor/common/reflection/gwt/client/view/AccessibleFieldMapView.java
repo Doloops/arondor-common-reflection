@@ -3,29 +3,26 @@ package com.arondor.common.reflection.gwt.client.view;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.arondor.common.reflection.gwt.client.presenter.AccessibleFieldListPresenter;
+import com.arondor.common.reflection.gwt.client.presenter.AccessibleFieldMapPresenter;
+import com.arondor.common.reflection.gwt.client.presenter.AccessibleFieldPresenter;
 import com.arondor.common.reflection.model.java.AccessibleField;
-import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AccessibleFieldListView extends Composite implements AccessibleFieldListPresenter.Display
+public class AccessibleFieldMapView extends Composite implements AccessibleFieldMapPresenter.Display
 {
 
     private FlexTable fields;
-
-    private Button saveButton;
 
     private FormPanel form;
 
     private Map<AccessibleField, AccessibleFieldView> accessibleFieldViewList;
 
-    public AccessibleFieldListView()
+    public AccessibleFieldMapView()
     {
         AbsolutePanel content = new AbsolutePanel();
         initWidget(content);
@@ -49,7 +46,11 @@ public class AccessibleFieldListView extends Composite implements AccessibleFiel
 
         form.add(fields);
         content.add(form);
+    }
 
+    public AccessibleFieldPresenter.Display createAccessibleFieldDisplay()
+    {
+        return new AccessibleFieldView(getFields());
     }
 
     public Widget asWidget()
@@ -60,11 +61,6 @@ public class AccessibleFieldListView extends Composite implements AccessibleFiel
     public FlexTable getFields()
     {
         return fields;
-    }
-
-    public HasClickHandlers getSaveButton()
-    {
-        return saveButton;
     }
 
     public Map<AccessibleField, AccessibleFieldView> getAccessibleFieldViewList()
@@ -80,4 +76,5 @@ public class AccessibleFieldListView extends Composite implements AccessibleFiel
         }
         accessibleFieldViewList.put(accessibleField, accessibleFieldView);
     }
+
 }

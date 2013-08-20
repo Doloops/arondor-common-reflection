@@ -6,7 +6,6 @@ import com.arondor.common.reflection.gwt.client.presenter.AccessibleFieldPresent
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.TextBox;
@@ -24,8 +23,6 @@ public class AccessibleFieldView extends Composite implements AccessibleFieldPre
     private HTML description;
 
     private TextBoxBase inputValue;
-
-    private FormPanel form;
 
     public AccessibleFieldView(FlexTable fields)
     {

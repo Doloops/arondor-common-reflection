@@ -1,59 +1,50 @@
 package com.arondor.common.reflection.gwt.client.presenter;
 
 import java.util.HashMap;
-import java.util.logging.Logger;
 
-import com.arondor.common.reflection.bean.config.ObjectConfigurationFactoryBean;
+import com.arondor.common.reflection.gwt.client.api.AccessibleClassPresenter;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
-import com.arondor.common.reflection.gwt.client.view.AccessibleFieldListView;
-import com.arondor.common.reflection.gwt.client.view.AccessibleFieldView;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.model.java.AccessibleClass;
-import com.arondor.common.reflection.model.java.AccessibleField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.IsWidget;
 
 public class SimpleAccessibleClassPresenter implements AccessibleClassPresenter
 {
-    private static final Logger LOG = Logger.getLogger(SimpleAccessibleClassPresenter.class.getName());
-
-    private AccessibleClass accessibleClass;
-
-    private ObjectConfiguration objectConfiguration;
-
     public interface Display extends IsWidget
     {
         void setName(String name);
 
         void setClassname(String classname);
 
-        void setObjectConfiguration(ObjectConfiguration objectConfiguration);
-
-        AccessibleFieldListView getAccessibleFieldListView();
-
-        void setAccessibleFieldListView(AccessibleFieldListView accessibleFieldView);
+        AccessibleFieldMapPresenter.Display getFieldMapDisplay();
     }
+
+    private String baseClassName;
+
+    public String getBaseClassName()
+    {
+        return baseClassName;
+    }
+
+    private String objectClassName;
 
     private final GWTReflectionServiceAsync rpcService;
 
     private final Display display;
 
-    private AccessibleFieldListPresenter fieldListPresenter;
+    private final AccessibleFieldMapPresenter fieldListPresenter;
 
     public SimpleAccessibleClassPresenter(GWTReflectionServiceAsync rpcService, Display view)
     {
         this.rpcService = rpcService;
         this.display = view;
 
+        fieldListPresenter = new AccessibleFieldMapPresenter(display.getFieldMapDisplay());
         bind();
-        // RootPanel.get().add(display.asWidget());
-
-        fieldListPresenter = new AccessibleFieldListPresenter(new AccessibleFieldListView());
-        display.setAccessibleFieldListView((AccessibleFieldListView) fieldListPresenter.getDisplay());
-        display.setObjectConfiguration(objectConfiguration);
     }
 
     public void bind()
@@ -65,13 +56,10 @@ public class SimpleAccessibleClassPresenter implements AccessibleClassPresenter
         return display;
     }
 
-    protected void setAccessibleClass(AccessibleClass accessibleClass)
+    public void setBaseClassName(String className)
     {
-        this.accessibleClass = accessibleClass;
-    }
-
-    public void setObjectClassName(String className)
-    {
+        this.baseClassName = className;
+        this.objectClassName = className;
         fetchAccessibleClass(className);
     }
 
@@ -82,11 +70,9 @@ public class SimpleAccessibleClassPresenter implements AccessibleClassPresenter
 
             public void onSuccess(AccessibleClass result)
             {
-                setAccessibleClass(result);
-                accessibleClass = result;
                 display.setName(result.getName());
                 display.setClassname(result.getClassBaseName());
-                fieldListPresenter.setAccessibleFieldList(result.getAccessibleFields());
+                fieldListPresenter.setAccessibleFields(result.getAccessibleFields());
             }
 
             public void onFailure(Throwable caught)
@@ -96,42 +82,17 @@ public class SimpleAccessibleClassPresenter implements AccessibleClassPresenter
         });
     }
 
-    public void doSave()
+    public ObjectConfiguration getObjectConfiguration(ObjectConfigurationFactory objectConfigurationFactory)
     {
-
-        ObjectConfigurationFactory objectConfigurationFactory = new ObjectConfigurationFactoryBean();
-
         ObjectConfiguration configuration = objectConfigurationFactory.createObjectConfiguration();
-        configuration.setClassName(accessibleClass.getName());
-
+        configuration.setClassName(objectClassName);
         configuration.setFields(new HashMap<String, ElementConfiguration>());
-
-        for (AccessibleField accessibleField : accessibleClass.getAccessibleFields().values())
-        {
-            AccessibleFieldView accessibleFieldView = display.getAccessibleFieldListView().getAccessibleFieldViewList()
-                    .get(accessibleField);
-            String value = accessibleFieldView.getInputValue().getValue();
-            configuration.getFields().put(accessibleField.getName(),
-                    objectConfigurationFactory.createPrimitiveConfiguration(value));
-            LOG.finest(accessibleField.getName() + " : " + value);
-        }
-
-        setObjectConfiguration(configuration);
-    }
-
-    public ObjectConfiguration getObjectConfiguration()
-    {
-        return objectConfiguration;
+        fieldListPresenter.updateObjectConfiguration(objectConfigurationFactory, configuration);
+        return configuration;
     }
 
     public void setObjectConfiguration(ObjectConfiguration objectConfiguration)
     {
-        this.objectConfiguration = objectConfiguration;
-        for (int i = display.getAccessibleFieldListView().getFields().getRowCount() - 1; i > 0; i--)
-        {
-            display.getAccessibleFieldListView().getFields().removeRow(i);
-        }
-        fetchAccessibleClass(objectConfiguration.getClassName());
         fieldListPresenter.setObjectConfiguration(objectConfiguration);
     }
 

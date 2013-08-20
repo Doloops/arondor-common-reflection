@@ -1,6 +1,6 @@
 package com.arondor.common.reflection.gwt.client;
 
-import com.arondor.common.reflection.gwt.client.presenter.AccessibleClassPresenter;
+import com.arondor.common.reflection.gwt.client.api.AccessibleClassPresenter;
 import com.arondor.common.reflection.gwt.client.presenter.SimpleAccessibleClassPresenter;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionService;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;

@@ -23,6 +23,7 @@ import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.arondor.common.reflection.model.java.AccessibleConstructor;
 import com.arondor.common.reflection.model.java.AccessibleField;
 import com.arondor.common.reflection.model.java.AccessibleMethod;
+import com.arondor.common.reflection.util.PrimitiveTypeUtil;
 
 public class JavaAccessibleClassParser implements AccessibleClassParser
 {
@@ -99,34 +100,6 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         return "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
     }
 
-    private static final Class<?> PRIMITIVES[] = { java.lang.String.class, java.lang.Long.class,
-            java.lang.Integer.class, java.lang.Float.class, java.lang.Boolean.class, java.lang.Double.class,
-            java.lang.Character.class, boolean.class, int.class, long.class, double.class, float.class, char.class };
-
-    public boolean isPrimitiveType(String clazzName)
-    {
-        for (Class<?> primitive : PRIMITIVES)
-        {
-            if (primitive.getName().equals(clazzName))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean isPrimitiveType(Class<?> clazz)
-    {
-        for (Class<?> primitive : PRIMITIVES)
-        {
-            if (primitive.equals(clazz))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
     /**
      * Check if a class is part of classes considered to be directly exposable
      * to JConsole
@@ -137,7 +110,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
      */
     public boolean isExposableType(Class<?> clazz, boolean includeNonPrimitive)
     {
-        if (isPrimitiveType(clazz))
+        if (PrimitiveTypeUtil.isPrimitiveType(clazz))
         {
             return true;
         }
@@ -541,5 +514,10 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         {
             return className;
         }
+    }
+
+    public boolean isPrimitiveType(String className)
+    {
+        return PrimitiveTypeUtil.isPrimitiveType(className);
     }
 }
