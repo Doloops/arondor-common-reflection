@@ -29,6 +29,11 @@ public class ObjectConfigurationBean implements ObjectConfiguration
         return ElementConfigurationType.Object;
     }
 
+    public ObjectConfigurationBean()
+    {
+
+    }
+
     @Id
     @GeneratedValue
     private long persistentId;
@@ -41,11 +46,6 @@ public class ObjectConfigurationBean implements ObjectConfiguration
     public long getPersistentId()
     {
         return persistentId;
-    }
-
-    public ObjectConfigurationBean()
-    {
-
     }
 
     private String className;

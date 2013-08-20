@@ -20,6 +20,11 @@ public class ReferenceConfigurationBean extends ElementConfigurationBean impleme
         return ElementConfigurationType.Reference;
     }
 
+    public ReferenceConfigurationBean()
+    {
+
+    }
+
     private String referenceName;
 
     public String getReferenceName()

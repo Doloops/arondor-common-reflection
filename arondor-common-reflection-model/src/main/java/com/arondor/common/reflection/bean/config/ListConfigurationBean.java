@@ -24,6 +24,11 @@ public class ListConfigurationBean extends ElementConfigurationBean implements L
         return ElementConfigurationType.List;
     }
 
+    public ListConfigurationBean()
+    {
+
+    }
+
     @Transient
     private List<ElementConfiguration> listConfiguration;
 
