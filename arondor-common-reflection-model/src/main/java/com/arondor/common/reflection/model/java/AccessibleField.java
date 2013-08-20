@@ -11,10 +11,21 @@ import java.util.List;
  */
 public interface AccessibleField extends Serializable
 {
+    /**
+     * @return the field name
+     */
     String getName();
 
+    /**
+     * 
+     * @return the field description
+     */
     String getDescription();
 
+    /**
+     * 
+     * @return the field Class name
+     */
     String getClassName();
 
     void setClassName(String replace);

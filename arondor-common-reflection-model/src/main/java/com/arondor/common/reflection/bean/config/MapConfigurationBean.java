@@ -2,9 +2,14 @@ package com.arondor.common.reflection.bean.config;
 
 import java.util.Map;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.MapConfiguration;
 
+@Entity
 public class MapConfigurationBean extends ElementConfigurationBean implements MapConfiguration
 {
     /**
@@ -22,6 +27,7 @@ public class MapConfigurationBean extends ElementConfigurationBean implements Ma
 
     }
 
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = ElementConfigurationBean.class)
     private Map<ElementConfiguration, ElementConfiguration> mapConfiguration;
 
     public Map<ElementConfiguration, ElementConfiguration> getMapConfiguration()

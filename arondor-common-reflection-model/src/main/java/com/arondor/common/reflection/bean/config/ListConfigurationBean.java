@@ -2,9 +2,14 @@ package com.arondor.common.reflection.bean.config;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ListConfiguration;
 
+@Entity
 public class ListConfigurationBean extends ElementConfigurationBean implements ListConfiguration
 {
 
@@ -18,6 +23,7 @@ public class ListConfigurationBean extends ElementConfigurationBean implements L
         return ElementConfigurationType.List;
     }
 
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = ElementConfigurationBean.class)
     private List<ElementConfiguration> listConfiguration;
 
     public List<ElementConfiguration> getListConfiguration()

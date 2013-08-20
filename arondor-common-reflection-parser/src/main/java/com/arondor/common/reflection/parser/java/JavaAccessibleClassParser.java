@@ -383,6 +383,16 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         {
             LOG.debug("Parsing accessible class : " + clazz.getName());
         }
+        Method[] methods = null;
+        try
+        {
+            methods = clazz.getMethods();
+        }
+        catch (NoClassDefFoundError e)
+        {
+            LOG.warn("Could not get methods :", e);
+            return null;
+        }
         AccessibleClassBean accessClass = createBaseAccessibleClass(clazz);
 
         setAccessibleClassInheritance(clazz, accessClass);
@@ -392,7 +402,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         Map<String, AccessibleField> exposedAttributes = new HashMap<String, AccessibleField>();
         List<Method> exposedMethods = new ArrayList<Method>();
 
-        parseExposedMethodAndAttributes(clazz.getMethods(), exposedAttributes, exposedMethods, true);
+        parseExposedMethodAndAttributes(methods, exposedAttributes, exposedMethods, true);
 
         setAccessibleFieldsDescriptions(accessClass, clazz, exposedAttributes);
 
@@ -437,6 +447,11 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
                     LOG.debug("Could not fetch field '" + accessibleField.getName() + "'");
                 }
                 catch (NoSuchFieldException e)
+                {
+                    LOG.debug("Could not fetch field '" + accessibleField.getName() + "' from class "
+                            + superclass.getName());
+                }
+                catch (NoClassDefFoundError e)
                 {
                     LOG.debug("Could not fetch field '" + accessibleField.getName() + "' from class "
                             + superclass.getName());

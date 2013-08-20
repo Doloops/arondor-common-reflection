@@ -1,7 +1,10 @@
 package com.arondor.common.reflection.bean.config;
 
+import javax.persistence.Entity;
+
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
 
+@Entity
 public class PrimitiveConfigurationBean extends ElementConfigurationBean implements PrimitiveConfiguration
 {
     /**

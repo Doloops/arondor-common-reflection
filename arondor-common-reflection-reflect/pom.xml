@@ -5,11 +5,16 @@
     <artifactId>arondor-common-reflection</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>arondor-common-reflection-service</artifactId>
+  <artifactId>arondor-common-reflection-reflect</artifactId>
   <dependencies>
   	<dependency>
   		<groupId>com.arondor.common.reflection</groupId>
   		<artifactId>arondor-common-reflection-api</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.arondor.common.reflection</groupId>
+  		<artifactId>arondor-common-reflection-parser</artifactId>
   		<version>0.0.1-SNAPSHOT</version>
   	</dependency>
   </dependencies>

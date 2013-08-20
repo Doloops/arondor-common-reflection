@@ -13,6 +13,7 @@
 		<module>arondor-common-reflection-parser</module>
 		<module>arondor-common-reflection-noreflect</module>
 		<module>arondor-common-reflection-service</module>
+		<module>arondor-common-reflection-reflect</module>
 	</modules>
 
 	<properties>
