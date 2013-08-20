@@ -2,14 +2,15 @@ package com.arondor.common.reflection.bean.config;
 
 import java.util.List;
 
-import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ListConfiguration;
 
 @Entity
+@DiscriminatorValue("LIST")
 public class ListConfigurationBean extends ElementConfigurationBean implements ListConfiguration
 {
 
@@ -23,8 +24,12 @@ public class ListConfigurationBean extends ElementConfigurationBean implements L
         return ElementConfigurationType.List;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, targetEntity = ElementConfigurationBean.class)
+    @Transient
     private List<ElementConfiguration> listConfiguration;
+
+    // @OneToMany(cascade = CascadeType.ALL)
+    // , targetEntity = ElementConfigurationBean.class
+    // @DiscriminatorColumn(columnDefinition = "DTYPE")
 
     public List<ElementConfiguration> getListConfiguration()
     {

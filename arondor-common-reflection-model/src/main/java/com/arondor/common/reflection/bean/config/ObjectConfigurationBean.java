@@ -4,19 +4,18 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 
 @Entity
-@Table(name = "ObjectConfiguration")
+// @Table(name = "ObjectConfiguration")
+@DiscriminatorValue("OBJ")
 public class ObjectConfigurationBean implements ObjectConfiguration
 {
 
@@ -62,7 +61,9 @@ public class ObjectConfigurationBean implements ObjectConfiguration
     }
 
     @OneToMany(cascade = CascadeType.ALL, targetEntity = ElementConfigurationBean.class)
-    @JoinTable(name = "FieldConfigMap", joinColumns = @JoinColumn(name = "objectConfigId"), inverseJoinColumns = @JoinColumn(name = "fieldConfigId"))
+    // @JoinTable(name = "FieldConfigMap", joinColumns = @JoinColumn(name =
+    // "objectConfigId"), inverseJoinColumns = @JoinColumn(name =
+    // "fieldConfigId"))
     private Map<String, ElementConfiguration> fields;
 
     public Map<String, ElementConfiguration> getFields()

@@ -1,7 +1,12 @@
 package com.arondor.common.reflection.bean.config;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 import com.arondor.common.reflection.model.config.ReferenceConfiguration;
 
+@Entity
+@DiscriminatorValue("REF")
 public class ReferenceConfigurationBean extends ElementConfigurationBean implements ReferenceConfiguration
 {
 

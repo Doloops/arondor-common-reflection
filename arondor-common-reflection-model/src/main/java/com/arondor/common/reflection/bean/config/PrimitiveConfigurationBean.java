@@ -1,10 +1,12 @@
 package com.arondor.common.reflection.bean.config;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
 
 @Entity
+@DiscriminatorValue("PRIM")
 public class PrimitiveConfigurationBean extends ElementConfigurationBean implements PrimitiveConfiguration
 {
     /**
