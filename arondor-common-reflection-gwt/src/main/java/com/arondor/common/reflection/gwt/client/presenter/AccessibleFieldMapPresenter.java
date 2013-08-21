@@ -4,9 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.arondor.common.reflection.model.config.ElementConfiguration;
+import com.arondor.common.reflection.model.config.ElementConfiguration.ElementConfigurationType;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.model.java.AccessibleField;
+import com.arondor.common.reflection.util.PrimitiveTypeUtil;
 import com.google.gwt.user.client.ui.IsWidget;
 
 public class AccessibleFieldMapPresenter
@@ -15,6 +17,8 @@ public class AccessibleFieldMapPresenter
 
     public interface Display extends IsWidget
     {
+        void clearList();
+
         AccessibleFieldPresenter.Display createAccessibleFieldDisplay();
     }
 
@@ -40,9 +44,12 @@ public class AccessibleFieldMapPresenter
     {
         for (AccessibleField accessibleField : accessibleFields.values())
         {
-            AccessibleFieldPresenter.Display fieldDisplay = getDisplay().createAccessibleFieldDisplay();
-            AccessibleFieldPresenter fieldPresenter = new AccessibleFieldPresenter(accessibleField, fieldDisplay);
-            accessibleFieldPresenters.put(accessibleField.getName(), fieldPresenter);
+            if (PrimitiveTypeUtil.isPrimitiveType(accessibleField.getClassName()))
+            {
+                AccessibleFieldPresenter.Display fieldDisplay = getDisplay().createAccessibleFieldDisplay();
+                AccessibleFieldPresenter fieldPresenter = new AccessibleFieldPresenter(accessibleField, fieldDisplay);
+                accessibleFieldPresenters.put(accessibleField.getName(), fieldPresenter);
+            }
         }
     }
 
@@ -52,7 +59,11 @@ public class AccessibleFieldMapPresenter
         {
             if (accessibleFieldPresenters.containsKey(fieldEntry.getKey()))
             {
-                accessibleFieldPresenters.get(fieldEntry.getKey()).setElementConfiguration(fieldEntry.getValue());
+                ElementConfiguration elementConfiguration = fieldEntry.getValue();
+                if (elementConfiguration.getFieldConfigurationType() == ElementConfigurationType.Primitive)
+                {
+                    accessibleFieldPresenters.get(fieldEntry.getKey()).setElementConfiguration(elementConfiguration);
+                }
             }
         }
     }

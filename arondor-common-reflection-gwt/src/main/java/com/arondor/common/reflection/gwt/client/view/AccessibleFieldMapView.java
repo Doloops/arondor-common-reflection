@@ -77,4 +77,12 @@ public class AccessibleFieldMapView extends Composite implements AccessibleField
         accessibleFieldViewList.put(accessibleField, accessibleFieldView);
     }
 
+    public void clearList()
+    {
+        for (int row = fields.getRowCount() - 1; row > 0; row--)
+        {
+            fields.removeRow(row);
+        }
+    }
+
 }

@@ -45,7 +45,7 @@ public class ClassDesignerPresenter
         classPresenter = new SimpleAccessibleClassPresenter(
                 (GWTReflectionServiceAsync) GWT.create(GWTReflectionService.class), new AccessibleClassView());
         display.setAccessibleClassView((AccessibleClassView) classPresenter.getDisplay());
-        classPresenter.setBaseClassName("com.arondor.common.reflection.gwt.server.samples.TestClass");
+        classPresenter.setBaseClassName("com.arondor.common.reflection.gwt.server.samples.ParentTestClass");
 
     }
 

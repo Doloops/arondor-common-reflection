@@ -1,6 +1,7 @@
 package com.arondor.common.reflection.gwt.client.presenter;
 
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import com.arondor.common.reflection.gwt.client.api.AccessibleClassPresenter;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
@@ -8,12 +9,17 @@ import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.model.java.AccessibleClass;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.TreeItem;
 
 public class SimpleAccessibleClassPresenter implements AccessibleClassPresenter
 {
+    private static final Logger LOG = Logger.getLogger(SimpleAccessibleClassPresenter.class.getName());
+
     public interface Display extends IsWidget
     {
         void setName(String name);
@@ -21,6 +27,10 @@ public class SimpleAccessibleClassPresenter implements AccessibleClassPresenter
         void setClassname(String classname);
 
         AccessibleFieldMapPresenter.Display getFieldMapDisplay();
+
+        ClassTreePresenter.Display getClassTreeDisplay();
+
+        void addImplementation(String implementationClassName);
     }
 
     private String baseClassName;
@@ -30,13 +40,13 @@ public class SimpleAccessibleClassPresenter implements AccessibleClassPresenter
         return baseClassName;
     }
 
-    private String objectClassName;
-
     private final GWTReflectionServiceAsync rpcService;
 
     private final Display display;
 
-    private final AccessibleFieldMapPresenter fieldListPresenter;
+    private AccessibleFieldMapPresenter fieldListPresenter;
+
+    private ClassTreePresenter classTreePresenter;
 
     public SimpleAccessibleClassPresenter(GWTReflectionServiceAsync rpcService, Display view)
     {
@@ -44,11 +54,23 @@ public class SimpleAccessibleClassPresenter implements AccessibleClassPresenter
         this.display = view;
 
         fieldListPresenter = new AccessibleFieldMapPresenter(display.getFieldMapDisplay());
+
         bind();
     }
 
     public void bind()
     {
+        if (classTreePresenter != null)
+        {
+            classTreePresenter.getDisplay().getTree().addSelectionHandler(new SelectionHandler<TreeItem>()
+            {
+
+                public void onSelection(SelectionEvent<TreeItem> event)
+                {
+                    fetchAccessibleClassField(event.getSelectedItem().getText());
+                }
+            });
+        }
     }
 
     public Display getDisplay()
@@ -59,7 +81,8 @@ public class SimpleAccessibleClassPresenter implements AccessibleClassPresenter
     public void setBaseClassName(String className)
     {
         this.baseClassName = className;
-        this.objectClassName = className;
+        classTreePresenter = new ClassTreePresenter(baseClassName, rpcService, display.getClassTreeDisplay());
+        bind();
         fetchAccessibleClass(className);
     }
 
@@ -70,22 +93,47 @@ public class SimpleAccessibleClassPresenter implements AccessibleClassPresenter
 
             public void onSuccess(AccessibleClass result)
             {
-                display.setName(result.getName());
-                display.setClassname(result.getClassBaseName());
+                buildInfo(result);
+                fieldListPresenter.setAccessibleFields(result.getAccessibleFields());
+                classTreePresenter.getParentNodePresenter().buildTree(result);
+            }
+
+            public void onFailure(Throwable caught)
+            {
+                Window.alert("Error fetching Accessible Class");
+            }
+        });
+    }
+
+    private void fetchAccessibleClassField(String className)
+    {
+        rpcService.getAccessibleClass(className, new AsyncCallback<AccessibleClass>()
+        {
+
+            public void onSuccess(AccessibleClass result)
+            {
+                buildInfo(result);
+                fieldListPresenter.getDisplay().clearList();
                 fieldListPresenter.setAccessibleFields(result.getAccessibleFields());
             }
 
             public void onFailure(Throwable caught)
             {
-                Window.alert("Error fetching Accessible Classes");
+                Window.alert("Error fetching Accessible Class");
             }
         });
+    }
+
+    private void buildInfo(AccessibleClass result)
+    {
+        display.setName(result.getName());
+        display.setClassname(result.getClassBaseName());
     }
 
     public ObjectConfiguration getObjectConfiguration(ObjectConfigurationFactory objectConfigurationFactory)
     {
         ObjectConfiguration configuration = objectConfigurationFactory.createObjectConfiguration();
-        configuration.setClassName(objectClassName);
+        configuration.setClassName(baseClassName);
         configuration.setFields(new HashMap<String, ElementConfiguration>());
         fieldListPresenter.updateObjectConfiguration(objectConfigurationFactory, configuration);
         return configuration;

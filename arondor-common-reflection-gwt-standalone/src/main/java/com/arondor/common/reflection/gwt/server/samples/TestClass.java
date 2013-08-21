@@ -10,6 +10,9 @@ public class TestClass
     @Description("This is a long property")
     private long aLongProperty;
 
+    @Description("This is a sub class")
+    private SubTestClass subClass;
+
     public String getAStringProperty()
     {
         return aStringProperty;
@@ -34,5 +37,15 @@ public class TestClass
     public String toString()
     {
         return "TestClass [aStringProperty=" + aStringProperty + ", aLongProperty=" + aLongProperty + "]";
+    }
+
+    public SubTestClass getSubClass()
+    {
+        return subClass;
+    }
+
+    public void setSubClass(SubTestClass subClass)
+    {
+        this.subClass = subClass;
     }
 }

@@ -34,7 +34,7 @@ public class AccessibleFieldView extends Composite implements AccessibleFieldPre
         description = new HTML();
 
         inputValue = new TextBox();
-        inputValue.setValue("init");
+        inputValue.setStyleName("form-control");
 
         int row = fields.getRowCount();
         fields.setWidget(row, 0, name);
