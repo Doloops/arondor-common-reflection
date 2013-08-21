@@ -35,6 +35,13 @@ public class FastPrimitiveConverter
                 return Integer.parseInt(value);
             }
         });
+        primitiveConverterMap.put("boolean", new PrimitiveConverter()
+        {
+            public Object convert(String value)
+            {
+                return Boolean.parseBoolean(value);
+            }
+        });
     }
 
     public Object convert(String value, String primitiveClass)
