@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Transient;
 
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ListConfiguration;
@@ -13,7 +12,6 @@ import com.arondor.common.reflection.model.config.ListConfiguration;
 @DiscriminatorValue("LIST")
 public class ListConfigurationBean extends ElementConfigurationBean implements ListConfiguration
 {
-
     /**
      * 
      */
@@ -29,12 +27,10 @@ public class ListConfigurationBean extends ElementConfigurationBean implements L
 
     }
 
-    @Transient
-    private List<ElementConfiguration> listConfiguration;
-
     // @OneToMany(cascade = CascadeType.ALL)
     // , targetEntity = ElementConfigurationBean.class
     // @DiscriminatorColumn(columnDefinition = "DTYPE")
+    private List<ElementConfiguration> listConfiguration;
 
     public List<ElementConfiguration> getListConfiguration()
     {
