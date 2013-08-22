@@ -27,11 +27,6 @@ public class ClassTreeView extends Composite implements ClassTreePresenter.Displ
         content.add(tree);
     }
 
-    public Widget asWidget()
-    {
-        return this;
-    }
-
     public Tree getTree()
     {
         return tree;
@@ -40,6 +35,11 @@ public class ClassTreeView extends Composite implements ClassTreePresenter.Displ
     public ClassTreeNodePresenter.Display createRootView()
     {
         return new ClassTreeNodeView(getTree());
+    }
+
+    public Widget asWidget()
+    {
+        return this;
     }
 
     private static class DisplaySelectionEvent extends SelectionEvent<Display>

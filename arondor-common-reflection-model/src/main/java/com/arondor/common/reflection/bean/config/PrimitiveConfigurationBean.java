@@ -36,4 +36,10 @@ public class PrimitiveConfigurationBean extends ElementConfigurationBean impleme
         this.value = value;
     }
 
+    @Override
+    public String toString()
+    {
+        return "PrimitiveConfigurationBean [value=" + value + "]";
+    }
+
 }

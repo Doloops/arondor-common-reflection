@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.Tree;
 public class ClassTreePresenter
 {
 
+    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(ClassTreePresenter.class.getName());
 
     public interface Display extends IsWidget
@@ -23,18 +24,15 @@ public class ClassTreePresenter
         Tree getTree();
     }
 
-    private final Display display;
+    private ClassTreeNodePresenter rootNodePresenter;
 
     private final String accessibleClassName;
 
-    private final GWTReflectionServiceAsync rpcService;
+    private final Display display;
 
-    private ClassTreeNodePresenter rootNodePresenter;
-
-    public ClassTreePresenter(String accessibleClassName, GWTReflectionServiceAsync rpcService, Display view)
+    public ClassTreePresenter(GWTReflectionServiceAsync rpcService, String accessibleClassName, Display view)
     {
         this.accessibleClassName = accessibleClassName;
-        this.rpcService = rpcService;
         this.display = view;
 
         setRootNodePresenter(new ClassTreeNodePresenter(rpcService, null, accessibleClassName, display.createRootView()));
@@ -45,26 +43,6 @@ public class ClassTreePresenter
     private void bind()
     {
 
-    }
-
-    public Display getDisplay()
-    {
-        return display;
-    }
-
-    public IsWidget getDisplayWidget()
-    {
-        return getDisplay();
-    }
-
-    public ClassTreeNodePresenter getRootNodePresenter()
-    {
-        return rootNodePresenter;
-    }
-
-    public void setRootNodePresenter(ClassTreeNodePresenter rootNodePresenter)
-    {
-        this.rootNodePresenter = rootNodePresenter;
     }
 
     private static class ClassTreeNodePresenterSelectionEvent extends SelectionEvent<ClassTreeNodePresenter>
@@ -85,5 +63,47 @@ public class ClassTreePresenter
                         .getClassTreeNodePresenter()));
             }
         });
+    }
+
+    public ClassTreeNodePresenter findNode(String classType)
+    {
+        if (rootNodePresenter.getBaseClassName().equals(classType))
+        {
+            return rootNodePresenter;
+        }
+        else
+        {
+            ClassTreeNodePresenter result = rootNodePresenter.findNode(classType);
+            if (result != null)
+            {
+                return result;
+            }
+        }
+        return null;
+    }
+
+    public ClassTreeNodePresenter getRootNodePresenter()
+    {
+        return rootNodePresenter;
+    }
+
+    public void setRootNodePresenter(ClassTreeNodePresenter rootNodePresenter)
+    {
+        this.rootNodePresenter = rootNodePresenter;
+    }
+
+    public String getAccessibleClassName()
+    {
+        return accessibleClassName;
+    }
+
+    public Display getDisplay()
+    {
+        return display;
+    }
+
+    public IsWidget getDisplayWidget()
+    {
+        return getDisplay();
     }
 }

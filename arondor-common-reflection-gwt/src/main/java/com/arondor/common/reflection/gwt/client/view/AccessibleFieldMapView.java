@@ -16,11 +16,11 @@ import com.google.gwt.user.client.ui.Widget;
 public class AccessibleFieldMapView extends Composite implements AccessibleFieldMapPresenter.Display
 {
 
+    private Map<AccessibleField, AccessibleFieldView> accessibleFieldViewList;
+
     private FlexTable fields;
 
     private FormPanel form;
-
-    private Map<AccessibleField, AccessibleFieldView> accessibleFieldViewList;
 
     public AccessibleFieldMapView()
     {
@@ -48,21 +48,6 @@ public class AccessibleFieldMapView extends Composite implements AccessibleField
         content.add(form);
     }
 
-    public AccessibleFieldPresenter.Display createAccessibleFieldDisplay()
-    {
-        return new AccessibleFieldView(getFields());
-    }
-
-    public Widget asWidget()
-    {
-        return this;
-    }
-
-    public FlexTable getFields()
-    {
-        return fields;
-    }
-
     public Map<AccessibleField, AccessibleFieldView> getAccessibleFieldViewList()
     {
         return accessibleFieldViewList;
@@ -77,12 +62,27 @@ public class AccessibleFieldMapView extends Composite implements AccessibleField
         accessibleFieldViewList.put(accessibleField, accessibleFieldView);
     }
 
+    public AccessibleFieldPresenter.Display createAccessibleFieldDisplay()
+    {
+        return new AccessibleFieldView(getFields());
+    }
+
+    public FlexTable getFields()
+    {
+        return fields;
+    }
+
     public void clearList()
     {
         for (int row = fields.getRowCount() - 1; row > 0; row--)
         {
             fields.removeRow(row);
         }
+    }
+
+    public Widget asWidget()
+    {
+        return this;
     }
 
 }

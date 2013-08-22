@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class AccessibleFieldView extends Composite implements AccessibleFieldPresenter.Display
 {
+    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(AccessibleFieldView.class.getName());
 
     private HTML name;
@@ -44,11 +45,6 @@ public class AccessibleFieldView extends Composite implements AccessibleFieldPre
 
     }
 
-    public Widget asWidget()
-    {
-        return this;
-    }
-
     public void setName(String name)
     {
         this.name.setText(name);
@@ -72,5 +68,10 @@ public class AccessibleFieldView extends Composite implements AccessibleFieldPre
     public void setInputValue(String value)
     {
         inputValue.setValue(value);
+    }
+
+    public Widget asWidget()
+    {
+        return this;
     }
 }

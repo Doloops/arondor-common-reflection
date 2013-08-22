@@ -5,7 +5,7 @@ import java.util.logging.Logger;
 import com.arondor.common.reflection.gwt.client.presenter.AccessibleFieldMapPresenter;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreePresenter.Display;
-import com.arondor.common.reflection.gwt.client.presenter.SimpleAccessibleClassPresenter;
+import com.arondor.common.reflection.gwt.client.presenter.HierarchicAccessibleClassPresenter;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
@@ -18,9 +18,14 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AccessibleClassView extends Composite implements SimpleAccessibleClassPresenter.Display
+public class AccessibleClassView extends Composite implements HierarchicAccessibleClassPresenter.Display
 {
+    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(AccessibleClassView.class.getName());
+
+    private ClassTreePresenter.Display classTreeDisplay = new ClassTreeView();
+
+    TreeItem treeItem = new TreeItem();
 
     private HTML name;
 
@@ -33,6 +38,11 @@ public class AccessibleClassView extends Composite implements SimpleAccessibleCl
     private ListBox implListInput;
 
     private AccessibleFieldMapPresenter.Display fieldMapDisplay = new AccessibleFieldMapView();
+
+    public void setFieldMapDisplay(AccessibleFieldMapPresenter.Display fieldMapDisplay)
+    {
+        this.fieldMapDisplay = fieldMapDisplay;
+    }
 
     public AccessibleClassView()
     {
@@ -81,13 +91,14 @@ public class AccessibleClassView extends Composite implements SimpleAccessibleCl
         content.add(fieldMapDisplay);
     }
 
-    TreeItem treeItem = new TreeItem();
-
-    private ClassTreePresenter.Display classTreeDisplay = new ClassTreeView();
-
-    public Widget asWidget()
+    public Display getClassTreeDisplay()
     {
-        return this;
+        return classTreeDisplay;
+    }
+
+    public IsWidget getClassTreeDisplayWidget()
+    {
+        return classTreeDisplay;
     }
 
     public void setName(String name)
@@ -100,19 +111,14 @@ public class AccessibleClassView extends Composite implements SimpleAccessibleCl
         className.setText("Classname : " + classname);
     }
 
-    public AccessibleFieldMapPresenter.Display getFieldMapDisplay()
+    public HasClickHandlers getSetConfigButton()
     {
-        return fieldMapDisplay;
+        return setConfigButton;
     }
 
-    public Display getClassTreeDisplay()
+    public HasClickHandlers getSaveConfigButton()
     {
-        return classTreeDisplay;
-    }
-
-    public IsWidget getClassTreeDisplayWidget()
-    {
-        return classTreeDisplay;
+        return saveConfigButton;
     }
 
     public HasClickHandlers getImplListInput()
@@ -125,27 +131,17 @@ public class AccessibleClassView extends Composite implements SimpleAccessibleCl
         return implListInput.getItemText(implListInput.getSelectedIndex());
     }
 
-    public void addImplementation(String implementationClassName)
-    {
-        implListInput.addItem(implementationClassName);
-    }
-
-    public HasClickHandlers getSetConfigButton()
-    {
-        return setConfigButton;
-    }
-
-    public HasClickHandlers getSaveConfigButton()
-    {
-        return saveConfigButton;
-    }
-
     public void clearImpl()
     {
         for (int i = implListInput.getItemCount() - 1; i >= 0; i--)
         {
             implListInput.removeItem(i);
         }
+    }
+
+    public void addImplementation(String implementationClassName)
+    {
+        implListInput.addItem(implementationClassName);
     }
 
     public void setSelectedImplementation(String implementation)
@@ -157,5 +153,10 @@ public class AccessibleClassView extends Composite implements SimpleAccessibleCl
                 implListInput.setSelectedIndex(i);
             }
         }
+    }
+
+    public Widget asWidget()
+    {
+        return this;
     }
 }

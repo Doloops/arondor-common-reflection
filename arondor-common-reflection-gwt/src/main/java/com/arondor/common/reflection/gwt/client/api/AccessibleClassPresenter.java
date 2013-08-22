@@ -1,7 +1,6 @@
 package com.arondor.common.reflection.gwt.client.api;
 
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
-import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.google.gwt.user.client.ui.IsWidget;
 
 public interface AccessibleClassPresenter
@@ -12,7 +11,7 @@ public interface AccessibleClassPresenter
 
     void setObjectConfiguration(ObjectConfiguration objectConfiguration);
 
-    ObjectConfiguration getObjectConfiguration(ObjectConfigurationFactory objectConfigurationFactory);
+    ObjectConfiguration getObjectConfiguration();
 
     IsWidget getDisplayWidget();
 }

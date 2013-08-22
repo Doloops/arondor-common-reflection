@@ -12,9 +12,8 @@ import com.google.gwt.user.client.ui.IsWidget;
 
 public class AccessibleFieldPresenter
 {
+    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(AccessibleFieldPresenter.class.getName());
-
-    private final AccessibleField accessibleField;
 
     public interface Display extends IsWidget
     {
@@ -29,6 +28,8 @@ public class AccessibleFieldPresenter
         void setInputValue(String value);
     }
 
+    private final AccessibleField accessibleField;
+
     private final Display display;
 
     public AccessibleFieldPresenter(AccessibleField accessibleField, Display view)
@@ -42,13 +43,22 @@ public class AccessibleFieldPresenter
         display.setDescription(accessibleField.getDescription());
     }
 
-    public Display getDisplay()
-    {
-        return display;
-    }
-
     public void bind()
     {
+    }
+
+    public ElementConfiguration getElementConfiguration(ObjectConfigurationFactory objectConfigurationFactory)
+    {
+        if (PrimitiveTypeUtil.isPrimitiveType(accessibleField.getClassName()))
+        {
+            String input = display.getInputValue().getValue();
+
+            if (!input.trim().isEmpty())
+            {
+                return objectConfigurationFactory.createPrimitiveConfiguration(input);
+            }
+        }
+        return null;
     }
 
     public void setElementConfiguration(ElementConfiguration elementConfiguration)
@@ -64,18 +74,8 @@ public class AccessibleFieldPresenter
 
     }
 
-    public ElementConfiguration getElementConfiguration(ObjectConfigurationFactory objectConfigurationFactory)
+    public Display getDisplay()
     {
-        if (PrimitiveTypeUtil.isPrimitiveType(accessibleField.getClassName()))
-        {
-            String input = display.getInputValue().getValue();
-            LOG.finest("field=" + accessibleField.getName() + ", class=" + accessibleField.getClassName() + ", value="
-                    + input);
-            if (!input.trim().isEmpty())
-            {
-                return objectConfigurationFactory.createPrimitiveConfiguration(input);
-            }
-        }
-        return null;
+        return display;
     }
 }

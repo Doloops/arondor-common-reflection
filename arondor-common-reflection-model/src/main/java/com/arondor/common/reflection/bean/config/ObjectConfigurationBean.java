@@ -124,4 +124,10 @@ public class ObjectConfigurationBean implements ObjectConfiguration
     {
         this.objectName = objectName;
     }
+
+    @Override
+    public String toString()
+    {
+        return "ObjectConfigurationBean [className=" + className + ", fields=" + fields + "]";
+    }
 }

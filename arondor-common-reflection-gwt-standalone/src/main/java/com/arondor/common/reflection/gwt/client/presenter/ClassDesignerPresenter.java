@@ -28,7 +28,7 @@ public class ClassDesignerPresenter
         void setAccessibleClassView(AccessibleClassView accessibleClassView);
     }
 
-    private SimpleAccessibleClassPresenter classPresenter;
+    private HierarchicAccessibleClassPresenter classPresenter;
 
     private final Display display;
 
@@ -37,7 +37,7 @@ public class ClassDesignerPresenter
         this.display = view;
 
         bind();
-        classPresenter = new SimpleAccessibleClassPresenter(
+        classPresenter = new HierarchicAccessibleClassPresenter(
                 (GWTReflectionServiceAsync) GWT.create(GWTReflectionService.class), new AccessibleClassView());
         display.setAccessibleClassView((AccessibleClassView) classPresenter.getDisplay());
         classPresenter.setBaseClassName("com.arondor.common.reflection.gwt.server.samples.ParentTestClass");

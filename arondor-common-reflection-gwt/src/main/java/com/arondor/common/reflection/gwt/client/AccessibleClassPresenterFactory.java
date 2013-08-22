@@ -1,7 +1,7 @@
 package com.arondor.common.reflection.gwt.client;
 
 import com.arondor.common.reflection.gwt.client.api.AccessibleClassPresenter;
-import com.arondor.common.reflection.gwt.client.presenter.SimpleAccessibleClassPresenter;
+import com.arondor.common.reflection.gwt.client.presenter.HierarchicAccessibleClassPresenter;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionService;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.gwt.client.view.AccessibleClassView;
@@ -14,6 +14,6 @@ public class AccessibleClassPresenterFactory
 
     public static AccessibleClassPresenter createAccessibleClassPresenter()
     {
-        return new SimpleAccessibleClassPresenter(ACCESSIBLE_CLASS_SERVICE, new AccessibleClassView());
+        return new HierarchicAccessibleClassPresenter(ACCESSIBLE_CLASS_SERVICE, new AccessibleClassView());
     }
 }
