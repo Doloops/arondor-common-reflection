@@ -50,12 +50,10 @@ public class ClassTreeView extends Composite implements ClassTreePresenter.Displ
         }
     }
 
-    @Override
     public HandlerRegistration addSelectionHandler(final SelectionHandler<Display> selectionHandler)
     {
         return tree.addSelectionHandler(new SelectionHandler<TreeItem>()
         {
-            @Override
             public void onSelection(SelectionEvent<TreeItem> event)
             {
                 selectionHandler.onSelection(new DisplaySelectionEvent((Display) event.getSelectedItem()));

@@ -5,21 +5,25 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
+import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
+import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.arondor.common.reflection.model.java.AccessibleField;
 import com.arondor.common.reflection.util.PrimitiveTypeUtil;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ClassTreeNodePresenter
 {
-    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(ClassTreeNodePresenter.class.getName());
 
     public interface Display
     {
         AccessibleFieldMapPresenter.Display getFieldMapDisplay();
+
+        ImplementingClassPresenter.Display getImplementingClassDisplay();
 
         Display createChild();
 
@@ -28,79 +32,110 @@ public class ClassTreeNodePresenter
         ClassTreeNodePresenter getClassTreeNodePresenter();
 
         void setClassTreeNodePresenter(ClassTreeNodePresenter classTreeNodePresenter);
+
+        void clear();
     }
 
     private Map<String, ClassTreeNodePresenter> classTreeNodePresenterMap;
 
     private final Display display;
 
-    private final String baseClassName;
-
-    private String implClassName;
-
     private final String fieldName;
-
-    private ObjectConfiguration objectConfiguration;
 
     private AccessibleFieldMapPresenter fieldsPresenter;
 
+    private final ImplementingClassPresenter implementingClassPresenter;
+
     private final GWTReflectionServiceAsync rpcService;
 
-    public ClassTreeNodePresenter(GWTReflectionServiceAsync rpcService, String fieldName, String baseClassName,
+    public ClassTreeNodePresenter(GWTReflectionServiceAsync rpcService, String baseClassName, Display view)
+    {
+        this(rpcService, null, baseClassName, view);
+    }
+
+    private ClassTreeNodePresenter(GWTReflectionServiceAsync rpcService, String fieldName, String baseClassName,
             Display view)
     {
         this.fieldName = fieldName;
-        this.baseClassName = baseClassName;
         this.rpcService = rpcService;
         this.display = view;
-
         this.display.setClassTreeNodePresenter(this);
+
+        LOG.finest("At node : fieldName=" + fieldName);
 
         classTreeNodePresenterMap = new HashMap<String, ClassTreeNodePresenter>();
 
+        implementingClassPresenter = new ImplementingClassPresenter(rpcService, baseClassName,
+                display.getImplementingClassDisplay());
         fieldsPresenter = new AccessibleFieldMapPresenter(display.getFieldMapDisplay());
 
         bind();
 
-        String title = "";
         if (fieldName != null)
         {
-            title += fieldName + " : " + implClassName;
+            display.setNodeName(fieldName);
         }
         else
         {
-            title += baseClassName;
+            /**
+             * We are supposed to be root here
+             */
+            display.setNodeName("Root :" + baseClassName);
         }
-        display.setNodeName(title);
     }
 
     private void bind()
     {
-    }
-
-    private void fetchAccessibleClass(String className)
-    {
-        rpcService.getAccessibleClass(className, new AsyncCallback<AccessibleClass>()
+        implementingClassPresenter.addValueChangeHandler(new ValueChangeHandler<AccessibleClass>()
         {
-
-            public void onSuccess(AccessibleClass result)
+            public void onValueChange(ValueChangeEvent<AccessibleClass> event)
             {
-                buildTree(result);
+                updateAccessibleClass(event.getValue());
             }
 
-            public void onFailure(Throwable caught)
-            {
-                Window.alert("Error fetching Accessible Class");
-            }
         });
     }
 
-    public void addClassTreePresenter(String accessibleClassName)
+    private void updateAccessibleClass(AccessibleClass accessibleClass)
     {
-        fetchAccessibleClass(accessibleClassName);
+        updateAccessibleClass(accessibleClass, null);
     }
 
-    public void buildTree(AccessibleClass accessibleClass)
+    private void updateAccessibleClass(AccessibleClass accessibleClass, ObjectConfiguration objectConfiguration)
+    {
+        LOG.finest("updateAccessibleClass(class=" + accessibleClass + ", objectConfiguration=" + objectConfiguration
+                + ")");
+        classTreeNodePresenterMap.clear();
+        fieldsPresenter.clear();
+        display.clear();
+
+        if (accessibleClass != null)
+        {
+            buildTree(accessibleClass);
+            fieldsPresenter.setAccessibleFields(accessibleClass.getAccessibleFields());
+
+            if (objectConfiguration != null)
+            {
+                for (Map.Entry<String, ElementConfiguration> fieldEntry : objectConfiguration.getFields().entrySet())
+                {
+                    ClassTreeNodePresenter nodePresenter = classTreeNodePresenterMap.get(fieldEntry.getKey());
+                    if (nodePresenter != null)
+                    {
+                        if (fieldEntry.getValue() instanceof ObjectConfiguration)
+                        {
+                            nodePresenter.setObjectConfiguration((ObjectConfiguration) fieldEntry.getValue());
+                        }
+                        else
+                        {
+                        }
+                    }
+                    fieldsPresenter.setObjectConfiguration(objectConfiguration);
+                }
+            }
+        }
+    }
+
+    private void buildTree(AccessibleClass accessibleClass)
     {
         for (AccessibleField accessibleField : accessibleClass.getAccessibleFields().values())
         {
@@ -110,8 +145,7 @@ public class ClassTreeNodePresenter
             {
                 ClassTreeNodePresenter childPresenter = new ClassTreeNodePresenter(rpcService, fieldName,
                         fieldClassName, display.createChild());
-                classTreeNodePresenterMap.put(fieldClassName, childPresenter);
-                childPresenter.addClassTreePresenter(fieldClassName);
+                classTreeNodePresenterMap.put(fieldName, childPresenter);
             }
         }
     }
@@ -144,18 +178,12 @@ public class ClassTreeNodePresenter
 
     public String getBaseClassName()
     {
-        return baseClassName;
+        return implementingClassPresenter.getBaseClassName();
     }
 
-    public String getImplClassName()
+    public String getImplementClassName()
     {
-        return implClassName;
-    }
-
-    public void setImplClassName(String implClassName)
-    {
-        this.implClassName = implClassName;
-        display.setNodeName(fieldName + " : " + implClassName);
+        return implementingClassPresenter.getImplementClassName();
     }
 
     public Display getDisplay()
@@ -163,14 +191,52 @@ public class ClassTreeNodePresenter
         return display;
     }
 
-    public ObjectConfiguration getObjectConfiguration()
+    public ObjectConfiguration getObjectConfiguration(ObjectConfigurationFactory objectConfigurationFactory)
     {
+        if (implementingClassPresenter.getImplementClassName() == null)
+        {
+            return null;
+        }
+        ObjectConfiguration objectConfiguration = objectConfigurationFactory.createObjectConfiguration();
+        objectConfiguration.setFields(new HashMap<String, ElementConfiguration>());
+        objectConfiguration.setClassName(implementingClassPresenter.getImplementClassName());
+
+        updateChildObjectConfigurations(objectConfigurationFactory, objectConfiguration);
+
+        fieldsPresenter.updateFieldsConfiguration(objectConfigurationFactory, objectConfiguration);
+
         return objectConfiguration;
     }
 
-    public void setObjectConfiguration(ObjectConfiguration objectConfiguration)
+    private void updateChildObjectConfigurations(ObjectConfigurationFactory objectConfigurationFactory,
+            ObjectConfiguration objectConfiguration)
     {
-        this.objectConfiguration = objectConfiguration;
+        for (Map.Entry<String, ClassTreeNodePresenter> presentersEntry : classTreeNodePresenterMap.entrySet())
+        {
+            ObjectConfiguration childConfiguration = presentersEntry.getValue().getObjectConfiguration(
+                    objectConfigurationFactory);
+            if (childConfiguration != null)
+            {
+                objectConfiguration.getFields().put(presentersEntry.getKey(), childConfiguration);
+            }
+        }
+    }
+
+    public void setObjectConfiguration(final ObjectConfiguration objectConfiguration)
+    {
+        LOG.finest("setObjectConfiguration :" + objectConfiguration);
+        implementingClassPresenter.setImplementClassName(objectConfiguration.getClassName(),
+                new AsyncCallback<AccessibleClass>()
+                {
+                    public void onFailure(Throwable caught)
+                    {
+                    }
+
+                    public void onSuccess(AccessibleClass result)
+                    {
+                        updateAccessibleClass(result, objectConfiguration);
+                    }
+                });
     }
 
     public AccessibleFieldMapPresenter getFieldsPresenter()

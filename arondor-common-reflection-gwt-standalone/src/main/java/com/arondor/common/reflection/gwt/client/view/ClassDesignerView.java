@@ -1,50 +1,26 @@
 package com.arondor.common.reflection.gwt.client.view;
 
 import com.arondor.common.reflection.gwt.client.presenter.ClassDesignerPresenter;
+import com.arondor.common.reflection.gwt.client.presenter.HierarchicAccessibleClassPresenter;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ClassDesignerView extends Composite implements ClassDesignerPresenter.Display
 {
-    private AccessibleClassView accessibleClassView;
+    private Button getConfigButton = new Button("Get");
 
-    private Button getConfigButton;
-
-    private Button setConfigButton;
+    private Button setConfigButton = new Button("Set");
 
     private final AbsolutePanel content = new AbsolutePanel();
 
     public ClassDesignerView()
     {
+        content.add(getConfigButton);
+        content.add(setConfigButton);
         initWidget(content);
-
-//        AbsolutePanel btnGroup = new AbsolutePanel();
-//        btnGroup.setStyleName("btn-group");
-//
-//        content.add(new HTML("<h1>Class Designer</h1>"));
-//
-//        getConfigButton = new Button("Get");
-//        getConfigButton.setStyleName("btn");
-//        getConfigButton.addStyleName("btn-primary");
-//
-//        btnGroup.add(getConfigButton);
-//
-//        setConfigButton = new Button("Save");
-//        setConfigButton.setStyleName("btn");
-//        setConfigButton.addStyleName("btn-primary");
-//
-//        btnGroup.add(setConfigButton);
-//
-//        content.add(btnGroup);
-    }
-
-    public AccessibleClassView getAccessibleClassView()
-    {
-        return accessibleClassView;
     }
 
     public Widget asWidget()
@@ -52,9 +28,8 @@ public class ClassDesignerView extends Composite implements ClassDesignerPresent
         return this;
     }
 
-    public void setAccessibleClassView(AccessibleClassView accessibleClassView)
+    public void setAccessibleClassView(HierarchicAccessibleClassPresenter.Display accessibleClassView)
     {
-        this.accessibleClassView = accessibleClassView;
         this.content.add(accessibleClassView);
     }
 

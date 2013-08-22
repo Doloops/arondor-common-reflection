@@ -35,7 +35,7 @@ public class ClassTreePresenter
         this.accessibleClassName = accessibleClassName;
         this.display = view;
 
-        setRootNodePresenter(new ClassTreeNodePresenter(rpcService, null, accessibleClassName, display.createRootView()));
+        setRootNodePresenter(new ClassTreeNodePresenter(rpcService, accessibleClassName, display.createRootView()));
 
         bind();
     }
@@ -65,22 +65,22 @@ public class ClassTreePresenter
         });
     }
 
-    public ClassTreeNodePresenter findNode(String classType)
-    {
-        if (rootNodePresenter.getBaseClassName().equals(classType))
-        {
-            return rootNodePresenter;
-        }
-        else
-        {
-            ClassTreeNodePresenter result = rootNodePresenter.findNode(classType);
-            if (result != null)
-            {
-                return result;
-            }
-        }
-        return null;
-    }
+    // public ClassTreeNodePresenter findNode(String classType)
+    // {
+    // if (rootNodePresenter.getBaseClassName().equals(classType))
+    // {
+    // return rootNodePresenter;
+    // }
+    // else
+    // {
+    // ClassTreeNodePresenter result = rootNodePresenter.findNode(classType);
+    // if (result != null)
+    // {
+    // return result;
+    // }
+    // }
+    // return null;
+    // }
 
     public ClassTreeNodePresenter getRootNodePresenter()
     {

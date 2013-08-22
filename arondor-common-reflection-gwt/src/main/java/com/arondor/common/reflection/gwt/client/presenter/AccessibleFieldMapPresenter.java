@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.IsWidget;
 
 public class AccessibleFieldMapPresenter
 {
-    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(AccessibleFieldMapPresenter.class.getName());
 
     public interface Display extends IsWidget
@@ -26,9 +25,7 @@ public class AccessibleFieldMapPresenter
 
     private final Display display;
 
-    private Map<String, AccessibleFieldPresenter> accessibleFieldPresenters = null;
-
-    private String className;
+    private final Map<String, AccessibleFieldPresenter> accessibleFieldPresenters = new HashMap<String, AccessibleFieldPresenter>();
 
     public AccessibleFieldMapPresenter(Display view)
     {
@@ -43,19 +40,14 @@ public class AccessibleFieldMapPresenter
 
     public void setAccessibleFields(Map<String, AccessibleField> accessibleFields)
     {
-        LOG.finest("setAccessibleFields");
-        if (accessibleFieldPresenters == null)
+        LOG.finest("setAccessibleFields : " + accessibleFields.size() + " fields");
+        for (AccessibleField accessibleField : accessibleFields.values())
         {
-            accessibleFieldPresenters = new HashMap<String, AccessibleFieldPresenter>();
-            for (AccessibleField accessibleField : accessibleFields.values())
+            if (PrimitiveTypeUtil.isPrimitiveType(accessibleField.getClassName()))
             {
-                if (PrimitiveTypeUtil.isPrimitiveType(accessibleField.getClassName()))
-                {
-                    AccessibleFieldPresenter.Display fieldDisplay = getDisplay().createAccessibleFieldDisplay();
-                    AccessibleFieldPresenter fieldPresenter = new AccessibleFieldPresenter(accessibleField,
-                            fieldDisplay);
-                    accessibleFieldPresenters.put(accessibleField.getName(), fieldPresenter);
-                }
+                AccessibleFieldPresenter.Display fieldDisplay = getDisplay().createAccessibleFieldDisplay();
+                AccessibleFieldPresenter fieldPresenter = new AccessibleFieldPresenter(accessibleField, fieldDisplay);
+                accessibleFieldPresenters.put(accessibleField.getName(), fieldPresenter);
             }
         }
     }
@@ -75,10 +67,9 @@ public class AccessibleFieldMapPresenter
         }
     }
 
-    public void saveObjectConfiguration(ObjectConfigurationFactory objectConfigurationFactory,
+    public void updateFieldsConfiguration(ObjectConfigurationFactory objectConfigurationFactory,
             ObjectConfiguration objectConfiguration)
     {
-        objectConfiguration.setFields(new HashMap<String, ElementConfiguration>());
         for (Map.Entry<String, AccessibleFieldPresenter> fieldEntry : accessibleFieldPresenters.entrySet())
         {
             ElementConfiguration elementConfiguration = fieldEntry.getValue().getElementConfiguration(
@@ -100,13 +91,9 @@ public class AccessibleFieldMapPresenter
         return display;
     }
 
-    public void setClassName(String className)
+    public void clear()
     {
-        this.className = className;
-    }
-
-    public String getClassName()
-    {
-        return className;
+        accessibleFieldPresenters.clear();
+        display.clearList();
     }
 }
