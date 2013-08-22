@@ -31,7 +31,13 @@
 			<artifactId>gwt-user</artifactId>
 			<version>${gwt.version}</version>
 			<scope>provided</scope>
-		</dependency>		
+		</dependency>
+		<!-- This dependency is only used by MockitoReflectionInstantiator -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.9.0</version>
+		</dependency>
 	</dependencies>
 
 
