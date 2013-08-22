@@ -17,11 +17,14 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import com.arondor.common.reflection.bean.config.ObjectConfigurationFactoryBean;
 import com.arondor.common.reflection.catalog.SimpleAccessibleClassCatalog;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter.Display;
 import com.arondor.common.reflection.gwt.client.testclasses.ParentTestClass;
 import com.arondor.common.reflection.gwt.client.testclasses.TestClass;
 import com.arondor.common.reflection.gwt.client.testclasses.TestInterface;
+import com.arondor.common.reflection.model.config.ObjectConfiguration;
+import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.parser.java.JavaAccessibleClassParser;
 import com.arondor.common.reflection.parser.java.JavaClassPathAccessibleClassProvider;
 import com.arondor.common.reflection.service.DefaultReflectionService;
@@ -32,6 +35,8 @@ import com.google.gwt.event.shared.HandlerRegistration;
 public class TestClassTreeNodePresenter
 {
     private MockGWTReflectionServiceAsync rpcService;
+
+    private ObjectConfigurationFactory factory = new ObjectConfigurationFactoryBean();
 
     @Before
     public void init()
@@ -108,6 +113,26 @@ public class TestClassTreeNodePresenter
          * that selected the class
          */
         verify(nodeView.getImplementingClassDisplay(), times(0)).selectImplementingClass(anyString());
+        assertEquals(TestClass.class.getName(), nodePresenter.getImplementClassName());
+    }
+
+    @Test
+    public void testChangeBaseClassNameFromObjectConfiguration()
+    {
+        ClassTreeNodePresenter.Display nodeView = mockClassTreeNodePresenterDisplay();
+
+        ClassTreeNodePresenter nodePresenter = new ClassTreeNodePresenter(rpcService, TestInterface.class.getName(),
+                nodeView);
+        assertEquals(TestInterface.class.getName(), nodePresenter.getBaseClassName());
+        assertNull(nodePresenter.getImplementClassName());
+        verify(nodeView.getImplementingClassDisplay()).setBaseClassName(TestInterface.class.getName());
+
+        ObjectConfiguration objectConfiguration = factory.createObjectConfiguration();
+        objectConfiguration.setClassName(TestClass.class.getName());
+
+        nodePresenter.setObjectConfiguration(objectConfiguration);
+
+        verify(nodeView.getImplementingClassDisplay(), times(1)).selectImplementingClass(anyString());
         assertEquals(TestClass.class.getName(), nodePresenter.getImplementClassName());
     }
 }
