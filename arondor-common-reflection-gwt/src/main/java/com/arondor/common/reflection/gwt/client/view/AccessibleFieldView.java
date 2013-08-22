@@ -72,6 +72,5 @@ public class AccessibleFieldView extends Composite implements AccessibleFieldPre
     public void setInputValue(String value)
     {
         inputValue.setValue(value);
-        LOG.finest(name + " : " + value + " - " + inputValue);
     }
 }

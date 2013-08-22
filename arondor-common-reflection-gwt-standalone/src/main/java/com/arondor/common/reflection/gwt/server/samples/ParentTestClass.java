@@ -5,32 +5,33 @@ import com.arondor.common.management.mbean.annotation.Description;
 public class ParentTestClass
 {
     @Description("Test Class Field")
-    private TestClass testClass;
+    private TestInterface testInterfaceField;
 
     @Description("Other property")
-    private TestClassBis testClassBis;
+    private TestClassBis testClassBisField;
 
     @Description("Primitive property")
     private String primitiveField;
 
-    public TestClass getTestClass()
+
+    public TestInterface getTestInterfaceField()
     {
-        return testClass;
+        return testInterfaceField;
     }
 
-    public void setTestClass(TestClass testClass)
+    public void setTestInterfaceField(TestInterface testInterfaceField)
     {
-        this.testClass = testClass;
+        this.testInterfaceField = testInterfaceField;
     }
 
-    public TestClassBis getTestClassBis()
+    public TestClassBis getTestClassBisField()
     {
-        return testClassBis;
+        return testClassBisField;
     }
 
-    public void setTestClassBis(TestClassBis testClassBis)
+    public void setTestClassBisField(TestClassBis testClassBisField)
     {
-        this.testClassBis = testClassBis;
+        this.testClassBisField = testClassBisField;
     }
 
     public String getPrimitiveField()
@@ -42,5 +43,6 @@ public class ParentTestClass
     {
         this.primitiveField = primitiveField;
     }
+
 
 }

@@ -3,7 +3,9 @@ package com.arondor.common.reflection.gwt.client.presenter;
 import java.util.logging.Logger;
 
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
-import com.arondor.common.reflection.gwt.client.view.ClassTreeNodeView;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Tree;
 
@@ -14,6 +16,9 @@ public class ClassTreePresenter
 
     public interface Display extends IsWidget
     {
+        ClassTreeNodePresenter.Display createRootView();
+
+        HandlerRegistration addSelectionHandler(SelectionHandler<ClassTreeNodePresenter.Display> selectionHandler);
 
         Tree getTree();
     }
@@ -24,7 +29,7 @@ public class ClassTreePresenter
 
     private final GWTReflectionServiceAsync rpcService;
 
-    private ClassTreeNodePresenter parentNodePresenter;
+    private ClassTreeNodePresenter rootNodePresenter;
 
     public ClassTreePresenter(String accessibleClassName, GWTReflectionServiceAsync rpcService, Display view)
     {
@@ -32,8 +37,7 @@ public class ClassTreePresenter
         this.rpcService = rpcService;
         this.display = view;
 
-        setParentNodePresenter(new ClassTreeNodePresenter(accessibleClassName, rpcService, new ClassTreeNodeView(
-                display.getTree())));
+        setRootNodePresenter(new ClassTreeNodePresenter(rpcService, null, accessibleClassName, display.createRootView()));
 
         bind();
     }
@@ -53,13 +57,33 @@ public class ClassTreePresenter
         return getDisplay();
     }
 
-    public ClassTreeNodePresenter getParentNodePresenter()
+    public ClassTreeNodePresenter getRootNodePresenter()
     {
-        return parentNodePresenter;
+        return rootNodePresenter;
     }
 
-    public void setParentNodePresenter(ClassTreeNodePresenter parentNodePresenter)
+    public void setRootNodePresenter(ClassTreeNodePresenter rootNodePresenter)
     {
-        this.parentNodePresenter = parentNodePresenter;
+        this.rootNodePresenter = rootNodePresenter;
+    }
+
+    private static class ClassTreeNodePresenterSelectionEvent extends SelectionEvent<ClassTreeNodePresenter>
+    {
+        protected ClassTreeNodePresenterSelectionEvent(ClassTreeNodePresenter selectedItem)
+        {
+            super(selectedItem);
+        }
+    }
+
+    public HandlerRegistration addSelectionHandler(final SelectionHandler<ClassTreeNodePresenter> selectionHandler)
+    {
+        return display.addSelectionHandler(new SelectionHandler<ClassTreeNodePresenter.Display>()
+        {
+            public void onSelection(SelectionEvent<ClassTreeNodePresenter.Display> event)
+            {
+                selectionHandler.onSelection(new ClassTreeNodePresenterSelectionEvent(event.getSelectedItem()
+                        .getClassTreeNodePresenter()));
+            }
+        });
     }
 }

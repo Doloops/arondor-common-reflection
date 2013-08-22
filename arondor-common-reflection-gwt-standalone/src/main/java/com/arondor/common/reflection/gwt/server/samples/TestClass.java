@@ -2,7 +2,7 @@ package com.arondor.common.reflection.gwt.server.samples;
 
 import com.arondor.common.management.mbean.annotation.Description;
 
-public class TestClass
+public class TestClass implements TestInterface
 {
     @Description("This is a string property")
     private String aStringProperty;

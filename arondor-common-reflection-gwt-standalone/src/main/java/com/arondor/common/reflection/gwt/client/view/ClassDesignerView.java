@@ -22,24 +22,24 @@ public class ClassDesignerView extends Composite implements ClassDesignerPresent
     {
         initWidget(content);
 
-        AbsolutePanel btnGroup = new AbsolutePanel();
-        btnGroup.setStyleName("btn-group");
-
-        content.add(new HTML("<h1>Class Designer</h1>"));
-
-        getConfigButton = new Button("Get");
-        getConfigButton.setStyleName("btn");
-        getConfigButton.addStyleName("btn-primary");
-
-        btnGroup.add(getConfigButton);
-
-        setConfigButton = new Button("Set");
-        setConfigButton.setStyleName("btn");
-        setConfigButton.addStyleName("btn-primary");
-
-        btnGroup.add(setConfigButton);
-
-        content.add(btnGroup);
+//        AbsolutePanel btnGroup = new AbsolutePanel();
+//        btnGroup.setStyleName("btn-group");
+//
+//        content.add(new HTML("<h1>Class Designer</h1>"));
+//
+//        getConfigButton = new Button("Get");
+//        getConfigButton.setStyleName("btn");
+//        getConfigButton.addStyleName("btn-primary");
+//
+//        btnGroup.add(getConfigButton);
+//
+//        setConfigButton = new Button("Save");
+//        setConfigButton.setStyleName("btn");
+//        setConfigButton.addStyleName("btn-primary");
+//
+//        btnGroup.add(setConfigButton);
+//
+//        content.add(btnGroup);
     }
 
     public AccessibleClassView getAccessibleClassView()

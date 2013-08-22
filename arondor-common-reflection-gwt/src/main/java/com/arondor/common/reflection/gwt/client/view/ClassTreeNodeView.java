@@ -1,48 +1,53 @@
 package com.arondor.common.reflection.gwt.client.view;
 
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter;
+import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter.Display;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.UIObject;
-import com.google.gwt.user.client.ui.Widget;
 
-public class ClassTreeNodeView extends Composite implements ClassTreeNodePresenter.Display
+public class ClassTreeNodeView extends TreeItem implements ClassTreeNodePresenter.Display
 {
-
-    private TreeItem nodeItem = new TreeItem();
 
     public ClassTreeNodeView(UIObject parentNode)
     {
         AbsolutePanel content = new AbsolutePanel();
-        initWidget(content);
 
         if (parentNode instanceof Tree)
-            ((Tree) parentNode).addItem(nodeItem);
+        {
+            ((Tree) parentNode).addItem(this);
+        }
         else if (parentNode instanceof TreeItem)
-            ((TreeItem) parentNode).addItem(nodeItem);
-    }
-
-    public Widget asWidget()
-    {
-        return this;
-    }
-
-    public void addItem(String child)
-    {
-        TreeItem childItem = new TreeItem();
-        childItem.setHTML(child);
-        nodeItem.addItem(childItem);
+        {
+            ((TreeItem) parentNode).addItem(this);
+        }
     }
 
     public void setNodeName(String name)
     {
-        nodeItem.setHTML(name);
+        setHTML(name);
     }
 
     public TreeItem getTreeItem()
     {
-        return nodeItem;
+        return this;
+    }
+
+    public Display createChild()
+    {
+        return new ClassTreeNodeView(getTreeItem());
+    }
+
+    private ClassTreeNodePresenter classTreeNodePresenter;
+
+    public void setClassTreeNodePresenter(ClassTreeNodePresenter classTreeNodePresenter)
+    {
+        this.classTreeNodePresenter = classTreeNodePresenter;
+    }
+
+    public ClassTreeNodePresenter getClassTreeNodePresenter()
+    {
+        return classTreeNodePresenter;
     }
 }

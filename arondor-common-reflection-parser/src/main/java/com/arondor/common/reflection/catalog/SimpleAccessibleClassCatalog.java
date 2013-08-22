@@ -17,8 +17,19 @@ import com.arondor.common.reflection.model.java.AccessibleClass;
  */
 public class SimpleAccessibleClassCatalog implements AccessibleClassCatalog
 {
-
     private Map<String, AccessibleClass> accessibleClassMap = new HashMap<String, AccessibleClass>();
+
+    private boolean allowSuperclassesInImplementingClases = false;
+
+    public boolean isAllowSuperclassesInImplementingClases()
+    {
+        return allowSuperclassesInImplementingClases;
+    }
+
+    public void setAllowSuperclassesInImplementingClases(boolean allowSuperclassesInImplementingClases)
+    {
+        this.allowSuperclassesInImplementingClases = allowSuperclassesInImplementingClases;
+    }
 
     public void addAccessibleClass(AccessibleClass accessibleClass)
     {
@@ -49,8 +60,18 @@ public class SimpleAccessibleClassCatalog implements AccessibleClassCatalog
                     break;
                 }
             }
+            if (isAllowSuperclassesInImplementingClases())
+            {
+                if (clazz.getSuperclass().equals(desiredInterfaceName))
+                {
+                    result.add(clazz);
+                }
+                else if (clazz.getName().equals(desiredInterfaceName))
+                {
+                    result.add(clazz);
+                }
+            }
         }
         return result;
     }
-
 }
