@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.model.java.AccessibleClass;
+import com.arondor.common.reflection.util.PrimitiveTypeUtil;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -96,6 +97,15 @@ public class ImplementingClassPresenter
 
     private void fetchBaseClass(final Runnable afterFetch)
     {
+        if (PrimitiveTypeUtil.isPrimitiveType(baseClassName))
+        {
+            implementClassName = baseClassName;
+            if (afterFetch != null)
+            {
+                afterFetch.run();
+            }
+            return;
+        }
         final List<String> implementingClasses = new ArrayList<String>();
         implementingClasses.add(NULL_VALUE);
         rpcService.getAccessibleClass(baseClassName, new AsyncCallback<AccessibleClass>()

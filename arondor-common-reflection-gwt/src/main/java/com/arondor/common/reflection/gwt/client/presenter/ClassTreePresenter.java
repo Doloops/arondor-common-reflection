@@ -1,41 +1,25 @@
 package com.arondor.common.reflection.gwt.client.presenter;
 
-import java.util.logging.Logger;
-
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Tree;
 
 public class ClassTreePresenter
 {
-
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(ClassTreePresenter.class.getName());
-
     public interface Display extends IsWidget
     {
-        ClassTreeNodePresenter.Display createRootView();
-
-        HandlerRegistration addSelectionHandler(SelectionHandler<ClassTreeNodePresenter.Display> selectionHandler);
-
-        Tree getTree();
+        ClassTreeNodePresenter.ClassDisplay createRootView(String baseClassName);
     }
 
-    private ClassTreeNodePresenter rootNodePresenter;
-
-    private final String accessibleClassName;
+    private TreeNodePresenter rootNodePresenter;
 
     private final Display display;
 
-    public ClassTreePresenter(GWTReflectionServiceAsync rpcService, String accessibleClassName, Display view)
+    public ClassTreePresenter(GWTReflectionServiceAsync rpcService, String baseClassName, Display view)
     {
-        this.accessibleClassName = accessibleClassName;
         this.display = view;
 
-        setRootNodePresenter(new ClassTreeNodePresenter(rpcService, accessibleClassName, display.createRootView()));
+        setRootNodePresenter(new ClassTreeNodePresenter(rpcService, baseClassName,
+                display.createRootView(baseClassName)));
 
         bind();
     }
@@ -45,27 +29,7 @@ public class ClassTreePresenter
 
     }
 
-    private static class ClassTreeNodePresenterSelectionEvent extends SelectionEvent<ClassTreeNodePresenter>
-    {
-        protected ClassTreeNodePresenterSelectionEvent(ClassTreeNodePresenter selectedItem)
-        {
-            super(selectedItem);
-        }
-    }
-
-    public HandlerRegistration addSelectionHandler(final SelectionHandler<ClassTreeNodePresenter> selectionHandler)
-    {
-        return display.addSelectionHandler(new SelectionHandler<ClassTreeNodePresenter.Display>()
-        {
-            public void onSelection(SelectionEvent<ClassTreeNodePresenter.Display> event)
-            {
-                selectionHandler.onSelection(new ClassTreeNodePresenterSelectionEvent(event.getSelectedItem()
-                        .getClassTreeNodePresenter()));
-            }
-        });
-    }
-
-    public ClassTreeNodePresenter getRootNodePresenter()
+    public TreeNodePresenter getRootNodePresenter()
     {
         return rootNodePresenter;
     }
@@ -73,11 +37,6 @@ public class ClassTreePresenter
     public void setRootNodePresenter(ClassTreeNodePresenter rootNodePresenter)
     {
         this.rootNodePresenter = rootNodePresenter;
-    }
-
-    public String getAccessibleClassName()
-    {
-        return accessibleClassName;
     }
 
     public Display getDisplay()

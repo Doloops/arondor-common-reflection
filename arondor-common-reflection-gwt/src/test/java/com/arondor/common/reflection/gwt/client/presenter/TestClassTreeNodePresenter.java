@@ -19,7 +19,7 @@ import org.mockito.stubbing.Answer;
 
 import com.arondor.common.reflection.bean.config.ObjectConfigurationFactoryBean;
 import com.arondor.common.reflection.catalog.SimpleAccessibleClassCatalog;
-import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter.Display;
+import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter.ClassDisplay;
 import com.arondor.common.reflection.gwt.client.testclasses.ParentTestClass;
 import com.arondor.common.reflection.gwt.client.testclasses.TestClass;
 import com.arondor.common.reflection.gwt.client.testclasses.TestInterface;
@@ -53,26 +53,23 @@ public class TestClassTreeNodePresenter
         rpcService = new MockGWTReflectionServiceAsync(reflectionService);
     }
 
-    private ClassTreeNodePresenter.Display mockClassTreeNodePresenterDisplay()
+    private ClassTreeNodePresenter.ClassDisplay mockClassTreeNodePresenterDisplay()
     {
-        ClassTreeNodePresenter.Display nodeView = mock(ClassTreeNodePresenter.Display.class);
+        ClassTreeNodePresenter.ClassDisplay nodeView = mock(ClassTreeNodePresenter.ClassDisplay.class);
         ImplementingClassPresenter.Display implView = mock(ImplementingClassPresenter.Display.class);
-        AccessibleFieldMapPresenter.Display fieldsView = mock(AccessibleFieldMapPresenter.Display.class);
-
-        when(fieldsView.createAccessibleFieldDisplay()).thenAnswer(new Answer<AccessibleFieldPresenter.Display>()
-        {
-            public com.arondor.common.reflection.gwt.client.presenter.AccessibleFieldPresenter.Display answer(
-                    InvocationOnMock invocation) throws Throwable
-            {
-                return mock(AccessibleFieldPresenter.Display.class);
-            }
-        });
         when(nodeView.getImplementingClassDisplay()).thenReturn(implView);
-        when(nodeView.getFieldMapDisplay()).thenReturn(fieldsView);
-        when(nodeView.createChild()).thenAnswer(new Answer<ClassTreeNodePresenter.Display>()
+        when(nodeView.createPrimitiveChild(anyString())).thenAnswer(
+                new Answer<PrimitiveTreeNodePresenter.PrimitiveDisplay>()
+                {
+                    public PrimitiveTreeNodePresenter.PrimitiveDisplay answer(InvocationOnMock invocation)
+                            throws Throwable
+                    {
+                        return mock(PrimitiveTreeNodePresenter.PrimitiveDisplay.class);
+                    }
+                });
+        when(nodeView.createClassChild()).thenAnswer(new Answer<ClassTreeNodePresenter.ClassDisplay>()
         {
-
-            public Display answer(InvocationOnMock invocation) throws Throwable
+            public ClassDisplay answer(InvocationOnMock invocation) throws Throwable
             {
                 return mockClassTreeNodePresenterDisplay();
             }
@@ -83,7 +80,7 @@ public class TestClassTreeNodePresenter
     @Test
     public void testChangeBaseClassName()
     {
-        ClassTreeNodePresenter.Display nodeView = mockClassTreeNodePresenterDisplay();
+        ClassTreeNodePresenter.ClassDisplay nodeView = mockClassTreeNodePresenterDisplay();
 
         final List<ValueChangeHandler<String>> changeHandlers = new ArrayList<ValueChangeHandler<String>>();
         when(nodeView.getImplementingClassDisplay().addValueChangeHandler(any(ValueChangeHandler.class))).then(
@@ -119,7 +116,7 @@ public class TestClassTreeNodePresenter
     @Test
     public void testChangeBaseClassNameFromObjectConfiguration()
     {
-        ClassTreeNodePresenter.Display nodeView = mockClassTreeNodePresenterDisplay();
+        ClassTreeNodePresenter.ClassDisplay nodeView = mockClassTreeNodePresenterDisplay();
 
         ClassTreeNodePresenter nodePresenter = new ClassTreeNodePresenter(rpcService, TestInterface.class.getName(),
                 nodeView);
@@ -130,7 +127,7 @@ public class TestClassTreeNodePresenter
         ObjectConfiguration objectConfiguration = factory.createObjectConfiguration();
         objectConfiguration.setClassName(TestClass.class.getName());
 
-        nodePresenter.setObjectConfiguration(objectConfiguration);
+        nodePresenter.setElementConfiguration(objectConfiguration);
 
         verify(nodeView.getImplementingClassDisplay(), times(1)).selectImplementingClass(anyString());
         assertEquals(TestClass.class.getName(), nodePresenter.getImplementClassName());

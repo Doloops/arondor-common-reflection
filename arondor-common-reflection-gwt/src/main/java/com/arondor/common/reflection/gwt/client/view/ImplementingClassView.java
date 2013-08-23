@@ -5,7 +5,6 @@ import java.util.Collection;
 import com.arondor.common.reflection.gwt.client.presenter.ImplementingClassPresenter.Display;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
@@ -29,14 +28,6 @@ public class ImplementingClassView extends Composite implements Display
         for (String implementingClass : implementingClasses)
         {
             implementingListInput.addItem(implementingClass);
-        }
-    }
-
-    private static final class StringValueChangeEvent extends ValueChangeEvent<String>
-    {
-        public StringValueChangeEvent(String value)
-        {
-            super(value);
         }
     }
 

@@ -6,8 +6,6 @@ import com.google.gwt.user.client.ui.IsWidget;
 
 public interface AccessibleClassPresenter
 {
-    String getBaseClassName();
-
     void setObjectConfiguration(ObjectConfiguration objectConfiguration);
 
     ObjectConfiguration getObjectConfiguration(ObjectConfigurationFactory objectConfigurationFactory);
