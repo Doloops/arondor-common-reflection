@@ -14,7 +14,7 @@ public class AbstractTreeNodeView extends TreeItem
 {
     private final Label nodeLabel = new Label("");
 
-    private static final int NODE_LABEL_MARGIN_WIDTH = 100;
+    private static final int NODE_LABEL_MARGIN_WIDTH = 140;
 
     private HorizontalPanel contents = new HorizontalPanel();
 

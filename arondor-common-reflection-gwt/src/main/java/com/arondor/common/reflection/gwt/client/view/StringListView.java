@@ -27,6 +27,7 @@ public class StringListView extends AbstractTreeNodeView implements StringListDi
         for (String value : values)
         {
             stringBuilder.append(value);
+            stringBuilder.append('\n');
         }
         textArea.setValue(stringBuilder.toString());
     }

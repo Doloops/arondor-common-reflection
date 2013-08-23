@@ -94,8 +94,8 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
 
     private void updateAccessibleClass(AccessibleClass accessibleClass, ObjectConfiguration objectConfiguration)
     {
-        LOG.finest("updateAccessibleClass(class=" + accessibleClass + ", objectConfiguration=" + objectConfiguration
-                + ")");
+        LOG.finest("field=" + fieldName + ", updateAccessibleClass(class=" + accessibleClass.getName()
+                + ", objectConfiguration=" + objectConfiguration + ")");
         classTreeNodePresenterMap.clear();
         display.clear();
 
@@ -163,7 +163,9 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
                 childPresenter = new ClassTreeNodePresenter(rpcService, fieldName, fieldClassName,
                         display.createClassChild());
             }
-            childPresenter.getDisplay().setNodeDescription(accessibleField.getDescription());
+            String nodeDescription = (accessibleField.getDescription() != null ? accessibleField.getDescription() : "")
+                    + " (" + fieldClassName + ")";
+            childPresenter.getDisplay().setNodeDescription(nodeDescription);
             classTreeNodePresenterMap.put(fieldName, childPresenter);
         }
     }
