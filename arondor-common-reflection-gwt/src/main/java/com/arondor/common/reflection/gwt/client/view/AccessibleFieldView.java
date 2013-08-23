@@ -3,6 +3,8 @@ package com.arondor.common.reflection.gwt.client.view;
 import java.util.logging.Logger;
 
 import com.arondor.common.reflection.gwt.client.presenter.AccessibleFieldPresenter;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
@@ -232,7 +234,17 @@ public class AccessibleFieldView extends Composite implements AccessibleFieldPre
 
         if (inputValue != null)
         {
-            inputValue.setEnabled(configurableCheckBox.getValue());
+            // inputValue.setEnabled(configurableCheckBox.getValue());
+
+            inputValue.addClickHandler(new ClickHandler()
+            {
+
+                @Override
+                public void onClick(ClickEvent event)
+                {
+                    configurableCheckBox.setValue(true);
+                }
+            });
         }
         fields.setWidget(row, 4, inputValue);
     }
