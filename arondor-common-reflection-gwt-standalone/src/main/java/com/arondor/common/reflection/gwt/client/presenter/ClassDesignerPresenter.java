@@ -82,7 +82,7 @@ public class ClassDesignerPresenter
             {
                 ObjectConfiguration objectConfiguration = classPresenter
                         .getObjectConfiguration(objectConfigurationFactory);
-                LOG.info("GET" + objectConfiguration);
+                LOG.info("GET - " + objectConfiguration);
             }
         });
 

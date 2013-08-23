@@ -44,4 +44,10 @@ public class ListConfigurationBean extends ElementConfigurationBean implements L
         this.listConfiguration = listConfiguration;
     }
 
+    @Override
+    public String toString()
+    {
+        return "ListConfigurationBean [listConfiguration=" + listConfiguration + "]";
+    }
+
 }

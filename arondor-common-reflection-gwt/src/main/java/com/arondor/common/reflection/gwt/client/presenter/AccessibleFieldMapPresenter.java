@@ -49,6 +49,20 @@ public class AccessibleFieldMapPresenter
                 AccessibleFieldPresenter fieldPresenter = new AccessibleFieldPresenter(accessibleField, fieldDisplay);
                 accessibleFieldPresenters.put(accessibleField.getName(), fieldPresenter);
             }
+            else if (accessibleField.getClassName().equals("java.util.List"))
+            // && accessibleField.getGenericParameterClassList().size() == 1
+            // &&
+            // accessibleField.getGenericParameterClassList().get(0).equals("java.lang.String")
+            {
+                LOG.finest("getGenericParameterClassList " + accessibleField.getGenericParameterClassList());
+                AccessibleFieldPresenter.Display fieldDisplay = getDisplay().createAccessibleFieldDisplay();
+                AccessibleFieldPresenter fieldPresenter = new AccessibleFieldPresenter(accessibleField, fieldDisplay);
+                accessibleFieldPresenters.put(accessibleField.getName(), fieldPresenter);
+            }
+            else
+            {
+                LOG.finest(accessibleField.getClassName());
+            }
         }
     }
 

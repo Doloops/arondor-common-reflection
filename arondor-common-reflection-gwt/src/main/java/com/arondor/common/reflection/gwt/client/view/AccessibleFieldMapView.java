@@ -38,10 +38,11 @@ public class AccessibleFieldMapView extends Composite implements AccessibleField
         fields.addStyleName("table-bordered");
 
         int row = 0;
-        fields.setText(row, 0, "Name");
-        fields.setText(row, 1, "Classname");
-        fields.setText(row, 2, "Description");
-        fields.setText(row, 3, "Value");
+        fields.setText(row, 1, "");
+        fields.setText(row, 1, "Name");
+        fields.setText(row, 2, "Classname");
+        fields.setText(row, 3, "Description");
+        fields.setText(row, 4, "Value");
         fields.getRowFormatter().setStyleName(0, "text-center");
 
         form.add(fields);

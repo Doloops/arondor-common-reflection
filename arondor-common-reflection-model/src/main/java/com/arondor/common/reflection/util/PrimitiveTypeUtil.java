@@ -9,7 +9,8 @@ public class PrimitiveTypeUtil
 
     private static final Class<?> PRIMITIVES[] = { java.lang.String.class, java.lang.Long.class,
             java.lang.Integer.class, java.lang.Float.class, java.lang.Boolean.class, java.lang.Double.class,
-            java.lang.Character.class, boolean.class, int.class, long.class, double.class, float.class, char.class };
+            java.lang.Character.class, boolean.class, int.class, long.class, double.class, float.class, char.class,
+            short.class, java.lang.Short.class, byte.class, java.lang.Byte.class };
 
     public static boolean isPrimitiveType(String clazzName)
     {

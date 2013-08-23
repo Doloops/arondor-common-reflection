@@ -1,8 +1,10 @@
 package com.arondor.common.reflection.gwt.client.presenter;
 
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import com.arondor.common.reflection.model.config.ElementConfiguration;
+import com.arondor.common.reflection.model.config.ListConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
 import com.arondor.common.reflection.model.java.AccessibleField;
@@ -23,9 +25,11 @@ public class AccessibleFieldPresenter
 
         void setDescription(String description);
 
-        HasValue<String> getInputValue();
+        HasValue<Object> getInputValue();
 
-        void setInputValue(String value);
+        void setInputValue(Object value);
+
+        boolean getToConfig();
     }
 
     private final AccessibleField accessibleField;
@@ -49,13 +53,45 @@ public class AccessibleFieldPresenter
 
     public ElementConfiguration getElementConfiguration(ObjectConfigurationFactory objectConfigurationFactory)
     {
-        if (PrimitiveTypeUtil.isPrimitiveType(accessibleField.getClassName()))
+        if (display.getToConfig())
         {
-            String input = display.getInputValue().getValue();
-
-            if (!input.trim().isEmpty())
+            if (PrimitiveTypeUtil.isPrimitiveType(accessibleField.getClassName()))
             {
-                return objectConfigurationFactory.createPrimitiveConfiguration(input);
+                Object input = display.getInputValue().getValue();
+
+                if (input != null)
+                {
+                    if (!input.toString().trim().isEmpty())
+                    {
+
+                        return objectConfigurationFactory.createPrimitiveConfiguration(input.toString());
+                    }
+                }
+            }
+            if (accessibleField.getClassName().equals("java.util.List"))
+            // && accessibleField.getGenericParameterClassList().size() == 1
+            // &&
+            // accessibleField.getGenericParameterClassList().get(0).equals("java.lang.String")
+            {
+                Object input = display.getInputValue().getValue();
+
+                if (input != null)
+                {
+                    if (!input.toString().trim().isEmpty())
+                    {
+                        ListConfiguration listConf = objectConfigurationFactory.createListConfiguration();
+                        listConf.setListConfiguration(new ArrayList<ElementConfiguration>());
+
+                        String[] split = input.toString().split("\n");
+                        for (int i = 0; i < split.length; i++)
+                        {
+                            listConf.getListConfiguration().add(
+                                    objectConfigurationFactory.createPrimitiveConfiguration(split[i]));
+                        }
+                        LOG.finest(listConf.toString());
+                        return listConf;
+                    }
+                }
             }
         }
         return null;

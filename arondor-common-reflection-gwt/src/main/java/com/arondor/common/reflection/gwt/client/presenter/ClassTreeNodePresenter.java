@@ -141,7 +141,7 @@ public class ClassTreeNodePresenter
         {
             String fieldName = accessibleField.getName();
             String fieldClassName = accessibleField.getClassName();
-            if (!PrimitiveTypeUtil.isPrimitiveType(fieldClassName))
+            if (!PrimitiveTypeUtil.isPrimitiveType(fieldClassName) && !fieldClassName.equals("java.util.List"))
             {
                 ClassTreeNodePresenter childPresenter = new ClassTreeNodePresenter(rpcService, fieldName,
                         fieldClassName, display.createChild());
