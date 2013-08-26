@@ -2,9 +2,9 @@ package com.arondor.common.reflection.gwt.client.view;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 
-class StringValueChangeEvent extends ValueChangeEvent<String>
+public class MyValueChangeEvent<T> extends ValueChangeEvent<T>
 {
-    public StringValueChangeEvent(String value)
+    public MyValueChangeEvent(T value)
     {
         super(value);
     }

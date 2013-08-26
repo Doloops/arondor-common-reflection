@@ -50,6 +50,7 @@ public class ClassTreeNodeView extends AbstractTreeNodeView implements ClassTree
     public void clear()
     {
         removeItems();
+        implementingClassDisplay.selectImplementingClass(null);
     }
 
 }

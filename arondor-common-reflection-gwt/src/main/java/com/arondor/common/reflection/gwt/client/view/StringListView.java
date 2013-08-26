@@ -1,8 +1,12 @@
 package com.arondor.common.reflection.gwt.client.view;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.arondor.common.reflection.gwt.client.presenter.StringListTreeNodePresenter.StringListDisplay;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.UIObject;
 
@@ -13,6 +17,7 @@ public class StringListView extends AbstractTreeNodeView implements StringListDi
     public StringListView(UIObject parentNode)
     {
         super(parentNode);
+        setHasRemoveButton(true);
         getContents().add(textArea);
     }
 
@@ -21,7 +26,7 @@ public class StringListView extends AbstractTreeNodeView implements StringListDi
         textArea.setValue("");
     }
 
-    public void setValues(List<String> values)
+    public void setValue(List<String> values)
     {
         StringBuilder stringBuilder = new StringBuilder();
         for (String value : values)
@@ -30,6 +35,25 @@ public class StringListView extends AbstractTreeNodeView implements StringListDi
             stringBuilder.append('\n');
         }
         textArea.setValue(stringBuilder.toString());
+        setActive(true);
+    }
+
+    public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<List<String>> valueChangeHandler)
+    {
+        return textArea.addValueChangeHandler(new ValueChangeHandler<String>()
+        {
+            public void onValueChange(ValueChangeEvent<String> event)
+            {
+                setActive(true);
+                String[] splitted = event.getValue().split("\n");
+                List<String> values = new ArrayList<String>();
+                for (String value : splitted)
+                {
+                    values.add(value);
+                }
+                valueChangeHandler.onValueChange(new MyValueChangeEvent<List<String>>(values));
+            }
+        });
     }
 
 }

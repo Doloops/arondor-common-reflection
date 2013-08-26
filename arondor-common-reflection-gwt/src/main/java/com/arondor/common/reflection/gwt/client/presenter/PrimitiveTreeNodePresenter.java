@@ -5,7 +5,6 @@ import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 
 public class PrimitiveTreeNodePresenter implements TreeNodePresenter
 {
@@ -13,11 +12,8 @@ public class PrimitiveTreeNodePresenter implements TreeNodePresenter
 
     private String fieldValue;
 
-    public interface PrimitiveDisplay extends Display
+    public interface PrimitiveDisplay extends ValueDisplay<String>
     {
-        HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> valueChangeHandler);
-
-        void setValue(String value);
     }
 
     private final PrimitiveDisplay primitiveDisplay;
@@ -26,8 +22,6 @@ public class PrimitiveTreeNodePresenter implements TreeNodePresenter
     {
         this.fieldName = fieldName;
         this.primitiveDisplay = primitiveDisplay;
-        this.primitiveDisplay.setNodeName(fieldName);
-
         bind();
     }
 

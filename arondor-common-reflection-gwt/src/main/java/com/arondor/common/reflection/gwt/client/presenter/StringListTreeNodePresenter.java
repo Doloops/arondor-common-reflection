@@ -12,9 +12,8 @@ public class StringListTreeNodePresenter implements TreeNodePresenter
 {
     private final String fieldName;
 
-    public interface StringListDisplay extends Display
+    public interface StringListDisplay extends ValueDisplay<List<String>>
     {
-        void setValues(List<String> values);
     }
 
     private final StringListDisplay primitiveDisplay;
@@ -23,7 +22,6 @@ public class StringListTreeNodePresenter implements TreeNodePresenter
     {
         this.fieldName = fieldName;
         this.primitiveDisplay = primitiveDisplay;
-        this.primitiveDisplay.setNodeName(fieldName);
     }
 
     public String getFieldName()
@@ -51,7 +49,7 @@ public class StringListTreeNodePresenter implements TreeNodePresenter
                     stringList.add(primitiveConfiguration.getValue());
                 }
             }
-            primitiveDisplay.setValues(stringList);
+            primitiveDisplay.setValue(stringList);
         }
     }
 

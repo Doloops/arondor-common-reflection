@@ -3,10 +3,13 @@ package com.arondor.common.reflection.gwt.client.presenter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
+import com.arondor.common.reflection.gwt.client.view.MyValueChangeEvent;
 import com.arondor.common.reflection.model.java.AccessibleClass;
-import com.arondor.common.reflection.util.PrimitiveTypeUtil;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -15,6 +18,8 @@ import com.google.gwt.user.client.ui.IsWidget;
 
 public class ImplementingClassPresenter
 {
+    private static final Logger LOG = Logger.getLogger(ImplementingClassPresenter.class.getName());
+
     public interface Display extends IsWidget
     {
         void setBaseClassName(String baseClassName);
@@ -34,7 +39,7 @@ public class ImplementingClassPresenter
 
     private final GWTReflectionServiceAsync rpcService;
 
-    private final String NULL_VALUE = "null";
+    public static final String NULL_VALUE = "null";
 
     public ImplementingClassPresenter(GWTReflectionServiceAsync rpcService, String baseClassName, Display display)
     {
@@ -44,18 +49,10 @@ public class ImplementingClassPresenter
         this.display.setBaseClassName(baseClassName);
         bind();
 
-        fetchBaseClass(null);
+        fetchBaseClass();
     }
 
-    private static class AccessibleClassChangeEvent extends ValueChangeEvent<AccessibleClass>
-    {
-        protected AccessibleClassChangeEvent(AccessibleClass value)
-        {
-            super(value);
-        }
-    }
-
-    public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<AccessibleClass> valueChangeHandler)
+    public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<String> valueChangeHandler)
     {
         return this.display.addValueChangeHandler(new ValueChangeHandler<String>()
         {
@@ -66,46 +63,14 @@ public class ImplementingClassPresenter
                 {
                     implementClassName = null;
                 }
-                if (implementClassName != null)
-                {
-                    changeAccessibleClass(valueChangeHandler, implementClassName);
-                }
-                else
-                {
-                    valueChangeHandler.onValueChange(new AccessibleClassChangeEvent(null));
-                }
-            }
-
-        });
-    }
-
-    private void changeAccessibleClass(final ValueChangeHandler<AccessibleClass> valueChangeHandler,
-            String implementClassName)
-    {
-        rpcService.getAccessibleClass(implementClassName, new AsyncCallback<AccessibleClass>()
-        {
-            public void onFailure(Throwable caught)
-            {
-            }
-
-            public void onSuccess(AccessibleClass result)
-            {
-                valueChangeHandler.onValueChange(new AccessibleClassChangeEvent(result));
+                LOG.finest("Changed implementClassName to " + implementClassName);
+                valueChangeHandler.onValueChange(new MyValueChangeEvent<String>(implementClassName));
             }
         });
     }
 
-    private void fetchBaseClass(final Runnable afterFetch)
+    private void fetchBaseClass()
     {
-        if (PrimitiveTypeUtil.isPrimitiveType(baseClassName))
-        {
-            implementClassName = baseClassName;
-            if (afterFetch != null)
-            {
-                afterFetch.run();
-            }
-            return;
-        }
         final List<String> implementingClasses = new ArrayList<String>();
         implementingClasses.add(NULL_VALUE);
         rpcService.getAccessibleClass(baseClassName, new AsyncCallback<AccessibleClass>()
@@ -120,7 +85,7 @@ public class ImplementingClassPresenter
                 {
                     implementingClasses.add(result.getName());
                 }
-                fetchImplementations(implementingClasses, afterFetch);
+                fetchImplementations(implementingClasses);
             }
         });
     }
@@ -130,7 +95,7 @@ public class ImplementingClassPresenter
         return result.getSuperclass() != null;
     }
 
-    private void fetchImplementations(final List<String> implementingClasses, final Runnable afterFetch)
+    private void fetchImplementations(final List<String> implementingClasses)
     {
         rpcService.getImplementingAccessibleClasses(baseClassName, new AsyncCallback<Collection<AccessibleClass>>()
         {
@@ -140,12 +105,20 @@ public class ImplementingClassPresenter
                 {
                     implementingClasses.add(classes.getName());
                 }
+                java.util.Collections.sort(implementingClasses, new ClassNameComparator());
                 display.setImplementingClasses(implementingClasses);
-
-                if (afterFetch != null)
+                LOG.finest("Set implementing classes (" + implementingClasses.size() + " items), implement="
+                        + implementClassName);
+                Scheduler.get().scheduleDeferred(new ScheduledCommand()
                 {
-                    afterFetch.run();
-                }
+                    public void execute()
+                    {
+                        if (implementClassName != null)
+                        {
+                            display.selectImplementingClass(implementClassName);
+                        }
+                    }
+                });
             }
 
             public void onFailure(Throwable caught)
@@ -165,6 +138,7 @@ public class ImplementingClassPresenter
                 {
                     implementClassName = null;
                 }
+                LOG.finest("Changed implementClassName=" + implementClassName);
             }
         });
     }
@@ -179,31 +153,10 @@ public class ImplementingClassPresenter
         return implementClassName;
     }
 
-    public void setImplementClassName(final String implementClassName, final AsyncCallback<AccessibleClass> callback)
+    public void setImplementClassName(final String implementClassName)
     {
         this.implementClassName = implementClassName;
-
-        final List<HandlerRegistration> handlers = new ArrayList<HandlerRegistration>();
-        fetchBaseClass(new Runnable()
-        {
-            public void run()
-            {
-                if (callback != null)
-                {
-                    handlers.add(addValueChangeHandler(new ValueChangeHandler<AccessibleClass>()
-                    {
-                        public void onValueChange(ValueChangeEvent<AccessibleClass> event)
-                        {
-                            callback.onSuccess(event.getValue());
-                            for (HandlerRegistration handler : handlers)
-                            {
-                                handler.removeHandler();
-                            }
-                        }
-                    }));
-                }
-                display.selectImplementingClass(implementClassName);
-            }
-        });
+        LOG.finest("setImplementClassName(" + implementClassName + ")");
+        display.selectImplementingClass(implementClassName);
     }
 }

@@ -14,6 +14,7 @@ public class PrimitiveBooleanView extends AbstractTreeNodeView implements Primit
     protected PrimitiveBooleanView(UIObject parentNode)
     {
         super(parentNode);
+        setHasRemoveButton(true);
         getContents().add(checkBox);
     }
 
@@ -25,16 +26,17 @@ public class PrimitiveBooleanView extends AbstractTreeNodeView implements Primit
     public void setValue(String value)
     {
         checkBox.setValue(Boolean.parseBoolean(value));
+        setActive(true);
     }
 
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<String> valueChangeHandler)
     {
         return checkBox.addValueChangeHandler(new ValueChangeHandler<Boolean>()
         {
-
             public void onValueChange(ValueChangeEvent<Boolean> event)
             {
-                valueChangeHandler.onValueChange(new StringValueChangeEvent(event.getValue().toString()));
+                setActive(true);
+                valueChangeHandler.onValueChange(new MyValueChangeEvent<String>(event.getValue().toString()));
             }
         });
     }

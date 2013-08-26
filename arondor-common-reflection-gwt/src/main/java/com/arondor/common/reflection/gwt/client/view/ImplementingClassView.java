@@ -1,6 +1,7 @@
 package com.arondor.common.reflection.gwt.client.view;
 
 import java.util.Collection;
+import java.util.logging.Logger;
 
 import com.arondor.common.reflection.gwt.client.presenter.ImplementingClassPresenter.Display;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -8,12 +9,11 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 
 public class ImplementingClassView extends Composite implements Display
 {
-    private Label baseClassNameLabel = new Label("{Unknown}");
+    private static final Logger LOG = Logger.getLogger(ImplementingClassView.class.getName());
 
     private ListBox implementingListInput = new ListBox();
 
@@ -24,6 +24,7 @@ public class ImplementingClassView extends Composite implements Display
 
     public void setImplementingClasses(Collection<String> implementingClasses)
     {
+        LOG.info("Selected classes : " + implementingClasses);
         implementingListInput.clear();
         for (String implementingClass : implementingClasses)
         {
@@ -31,26 +32,10 @@ public class ImplementingClassView extends Composite implements Display
         }
     }
 
-    public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<String> valueChangeHandler)
-    {
-        return implementingListInput.addChangeHandler(new ChangeHandler()
-        {
-            public void onChange(ChangeEvent event)
-            {
-                valueChangeHandler.onValueChange(new StringValueChangeEvent(implementingListInput
-                        .getValue(implementingListInput.getSelectedIndex())));
-            }
-        });
-    }
-
-    public void setBaseClassName(String baseClassName)
-    {
-        baseClassNameLabel.setText(baseClassName);
-        doSelect(baseClassName);
-    }
-
     private void doSelect(String className)
     {
+        LOG.warning("Selecting class : " + className + " from a choice of " + implementingListInput.getItemCount()
+                + " items");
         for (int idx = 0; idx < implementingListInput.getItemCount(); idx++)
         {
             if (implementingListInput.getItemText(idx).equals(className))
@@ -59,16 +44,31 @@ public class ImplementingClassView extends Composite implements Display
                 return;
             }
         }
+        LOG.warning("Could not select class : " + className);
     }
 
-    private static class MyChangeEvent extends ChangeEvent
+    public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<String> valueChangeHandler)
     {
+        return implementingListInput.addChangeHandler(new ChangeHandler()
+        {
+            public void onChange(ChangeEvent event)
+            {
+                if (implementingListInput.getSelectedIndex() != -1)
+                {
+                    valueChangeHandler.onValueChange(new MyValueChangeEvent<String>(implementingListInput
+                            .getValue(implementingListInput.getSelectedIndex())));
+                }
+            }
+        });
+    }
 
+    public void setBaseClassName(String baseClassName)
+    {
+        doSelect(baseClassName);
     }
 
     public void selectImplementingClass(String implementingClassName)
     {
         doSelect(implementingClassName);
-        implementingListInput.fireEvent(new MyChangeEvent());
     }
 }
