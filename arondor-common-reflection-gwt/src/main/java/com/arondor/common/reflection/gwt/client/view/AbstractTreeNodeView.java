@@ -86,8 +86,16 @@ public abstract class AbstractTreeNodeView extends TreeItem implements TreeNodeP
         {
             TreeItem parentNodeItem = (TreeItem) parentNode;
             int childCount = parentNodeItem.getChildCount();
+            int nodeDepth = 0;
+            for (TreeItem ancestor = parentNodeItem; ancestor != null; ancestor = ancestor.getParentItem())
+            {
+                nodeDepth++;
+            }
             parentNodeItem.addItem(this);
-            getElement().getStyle().setBackgroundColor(childCount % 2 == 0 ? "white" : "#E5E4E2");
+
+            String colors[] = { "#F5F5F2", "#DBDAD8", "#F9F8F6", "#E7E7E3" };
+            int colorIndex = ((nodeDepth % 2) + (childCount % 2)) % 2;
+            getElement().getStyle().setBackgroundColor(colors[colorIndex]);
         }
     }
 
