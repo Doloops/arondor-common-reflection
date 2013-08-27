@@ -1,5 +1,7 @@
 package com.arondor.common.reflection.gwt.client.view;
 
+import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent;
+import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent.Handler;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.view.resources.Images;
 import com.google.gwt.core.client.Scheduler;
@@ -10,6 +12,8 @@ import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -63,6 +67,11 @@ public abstract class AbstractTreeNodeView extends TreeItem implements TreeNodeP
         setWidget(contents);
 
         bind();
+    }
+
+    protected TreeItem getTreeItem()
+    {
+        return this;
     }
 
     private void bind()
@@ -146,8 +155,11 @@ public abstract class AbstractTreeNodeView extends TreeItem implements TreeNodeP
         nodeLabel.setTitle(description);
     }
 
+    private boolean active;
+
     public void setActive(boolean active)
     {
+        this.active = active;
         nodeLabel.getElement().getStyle().setFontWeight(active ? FontWeight.BOLD : FontWeight.NORMAL);
         if (hasRemoveButton)
         {
@@ -155,10 +167,16 @@ public abstract class AbstractTreeNodeView extends TreeItem implements TreeNodeP
         }
     }
 
+    public boolean isActive()
+    {
+        return active;
+    }
+
     private void clearValue()
     {
         clear();
         setActive(false);
+        eventBus.fireEvent(new TreeNodeClearEvent());
     }
 
     public boolean isHasRemoveButton()
@@ -169,6 +187,13 @@ public abstract class AbstractTreeNodeView extends TreeItem implements TreeNodeP
     public void setHasRemoveButton(boolean hasRemoveButton)
     {
         this.hasRemoveButton = hasRemoveButton;
+    }
+
+    private final EventBus eventBus = new SimpleEventBus();
+
+    public void addTreeNodeClearHandler(Handler handler)
+    {
+        eventBus.addHandler(TreeNodeClearEvent.TYPE, handler);
     }
 
 }

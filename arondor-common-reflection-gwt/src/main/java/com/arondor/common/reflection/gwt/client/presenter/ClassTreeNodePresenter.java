@@ -7,8 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter;
-import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeNodePresenter;
+import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
@@ -24,17 +23,10 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
 {
     private static final Logger LOG = Logger.getLogger(ClassTreeNodePresenter.class.getName());
 
-    private static final int MAX_DESCRIPTION_LENGTH = 60;
-
-    public interface ClassDisplay extends TreeNodePresenter.Display
+    public interface ClassDisplay extends TreeNodePresenter.ChildCreatorDisplay
     {
         ImplementingClassPresenter.Display getImplementingClassDisplay();
 
-        ClassDisplay createClassChild();
-
-        PrimitiveTreeNodePresenter.PrimitiveDisplay createPrimitiveChild(String fieldClassName);
-
-        StringListTreeNodePresenter.StringListDisplay createStringListChild();
     }
 
     private final Map<String, TreeNodePresenter> classTreeNodePresenterMap = new HashMap<String, TreeNodePresenter>();
@@ -53,7 +45,7 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
         display.setNodeName(baseClassName);
     }
 
-    private ClassTreeNodePresenter(GWTReflectionServiceAsync rpcService, String fieldName, String baseClassName,
+    protected ClassTreeNodePresenter(GWTReflectionServiceAsync rpcService, String fieldName, String baseClassName,
             ClassDisplay view)
     {
         this.fieldName = fieldName;
@@ -74,6 +66,15 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
             public void onValueChange(ValueChangeEvent<String> event)
             {
                 updateAccessibleClass(event.getValue(), null);
+            }
+        });
+
+        display.addTreeNodeClearHandler(new TreeNodeClearEvent.Handler()
+        {
+            public void onTreeNodeClearEvent(TreeNodeClearEvent treeNodeClearEvent)
+            {
+                implementingClassPresenter.setImplementClassName(null);
+                classTreeNodePresenterMap.clear();
             }
         });
     }
@@ -136,56 +137,11 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
 
         for (AccessibleField accessibleField : sortedAccessibleFields)
         {
-            String fieldName = accessibleField.getName();
-            String fieldClassName = accessibleField.getClassName();
-
-            TreeNodePresenter childPresenter = null;
-            if (PrimitiveTypeUtil.isPrimitiveType(fieldClassName))
-            {
-                childPresenter = new PrimitiveTreeNodePresenter(fieldName, display.createPrimitiveChild(fieldClassName));
-            }
-            else if (isStringListField(accessibleField))
-            {
-                childPresenter = new StringListTreeNodePresenter(fieldName, display.createStringListChild());
-            }
-            else
-            {
-                childPresenter = new ClassTreeNodePresenter(rpcService, fieldName, fieldClassName,
-                        display.createClassChild());
-            }
-
-            String fieldDescription = accessibleField.getDescription();
-            String nodeName;
-            String nodeDescription = "";
-            if (fieldDescription != null)
-            {
-                if (fieldDescription.length() >= MAX_DESCRIPTION_LENGTH)
-                {
-                    nodeName = fieldDescription.substring(0, MAX_DESCRIPTION_LENGTH) + "...";
-                    nodeDescription = fieldDescription;
-                }
-                else
-                {
-                    nodeName = fieldDescription;
-                }
-            }
-            else
-            {
-                nodeName = fieldName;
-            }
-            nodeDescription += " (" + fieldName + " : " + fieldClassName + ")";
-            childPresenter.getDisplay().setNodeDescription(nodeDescription);
-            childPresenter.getDisplay().setNodeName(nodeName);
-            classTreeNodePresenterMap.put(fieldName, childPresenter);
+            TreeNodePresenter childPresenter = TreeNodePresenterFactory.getInstance().createChildNodePresenter(
+                    rpcService, display, accessibleField);
+            LOG.finest("At field=" + accessibleField.getName() + ", created childPresenter=" + childPresenter);
+            classTreeNodePresenterMap.put(accessibleField.getName(), childPresenter);
         }
-    }
-
-    private boolean isStringListField(AccessibleField accessibleField)
-    {
-        String fieldClassName = accessibleField.getClassName();
-        return fieldClassName.equals("java.util.List") && accessibleField.getGenericParameterClassList() != null
-                && accessibleField.getGenericParameterClassList().size() == 1
-                && accessibleField.getGenericParameterClassList().get(0).equals("java.lang.String");
     }
 
     public String getFieldName()

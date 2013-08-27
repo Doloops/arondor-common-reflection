@@ -38,6 +38,7 @@ public class ImplementingClassView extends Composite implements Display
                 + " items");
         for (int idx = 0; idx < implementingListInput.getItemCount(); idx++)
         {
+            LOG.finest("* Choice : " + implementingListInput.getItemText(idx));
             if (implementingListInput.getItemText(idx).equals(className))
             {
                 implementingListInput.setSelectedIndex(idx);

@@ -149,6 +149,13 @@ public class ImplementingClassPresenter
     {
         this.implementClassName = implementClassName;
         LOG.finest("setImplementClassName(" + implementClassName + ")");
-        display.selectImplementingClass(implementClassName);
+        if (implementClassName == null)
+        {
+            display.selectImplementingClass(NULL_VALUE);
+        }
+        else
+        {
+            display.selectImplementingClass(implementClassName);
+        }
     }
 }
