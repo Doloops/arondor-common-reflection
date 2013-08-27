@@ -43,4 +43,8 @@ public class MapConfigurationBean extends ElementConfigurationBean implements Ma
         this.mapConfiguration = mapConfiguration;
     }
 
+    public String toString()
+    {
+        return "MapConfigurationBean[" + mapConfiguration.entrySet() + "]";
+    }
 }
