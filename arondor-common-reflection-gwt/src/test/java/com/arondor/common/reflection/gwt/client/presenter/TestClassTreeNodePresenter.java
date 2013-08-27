@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Before;
@@ -23,6 +24,7 @@ import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter
 import com.arondor.common.reflection.gwt.client.testclasses.ParentTestClass;
 import com.arondor.common.reflection.gwt.client.testclasses.TestClass;
 import com.arondor.common.reflection.gwt.client.testclasses.TestInterface;
+import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.parser.java.JavaAccessibleClassParser;
@@ -125,6 +127,7 @@ public class TestClassTreeNodePresenter
         verify(nodeView.getImplementingClassDisplay()).setBaseClassName(TestInterface.class.getName());
 
         ObjectConfiguration objectConfiguration = factory.createObjectConfiguration();
+        objectConfiguration.setFields(new HashMap<String, ElementConfiguration>());
         objectConfiguration.setClassName(TestClass.class.getName());
 
         nodePresenter.setElementConfiguration(objectConfiguration);

@@ -8,9 +8,6 @@ import java.util.logging.Logger;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.gwt.client.view.MyValueChangeEvent;
 import com.arondor.common.reflection.model.java.AccessibleClass;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -110,20 +107,7 @@ public class ImplementingClassPresenter
                 display.setImplementingClasses(implementingClasses);
                 LOG.finest("Set implementing classes (" + implementingClasses.size() + " items), implement="
                         + implementClassName);
-                if (GWT.isClient())
-                {
-                    Scheduler.get().scheduleDeferred(new ScheduledCommand()
-                    {
-                        public void execute()
-                        {
-                            if (implementClassName != null)
-                            {
-                                display.selectImplementingClass(implementClassName);
-                            }
-                        }
-                    });
-                }
-                else
+                if (implementClassName != null)
                 {
                     display.selectImplementingClass(implementClassName);
                 }

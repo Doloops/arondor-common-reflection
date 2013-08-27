@@ -24,7 +24,7 @@ public class ImplementingClassView extends Composite implements Display
 
     public void setImplementingClasses(Collection<String> implementingClasses)
     {
-        LOG.info("Selected classes : " + implementingClasses);
+        LOG.finest("Selected classes : " + implementingClasses);
         implementingListInput.clear();
         for (String implementingClass : implementingClasses)
         {
@@ -34,7 +34,7 @@ public class ImplementingClassView extends Composite implements Display
 
     private void doSelect(String className)
     {
-        LOG.warning("Selecting class : " + className + " from a choice of " + implementingListInput.getItemCount()
+        LOG.finest("Selecting class : " + className + " from a choice of " + implementingListInput.getItemCount()
                 + " items");
         for (int idx = 0; idx < implementingListInput.getItemCount(); idx++)
         {
