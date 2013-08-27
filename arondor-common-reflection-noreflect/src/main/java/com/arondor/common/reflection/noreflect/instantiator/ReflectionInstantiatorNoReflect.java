@@ -180,6 +180,13 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
 
     public <T> T instanciateObject(String beanName, Class<T> desiredClass, InstantiationContext context)
     {
+        {
+            Object sharedObject = context.getSharedObject(beanName);
+            if (sharedObject != null)
+            {
+                return (T) sharedObject;
+            }
+        }
         ObjectConfiguration objectConfiguration = context.getSharedObjectConfiguration(beanName);
         if (objectConfiguration == null)
         {
