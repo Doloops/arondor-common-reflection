@@ -12,8 +12,6 @@ import com.arondor.common.reflection.gwt.client.view.MyValueChangeEvent;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.arondor.common.reflection.model.java.AccessibleClass;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -37,7 +35,7 @@ public class ImplementingClassPresenter
 
     private final String baseClassName;
 
-    private ImplementingClass currentImplementingClass;
+    private ImplementingClass currentImplementingClass = ImplementingClass.NULL_CLASS;
 
     private final Display display;
 
@@ -146,9 +144,9 @@ public class ImplementingClassPresenter
         }
         updateDisplayScheduled = true;
 
-        Scheduler.get().scheduleDeferred(new ScheduledCommand()
+        new DefferedScheduler().scheduleDeffered(new Runnable()
         {
-            public void execute()
+            public void run()
             {
                 doUpdateDisplay();
             }

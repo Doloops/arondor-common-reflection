@@ -1,11 +1,14 @@
 package com.arondor.common.reflection.gwt.client.presenter;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -61,6 +64,14 @@ public class TestClassTreeNodePresenter
         ClassTreeNodePresenter.ClassDisplay nodeView = mock(ClassTreeNodePresenter.ClassDisplay.class);
         ImplementingClassPresenter.Display implView = mock(ImplementingClassPresenter.Display.class);
         when(nodeView.getImplementingClassDisplay()).thenReturn(implView);
+        doAnswer(new Answer<Void>()
+        {
+            public Void answer(InvocationOnMock invocation) throws Throwable
+            {
+                System.err.println("selectImplementingClass(" + invocation.getArguments()[0] + ")");
+                return null;
+            }
+        }).when(implView).selectImplementingClass(anyString());
         when(nodeView.createPrimitiveChild(anyString())).thenAnswer(
                 new Answer<PrimitiveTreeNodePresenter.PrimitiveDisplay>()
                 {
@@ -112,7 +123,7 @@ public class TestClassTreeNodePresenter
          * We shall not call selectImplementingClass because it's the widget
          * that selected the class
          */
-        verify(nodeView.getImplementingClassDisplay(), times(0)).selectImplementingClass(anyString());
+        verify(nodeView.getImplementingClassDisplay(), atLeastOnce()).selectImplementingClass(anyString());
         assertEquals(TestClass.class.getName(), nodePresenter.getImplementingClass().getName());
     }
 
@@ -124,6 +135,7 @@ public class TestClassTreeNodePresenter
         ClassTreeNodePresenter nodePresenter = new ClassTreeNodePresenter(rpcService, null,
                 TestInterface.class.getName(), nodeView);
         assertEquals(TestInterface.class.getName(), nodePresenter.getBaseClassName());
+        assertNotNull(nodePresenter.getImplementingClass());
         assertNull(nodePresenter.getImplementingClass().getName());
         verify(nodeView.getImplementingClassDisplay()).setBaseClassName(TestInterface.class.getName());
 
@@ -133,7 +145,13 @@ public class TestClassTreeNodePresenter
 
         nodePresenter.setElementConfiguration(objectConfiguration);
 
-        verify(nodeView.getImplementingClassDisplay(), times(1)).selectImplementingClass(anyString());
+        verify(nodeView.getImplementingClassDisplay(), atLeastOnce()).selectImplementingClass(anyString());
         assertEquals(TestClass.class.getName(), nodePresenter.getImplementingClass().getName());
+
+        ElementConfiguration elementConfiguration = nodePresenter.getElementConfiguration(factory);
+        assertNotNull(elementConfiguration);
+        assertTrue(elementConfiguration instanceof ObjectConfiguration);
+        ObjectConfiguration createdObjectConfiguration = (ObjectConfiguration) elementConfiguration;
+        assertEquals(TestClass.class.getName(), createdObjectConfiguration.getClassName());
     }
 }
