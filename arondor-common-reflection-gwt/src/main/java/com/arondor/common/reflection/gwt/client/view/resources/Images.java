@@ -5,6 +5,7 @@ import com.google.gwt.resources.client.ImageResource;
 
 public interface Images extends ClientBundle
 {
-    ImageResource remove16();
+    ImageResource add16();
 
+    ImageResource remove16();
 }
