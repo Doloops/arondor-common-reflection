@@ -184,7 +184,7 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
             Object sharedObject = context.getSharedObject(beanName);
             if (sharedObject != null)
             {
-                return (T) sharedObject;
+                return castObject(sharedObject, desiredClass);
             }
         }
         ObjectConfiguration objectConfiguration = context.getSharedObjectConfiguration(beanName);
