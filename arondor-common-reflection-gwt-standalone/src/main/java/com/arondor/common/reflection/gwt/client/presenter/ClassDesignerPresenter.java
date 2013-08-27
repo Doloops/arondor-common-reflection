@@ -8,6 +8,7 @@ import com.arondor.common.reflection.gwt.client.service.GWTReflectionService;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.gwt.client.view.HierarchicAccessibleClassView;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
+import com.arondor.common.reflection.model.config.MapConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.google.gwt.core.client.GWT;
@@ -73,6 +74,22 @@ public class ClassDesignerPresenter
                 parentObjectConfiguration.getFields().put("testInterfaceField", childObjectConfiguration);
 
                 classPresenter.setObjectConfiguration(parentObjectConfiguration);
+
+                ObjectConfiguration otherObject = objectConfigurationFactory.createObjectConfiguration();
+                otherObject.setClassName("com.arondor.common.reflection.gwt.server.samples.TestClassBis");
+                parentObjectConfiguration.getFields().put("testClassBisField", otherObject);
+
+                MapConfiguration stringMapConfiguration = objectConfigurationFactory.createMapConfiguration();
+                otherObject.setFields(new HashMap<String, ElementConfiguration>());
+                otherObject.getFields().put("stringMapField", stringMapConfiguration);
+
+                stringMapConfiguration.setMapConfiguration(new HashMap<ElementConfiguration, ElementConfiguration>());
+                stringMapConfiguration.getMapConfiguration().put(
+                        objectConfigurationFactory.createPrimitiveConfiguration("key1"),
+                        objectConfigurationFactory.createPrimitiveConfiguration("value1"));
+                stringMapConfiguration.getMapConfiguration().put(
+                        objectConfigurationFactory.createPrimitiveConfiguration("key2"),
+                        objectConfigurationFactory.createPrimitiveConfiguration("value2"));
             }
         });
 
