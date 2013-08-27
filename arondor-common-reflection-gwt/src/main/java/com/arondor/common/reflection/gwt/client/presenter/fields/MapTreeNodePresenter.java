@@ -75,6 +75,11 @@ public class MapTreeNodePresenter implements TreeNodePresenter
 
     private final List<KeyValuePresenterPair> keyValuePresenters = new ArrayList<KeyValuePresenterPair>();
 
+    protected List<KeyValuePresenterPair> getKeyValuePresenters()
+    {
+        return keyValuePresenters;
+    }
+
     protected KeyValuePresenterPair addChild()
     {
         mapRootDisplay.setActive(true);
@@ -120,6 +125,13 @@ public class MapTreeNodePresenter implements TreeNodePresenter
         return mapConfiguration;
     }
 
+    protected void addChild(ElementConfiguration keyConfiguration, ElementConfiguration valueConfiguration)
+    {
+        KeyValuePresenterPair keyValuePresenterPair = addChild();
+        keyValuePresenterPair.getKeyPresenter().setElementConfiguration(keyConfiguration);
+        keyValuePresenterPair.getValuePresenter().setElementConfiguration(valueConfiguration);
+    }
+
     public void setElementConfiguration(ElementConfiguration elementConfiguration)
     {
         if (elementConfiguration instanceof MapConfiguration)
@@ -128,9 +140,7 @@ public class MapTreeNodePresenter implements TreeNodePresenter
             for (Map.Entry<ElementConfiguration, ElementConfiguration> entry : mapConfiguration.getMapConfiguration()
                     .entrySet())
             {
-                KeyValuePresenterPair keyValuePresenterPair = addChild();
-                keyValuePresenterPair.getKeyPresenter().setElementConfiguration(entry.getKey());
-                keyValuePresenterPair.getValuePresenter().setElementConfiguration(entry.getValue());
+                addChild(entry.getKey(), entry.getValue());
             }
         }
     }

@@ -33,7 +33,12 @@ public abstract class AbstractChildCreatorNodeView extends AbstractTreeNodeView 
         {
             return new PrimitiveBooleanView(getTreeItem());
         }
-        return new PrimitiveStringView(getTreeItem());
+        PrimitiveStringView primitiveStringView = new PrimitiveStringView(getTreeItem());
+        if (fieldClassName.equals("java.lang.String"))
+        {
+            primitiveStringView.setTextWidth(400);
+        }
+        return primitiveStringView;
     }
 
     public MapRootDisplay createMapChild()

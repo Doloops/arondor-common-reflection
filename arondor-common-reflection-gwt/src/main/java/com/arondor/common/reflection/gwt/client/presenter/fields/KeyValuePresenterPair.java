@@ -2,7 +2,7 @@ package com.arondor.common.reflection.gwt.client.presenter.fields;
 
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter;
 
-class KeyValuePresenterPair
+public class KeyValuePresenterPair
 {
     private final TreeNodePresenter keyPresenter;
 

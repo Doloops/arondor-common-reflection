@@ -30,6 +30,11 @@ public class PrimitiveStringView extends AbstractTreeNodeView implements Primiti
         setActive(true);
     }
 
+    public void setTextWidth(int width)
+    {
+        textBox.setWidth(width + "px");
+    }
+
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<String> valueChangeHandler)
     {
         return textBox.addValueChangeHandler(new ValueChangeHandler<String>()

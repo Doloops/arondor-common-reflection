@@ -21,6 +21,7 @@ public class StringListView extends AbstractTreeNodeView implements StringListDi
         super(parentNode);
         setHasRemoveButton(true);
         getContents().add(textArea);
+        textArea.setWidth("400px");
     }
 
     public void clear()

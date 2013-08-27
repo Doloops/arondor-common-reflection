@@ -27,17 +27,17 @@ public class ListTreeNodePresenter implements TreeNodePresenter
 
     private final String fieldName;
 
-    private final List<String> genericTypes;
+    private final String genericType;
 
     private final GWTReflectionServiceAsync rpcService;
 
-    public ListTreeNodePresenter(GWTReflectionServiceAsync rpcService, String fieldName, List<String> genericTypes,
+    public ListTreeNodePresenter(GWTReflectionServiceAsync rpcService, String fieldName, String genericType,
             ListRootDisplay listDisplay)
     {
         this.rpcService = rpcService;
         this.fieldName = fieldName;
         this.listDisplay = listDisplay;
-        this.genericTypes = genericTypes;
+        this.genericType = genericType;
 
         bind();
     }
@@ -60,7 +60,7 @@ public class ListTreeNodePresenter implements TreeNodePresenter
     {
         listDisplay.setActive(true);
         final TreeNodePresenter childPresenter = TreeNodePresenterFactory.getInstance().createChildNodePresenter(
-                rpcService, listDisplay, "Entry", genericTypes.get(0), "Entry", null);
+                rpcService, listDisplay, "Entry", genericType, "Entry", null);
 
         childPresenter.getDisplay().addTreeNodeClearHandler(new TreeNodeClearEvent.Handler()
         {

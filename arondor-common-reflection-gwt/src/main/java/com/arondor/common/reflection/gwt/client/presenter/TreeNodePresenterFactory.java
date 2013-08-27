@@ -36,13 +36,14 @@ public class TreeNodePresenterFactory
         {
             childPresenter = new StringListTreeNodePresenter(fieldName, display.createStringListChild());
         }
-        else if (fieldClassName.equals("java.util.Map"))
+        else if (fieldClassName.equals("java.util.Map") && genericTypes != null && genericTypes.size() == 2)
         {
             childPresenter = new MapTreeNodePresenter(rpcService, fieldName, genericTypes, display.createMapChild());
         }
-        else if (fieldClassName.equals("java.util.List"))
+        else if (fieldClassName.equals("java.util.List") && genericTypes != null && genericTypes.size() == 1)
         {
-            childPresenter = new ListTreeNodePresenter(rpcService, fieldName, genericTypes, display.createListChild());
+            String genericType = genericTypes.get(0);
+            childPresenter = new ListTreeNodePresenter(rpcService, fieldName, genericType, display.createListChild());
         }
         else
         {
