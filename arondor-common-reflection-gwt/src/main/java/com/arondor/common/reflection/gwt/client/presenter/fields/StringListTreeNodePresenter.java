@@ -8,6 +8,8 @@ import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ListConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
 public class StringListTreeNodePresenter implements TreeNodePresenter
 {
@@ -19,10 +21,25 @@ public class StringListTreeNodePresenter implements TreeNodePresenter
 
     private final StringListDisplay primitiveDisplay;
 
+    private List<String> values;
+
     public StringListTreeNodePresenter(String fieldName, StringListDisplay primitiveDisplay)
     {
         this.fieldName = fieldName;
         this.primitiveDisplay = primitiveDisplay;
+        bind();
+    }
+
+    private void bind()
+    {
+        primitiveDisplay.addValueChangeHandler(new ValueChangeHandler<List<String>>()
+        {
+            public void onValueChange(ValueChangeEvent<List<String>> event)
+            {
+                values = event.getValue();
+            }
+        });
+
     }
 
     public String getFieldName()
@@ -32,7 +49,17 @@ public class StringListTreeNodePresenter implements TreeNodePresenter
 
     public ElementConfiguration getElementConfiguration(ObjectConfigurationFactory objectConfigurationFactory)
     {
-        // TODO Auto-generated method stub
+        if (values != null)
+        {
+            ListConfiguration listConfiguration = objectConfigurationFactory.createListConfiguration();
+            listConfiguration.setListConfiguration(new ArrayList<ElementConfiguration>());
+            for (String value : values)
+            {
+                listConfiguration.getListConfiguration().add(
+                        objectConfigurationFactory.createPrimitiveConfiguration(value));
+            }
+            return listConfiguration;
+        }
         return null;
     }
 
@@ -51,6 +78,7 @@ public class StringListTreeNodePresenter implements TreeNodePresenter
                 }
             }
             primitiveDisplay.setValue(stringList);
+            this.values = stringList;
         }
     }
 
