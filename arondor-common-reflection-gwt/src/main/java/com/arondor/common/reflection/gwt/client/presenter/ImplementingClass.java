@@ -68,7 +68,7 @@ public class ImplementingClass implements Comparable<ImplementingClass>
 
     public int hashCode()
     {
-        return (reference ? 23 : 17) + name != null ? name.hashCode() : 0;
+        return (reference ? 23 : 17) + ((name != null) ? name.hashCode() : 0);
     }
 
     public String toString()
