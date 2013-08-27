@@ -111,12 +111,16 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
             if (objectConfiguration != null)
             {
                 implementingClassPresenter.setImplementClassName(objectConfiguration.getClassName());
-                for (Map.Entry<String, ElementConfiguration> fieldEntry : objectConfiguration.getFields().entrySet())
+                if (objectConfiguration.getFields() != null)
                 {
-                    TreeNodePresenter nodePresenter = classTreeNodePresenterMap.get(fieldEntry.getKey());
-                    if (nodePresenter != null)
+                    for (Map.Entry<String, ElementConfiguration> fieldEntry : objectConfiguration.getFields()
+                            .entrySet())
                     {
-                        nodePresenter.setElementConfiguration(fieldEntry.getValue());
+                        TreeNodePresenter nodePresenter = classTreeNodePresenterMap.get(fieldEntry.getKey());
+                        if (nodePresenter != null)
+                        {
+                            nodePresenter.setElementConfiguration(fieldEntry.getValue());
+                        }
                     }
                 }
             }
