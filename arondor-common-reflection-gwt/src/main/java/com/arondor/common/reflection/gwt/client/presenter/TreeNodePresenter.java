@@ -2,6 +2,7 @@ package com.arondor.common.reflection.gwt.client.presenter;
 
 import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter.ClassDisplay;
+import com.arondor.common.reflection.gwt.client.presenter.fields.ListTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeNodePresenter;
@@ -43,6 +44,8 @@ public interface TreeNodePresenter
         StringListTreeNodePresenter.StringListDisplay createStringListChild();
 
         MapTreeNodePresenter.MapRootDisplay createMapChild();
+
+        ListTreeNodePresenter.ListRootDisplay createListChild();
     }
 
     String getFieldName();

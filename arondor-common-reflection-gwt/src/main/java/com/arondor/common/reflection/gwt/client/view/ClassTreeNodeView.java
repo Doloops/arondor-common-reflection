@@ -24,5 +24,4 @@ public class ClassTreeNodeView extends AbstractChildCreatorNodeView implements C
     {
         removeItems();
     }
-
 }

@@ -2,6 +2,7 @@ package com.arondor.common.reflection.gwt.client.presenter;
 
 import java.util.List;
 
+import com.arondor.common.reflection.gwt.client.presenter.fields.ListTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeNodePresenter;
@@ -38,6 +39,10 @@ public class TreeNodePresenterFactory
         else if (fieldClassName.equals("java.util.Map"))
         {
             childPresenter = new MapTreeNodePresenter(rpcService, fieldName, genericTypes, display.createMapChild());
+        }
+        else if (fieldClassName.equals("java.util.List"))
+        {
+            childPresenter = new ListTreeNodePresenter(rpcService, fieldName, genericTypes, display.createListChild());
         }
         else
         {

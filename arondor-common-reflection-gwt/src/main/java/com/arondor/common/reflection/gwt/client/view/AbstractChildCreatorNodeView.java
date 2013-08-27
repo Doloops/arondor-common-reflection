@@ -2,6 +2,7 @@ package com.arondor.common.reflection.gwt.client.view;
 
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter.ClassDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter;
+import com.arondor.common.reflection.gwt.client.presenter.fields.ListTreeNodePresenter.ListRootDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePresenter.MapRootDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter.PrimitiveDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeNodePresenter.StringListDisplay;
@@ -37,6 +38,11 @@ public abstract class AbstractChildCreatorNodeView extends AbstractTreeNodeView 
     public MapRootDisplay createMapChild()
     {
         return new MapRootView(getTreeItem());
+    }
+
+    public ListRootDisplay createListChild()
+    {
+        return new ListRootView(getTreeItem());
     }
 
     public StringListDisplay createStringListChild()

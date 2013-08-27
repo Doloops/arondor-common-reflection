@@ -34,14 +34,14 @@ public class MapTreeNodePresenter implements TreeNodePresenter
 
     private final String fieldName;
 
+    private final List<String> genericTypes;
+
+    private final GWTReflectionServiceAsync rpcService;
+
     public String getFieldName()
     {
         return fieldName;
     }
-
-    private final List<String> genericTypes;
-
-    private final GWTReflectionServiceAsync rpcService;
 
     public MapTreeNodePresenter(GWTReflectionServiceAsync rpcService, String fieldName, List<String> genericTypes,
             MapRootDisplay mapDisplay)
