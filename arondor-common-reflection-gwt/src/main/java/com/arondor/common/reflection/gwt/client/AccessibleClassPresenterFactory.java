@@ -8,13 +8,15 @@ import com.arondor.common.reflection.gwt.client.presenter.SimpleObjectConfigurat
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.gwt.client.view.HierarchicAccessibleClassView;
 import com.arondor.common.reflection.gwt.client.view.ObjectConfigurationMapView;
+import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 
 public class AccessibleClassPresenterFactory
 {
     public static AccessibleClassPresenter createAccessibleClassPresenter(GWTReflectionServiceAsync rpcService,
-            String baseClassName)
+            ObjectConfigurationMap objectConfigurationMap, String baseClassName)
     {
-        return new HierarchicAccessibleClassPresenter(rpcService, baseClassName, new HierarchicAccessibleClassView());
+        return new HierarchicAccessibleClassPresenter(rpcService, objectConfigurationMap, baseClassName,
+                new HierarchicAccessibleClassView());
     }
 
     public static ObjectConfigurationMapPresenter createObjectConfigurationMapPresenter(

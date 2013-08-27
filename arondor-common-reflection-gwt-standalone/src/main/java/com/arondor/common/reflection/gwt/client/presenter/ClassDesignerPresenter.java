@@ -43,7 +43,7 @@ public class ClassDesignerPresenter
         bind();
         String baseClassName = "com.arondor.common.reflection.gwt.server.samples.ParentTestClass";
         GWTReflectionServiceAsync rpcService = GWT.create(GWTReflectionService.class);
-        classPresenter = new HierarchicAccessibleClassPresenter(rpcService, baseClassName,
+        classPresenter = new HierarchicAccessibleClassPresenter(rpcService, null, baseClassName,
                 new HierarchicAccessibleClassView());
         display.setAccessibleClassView((HierarchicAccessibleClassView) classPresenter.getDisplay());
     }

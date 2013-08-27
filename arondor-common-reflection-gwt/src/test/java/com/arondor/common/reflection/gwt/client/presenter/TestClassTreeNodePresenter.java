@@ -96,10 +96,10 @@ public class TestClassTreeNodePresenter
                     }
                 });
 
-        ClassTreeNodePresenter nodePresenter = new ClassTreeNodePresenter(rpcService, TestInterface.class.getName(),
-                nodeView);
+        ClassTreeNodePresenter nodePresenter = new ClassTreeNodePresenter(rpcService, null,
+                TestInterface.class.getName(), nodeView);
         assertEquals(TestInterface.class.getName(), nodePresenter.getBaseClassName());
-        assertNull(nodePresenter.getImplementClassName());
+        assertNull(nodePresenter.getImplementingClass().getName());
         verify(nodeView.getImplementingClassDisplay()).setBaseClassName(TestInterface.class.getName());
 
         ValueChangeEvent<String> valueChangeEvent = mock(ValueChangeEvent.class);
@@ -113,7 +113,7 @@ public class TestClassTreeNodePresenter
          * that selected the class
          */
         verify(nodeView.getImplementingClassDisplay(), times(0)).selectImplementingClass(anyString());
-        assertEquals(TestClass.class.getName(), nodePresenter.getImplementClassName());
+        assertEquals(TestClass.class.getName(), nodePresenter.getImplementingClass().getName());
     }
 
     @Test
@@ -121,10 +121,10 @@ public class TestClassTreeNodePresenter
     {
         ClassTreeNodePresenter.ClassDisplay nodeView = mockClassTreeNodePresenterDisplay();
 
-        ClassTreeNodePresenter nodePresenter = new ClassTreeNodePresenter(rpcService, TestInterface.class.getName(),
-                nodeView);
+        ClassTreeNodePresenter nodePresenter = new ClassTreeNodePresenter(rpcService, null,
+                TestInterface.class.getName(), nodeView);
         assertEquals(TestInterface.class.getName(), nodePresenter.getBaseClassName());
-        assertNull(nodePresenter.getImplementClassName());
+        assertNull(nodePresenter.getImplementingClass().getName());
         verify(nodeView.getImplementingClassDisplay()).setBaseClassName(TestInterface.class.getName());
 
         ObjectConfiguration objectConfiguration = factory.createObjectConfiguration();
@@ -134,6 +134,6 @@ public class TestClassTreeNodePresenter
         nodePresenter.setElementConfiguration(objectConfiguration);
 
         verify(nodeView.getImplementingClassDisplay(), times(1)).selectImplementingClass(anyString());
-        assertEquals(TestClass.class.getName(), nodePresenter.getImplementClassName());
+        assertEquals(TestClass.class.getName(), nodePresenter.getImplementingClass().getName());
     }
 }

@@ -35,7 +35,7 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter 
     public SimpleObjectConfigurationMapPresenter(GWTReflectionServiceAsync rpcService, String fieldName,
             ObjectConfigurationMapDisplay mapDisplay)
     {
-        super(rpcService, fieldName, GENERIC_TYPES, mapDisplay);
+        super(rpcService, null, fieldName, GENERIC_TYPES, mapDisplay);
         mapDisplay.setNodeName("Shared Objects");
     }
 

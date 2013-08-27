@@ -7,6 +7,7 @@ import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsyn
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
+import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.google.gwt.user.client.ui.IsWidget;
 
 public class HierarchicAccessibleClassPresenter implements AccessibleClassPresenter
@@ -22,10 +23,12 @@ public class HierarchicAccessibleClassPresenter implements AccessibleClassPresen
 
     private final ClassTreePresenter classTreePresenter;
 
-    public HierarchicAccessibleClassPresenter(GWTReflectionServiceAsync rpcService, String baseClassName, Display view)
+    public HierarchicAccessibleClassPresenter(GWTReflectionServiceAsync rpcService,
+            ObjectConfigurationMap objectConfigurationMap, String baseClassName, Display view)
     {
         this.display = view;
-        this.classTreePresenter = new ClassTreePresenter(rpcService, baseClassName, display.getClassTreeDisplay());
+        this.classTreePresenter = new ClassTreePresenter(rpcService, objectConfigurationMap, baseClassName,
+                display.getClassTreeDisplay());
         bind();
     }
 

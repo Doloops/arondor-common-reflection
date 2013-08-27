@@ -12,6 +12,7 @@ import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsyn
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.MapConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
+import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -38,15 +39,18 @@ public class MapTreeNodePresenter implements TreeNodePresenter
 
     private final GWTReflectionServiceAsync rpcService;
 
+    private final ObjectConfigurationMap objectConfigurationMap;
+
     public String getFieldName()
     {
         return fieldName;
     }
 
-    public MapTreeNodePresenter(GWTReflectionServiceAsync rpcService, String fieldName, List<String> genericTypes,
-            MapRootDisplay mapDisplay)
+    public MapTreeNodePresenter(GWTReflectionServiceAsync rpcService, ObjectConfigurationMap objectConfigurationMap,
+            String fieldName, List<String> genericTypes, MapRootDisplay mapDisplay)
     {
         this.rpcService = rpcService;
+        this.objectConfigurationMap = objectConfigurationMap;
         this.fieldName = fieldName;
         this.mapRootDisplay = mapDisplay;
         this.genericTypes = genericTypes;
@@ -87,10 +91,10 @@ public class MapTreeNodePresenter implements TreeNodePresenter
         childNode.setNodeName("Entry");
 
         TreeNodePresenter keyPresenter = TreeNodePresenterFactory.getInstance().createChildNodePresenter(rpcService,
-                childNode, "Key", genericTypes.get(0), "Key", null);
+                objectConfigurationMap, childNode, "Key", genericTypes.get(0), "Key", null);
 
         TreeNodePresenter valuePresenter = TreeNodePresenterFactory.getInstance().createChildNodePresenter(rpcService,
-                childNode, "Value", genericTypes.get(1), "Value", null);
+                objectConfigurationMap, childNode, "Value", genericTypes.get(1), "Value", null);
 
         final KeyValuePresenterPair keyValuePresenterPair = new KeyValuePresenterPair(keyPresenter, valuePresenter);
         keyValuePresenters.add(keyValuePresenterPair);

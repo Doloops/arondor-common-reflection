@@ -7,6 +7,7 @@ import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePres
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
+import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.arondor.common.reflection.model.java.AccessibleField;
 import com.arondor.common.reflection.util.PrimitiveTypeUtil;
 
@@ -15,17 +16,18 @@ public class TreeNodePresenterFactory
     private static final int MAX_DESCRIPTION_LENGTH = 60;
 
     public TreeNodePresenter createChildNodePresenter(GWTReflectionServiceAsync rpcService,
-            TreeNodePresenter.ChildCreatorDisplay display, AccessibleField accessibleField)
+            ObjectConfigurationMap objectConfigurationMap, TreeNodePresenter.ChildCreatorDisplay display,
+            AccessibleField accessibleField)
     {
         String fieldName = accessibleField.getName();
         String fieldClassName = accessibleField.getClassName();
-        return createChildNodePresenter(rpcService, display, fieldName, fieldClassName,
+        return createChildNodePresenter(rpcService, objectConfigurationMap, display, fieldName, fieldClassName,
                 accessibleField.getDescription(), accessibleField.getGenericParameterClassList());
     }
 
     public TreeNodePresenter createChildNodePresenter(GWTReflectionServiceAsync rpcService,
-            TreeNodePresenter.ChildCreatorDisplay display, String fieldName, String fieldClassName,
-            String fieldDescription, List<String> genericTypes)
+            ObjectConfigurationMap objectConfigurationMap, TreeNodePresenter.ChildCreatorDisplay display,
+            String fieldName, String fieldClassName, String fieldDescription, List<String> genericTypes)
     {
         TreeNodePresenter childPresenter = null;
         if (PrimitiveTypeUtil.isPrimitiveType(fieldClassName))
@@ -38,16 +40,18 @@ public class TreeNodePresenterFactory
         }
         else if (fieldClassName.equals("java.util.Map") && genericTypes != null && genericTypes.size() == 2)
         {
-            childPresenter = new MapTreeNodePresenter(rpcService, fieldName, genericTypes, display.createMapChild());
+            childPresenter = new MapTreeNodePresenter(rpcService, objectConfigurationMap, fieldName, genericTypes,
+                    display.createMapChild());
         }
         else if (fieldClassName.equals("java.util.List") && genericTypes != null && genericTypes.size() == 1)
         {
             String genericType = genericTypes.get(0);
-            childPresenter = new ListTreeNodePresenter(rpcService, fieldName, genericType, display.createListChild());
+            childPresenter = new ListTreeNodePresenter(rpcService, objectConfigurationMap, fieldName, genericType,
+                    display.createListChild());
         }
         else
         {
-            childPresenter = new ClassTreeNodePresenter(rpcService, fieldName, fieldClassName,
+            childPresenter = new ClassTreeNodePresenter(rpcService, objectConfigurationMap, fieldName, fieldClassName,
                     display.createClassChild());
         }
 

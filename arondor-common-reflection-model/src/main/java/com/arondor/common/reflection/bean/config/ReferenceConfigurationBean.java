@@ -37,4 +37,8 @@ public class ReferenceConfigurationBean extends ElementConfigurationBean impleme
         this.referenceName = referenceName;
     }
 
+    public String toString()
+    {
+        return "ReferenceConfigurationBean [" + referenceName + "]";
+    }
 }

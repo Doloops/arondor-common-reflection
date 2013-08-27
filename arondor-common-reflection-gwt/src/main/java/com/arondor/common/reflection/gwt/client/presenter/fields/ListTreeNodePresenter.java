@@ -10,6 +10,7 @@ import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsyn
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ListConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
+import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -23,18 +24,21 @@ public class ListTreeNodePresenter implements TreeNodePresenter
         void removeChild(Display childDisplay);
     }
 
+    private final GWTReflectionServiceAsync rpcService;
+
+    private final ObjectConfigurationMap objectConfigurationMap;
+
     private final ListRootDisplay listDisplay;
 
     private final String fieldName;
 
     private final String genericType;
 
-    private final GWTReflectionServiceAsync rpcService;
-
-    public ListTreeNodePresenter(GWTReflectionServiceAsync rpcService, String fieldName, String genericType,
-            ListRootDisplay listDisplay)
+    public ListTreeNodePresenter(GWTReflectionServiceAsync rpcService, ObjectConfigurationMap objectConfigurationMap,
+            String fieldName, String genericType, ListRootDisplay listDisplay)
     {
         this.rpcService = rpcService;
+        this.objectConfigurationMap = objectConfigurationMap;
         this.fieldName = fieldName;
         this.listDisplay = listDisplay;
         this.genericType = genericType;
@@ -60,7 +64,7 @@ public class ListTreeNodePresenter implements TreeNodePresenter
     {
         listDisplay.setActive(true);
         final TreeNodePresenter childPresenter = TreeNodePresenterFactory.getInstance().createChildNodePresenter(
-                rpcService, listDisplay, "Entry", genericType, "Entry", null);
+                rpcService, objectConfigurationMap, listDisplay, "Entry", genericType, "Entry", null);
 
         childPresenter.getDisplay().addTreeNodeClearHandler(new TreeNodeClearEvent.Handler()
         {
