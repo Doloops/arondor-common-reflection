@@ -6,6 +6,7 @@ import com.arondor.common.reflection.gwt.client.presenter.fields.ListTreeNodePre
 import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePresenter.MapRootDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter.PrimitiveDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeNodePresenter.StringListDisplay;
+import com.arondor.common.reflection.gwt.client.view.fields.ListRootView;
 import com.arondor.common.reflection.gwt.client.view.fields.MapRootView;
 import com.arondor.common.reflection.gwt.client.view.fields.PrimitiveBooleanView;
 import com.arondor.common.reflection.gwt.client.view.fields.PrimitiveStringView;
