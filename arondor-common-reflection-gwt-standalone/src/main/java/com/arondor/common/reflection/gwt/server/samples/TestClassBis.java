@@ -1,5 +1,6 @@
 package com.arondor.common.reflection.gwt.server.samples;
 
+import java.util.List;
 import java.util.Map;
 
 import com.arondor.common.management.mbean.annotation.Description;
@@ -42,6 +43,32 @@ public class TestClassBis
     public void setStringMapField(Map<String, String> stringMapField)
     {
         this.stringMapField = stringMapField;
+    }
+
+    @Description("A list of strings")
+    private List<String> stringList;
+
+    public List<String> getStringList()
+    {
+        return stringList;
+    }
+
+    public void setStringList(List<String> stringList)
+    {
+        this.stringList = stringList;
+    }
+
+    @Description("A list of objects")
+    private List<TestInterface> objectList;
+
+    public List<TestInterface> getObjectList()
+    {
+        return objectList;
+    }
+
+    public void setObjectList(List<TestInterface> objectList)
+    {
+        this.objectList = objectList;
     }
 
 }
