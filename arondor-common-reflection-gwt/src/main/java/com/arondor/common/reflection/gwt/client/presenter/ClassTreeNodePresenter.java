@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter;
+import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
@@ -142,7 +144,7 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
             {
                 childPresenter = new PrimitiveTreeNodePresenter(fieldName, display.createPrimitiveChild(fieldClassName));
             }
-            else if (fieldClassName.equals("java.util.List"))
+            else if (isStringListField(accessibleField))
             {
                 childPresenter = new StringListTreeNodePresenter(fieldName, display.createStringListChild());
             }
@@ -176,6 +178,14 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
             childPresenter.getDisplay().setNodeName(nodeName);
             classTreeNodePresenterMap.put(fieldName, childPresenter);
         }
+    }
+
+    private boolean isStringListField(AccessibleField accessibleField)
+    {
+        String fieldClassName = accessibleField.getClassName();
+        return fieldClassName.equals("java.util.List") && accessibleField.getGenericParameterClassList() != null
+                && accessibleField.getGenericParameterClassList().size() == 1
+                && accessibleField.getGenericParameterClassList().get(0).equals("java.lang.String");
     }
 
     public String getFieldName()

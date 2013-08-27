@@ -1,8 +1,11 @@
-package com.arondor.common.reflection.gwt.client.presenter;
+package com.arondor.common.reflection.gwt.client.presenter.fields;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter;
+import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter.Display;
+import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter.ValueDisplay;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ListConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;

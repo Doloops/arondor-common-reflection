@@ -1,9 +1,11 @@
-package com.arondor.common.reflection.gwt.client.view;
+package com.arondor.common.reflection.gwt.client.view.fields;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.arondor.common.reflection.gwt.client.presenter.StringListTreeNodePresenter.StringListDisplay;
+import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeNodePresenter.StringListDisplay;
+import com.arondor.common.reflection.gwt.client.view.AbstractTreeNodeView;
+import com.arondor.common.reflection.gwt.client.view.MyValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;

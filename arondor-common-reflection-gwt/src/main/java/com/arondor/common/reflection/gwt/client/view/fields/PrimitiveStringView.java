@@ -1,6 +1,7 @@
-package com.arondor.common.reflection.gwt.client.view;
+package com.arondor.common.reflection.gwt.client.view.fields;
 
-import com.arondor.common.reflection.gwt.client.presenter.PrimitiveTreeNodePresenter;
+import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter;
+import com.arondor.common.reflection.gwt.client.view.AbstractTreeNodeView;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;

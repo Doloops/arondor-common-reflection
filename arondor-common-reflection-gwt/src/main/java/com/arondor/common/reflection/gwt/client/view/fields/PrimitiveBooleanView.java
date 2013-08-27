@@ -1,6 +1,8 @@
-package com.arondor.common.reflection.gwt.client.view;
+package com.arondor.common.reflection.gwt.client.view.fields;
 
-import com.arondor.common.reflection.gwt.client.presenter.PrimitiveTreeNodePresenter.PrimitiveDisplay;
+import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter.PrimitiveDisplay;
+import com.arondor.common.reflection.gwt.client.view.AbstractTreeNodeView;
+import com.arondor.common.reflection.gwt.client.view.MyValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -11,7 +13,7 @@ public class PrimitiveBooleanView extends AbstractTreeNodeView implements Primit
 {
     private final CheckBox checkBox = new CheckBox();
 
-    protected PrimitiveBooleanView(UIObject parentNode)
+    public PrimitiveBooleanView(UIObject parentNode)
     {
         super(parentNode);
         setHasRemoveButton(true);

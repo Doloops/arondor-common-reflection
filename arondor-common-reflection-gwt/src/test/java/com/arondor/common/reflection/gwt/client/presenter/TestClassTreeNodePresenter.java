@@ -21,6 +21,7 @@ import org.mockito.stubbing.Answer;
 import com.arondor.common.reflection.bean.config.ObjectConfigurationFactoryBean;
 import com.arondor.common.reflection.catalog.SimpleAccessibleClassCatalog;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter.ClassDisplay;
+import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.testclasses.ParentTestClass;
 import com.arondor.common.reflection.gwt.client.testclasses.TestClass;
 import com.arondor.common.reflection.gwt.client.testclasses.TestInterface;

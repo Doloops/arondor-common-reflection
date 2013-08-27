@@ -3,8 +3,11 @@ package com.arondor.common.reflection.gwt.client.view;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter.ClassDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.ImplementingClassPresenter;
-import com.arondor.common.reflection.gwt.client.presenter.PrimitiveTreeNodePresenter.PrimitiveDisplay;
-import com.arondor.common.reflection.gwt.client.presenter.StringListTreeNodePresenter.StringListDisplay;
+import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter.PrimitiveDisplay;
+import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeNodePresenter.StringListDisplay;
+import com.arondor.common.reflection.gwt.client.view.fields.PrimitiveBooleanView;
+import com.arondor.common.reflection.gwt.client.view.fields.PrimitiveStringView;
+import com.arondor.common.reflection.gwt.client.view.fields.StringListView;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.UIObject;
 
