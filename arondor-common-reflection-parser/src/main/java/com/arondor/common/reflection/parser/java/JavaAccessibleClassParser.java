@@ -218,7 +218,10 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
                 attributeInfo.setClassName(parameterType.getName());
             }
             attributeInfo.setWritable();
-            handleObjectMultipleMethod(method, parameterType, attributeInfo);
+            if (method.getGenericParameterTypes() != null && method.getGenericParameterTypes().length == 1)
+            {
+                addGenericParameter(attributeInfo, method.getGenericParameterTypes()[0]);
+            }
         }
         else if ((isVoid(method.getReturnType()) || (isExposableType(method.getReturnType(), includeNonPrimitive)))
                 && (isExposableSignature(method.getParameterTypes(), includeNonPrimitive)))
@@ -235,35 +238,29 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         }
     }
 
-    private void handleObjectMultipleMethod(Method method, Class<?> parameterType, AccessibleFieldBean attributeInfo)
+    private void addGenericParameter(AccessibleFieldBean attributeInfo, Type type)
     {
-        if (java.util.Map.class.isAssignableFrom(parameterType))
+        LOG.debug("Setting field " + attributeInfo.getName() + " : type=" + type);
+        List<String> genericTypes = new ArrayList<String>();
+        if (type instanceof ParameterizedType)
         {
-            Type genericParameterType = method.getGenericParameterTypes()[0];
-            if (genericParameterType instanceof ParameterizedType)
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            for (Type subType : parameterizedType.getActualTypeArguments())
             {
-                ParameterizedType parameterizedType = (ParameterizedType) genericParameterType;
-
-                List<String> genericParameterClassList = new ArrayList<String>();
-                for (Type argument : parameterizedType.getActualTypeArguments())
+                LOG.debug("subType : " + subType);
+                if (subType instanceof Class<?>)
                 {
-                    if (Class.class.isAssignableFrom(argument.getClass()))
-                    {
-                        String argumentClassName = ((Class<?>) argument).getName();
-                        if (DEBUG)
-                        {
-                            LOG.debug("* Type argument : " + argumentClassName);
-                        }
-                        genericParameterClassList.add(argumentClassName);
-                    }
-                    else
-                    {
-                        genericParameterClassList.add("{Unkown type:" + argument + "}");
-                    }
+                    Class<?> subTypeClass = (Class<?>) subType;
+                    genericTypes.add(subTypeClass.getName());
                 }
-                attributeInfo.setGenericParameterClassList(genericParameterClassList);
+                else
+                {
+                    return;
+                }
             }
         }
+        LOG.debug("Setting field " + attributeInfo.getName() + " : genericTypes=" + genericTypes);
+        attributeInfo.setGenericParameterClassList(genericTypes);
     }
 
     private static final String[] IGNORED_METHODS = { "wait", "notifyAll", "notify", "finalize", "getClass", "equals",

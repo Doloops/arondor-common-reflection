@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -114,5 +115,82 @@ public class TestJavaAccessibleClassParser
         assertNotNull(field);
 
         assertEquals(String.class.getName(), field.getClassName());
+    }
+
+    public static class ClassWithStringList
+    {
+        private List<String> stringList;
+
+        public List<String> getStringList()
+        {
+            return stringList;
+        }
+
+        public void setStringList(List<String> stringList)
+        {
+            this.stringList = stringList;
+        }
+    }
+
+    @Test
+    public void testClassWithStringList()
+    {
+        AccessibleClassParser parser = new JavaAccessibleClassParser();
+        AccessibleClass clazz = parser.parseAccessibleClass(ClassWithStringList.class);
+
+        assertNotNull(clazz);
+        log.info("Class : " + clazz.getClassBaseName());
+
+        assertEquals(1, clazz.getAccessibleFields().size());
+
+        AccessibleField field = clazz.getAccessibleFields().get("stringList");
+        assertNotNull(field);
+
+        assertEquals(List.class.getName(), field.getClassName());
+        assertNotNull(field.getGenericParameterClassList());
+        assertEquals(1, field.getGenericParameterClassList().size());
+        assertEquals(String.class.getName(), field.getGenericParameterClassList().get(0));
+    }
+
+    public static class ClassWithMapWithGenerics
+    {
+        public static class EmbeddedClass
+        {
+
+        }
+
+        private Map<String, EmbeddedClass> myMap;
+
+        public Map<String, EmbeddedClass> getMyMap()
+        {
+            return myMap;
+        }
+
+        public void setMyMap(Map<String, EmbeddedClass> myMap)
+        {
+            this.myMap = myMap;
+        }
+    }
+
+    @Test
+    public void testClassWithMapWithGenerics()
+    {
+        AccessibleClassParser parser = new JavaAccessibleClassParser();
+        AccessibleClass clazz = parser.parseAccessibleClass(ClassWithMapWithGenerics.class);
+
+        assertNotNull(clazz);
+        log.info("Class : " + clazz.getClassBaseName());
+
+        assertEquals(1, clazz.getAccessibleFields().size());
+
+        AccessibleField field = clazz.getAccessibleFields().get("myMap");
+        assertNotNull(field);
+
+        assertEquals(Map.class.getName(), field.getClassName());
+        assertNotNull(field.getGenericParameterClassList());
+        assertEquals(2, field.getGenericParameterClassList().size());
+        assertEquals(String.class.getName(), field.getGenericParameterClassList().get(0));
+        assertEquals(ClassWithMapWithGenerics.EmbeddedClass.class.getName(), field.getGenericParameterClassList()
+                .get(1));
     }
 }
