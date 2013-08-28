@@ -40,8 +40,6 @@ public class TestReflectionInstantiatorReflect
 
     private ReflectionInstantiator reflectionInstantiator;
 
-    // private AccessibleClassParser parser;
-
     private ObjectConfigurationFactory objectConfigurationFactory = new ObjectConfigurationFactoryBean();
 
     @Before

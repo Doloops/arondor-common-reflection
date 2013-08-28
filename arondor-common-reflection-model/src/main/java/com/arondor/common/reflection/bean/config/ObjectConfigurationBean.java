@@ -128,6 +128,9 @@ public class ObjectConfigurationBean implements ObjectConfiguration
     @Override
     public String toString()
     {
-        return "ObjectConfigurationBean [className=" + className + ", fields=" + fields + "]";
+        return "ObjectConfigurationBean [className="
+                + className
+                + ((constructorArguments != null && !constructorArguments.isEmpty()) ? (", constructor=" + constructorArguments)
+                        : "") + ", fields=" + fields + "]";
     }
 }

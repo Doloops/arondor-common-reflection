@@ -7,7 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.arondor.common.reflection.api.catalog.AccessibleClassCatalog;
+import com.arondor.common.reflection.bean.java.AccessibleClassBean;
+import com.arondor.common.reflection.bean.java.AccessibleFieldBean;
 import com.arondor.common.reflection.model.java.AccessibleClass;
+import com.arondor.common.reflection.model.java.AccessibleConstructor;
+import com.arondor.common.reflection.model.java.AccessibleField;
+import com.arondor.common.reflection.model.java.AccessibleMethod;
 
 /**
  * Simple Class Catalog Parser
@@ -17,7 +22,25 @@ import com.arondor.common.reflection.model.java.AccessibleClass;
  */
 public class SimpleAccessibleClassCatalog implements AccessibleClassCatalog
 {
-    private Map<String, AccessibleClass> accessibleClassMap = new HashMap<String, AccessibleClass>();
+    private final Map<String, AccessibleClass> accessibleClassMap = new HashMap<String, AccessibleClass>();
+
+    public SimpleAccessibleClassCatalog()
+    {
+        AccessibleClassBean stringClass = new AccessibleClassBean();
+        stringClass.setName(String.class.getName());
+        stringClass.setConstructors(new ArrayList<AccessibleConstructor>());
+        stringClass.setAccessibleMethods(new ArrayList<AccessibleMethod>());
+        stringClass.setAccessibleFields(new HashMap<String, AccessibleField>());
+        stringClass.setSuperclass(Object.class.getName());
+        stringClass.setInterfaces(new ArrayList<String>());
+        stringClass.setAllInterfaces(new ArrayList<String>());
+        stringClass.getAllInterfaces().add(Object.class.getName());
+
+        AccessibleFieldBean stringValue = new AccessibleFieldBean("value", "The String value", String.class, true, true);
+        stringClass.getAccessibleFields().put(stringValue.getName(), stringValue);
+
+        accessibleClassMap.put(stringClass.getName(), stringClass);
+    }
 
     private boolean allowSuperclassesInImplementingClases = false;
 

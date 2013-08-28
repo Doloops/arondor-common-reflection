@@ -61,6 +61,9 @@ public class ParentTestClass
     @Description("property")
     private List<String> arraylistStringField = new ArrayList<String>();
 
+    @Description("anObject")
+    private Object anObject;
+
     public TestInterface getTestInterfaceField()
     {
         return testInterfaceField;
@@ -259,6 +262,16 @@ public class ParentTestClass
     public void setCharacterField(Character characterField)
     {
         this.characterField = characterField;
+    }
+
+    public Object getAnObject()
+    {
+        return anObject;
+    }
+
+    public void setAnObject(Object anObject)
+    {
+        this.anObject = anObject;
     }
 
 }

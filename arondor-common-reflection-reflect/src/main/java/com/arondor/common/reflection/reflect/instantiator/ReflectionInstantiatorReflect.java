@@ -118,9 +118,17 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
     }
 
     private <T> Constructor<T> getClassConstructor(String className, List<ElementConfiguration> constructorArguments)
-            throws ClassNotFoundException, InstantiationException, IllegalAccessException
+            throws ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException,
+            SecurityException
     {
         Class<T> clazz = (Class<T>) resolveClass(className);
+        if (clazz.equals(String.class))
+        {
+            /**
+             * Special case for Primitive Class
+             */
+            return clazz.getConstructor(String.class);
+        }
         for (Constructor<T> constructor : (Constructor<T>[]) clazz.getConstructors())
         {
             if (constructor.getParameterTypes().length == constructorArguments.size())
@@ -128,7 +136,7 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
                 return constructor;
             }
         }
-        throw new NoSuchMethodError("Could not find a constructor with " + constructorArguments.size()
+        throw new NoSuchMethodException("Could not find a constructor with " + constructorArguments.size()
                 + " arguments for class " + className);
     }
 

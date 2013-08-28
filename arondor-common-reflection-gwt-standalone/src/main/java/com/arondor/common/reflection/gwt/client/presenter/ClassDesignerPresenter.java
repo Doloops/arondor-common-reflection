@@ -1,5 +1,6 @@
 package com.arondor.common.reflection.gwt.client.presenter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
@@ -90,6 +91,14 @@ public class ClassDesignerPresenter
                 stringMapConfiguration.getMapConfiguration().put(
                         objectConfigurationFactory.createPrimitiveConfiguration("key2"),
                         objectConfigurationFactory.createPrimitiveConfiguration("value2"));
+
+                ObjectConfiguration myString = objectConfigurationFactory.createObjectConfiguration();
+                myString.setClassName("java.lang.String");
+                myString.setFields(new HashMap<String, ElementConfiguration>());
+                myString.setConstructorArguments(new ArrayList<ElementConfiguration>());
+                myString.getConstructorArguments().add(
+                        objectConfigurationFactory.createPrimitiveConfiguration("a value"));
+                parentObjectConfiguration.getFields().put("anObject", myString);
             }
         });
 
