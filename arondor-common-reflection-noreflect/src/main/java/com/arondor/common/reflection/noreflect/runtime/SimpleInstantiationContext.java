@@ -39,18 +39,22 @@ public class SimpleInstantiationContext implements InstantiationContext
 
     public ObjectConfiguration getSharedObjectConfiguration(String name)
     {
-        if (objetConfigurations == null)
-        {
-            return null;
-        }
         return objetConfigurations.get(name);
     }
 
-    private Map<String, ObjectConfiguration> objetConfigurations;
+    private final Map<String, ObjectConfiguration> objetConfigurations = new HashMap<String, ObjectConfiguration>();
 
     public void setSharedObjectConfigurations(ObjectConfigurationMap objetConfigurations)
     {
-        this.objetConfigurations = objetConfigurations;
+        addSharedObjectConfigurations(objetConfigurations);
+    }
+
+    public void addSharedObjectConfigurations(ObjectConfigurationMap objetConfigurations)
+    {
+        for (Map.Entry<String, ObjectConfiguration> entry : objetConfigurations.entrySet())
+        {
+            this.objetConfigurations.put(entry.getKey(), entry.getValue());
+        }
     }
 
     private List<SharedObjectResolver> sharedObjectResolvers = new ArrayList<SharedObjectResolver>();
