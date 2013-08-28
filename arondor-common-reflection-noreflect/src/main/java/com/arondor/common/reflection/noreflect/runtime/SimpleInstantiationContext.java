@@ -63,5 +63,4 @@ public class SimpleInstantiationContext implements InstantiationContext
     {
         sharedObjectResolvers.add(sharedObjectResolver);
     }
-
 }
