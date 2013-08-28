@@ -12,6 +12,11 @@ public class AccessibleConstructorBean implements AccessibleConstructor
      */
     private static final long serialVersionUID = -3238305306015874730L;
 
+    public AccessibleConstructorBean()
+    {
+
+    }
+
     private List<String> argumentTypes;
 
     public List<String> getArgumentTypes()
