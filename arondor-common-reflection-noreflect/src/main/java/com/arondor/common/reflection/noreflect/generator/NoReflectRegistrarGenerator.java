@@ -136,7 +136,8 @@ public class NoReflectRegistrarGenerator
         {
             out.println("/* Enum Case */");
             out.println("if ( constructorArguments == null || constructorArguments.size() !=  1 )");
-            out.println("{ throw new RuntimeException(\"Invalid constructor arguments : \" + constructorArguments); }");
+            out.println("{ throw new RuntimeException(\"Invalid constructor arguments for class '"
+                    + accessibleClass.getName() + "' : \" + constructorArguments); }");
 
             out.println("String value = (String) constructorArguments.get(0);");
             out.println("return " + normalizeClassName(accessibleClass.getName()) + ".valueOf(value);");
@@ -160,7 +161,8 @@ public class NoReflectRegistrarGenerator
 
             out.println(");}");
         }
-        out.println("                    throw new IllegalArgumentException(\"Invalid constructor arguments : \" + constructorArguments);");
+        out.println("                    throw new IllegalArgumentException(\"Invalid constructor arguments for class '"
+                + accessibleClass.getName() + "' : \" + constructorArguments);");
     }
 
     private void generateCast(PrintStream out, String className, String valueLabel)
