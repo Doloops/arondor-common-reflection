@@ -113,12 +113,16 @@ public class NoReflectRegistrarGenerator
             out.println("        inheritance.add(\"" + accessibleClass.getSuperclass() + "\");");
         }
         out.println("        catalog.registerObjectInheritance(\"" + accessibleClass.getName() + "\", inheritance);");
-        out.println("        catalog.registerObjectConstructor(\"" + accessibleClass.getName() + "\",");
-        out.println("            new ObjectConstructor(){");
-        out.println("                public Object create(List<Object> constructorArguments){");
-        generateClassConstructor(out, accessibleClass);
-        out.println("            }");
-        out.println("            });");
+
+        if (!accessibleClass.isAbstract())
+        {
+            out.println("        catalog.registerObjectConstructor(\"" + accessibleClass.getName() + "\",");
+            out.println("            new ObjectConstructor(){");
+            out.println("                public Object create(List<Object> constructorArguments){");
+            generateClassConstructor(out, accessibleClass);
+            out.println("            }");
+            out.println("            });");
+        }
 
         for (AccessibleField field : accessibleClass.getAccessibleFields().values())
         {

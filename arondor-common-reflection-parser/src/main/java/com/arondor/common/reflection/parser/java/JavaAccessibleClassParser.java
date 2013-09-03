@@ -393,8 +393,12 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         }
         AccessibleClassBean accessClass = createBaseAccessibleClass(clazz);
 
-        setAccessibleClassInheritance(clazz, accessClass);
+        if (Modifier.isAbstract(clazz.getModifiers()))
+        {
+            accessClass.setAbstract(true);
+        }
 
+        setAccessibleClassInheritance(clazz, accessClass);
         setAccessibleClassConstructors(clazz, accessClass);
 
         Map<String, AccessibleField> exposedAttributes = new HashMap<String, AccessibleField>();

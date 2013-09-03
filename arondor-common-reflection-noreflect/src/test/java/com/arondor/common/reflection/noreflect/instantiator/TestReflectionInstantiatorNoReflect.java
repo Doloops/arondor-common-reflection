@@ -10,7 +10,9 @@ import com.arondor.common.reflection.noreflect.model.FieldSetter;
 import com.arondor.common.reflection.noreflect.model.ObjectConstructor;
 import com.arondor.common.reflection.noreflect.model.ReflectionInstantiatorCatalog;
 import com.arondor.common.reflection.noreflect.runtime.SimpleReflectionInstantiatorCatalog;
+import com.arondor.common.reflection.noreflect.testclasses.TestAbstractParent;
 import com.arondor.common.reflection.noreflect.testclasses.TestChildClass;
+import com.arondor.common.reflection.noreflect.testclasses.TestChildWithAbstractParent;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassA;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassB;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassC;
@@ -160,6 +162,26 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
         List<String> childClassInheritance = new ArrayList<String>();
         childClassInheritance.add(TestParentClass.class.getName());
         catalog.registerObjectInheritance(TestChildClass.class.getName(), childClassInheritance);
+
+        catalog.registerFieldSetter(TestAbstractParent.class.getName(), "abstractField", new FieldSetter()
+        {
+            public void set(Object object, Object value)
+            {
+                ((TestAbstractParent) object).setAbstractField((String) value);
+            }
+        });
+
+        catalog.registerObjectConstructor(TestChildWithAbstractParent.class.getName(), new ObjectConstructor()
+        {
+            public Object create(List<Object> arguments)
+            {
+                return new TestChildWithAbstractParent();
+            }
+        });
+
+        List<String> childAbstractInheritance = new ArrayList<String>();
+        childAbstractInheritance.add(TestAbstractParent.class.getName());
+        catalog.registerObjectInheritance(TestChildWithAbstractParent.class.getName(), childAbstractInheritance);
 
         ReflectionInstantiatorNoReflect reflectionInstantiator = new ReflectionInstantiatorNoReflect();
         reflectionInstantiator.setReflectionInstantiatorCatalog(catalog);

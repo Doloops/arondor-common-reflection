@@ -12,8 +12,18 @@ import java.util.Map;
  */
 public interface AccessibleClass extends Serializable
 {
+    /**
+     * The class name (including packages)
+     * 
+     * @return
+     */
     public String getName();
 
+    /**
+     * The class description
+     * 
+     * @return
+     */
     public String getDescription();
 
     public String getSuperclass();
@@ -31,5 +41,7 @@ public interface AccessibleClass extends Serializable
     public String getClassBaseName();
 
     public String getPackageName();
+
+    public boolean isAbstract();
 
 }

@@ -25,6 +25,7 @@ import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
 import com.arondor.common.reflection.model.config.ReferenceConfiguration;
 import com.arondor.common.reflection.noreflect.testclasses.TestChildClass;
+import com.arondor.common.reflection.noreflect.testclasses.TestChildWithAbstractParent;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassA;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassB;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassC;
@@ -336,7 +337,6 @@ public abstract class TestNoReflectSharedTests
     public void testParentAndChild()
     {
         ObjectConfiguration childConfiguration = objectConfigurationFactory.createObjectConfiguration();
-        childConfiguration.setSingleton(true);
         childConfiguration.setClassName(TestChildClass.class.getName());
         childConfiguration.setFields(new HashMap<String, ElementConfiguration>());
 
@@ -350,5 +350,21 @@ public abstract class TestNoReflectSharedTests
         assertNotNull(child);
         assertEquals("Parent value", child.getParentField());
         assertEquals("Child value", child.getChildField());
+    }
+
+    @Test
+    public void testChildWithAbstractParent()
+    {
+        ObjectConfiguration childConfiguration = objectConfigurationFactory.createObjectConfiguration();
+        childConfiguration.setClassName(TestChildWithAbstractParent.class.getName());
+        childConfiguration.setFields(new HashMap<String, ElementConfiguration>());
+
+        childConfiguration.getFields().put("abstractField",
+                objectConfigurationFactory.createPrimitiveConfiguration("Value for field from abstract"));
+
+        TestChildWithAbstractParent child = reflectionInstantiator.instanciateObject(childConfiguration,
+                TestChildWithAbstractParent.class, instantationContext);
+        assertNotNull(child);
+        assertEquals("Value for field from abstract", child.getAbstractField());
     }
 }

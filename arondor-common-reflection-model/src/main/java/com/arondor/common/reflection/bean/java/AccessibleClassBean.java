@@ -135,4 +135,16 @@ public class AccessibleClassBean implements AccessibleClass
     {
         this.methods = methods;
     }
+
+    private boolean abstactClass = false;
+
+    public boolean isAbstract()
+    {
+        return abstactClass;
+    }
+
+    public void setAbstract(boolean abstractClass)
+    {
+        this.abstactClass = abstractClass;
+    }
 }

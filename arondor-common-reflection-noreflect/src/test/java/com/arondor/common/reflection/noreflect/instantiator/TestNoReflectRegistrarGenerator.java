@@ -16,7 +16,9 @@ import com.arondor.common.reflection.noreflect.generator.NoReflectRegistrarGener
 import com.arondor.common.reflection.noreflect.model.ReflectionInstantiatorCatalog;
 import com.arondor.common.reflection.noreflect.model.ReflectionInstantiatorRegistrar;
 import com.arondor.common.reflection.noreflect.runtime.SimpleReflectionInstantiatorCatalog;
+import com.arondor.common.reflection.noreflect.testclasses.TestAbstractParent;
 import com.arondor.common.reflection.noreflect.testclasses.TestChildClass;
+import com.arondor.common.reflection.noreflect.testclasses.TestChildWithAbstractParent;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassA;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassB;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassC;
@@ -42,6 +44,8 @@ public class TestNoReflectRegistrarGenerator extends TestNoReflectSharedTests
         classes.add(parser.parseAccessibleClass(TestClassD.class));
         classes.add(parser.parseAccessibleClass(TestParentClass.class));
         classes.add(parser.parseAccessibleClass(TestChildClass.class));
+        classes.add(parser.parseAccessibleClass(TestAbstractParent.class));
+        classes.add(parser.parseAccessibleClass(TestChildWithAbstractParent.class));
 
         NoReflectRegistrarGenerator gen = new NoReflectRegistrarGenerator();
 

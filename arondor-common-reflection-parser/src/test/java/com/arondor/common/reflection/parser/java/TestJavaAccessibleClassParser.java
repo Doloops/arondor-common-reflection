@@ -1,6 +1,7 @@
 package com.arondor.common.reflection.parser.java;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -39,7 +40,6 @@ public class TestJavaAccessibleClassParser
         {
 
         }
-
     }
 
     @Test
@@ -47,8 +47,8 @@ public class TestJavaAccessibleClassParser
     {
         AccessibleClassParser parser = new JavaAccessibleClassParser();
         AccessibleClass clazz = parser.parseAccessibleClass(SimpleClass.class);
-
         assertNotNull(clazz);
+        assertFalse(clazz.isAbstract());
 
         String className = clazz.getName();
         assertEquals(SimpleClass.class.getName(), className);
@@ -248,4 +248,17 @@ public class TestJavaAccessibleClassParser
 
     }
 
+    public static abstract class AbstractClass
+    {
+
+    }
+
+    @Test
+    public void testAbstractClass()
+    {
+        AccessibleClassParser parser = new JavaAccessibleClassParser();
+        AccessibleClass clazz = parser.parseAccessibleClass(AbstractClass.class);
+
+        assertTrue(clazz.isAbstract());
+    }
 }
