@@ -24,6 +24,7 @@ import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
 import com.arondor.common.reflection.model.config.ReferenceConfiguration;
+import com.arondor.common.reflection.noreflect.testclasses.TestChildClass;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassA;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassB;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassC;
@@ -329,7 +330,25 @@ public abstract class TestNoReflectSharedTests
 
         Assert.assertEquals("Referenced value from TestClassA", classA.getProperty1());
         Assert.assertEquals(777802, classA.getProperty2());
-
     }
 
+    @Test
+    public void testParentAndChild()
+    {
+        ObjectConfiguration childConfiguration = objectConfigurationFactory.createObjectConfiguration();
+        childConfiguration.setSingleton(true);
+        childConfiguration.setClassName(TestChildClass.class.getName());
+        childConfiguration.setFields(new HashMap<String, ElementConfiguration>());
+
+        childConfiguration.getFields().put("parentField",
+                objectConfigurationFactory.createPrimitiveConfiguration("Parent value"));
+        childConfiguration.getFields().put("childField",
+                objectConfigurationFactory.createPrimitiveConfiguration("Child value"));
+
+        TestChildClass child = reflectionInstantiator.instanciateObject(childConfiguration, TestChildClass.class,
+                instantationContext);
+        assertNotNull(child);
+        assertEquals("Parent value", child.getParentField());
+        assertEquals("Child value", child.getChildField());
+    }
 }

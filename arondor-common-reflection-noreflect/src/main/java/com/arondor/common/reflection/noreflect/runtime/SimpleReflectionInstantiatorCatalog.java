@@ -1,5 +1,6 @@
 package com.arondor.common.reflection.noreflect.runtime;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -12,9 +13,16 @@ public class SimpleReflectionInstantiatorCatalog implements ReflectionInstantiat
 {
     private final static Logger LOG = Logger.getLogger(SimpleReflectionInstantiatorCatalog.class.getName());
 
+    private final Map<String, Collection<String>> inheritanceMap = new HashMap<String, Collection<String>>();
+
     private final Map<String, ObjectConstructor> objectConstructorMap = new HashMap<String, ObjectConstructor>();
 
     private final Map<String, FieldSetter> fieldSetterMap = new HashMap<String, FieldSetter>();
+
+    public void registerObjectInheritance(String className, Collection<String> inheritance)
+    {
+        inheritanceMap.put(className, inheritance);
+    }
 
     public void registerObjectConstructor(String name, ObjectConstructor objectConstructor)
     {
@@ -39,6 +47,24 @@ public class SimpleReflectionInstantiatorCatalog implements ReflectionInstantiat
 
     public FieldSetter getFieldSetter(String className, String fieldName)
     {
-        return fieldSetterMap.get(getFieldSetterName(className, fieldName));
+        FieldSetter fieldSetter = fieldSetterMap.get(getFieldSetterName(className, fieldName));
+        if (fieldSetter != null)
+        {
+            return fieldSetter;
+        }
+        Collection<String> inheritance = inheritanceMap.get(className);
+        if (inheritance != null)
+        {
+            for (String parent : inheritance)
+            {
+                fieldSetter = fieldSetterMap.get(getFieldSetterName(parent, fieldName));
+                if (fieldSetter != null)
+                {
+                    return fieldSetter;
+                }
+            }
+        }
+        return null;
     }
+
 }

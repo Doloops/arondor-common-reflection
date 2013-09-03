@@ -1,6 +1,7 @@
 package com.arondor.common.reflection.noreflect.instantiator;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -9,11 +10,13 @@ import com.arondor.common.reflection.noreflect.model.FieldSetter;
 import com.arondor.common.reflection.noreflect.model.ObjectConstructor;
 import com.arondor.common.reflection.noreflect.model.ReflectionInstantiatorCatalog;
 import com.arondor.common.reflection.noreflect.runtime.SimpleReflectionInstantiatorCatalog;
+import com.arondor.common.reflection.noreflect.testclasses.TestChildClass;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassA;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassB;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassC;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassC.EnumValue;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassD;
+import com.arondor.common.reflection.noreflect.testclasses.TestParentClass;
 
 public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTests
 {
@@ -129,6 +132,34 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
                 ((TestClassD) object).setListClassA((List<TestClassA>) value);
             }
         });
+
+        catalog.registerObjectConstructor(TestChildClass.class.getName(), new ObjectConstructor()
+        {
+            public Object create(List<Object> arguments)
+            {
+                return new TestChildClass();
+            }
+        });
+
+        catalog.registerFieldSetter(TestParentClass.class.getName(), "parentField", new FieldSetter()
+        {
+            public void set(Object object, Object value)
+            {
+                ((TestParentClass) object).setParentField((String) value);
+            }
+        });
+
+        catalog.registerFieldSetter(TestChildClass.class.getName(), "childField", new FieldSetter()
+        {
+            public void set(Object object, Object value)
+            {
+                ((TestChildClass) object).setChildField((String) value);
+            }
+        });
+
+        List<String> childClassInheritance = new ArrayList<String>();
+        childClassInheritance.add(TestParentClass.class.getName());
+        catalog.registerObjectInheritance(TestChildClass.class.getName(), childClassInheritance);
 
         ReflectionInstantiatorNoReflect reflectionInstantiator = new ReflectionInstantiatorNoReflect();
         reflectionInstantiator.setReflectionInstantiatorCatalog(catalog);
