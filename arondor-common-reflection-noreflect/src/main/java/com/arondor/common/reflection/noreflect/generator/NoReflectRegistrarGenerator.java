@@ -1,6 +1,7 @@
 package com.arondor.common.reflection.noreflect.generator;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import com.arondor.common.reflection.noreflect.model.ReflectionInstantiatorCatal
 import com.arondor.common.reflection.noreflect.model.ReflectionInstantiatorRegistrar;
 import com.arondor.common.reflection.noreflect.runtime.PrimitiveStringConverter;
 import com.arondor.common.reflection.parser.java.JavaAccessibleClassParser;
+import com.arondor.common.reflection.util.PrimitiveTypeUtil;
 
 public class NoReflectRegistrarGenerator
 {
@@ -55,6 +57,7 @@ public class NoReflectRegistrarGenerator
         out.println(IMPORT_KEYWORD + PrimitiveStringConverter.class.getName() + ";");
         out.println(IMPORT_KEYWORD + ReflectionInstantiatorRegistrar.class.getName() + ";");
         out.println(IMPORT_KEYWORD + List.class.getName() + ";");
+        out.println(IMPORT_KEYWORD + ArrayList.class.getName() + ";");
 
         out.println("public class " + getClassName() + " implements ReflectionInstantiatorRegistrar");
         out.println("{");
@@ -65,20 +68,54 @@ public class NoReflectRegistrarGenerator
         out.println("    {");
         for (AccessibleClass accessibleClass : accessibleClasses)
         {
-            generateClass(out, accessibleClass);
+            generateClassMethodCall(out, accessibleClass);
         }
         out.println("    }");
+        for (AccessibleClass accessibleClass : accessibleClasses)
+        {
+            generateClassMethod(out, accessibleClass);
+        }
+
         out.println("}");
     }
 
-    private void generateClass(PrintStream out, AccessibleClass accessibleClass)
+    private String generateClassUniqueName(AccessibleClass accessibleClass)
     {
+        return accessibleClass.getName().replace('.', '_').replace('$', '_');
+    }
 
+    private void generateClassMethodCall(PrintStream out, AccessibleClass accessibleClass)
+    {
+        String classUniqueName = generateClassUniqueName(accessibleClass);
+        out.println("        register_" + classUniqueName + "(catalog);");
+    }
+
+    private void generateClassMethod(PrintStream out, AccessibleClass accessibleClass)
+    {
+        String classUniqueName = generateClassUniqueName(accessibleClass);
+        out.println("    // Class " + accessibleClass.getName());
+        out.println("    private void register_" + classUniqueName + "(ReflectionInstantiatorCatalog catalog)");
+        out.println("    {");
+        generateClassContents(out, accessibleClass);
+        out.println("    }");
+    }
+
+    private void generateClassContents(PrintStream out, AccessibleClass accessibleClass)
+    {
         LOG.info("Generating stub for " + accessibleClass.getName());
+        out.println("        List<String> inheritance = new ArrayList<String>();");
+        for (String inherits : accessibleClass.getAllInterfaces())
+        {
+            out.println("        inheritance.add(\"" + inherits + "\");");
+        }
+        if (accessibleClass.getSuperclass() != null)
+        {
+            out.println("        inheritance.add(\"" + accessibleClass.getSuperclass() + "\");");
+        }
+        out.println("        catalog.registerObjectInheritance(\"" + accessibleClass.getName() + "\", inheritance);");
         out.println("        catalog.registerObjectConstructor(\"" + accessibleClass.getName() + "\",");
         out.println("            new ObjectConstructor(){");
         out.println("                public Object create(List<Object> constructorArguments){");
-
         generateClassConstructor(out, accessibleClass);
         out.println("            }");
         out.println("            });");
@@ -103,8 +140,9 @@ public class NoReflectRegistrarGenerator
         }
         for (AccessibleConstructor constructor : accessibleClass.getConstructors())
         {
-            out.println("if ( constructorArguments.size() ==" + constructor.getArgumentTypes().size() + ")");
-            out.println("{return new " + accessibleClass.getName() + "(");
+            out.println("                    if ( constructorArguments.size() =="
+                    + constructor.getArgumentTypes().size() + ")");
+            out.print("                    {return new " + accessibleClass.getName() + "(");
 
             for (int argumentIndex = 0; argumentIndex < constructor.getArgumentTypes().size(); argumentIndex++)
             {
@@ -118,21 +156,20 @@ public class NoReflectRegistrarGenerator
 
             out.println(");}");
         }
-        out.println("throw new IllegalArgumentException(\"Invalid constructor arguments : \" + constructorArguments);");
+        out.println("                    throw new IllegalArgumentException(\"Invalid constructor arguments : \" + constructorArguments);");
     }
 
     private void generateCast(PrintStream out, String className, String valueLabel)
     {
-        boolean primitive = accessibleClassParser.isPrimitiveType(className);
-
+        boolean primitive = PrimitiveTypeUtil.isPrimitiveType(className);
         if (primitive)
         {
             String primitiveMethod = PrimitiveStringConverter.getConvertionMethodFromClassName(className);
-            out.println("  PrimitiveStringConverter." + primitiveMethod + "((String)" + valueLabel + ")");
+            out.print("PrimitiveStringConverter." + primitiveMethod + "((String)" + valueLabel + ")");
         }
         else
         {
-            out.println("(" + normalizeClassName(className) + ") " + valueLabel);
+            out.print("(" + normalizeClassName(className) + ") " + valueLabel);
         }
 
     }
@@ -141,7 +178,13 @@ public class NoReflectRegistrarGenerator
     {
         if (!field.getWritable())
         {
-            LOG.debug("Skipping field " + field.getName() + ", not writable");
+            LOG.debug("Skipping field " + field.getName() + " in class " + accessibleClass.getName() + ", not writable");
+            return;
+        }
+        if (field.getDeclaredInClass() != null && !field.getDeclaredInClass().equals(accessibleClass.getName()))
+        {
+            LOG.warn("Skipping field " + field.getName() + " from class " + accessibleClass.getName()
+                    + " because it is said to be declared in " + field.getDeclaredInClass());
             return;
         }
         String setterName = accessibleClassParser.attributeToSetter(field.getName());
@@ -150,7 +193,7 @@ public class NoReflectRegistrarGenerator
                 + "\",");
         out.println("             new FieldSetter() {");
         out.println("                          public void set(Object object, Object value) {");
-        out.println("                          ((" + accessibleClass.getName() + ")object)." + setterName + "(");
+        out.print("                          ((" + accessibleClass.getName() + ")object)." + setterName + "(");
 
         generateCast(out, field.getClassName(), "value");
 

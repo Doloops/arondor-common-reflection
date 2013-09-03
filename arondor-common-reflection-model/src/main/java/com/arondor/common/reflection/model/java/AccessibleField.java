@@ -28,14 +28,38 @@ public interface AccessibleField extends Serializable
      */
     String getClassName();
 
-    void setClassName(String replace);
-
+    /**
+     * The generic Parameter class list for generics
+     * 
+     * @return
+     */
     List<String> getGenericParameterClassList();
 
+    /**
+     * Is the field readable (with a get()) ?
+     * 
+     * @return true if the field is readable, false otherwise
+     */
     boolean getReadable();
 
+    /**
+     * Is the field writable (with a set()) ?
+     * 
+     * @return true if the field is writable, false otherwise
+     */
     boolean getWritable();
 
+    /**
+     * For booleans, we prefer declaring boolean isField() instead of boolean
+     * getField() ; it is a matter of taste actually
+     * 
+     * @return
+     */
+    @Deprecated
     boolean isIs();
 
+    /**
+     * In which class this field is declared
+     */
+    String getDeclaredInClass();
 }

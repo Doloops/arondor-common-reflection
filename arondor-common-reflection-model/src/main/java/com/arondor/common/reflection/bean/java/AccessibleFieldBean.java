@@ -146,4 +146,15 @@ public class AccessibleFieldBean implements AccessibleField
         return genericParameterClassList;
     }
 
+    private String declaredInClass;
+
+    public String getDeclaredInClass()
+    {
+        return declaredInClass;
+    }
+
+    public void setDeclaredInClass(String declaredInClass)
+    {
+        this.declaredInClass = declaredInClass;
+    }
 }

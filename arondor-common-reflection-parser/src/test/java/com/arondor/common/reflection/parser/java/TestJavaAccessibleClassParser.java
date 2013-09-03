@@ -193,4 +193,59 @@ public class TestJavaAccessibleClassParser
         assertEquals(ClassWithMapWithGenerics.EmbeddedClass.class.getName(), field.getGenericParameterClassList()
                 .get(1));
     }
+
+    public static class ClassWhichIsParent
+    {
+        private String parentField;
+
+        public String getParentField()
+        {
+            return parentField;
+        }
+
+        public void setParentField(String parentField)
+        {
+            this.parentField = parentField;
+        }
+    }
+
+    public static class ClassWhichIsChild extends ClassWhichIsParent
+    {
+        private String childField;
+
+        public String getChildField()
+        {
+            return childField;
+        }
+
+        public void setChildField(String childField)
+        {
+            this.childField = childField;
+        }
+    }
+
+    @Test
+    public void testFieldScope_Parent()
+    {
+        AccessibleClassParser parser = new JavaAccessibleClassParser();
+        AccessibleClass clazz = parser.parseAccessibleClass(ClassWhichIsParent.class);
+        assertEquals(1, clazz.getAccessibleFields().size());
+        AccessibleField parentField = clazz.getAccessibleFields().get("parentField");
+        assertEquals(ClassWhichIsParent.class.getName(), parentField.getDeclaredInClass());
+    }
+
+    @Test
+    public void testFieldScope_Child()
+    {
+        AccessibleClassParser parser = new JavaAccessibleClassParser();
+        AccessibleClass clazz = parser.parseAccessibleClass(ClassWhichIsChild.class);
+        assertEquals(2, clazz.getAccessibleFields().size());
+        AccessibleField parentField = clazz.getAccessibleFields().get("parentField");
+        assertEquals(ClassWhichIsParent.class.getName(), parentField.getDeclaredInClass());
+
+        AccessibleField childField = clazz.getAccessibleFields().get("childField");
+        assertEquals(ClassWhichIsChild.class.getName(), childField.getDeclaredInClass());
+
+    }
+
 }

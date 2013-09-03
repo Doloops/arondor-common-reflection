@@ -181,7 +181,8 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
             {
                 LOG.debug("Method : " + method.getName() + ", return=" + method.getReturnType().getName()
                         + " (exposable=" + isExposableType(method.getReturnType(), includeNonPrimitive) + ")"
-                        + ", args=" + method.getParameterTypes().length);
+                        + ", args=" + method.getParameterTypes().length + ", declaringClass="
+                        + method.getDeclaringClass().getName());
             }
             if (isIgnoredMethod(method))
             {
@@ -198,29 +199,31 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         {
             String prop = getterToAttribute(method.getName());
             Class<?> fieldClass = method.getReturnType();
-            AccessibleFieldBean attributeField = getBeanFromMethod(exposedAttributes, fieldClass, prop);
-            attributeField.setReadable();
+            AccessibleFieldBean field = getBeanFromMethod(exposedAttributes, fieldClass, prop);
+            field.setReadable();
+            setFieldDeclaredInClass(field, method.getDeclaringClass());
             if (method.getName().startsWith("is"))
             {
-                attributeField.setIs(true);
+                field.setIs(true);
             }
         }
         else if (isSetterMethod(includeNonPrimitive, method))
         {
             String prop = getterToAttribute(method.getName());
             Class<?> fieldType = method.getParameterTypes()[0];
-            AccessibleFieldBean attributeField = getBeanFromMethod(exposedAttributes, fieldType, prop);
-            if (!attributeField.getClassName().equals(fieldType.getName()))
+            AccessibleFieldBean field = getBeanFromMethod(exposedAttributes, fieldType, prop);
+            field.setWritable();
+            setFieldDeclaredInClass(field, method.getDeclaringClass());
+            if (!field.getClassName().equals(fieldType.getName()))
             {
-                LOG.warn("Incompatible setter type ! getter said " + attributeField.getClassName() + ", setter said "
+                LOG.warn("Incompatible setter type ! getter said " + field.getClassName() + ", setter said "
                         + fieldType.getName());
                 LOG.warn("Overriding getter type to the setter type " + fieldType.getName());
-                attributeField.setClassName(fieldType.getName());
+                field.setClassName(fieldType.getName());
             }
-            attributeField.setWritable();
             if (method.getGenericParameterTypes() != null && method.getGenericParameterTypes().length == 1)
             {
-                addGenericParameter(attributeField, method.getGenericParameterTypes()[0]);
+                addGenericParameter(field, method.getGenericParameterTypes()[0]);
             }
         }
         else if ((isVoid(method.getReturnType()) || (isExposableType(method.getReturnType(), includeNonPrimitive)))
@@ -236,6 +239,24 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
                         + Modifier.toString(method.getModifiers()));
             }
         }
+    }
+
+    private void setFieldDeclaredInClass(AccessibleFieldBean field, Class<?> declaredClass)
+    {
+        if (field.getDeclaredInClass() != null)
+        {
+            if (field.getDeclaredInClass().equals(declaredClass.getName()))
+            {
+                return;
+            }
+            else
+            {
+                LOG.warn("Field " + field.getName() + " already declared in class " + field.getDeclaredInClass()
+                        + ", now said to be declared (or overridden) in " + declaredClass.getName());
+                return;
+            }
+        }
+        field.setDeclaredInClass(declaredClass.getName());
     }
 
     private void addGenericParameter(AccessibleFieldBean attributeInfo, Type type)
