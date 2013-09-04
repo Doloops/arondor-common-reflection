@@ -113,17 +113,28 @@ abstract class BeanPropertyParser
         return listConfiguration;
     }
 
-    private ElementConfiguration parseBeanList(ManagedList<?> value)
+    private ElementConfiguration parseBeanList(ManagedList<?> managedList)
     {
-        @SuppressWarnings("unchecked")
-        ManagedList<RuntimeBeanReference> beanReferences = (ManagedList<RuntimeBeanReference>) value;
-
         ListConfiguration listConfiguration = objectConfigurationFactory.createListConfiguration();
         listConfiguration.setListConfiguration(new ArrayList<ElementConfiguration>());
 
-        for (RuntimeBeanReference beanReference : beanReferences)
+        for (Object item : managedList)
         {
-            listConfiguration.getListConfiguration().add(parseBeanDefinition(beanReference.getBeanName()));
+            if (item instanceof RuntimeBeanReference)
+            {
+                RuntimeBeanReference runtimeBeanReference = (RuntimeBeanReference) item;
+                listConfiguration.getListConfiguration().add(parseBeanDefinition(runtimeBeanReference.getBeanName()));
+            }
+            else if (item instanceof BeanDefinitionHolder)
+            {
+                BeanDefinitionHolder beanDefinitionHolder = (BeanDefinitionHolder) item;
+                listConfiguration.getListConfiguration().add(
+                        parseBeanDefinition(beanDefinitionHolder.getBeanDefinition()));
+            }
+            else
+            {
+                throw new IllegalArgumentException("Not supported : item class " + item.getClass().getName());
+            }
         }
         return listConfiguration;
     }
