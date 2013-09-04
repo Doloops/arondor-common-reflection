@@ -31,6 +31,7 @@ import com.arondor.common.reflection.noreflect.testclasses.TestClassB;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassC;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassC.EnumValue;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassD;
+import com.arondor.common.reflection.noreflect.testclasses.TestNestedClass;
 
 public abstract class TestNoReflectSharedTests
 {
@@ -366,5 +367,27 @@ public abstract class TestNoReflectSharedTests
                 TestChildWithAbstractParent.class, instantationContext);
         assertNotNull(child);
         assertEquals("Value for field from abstract", child.getAbstractField());
+    }
+
+    @Test
+    public void testNestedClass()
+    {
+        ObjectConfiguration embeddedConfiguration = objectConfigurationFactory.createObjectConfiguration();
+        embeddedConfiguration.setClassName(TestNestedClass.EmbeddedClass.class.getName());
+        embeddedConfiguration.setFields(new HashMap<String, ElementConfiguration>());
+        embeddedConfiguration.getFields().put("fieldInEmbedded",
+                objectConfigurationFactory.createPrimitiveConfiguration("Embedded value"));
+
+        ObjectConfiguration nestedConfiguration = objectConfigurationFactory.createObjectConfiguration();
+        nestedConfiguration.setClassName(TestNestedClass.class.getName());
+        nestedConfiguration.setFields(new HashMap<String, ElementConfiguration>());
+        nestedConfiguration.getFields().put("embeddedClass", embeddedConfiguration);
+
+        TestNestedClass nestedClass = reflectionInstantiator.instanciateObject(nestedConfiguration,
+                TestNestedClass.class, instantationContext);
+
+        assertNotNull(nestedClass);
+        assertNotNull(nestedClass.getEmbeddedClass());
+        assertEquals("Embedded value", nestedClass.getEmbeddedClass().getFieldInEmbedded());
     }
 }

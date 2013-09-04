@@ -147,7 +147,7 @@ public class NoReflectRegistrarGenerator
         {
             out.println("                    if ( constructorArguments.size() =="
                     + constructor.getArgumentTypes().size() + ")");
-            out.print("                    {return new " + accessibleClass.getName() + "(");
+            out.print("                    {return new " + normalizeClassName(accessibleClass.getName()) + "(");
 
             for (int argumentIndex = 0; argumentIndex < constructor.getArgumentTypes().size(); argumentIndex++)
             {
@@ -199,7 +199,8 @@ public class NoReflectRegistrarGenerator
                 + "\",");
         out.println("             new FieldSetter() {");
         out.println("                          public void set(Object object, Object value) {");
-        out.print("                          ((" + accessibleClass.getName() + ")object)." + setterName + "(");
+        out.print("                          ((" + normalizeClassName(accessibleClass.getName()) + ")object)."
+                + setterName + "(");
 
         generateCast(out, field.getClassName(), "value");
 

@@ -18,6 +18,7 @@ import com.arondor.common.reflection.noreflect.testclasses.TestClassB;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassC;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassC.EnumValue;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassD;
+import com.arondor.common.reflection.noreflect.testclasses.TestNestedClass;
 import com.arondor.common.reflection.noreflect.testclasses.TestParentClass;
 
 public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTests
@@ -182,6 +183,38 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
         List<String> childAbstractInheritance = new ArrayList<String>();
         childAbstractInheritance.add(TestAbstractParent.class.getName());
         catalog.registerObjectInheritance(TestChildWithAbstractParent.class.getName(), childAbstractInheritance);
+
+        catalog.registerObjectConstructor(TestNestedClass.class.getName(), new ObjectConstructor()
+        {
+            public Object create(List<Object> arguments)
+            {
+                return new TestNestedClass();
+            }
+        });
+
+        catalog.registerObjectConstructor(TestNestedClass.EmbeddedClass.class.getName(), new ObjectConstructor()
+        {
+            public Object create(List<Object> arguments)
+            {
+                return new TestNestedClass.EmbeddedClass();
+            }
+        });
+
+        catalog.registerFieldSetter(TestNestedClass.class.getName(), "embeddedClass", new FieldSetter()
+        {
+            public void set(Object object, Object value)
+            {
+                ((TestNestedClass) object).setEmbeddedClass((TestNestedClass.EmbeddedClass) value);
+            }
+        });
+
+        catalog.registerFieldSetter(TestNestedClass.EmbeddedClass.class.getName(), "fieldInEmbedded", new FieldSetter()
+        {
+            public void set(Object object, Object value)
+            {
+                ((TestNestedClass.EmbeddedClass) object).setFieldInEmbedded((String) value);
+            }
+        });
 
         ReflectionInstantiatorNoReflect reflectionInstantiator = new ReflectionInstantiatorNoReflect();
         reflectionInstantiator.setReflectionInstantiatorCatalog(catalog);
