@@ -57,7 +57,7 @@ public class SimpleReflectionInstantiatorCatalog implements ReflectionInstantiat
         {
             for (String parent : inheritance)
             {
-                fieldSetter = fieldSetterMap.get(getFieldSetterName(parent, fieldName));
+                fieldSetter = getFieldSetter(parent, fieldName);
                 if (fieldSetter != null)
                 {
                     return fieldSetter;
@@ -66,5 +66,4 @@ public class SimpleReflectionInstantiatorCatalog implements ReflectionInstantiat
         }
         return null;
     }
-
 }

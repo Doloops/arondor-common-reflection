@@ -18,6 +18,7 @@ import com.arondor.common.reflection.noreflect.testclasses.TestClassB;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassC;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassC.EnumValue;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassD;
+import com.arondor.common.reflection.noreflect.testclasses.TestGrandChildClass;
 import com.arondor.common.reflection.noreflect.testclasses.TestNestedClass;
 import com.arondor.common.reflection.noreflect.testclasses.TestParentClass;
 
@@ -163,6 +164,18 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
         List<String> childClassInheritance = new ArrayList<String>();
         childClassInheritance.add(TestParentClass.class.getName());
         catalog.registerObjectInheritance(TestChildClass.class.getName(), childClassInheritance);
+
+        List<String> grandChildClassInheritance = new ArrayList<String>();
+        grandChildClassInheritance.add(TestChildClass.class.getName());
+        catalog.registerObjectInheritance(TestGrandChildClass.class.getName(), grandChildClassInheritance);
+
+        catalog.registerObjectConstructor(TestGrandChildClass.class.getName(), new ObjectConstructor()
+        {
+            public Object create(List<Object> arguments)
+            {
+                return new TestGrandChildClass();
+            }
+        });
 
         catalog.registerFieldSetter(TestAbstractParent.class.getName(), "abstractField", new FieldSetter()
         {

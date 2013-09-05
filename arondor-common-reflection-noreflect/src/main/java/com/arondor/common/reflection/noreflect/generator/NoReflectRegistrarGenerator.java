@@ -104,7 +104,7 @@ public class NoReflectRegistrarGenerator
     {
         LOG.info("Generating stub for " + accessibleClass.getName());
         out.println("        List<String> inheritance = new ArrayList<String>();");
-        for (String inherits : accessibleClass.getAllInterfaces())
+        for (String inherits : accessibleClass.getInterfaces())
         {
             out.println("        inheritance.add(\"" + inherits + "\");");
         }

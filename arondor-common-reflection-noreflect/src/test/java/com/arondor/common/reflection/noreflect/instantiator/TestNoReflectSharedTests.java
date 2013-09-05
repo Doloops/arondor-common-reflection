@@ -31,6 +31,7 @@ import com.arondor.common.reflection.noreflect.testclasses.TestClassB;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassC;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassC.EnumValue;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassD;
+import com.arondor.common.reflection.noreflect.testclasses.TestGrandChildClass;
 import com.arondor.common.reflection.noreflect.testclasses.TestNestedClass;
 
 public abstract class TestNoReflectSharedTests
@@ -351,6 +352,25 @@ public abstract class TestNoReflectSharedTests
         assertNotNull(child);
         assertEquals("Parent value", child.getParentField());
         assertEquals("Child value", child.getChildField());
+    }
+
+    @Test
+    public void testGrandChild()
+    {
+        ObjectConfiguration childConfiguration = objectConfigurationFactory.createObjectConfiguration();
+        childConfiguration.setClassName(TestGrandChildClass.class.getName());
+        childConfiguration.setFields(new HashMap<String, ElementConfiguration>());
+
+        childConfiguration.getFields().put("parentField",
+                objectConfigurationFactory.createPrimitiveConfiguration("Parent value"));
+        childConfiguration.getFields().put("childField",
+                objectConfigurationFactory.createPrimitiveConfiguration("Child value"));
+
+        TestGrandChildClass grandChild = reflectionInstantiator.instanciateObject(childConfiguration,
+                TestGrandChildClass.class, instantationContext);
+        assertNotNull(grandChild);
+        assertEquals("Parent value", grandChild.getParentField());
+        assertEquals("Child value", grandChild.getChildField());
     }
 
     @Test
