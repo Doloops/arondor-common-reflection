@@ -3,6 +3,8 @@ package com.arondor.common.reflection.noreflect.instantiator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.arondor.common.reflection.api.instantiator.InstantiationContext;
 import com.arondor.common.reflection.api.instantiator.ReflectionInstantiator;
@@ -16,11 +18,15 @@ import com.arondor.common.reflection.noreflect.model.FieldSetter;
 import com.arondor.common.reflection.noreflect.model.ObjectConstructor;
 import com.arondor.common.reflection.noreflect.model.ReflectionInstantiatorCatalog;
 import com.arondor.common.reflection.noreflect.model.ReflectionInstantiatorRegistrar;
+import com.arondor.common.reflection.noreflect.runtime.AsynchronousObject;
 import com.arondor.common.reflection.noreflect.runtime.SimpleInstantiationContext;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
 {
+    private static final Logger LOGGER = Logger.getLogger(ReflectionInstantiatorNoReflect.class.getName());
+
     public InstantiationContext createDefaultInstantiationContext()
     {
         return new SimpleInstantiationContext();
@@ -160,17 +166,36 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
 
     }
 
-    private void instanciateObjectField(Object object, String className, String propertyName,
+    private void instanciateObjectField(final Object object, String className, String propertyName,
             ElementConfiguration fieldConfiguration, InstantiationContext context)
     {
-        FieldSetter fieldSetter = reflectionInstantiatorCatalog.getFieldSetter(className, propertyName);
+        final FieldSetter fieldSetter = reflectionInstantiatorCatalog.getFieldSetter(className, propertyName);
         if (fieldSetter == null)
         {
             throw new NoReflectRuntimeException("No setter found : className:" + className + ", propertyName:"
                     + propertyName);
         }
         Object value = instanciateObjectField(fieldConfiguration, context);
-        fieldSetter.set(object, value);
+        if (value instanceof AsynchronousObject)
+        {
+            ((AsynchronousObject) value).addCallback(new AsyncCallback<Object>()
+            {
+
+                public void onSuccess(Object result)
+                {
+                    fieldSetter.set(object, result);
+                }
+
+                public void onFailure(Throwable caught)
+                {
+                    LOGGER.log(Level.SEVERE, "Could not set asynchronous object", caught);
+                }
+            });
+        }
+        else
+        {
+            fieldSetter.set(object, value);
+        }
     }
 
     public Object instanciatePrimite(String value, Class<?> targetClass)
