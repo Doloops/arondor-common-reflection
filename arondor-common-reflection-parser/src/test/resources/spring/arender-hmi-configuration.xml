@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans default-lazy-init="true" default-autowire="no"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+	<context:property-placeholder location="classpath:*/arender.properties" />
+	
+<!-- 	<import resource="alterdocumentcontent-configuration.xml" /> -->
+<!-- 	<import resource="toppanel-annotations-configuration.xml" /> -->
+<!-- 	<import resource="toppanel-configuration.xml" /> -->
+
+	<bean id="pageImagePool"
+		class="com.arondor.viewer.client.controllers.asyncmap.impl.PageImagePoolImpl"
+		scope="singleton" />
+
+	<bean id="treeModelFactory"
+		class="com.arondor.viewer.client.pictree.model.impl.TreeModelFactoryImpl"
+		scope="singleton" />
+
+	<bean id="thumbDisplay" class="com.arondor.viewer.client.pictree.view.ImageThumbView"
+		scope="prototype" />
+
+	<bean id="documentExplorerPicTree"
+		class="com.arondor.viewer.client.pictree.presenter.MultiNodePicTreePresenter"
+		scope="singleton">
+		<constructor-arg>
+			<bean id="documentExplorerPicTreeView" class="com.arondor.viewer.client.pictree.view.PicTree" />
+		</constructor-arg>
+	</bean>
+
+	<bean id="thumbViewWithActions"
+		class="com.arondor.viewer.client.pictree.presenter.ThumbWithActionPanel"
+		scope="prototype" />
+
+	<bean id="dateFormatter" class="com.arondor.viewer.client.utils.DateFormatter">
+		<property name="pattern" value="${date.format}" />
+	</bean>
+</beans>

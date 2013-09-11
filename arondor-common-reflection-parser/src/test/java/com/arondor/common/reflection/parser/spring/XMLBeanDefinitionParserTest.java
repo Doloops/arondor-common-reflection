@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.arondor.common.reflection.bean.config.ListConfigurationBean;
+import com.arondor.common.reflection.bean.config.PrimitiveConfigurationBean;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ElementConfiguration.ElementConfigurationType;
 import com.arondor.common.reflection.model.config.ListConfiguration;
@@ -204,9 +205,7 @@ public class XMLBeanDefinitionParserTest
     {
         ObjectConfigurationMap parsedObjectConfiguration = parser.parse();
         ObjectConfiguration objectConfiguration = parsedObjectConfiguration.get("singletonObject");
-
         assertTrue("Shall be singleton !", objectConfiguration.isSingleton());
-
     }
 
     @Test
@@ -218,4 +217,14 @@ public class XMLBeanDefinitionParserTest
         assertFalse("Shall be non-singleton !", objectConfiguration.isSingleton());
     }
 
+    @Test
+    public void testContextPropertyPlaceHolder()
+    {
+        parser = new XMLBeanDefinitionParser("/spring/arender-hmi-configuration.xml");
+        ObjectConfigurationMap parsed = parser.parse();
+        assertEquals(7, parsed.size());
+        ElementConfiguration patternField = parsed.get("dateFormatter").getFields().get("pattern");
+        assertTrue(patternField instanceof PrimitiveConfigurationBean);
+        assertEquals("dd--MM--yyyy", ((PrimitiveConfigurationBean) patternField).getValue());
+    }
 }

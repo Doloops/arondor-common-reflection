@@ -100,8 +100,16 @@ public class XMLBeanDefinitionParser implements ObjectConfigurationMapParser
 
         for (PropertyValue ppt : beanDefinition.getPropertyValues().getPropertyValueList())
         {
-            ElementConfiguration fieldConfiguration = beanPropertyParser.parseProperty(ppt.getValue());
-            fields.put(hashHelper.hashFieldName(beanDefinition.getBeanClassName(), ppt.getName()), fieldConfiguration);
+            try
+            {
+                ElementConfiguration fieldConfiguration = beanPropertyParser.parseProperty(ppt.getValue());
+                fields.put(hashHelper.hashFieldName(beanDefinition.getBeanClassName(), ppt.getName()),
+                        fieldConfiguration);
+            }
+            catch (Exception e)
+            {
+                LOGGER.error("The property value of " + ppt + " cannot be parsed", e);
+            }
         }
 
         List<ElementConfiguration> constructorArguments = new ArrayList<ElementConfiguration>();
