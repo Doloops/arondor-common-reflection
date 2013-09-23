@@ -15,6 +15,7 @@ import com.arondor.common.reflection.api.parser.AccessibleClassParser;
 import com.arondor.common.reflection.catalog.SimpleAccessibleClassCatalog;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ListConfiguration;
+import com.arondor.common.reflection.model.config.MapConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
 import com.arondor.common.reflection.model.config.ReferenceConfiguration;
@@ -258,6 +259,17 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
                 list.add(instantiateElementConfiguration(listElement, String.class.getName(), context));
             }
             return list;
+        case Map:
+            MapConfiguration mapConfiguration = (MapConfiguration) elementConfiguration;
+            Map<Object, Object> map = new HashMap<Object, Object>();
+            for (Map.Entry<ElementConfiguration, ElementConfiguration> entry : mapConfiguration.getMapConfiguration()
+                    .entrySet())
+            {
+                Object key = instantiateElementConfiguration(entry.getKey(), String.class.getName(), context);
+                Object value = instantiateElementConfiguration(entry.getValue(), String.class.getName(), context);
+                map.put(key, value);
+            }
+            return map;
         default:
             throw new RuntimeException("NOT IMPLEMENTED YET :" + elementConfiguration.getFieldConfigurationType());
         }

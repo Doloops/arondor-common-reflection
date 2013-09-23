@@ -21,6 +21,7 @@ import com.arondor.common.reflection.api.instantiator.ReflectionInstantiator;
 import com.arondor.common.reflection.bean.config.ObjectConfigurationFactoryBean;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ListConfiguration;
+import com.arondor.common.reflection.model.config.MapConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
@@ -31,6 +32,7 @@ import com.arondor.common.reflection.reflect.testclasses.TestClassB;
 import com.arondor.common.reflection.reflect.testclasses.TestClassC;
 import com.arondor.common.reflection.reflect.testclasses.TestClassC.EnumValue;
 import com.arondor.common.reflection.reflect.testclasses.TestClassD;
+import com.arondor.common.reflection.reflect.testclasses.TestClassE;
 
 public class TestReflectionInstantiatorReflect
 {
@@ -323,7 +325,7 @@ public class TestReflectionInstantiatorReflect
         ObjectConfigurationMap configurationMap = objectConfigurationFactory.createObjectConfigurationMap();
         String objectName = "myClassA";
         configurationMap.put(objectName, configurationA);
-        instantationContext.setSharedObjectConfigurations(configurationMap);
+        instantationContext.addSharedObjectConfigurations(configurationMap);
 
         ObjectConfiguration configurationB = objectConfigurationFactory.createObjectConfiguration();
         configurationB.setClassName(TestClassB.class.getName());
@@ -345,4 +347,27 @@ public class TestReflectionInstantiatorReflect
 
     }
 
+    @Test
+    public void instantiateMap()
+    {
+        MapConfiguration mapConfiguration = objectConfigurationFactory.createMapConfiguration();
+        mapConfiguration.setMapConfiguration(new HashMap<ElementConfiguration, ElementConfiguration>());
+        mapConfiguration.getMapConfiguration().put(objectConfigurationFactory.createPrimitiveConfiguration("key1"),
+                objectConfigurationFactory.createPrimitiveConfiguration("value1"));
+        mapConfiguration.getMapConfiguration().put(objectConfigurationFactory.createPrimitiveConfiguration("key2"),
+                objectConfigurationFactory.createPrimitiveConfiguration("value2"));
+
+        ObjectConfiguration configurationE = objectConfigurationFactory.createObjectConfiguration();
+        configurationE.setClassName(TestClassE.class.getName());
+        configurationE.setFields(new HashMap<String, ElementConfiguration>());
+        configurationE.getFields().put("mapOfStrings", mapConfiguration);
+
+        TestClassE objectE = reflectionInstantiator.instanciateObject(configurationE, TestClassE.class,
+                instantationContext);
+        assertNotNull(objectE);
+        assertNotNull(objectE.getMapOfStrings());
+        assertEquals(2, objectE.getMapOfStrings().size());
+        assertEquals("value1", objectE.getMapOfStrings().get("key1"));
+        assertEquals("value2", objectE.getMapOfStrings().get("key2"));
+    }
 }
