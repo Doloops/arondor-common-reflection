@@ -37,7 +37,7 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
         return accessibleClassParser;
     }
 
-    public void setAccessibleClassParser(AccessibleClassParser accessibleClassParser)
+    public synchronized void setAccessibleClassParser(AccessibleClassParser accessibleClassParser)
     {
         this.accessibleClassParser = accessibleClassParser;
     }
@@ -53,7 +53,7 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
         return accessibleClassCatalog;
     }
 
-    public void setAccessibleClassCatalog(AccessibleClassCatalog accessibleClassCatalog)
+    public synchronized void setAccessibleClassCatalog(AccessibleClassCatalog accessibleClassCatalog)
     {
         this.accessibleClassCatalog = accessibleClassCatalog;
     }
@@ -292,7 +292,7 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
             AccessibleField accessibleField = accessibleClass.getAccessibleFields().get(fieldName);
             if (accessibleField == null)
             {
-                throw new InstantiationException("Invalid field name : " + accessibleField);
+                throw new InstantiationException("Invalid field name : " + fieldName);
             }
             String fieldClassName = accessibleField.getClassName();
             Method setterMethod = getSetterMethod(objectConfiguration.getClassName(), setterName, fieldClassName);
