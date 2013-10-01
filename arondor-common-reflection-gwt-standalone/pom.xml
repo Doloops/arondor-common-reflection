@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.arondor.common</groupId>
 		<artifactId>arondor-common-reflection</artifactId>
-		<version>0.1.4-SNAPSHOT</version>
+		<version>0.1.5-SNAPSHOT</version>
 	</parent>
 	<groupId>com.arondor.common.reflection</groupId>
 	<artifactId>arondor-common-reflection-gwt-standalone</artifactId>
@@ -13,7 +13,7 @@
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-gwt</artifactId>
-			<version>0.1.4-SNAPSHOT</version>
+			<version>0.1.5-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.gwt</groupId>
@@ -24,7 +24,7 @@
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-service</artifactId>
-			<version>0.1.4-SNAPSHOT</version>
+			<version>0.1.5-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
