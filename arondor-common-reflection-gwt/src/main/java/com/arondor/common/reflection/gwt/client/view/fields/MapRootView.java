@@ -8,7 +8,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.user.client.ui.HasVisibility;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.UIObject;
 
@@ -42,15 +41,12 @@ public class MapRootView extends AbstractTreeNodeView implements MapTreeNodePres
     public MapNodeDisplay createChildNode()
     {
         setActive(true);
-        MapNodeDisplay mapNodeDisplay = new MapNodeView(this);
+        MapNodeView mapNodeDisplay = new MapNodeView(this);
 
         /**
          * Enforce element visibility
          */
-        if (mapNodeDisplay instanceof HasVisibility)
-        {
-            ((HasVisibility) mapNodeDisplay).setVisible(true);
-        }
+        mapNodeDisplay.setVisible(true);
         return mapNodeDisplay;
     }
 }
