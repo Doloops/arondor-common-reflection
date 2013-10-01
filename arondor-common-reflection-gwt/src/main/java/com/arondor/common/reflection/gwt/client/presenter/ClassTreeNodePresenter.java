@@ -71,13 +71,13 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
         {
             public void onValueChange(ValueChangeEvent<ImplementingClass> event)
             {
-                if (event.getValue().isReference() == false)
+                if (event.getValue().isReference())
                 {
-                    updateAccessibleClass(event.getValue().getName(), null);
+                    classTreeNodePresenterMap.clear();
                 }
                 else
                 {
-                    classTreeNodePresenterMap.clear();
+                    updateAccessibleClass(event.getValue().getName(), null);
                 }
             }
         });

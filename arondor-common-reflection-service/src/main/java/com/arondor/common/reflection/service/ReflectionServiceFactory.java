@@ -6,7 +6,7 @@ import com.arondor.common.reflection.parser.java.JavaAccessibleClassParser;
 
 public class ReflectionServiceFactory
 {
-    private static ReflectionServiceFactory INSTANCE = new ReflectionServiceFactory();
+    private static final ReflectionServiceFactory INSTANCE = new ReflectionServiceFactory();
 
     public static ReflectionServiceFactory getInstance()
     {

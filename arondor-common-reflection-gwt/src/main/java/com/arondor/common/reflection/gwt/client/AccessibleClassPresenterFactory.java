@@ -10,8 +10,22 @@ import com.arondor.common.reflection.gwt.client.view.HierarchicAccessibleClassVi
 import com.arondor.common.reflection.gwt.client.view.ObjectConfigurationMapView;
 import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 
+/**
+ * Helper class to create Hierarchic Class Presenters
+ * 
+ * @author Francois Barre
+ * 
+ */
 public class AccessibleClassPresenterFactory
 {
+    /**
+     * This is a utility class, so hide constructor
+     */
+    private AccessibleClassPresenterFactory()
+    {
+
+    }
+
     public static AccessibleClassPresenter createAccessibleClassPresenter(GWTReflectionServiceAsync rpcService,
             ObjectConfigurationMap objectConfigurationMap, String baseClassName)
     {
