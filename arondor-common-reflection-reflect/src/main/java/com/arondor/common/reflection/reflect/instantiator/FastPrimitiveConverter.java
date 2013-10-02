@@ -42,6 +42,13 @@ public class FastPrimitiveConverter
                 return Boolean.parseBoolean(value);
             }
         });
+        primitiveConverterMap.put("float", new PrimitiveConverter()
+        {
+            public Object convert(String value)
+            {
+                return Float.parseFloat(value);
+            }
+        });
     }
 
     public Object convert(String value, String primitiveClass)
