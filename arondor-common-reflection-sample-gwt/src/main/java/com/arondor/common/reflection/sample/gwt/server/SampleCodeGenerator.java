@@ -32,7 +32,7 @@ public class SampleCodeGenerator extends GWTNoReflectRegistrarGenerator
     @Override
     public String getClassName()
     {
-        return "ARenderNoReflectGenerator";
+        return "SampleGWYNoReflectGenerator";
     }
 
     @Override
