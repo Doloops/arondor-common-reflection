@@ -1,0 +1,45 @@
+com.arondor.common.reflection.bean.config.ElementConfigurationBean, true, false, false, false, com.arondor.common.reflection.bean.config.ElementConfigurationBean/2772199083, 2772199083
+@ClientFields,com.arondor.common.reflection.bean.config.ElementConfigurationBean,persistentId
+[Lcom.arondor.common.reflection.bean.config.ElementConfigurationBean;, true, true, false, false, [Lcom.arondor.common.reflection.bean.config.ElementConfigurationBean;/3096508458, 3096508458
+com.arondor.common.reflection.bean.config.ListConfigurationBean, true, true, false, false, com.arondor.common.reflection.bean.config.ListConfigurationBean/1047101137, 1047101137
+@ClientFields,com.arondor.common.reflection.bean.config.ListConfigurationBean,listConfiguration
+[Lcom.arondor.common.reflection.bean.config.ListConfigurationBean;, true, true, false, false, [Lcom.arondor.common.reflection.bean.config.ListConfigurationBean;/1354092755, 1354092755
+com.arondor.common.reflection.bean.config.MapConfigurationBean, true, true, false, false, com.arondor.common.reflection.bean.config.MapConfigurationBean/1287706844, 1287706844
+@ClientFields,com.arondor.common.reflection.bean.config.MapConfigurationBean,mapConfiguration
+[Lcom.arondor.common.reflection.bean.config.MapConfigurationBean;, true, true, false, false, [Lcom.arondor.common.reflection.bean.config.MapConfigurationBean;/834118469, 834118469
+com.arondor.common.reflection.bean.config.ObjectConfigurationBean, true, true, false, false, com.arondor.common.reflection.bean.config.ObjectConfigurationBean/2818527705, 2818527705
+@ClientFields,com.arondor.common.reflection.bean.config.ObjectConfigurationBean,persistentId,className,fields,referenceName,constructorArguments,singleton,objectName
+[Lcom.arondor.common.reflection.bean.config.ObjectConfigurationBean;, true, true, false, false, [Lcom.arondor.common.reflection.bean.config.ObjectConfigurationBean;/3135155041, 3135155041
+com.arondor.common.reflection.bean.config.ObjectConfigurationMapBean, true, true, false, false, com.arondor.common.reflection.bean.config.ObjectConfigurationMapBean/2790258351, 2790258351
+com.arondor.common.reflection.bean.config.PrimitiveConfigurationBean, true, true, false, false, com.arondor.common.reflection.bean.config.PrimitiveConfigurationBean/367333293, 367333293
+@ClientFields,com.arondor.common.reflection.bean.config.PrimitiveConfigurationBean,value
+[Lcom.arondor.common.reflection.bean.config.PrimitiveConfigurationBean;, true, true, false, false, [Lcom.arondor.common.reflection.bean.config.PrimitiveConfigurationBean;/2218880745, 2218880745
+com.arondor.common.reflection.bean.config.ReferenceConfigurationBean, true, true, false, false, com.arondor.common.reflection.bean.config.ReferenceConfigurationBean/3944953820, 3944953820
+@ClientFields,com.arondor.common.reflection.bean.config.ReferenceConfigurationBean,referenceName
+[Lcom.arondor.common.reflection.bean.config.ReferenceConfigurationBean;, true, true, false, false, [Lcom.arondor.common.reflection.bean.config.ReferenceConfigurationBean;/2453000622, 2453000622
+[Lcom.arondor.common.reflection.model.config.ElementConfiguration;, true, true, false, false, [Lcom.arondor.common.reflection.model.config.ElementConfiguration;/528776791, 528776791
+[Lcom.arondor.common.reflection.model.config.ListConfiguration;, true, true, false, false, [Lcom.arondor.common.reflection.model.config.ListConfiguration;/697579204, 697579204
+[Lcom.arondor.common.reflection.model.config.MapConfiguration;, true, true, false, false, [Lcom.arondor.common.reflection.model.config.MapConfiguration;/3215668570, 3215668570
+[Lcom.arondor.common.reflection.model.config.ObjectConfiguration;, true, true, false, false, [Lcom.arondor.common.reflection.model.config.ObjectConfiguration;/2757032218, 2757032218
+[Lcom.arondor.common.reflection.model.config.PrimitiveConfiguration;, true, true, false, false, [Lcom.arondor.common.reflection.model.config.PrimitiveConfiguration;/1266117182, 1266117182
+[Lcom.arondor.common.reflection.model.config.ReferenceConfiguration;, true, true, false, false, [Lcom.arondor.common.reflection.model.config.ReferenceConfiguration;/3083461503, 3083461503
+com.arondor.common.reflection.sample.gwt.client.service.ConfigurationService, false, false, false, false, _, 1049202564
+com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException, true, true, true, true, com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException/3936916533, 3936916533
+com.google.gwt.user.client.rpc.RpcTokenException, true, true, false, false, com.google.gwt.user.client.rpc.RpcTokenException/2345075298, 2345075298
+com.google.gwt.user.client.rpc.XsrfToken, false, false, true, true, com.google.gwt.user.client.rpc.XsrfToken/4254043109, 4254043109
+java.lang.Exception, true, false, true, false, java.lang.Exception/1920171873, 1920171873
+java.lang.RuntimeException, true, false, true, false, java.lang.RuntimeException/515124647, 515124647
+java.lang.String, true, true, true, true, java.lang.String/2004016611, 2004016611
+java.lang.Throwable, true, false, true, false, java.lang.Throwable/2953622131, 2953622131
+java.util.ArrayList, true, true, false, false, java.util.ArrayList/4159755760, 4159755760
+java.util.Arrays$ArrayList, true, true, false, false, java.util.Arrays$ArrayList/2507071751, 2507071751
+java.util.Collections$EmptyList, true, true, false, false, java.util.Collections$EmptyList/4157118744, 4157118744
+java.util.Collections$EmptyMap, true, true, false, false, java.util.Collections$EmptyMap/4174664486, 4174664486
+java.util.Collections$SingletonList, true, true, false, false, java.util.Collections$SingletonList/1586180994, 1586180994
+java.util.HashMap, true, true, false, false, java.util.HashMap/1797211028, 1797211028
+java.util.IdentityHashMap, true, true, false, false, java.util.IdentityHashMap/1839153020, 1839153020
+java.util.LinkedHashMap, true, true, false, false, java.util.LinkedHashMap/3008245022, 3008245022
+java.util.LinkedList, true, true, false, false, java.util.LinkedList/3953877921, 3953877921
+java.util.Stack, true, true, false, false, java.util.Stack/1346942793, 1346942793
+java.util.TreeMap, true, true, false, false, java.util.TreeMap/1493889780, 1493889780
+java.util.Vector, true, true, false, false, java.util.Vector/3057315478, 3057315478

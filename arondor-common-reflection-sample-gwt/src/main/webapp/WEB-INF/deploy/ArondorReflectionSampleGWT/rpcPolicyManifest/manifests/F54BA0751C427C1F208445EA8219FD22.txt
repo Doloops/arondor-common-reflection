@@ -1,0 +1,2 @@
+serviceClass: com.arondor.common.reflection.sample.gwt.client.service.ConfigurationService
+path: AF236EEA1450089E46E79734B1B132CF.gwt.rpc
