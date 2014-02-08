@@ -15,8 +15,14 @@
  */
 package com.arondor.common.reflection.parser.java;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import org.apache.log4j.Logger;
 
@@ -41,6 +47,31 @@ public abstract class AbstractJavaAccessibleClassProvider implements AccessibleC
 
     private boolean allowInterfaces = true;
 
+
+    private List<String> packagePrefixes;
+
+    public void setPackagePrefixes(List<String> packagePrefixes)
+    {
+        this.packagePrefixes = packagePrefixes;
+    }
+
+    public List<String> getPackagePrefixes()
+    {
+        return packagePrefixes;
+    }
+
+    protected boolean isClassInPackagePrefixes(String clazz)
+    {
+        for ( String prefix : getPackagePrefixes() )
+        {
+            if ( clazz.startsWith(prefix))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     protected boolean isValidClass(Class<?> clazz)
     {
         String className = clazz.getName();
@@ -109,6 +140,55 @@ public abstract class AbstractJavaAccessibleClassProvider implements AccessibleC
         return false;
     }
 
+    protected void scanJar(AccessibleClassCatalog catalog, File pathFile)
+    {
+        LOG.debug("Openning jar '" + pathFile.getAbsolutePath() + "'");
+        JarFile jarFile = null;
+        try
+        {
+            jarFile = new JarFile(pathFile);
+            Enumeration<JarEntry> entries = jarFile.entries();
+            while (entries.hasMoreElements())
+            {
+                JarEntry entry = entries.nextElement();
+                if (entry.getName().endsWith(".class") && !entry.getName().contains("$"))
+                {
+
+                    String clz = entry.getName().substring(0, entry.getName().length() - ".class".length());
+
+                    /**
+                     * Regardless on which platform we are on, convert both \\
+                     * and / to a dot.
+                     */
+                    clz = clz.replace('\\', '.').replace('/', '.');
+                    if (isClassInPackagePrefixes(clz))
+                    {
+                        addClass(catalog, clz);
+                    }
+                }
+            }
+        }
+        catch (Throwable t)
+        {
+            LOG.error("Could not scan jar : " + pathFile.getAbsolutePath());
+        }
+        finally
+        {
+            if (jarFile != null)
+            {
+                try
+                {
+                    jarFile.close();
+                }
+                catch (IOException e)
+                {
+                    LOG.error("Could not close jar : " + pathFile.getAbsolutePath());
+                }
+            }
+        }
+    }
+
+    
     protected void addClass(AccessibleClassCatalog catalog, String className)
     {
         try

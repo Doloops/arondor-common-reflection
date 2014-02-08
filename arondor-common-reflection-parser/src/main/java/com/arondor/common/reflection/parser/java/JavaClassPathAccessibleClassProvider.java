@@ -16,11 +16,6 @@
 package com.arondor.common.reflection.parser.java;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 import org.apache.log4j.Logger;
 
@@ -41,18 +36,6 @@ public class JavaClassPathAccessibleClassProvider extends AbstractJavaAccessible
         doParse(catalog);
     }
 
-    private List<String> packagePrefixes;
-
-    public void setPackagePrefixes(List<String> packagePrefixes)
-    {
-        this.packagePrefixes = packagePrefixes;
-    }
-
-    public List<String> getPackagePrefixes()
-    {
-        return packagePrefixes;
-    }
-
     private void doParse(AccessibleClassCatalog catalog)
     {
         LOG.info("Parsing classpath for prefixes : ");
@@ -61,14 +44,10 @@ public class JavaClassPathAccessibleClassProvider extends AbstractJavaAccessible
             LOG.info("* " + prefix);
         }
 
-        for (String prefix : packagePrefixes)
-        {
-            doScanClasspathForPackages(catalog, prefix);
-        }
-
+        doScanClasspathForPackages(catalog);
     }
 
-    protected void doScanClasspathForPackages(AccessibleClassCatalog catalog, String packagePrefix)
+    protected void doScanClasspathForPackages(AccessibleClassCatalog catalog)
     {
         String classpath = System.getProperty("java.class.path");
         LOG.info("Scanning classpath : " + classpath);
@@ -81,11 +60,11 @@ public class JavaClassPathAccessibleClassProvider extends AbstractJavaAccessible
             File pathFile = new File(path);
             if (path.endsWith(".jar"))
             {
-                scanJar(catalog, pathFile, packagePrefix);
+                scanJar(catalog, pathFile);
             }
             else if (pathFile.exists() && pathFile.isDirectory())
             {
-                scanDirectory(catalog, pathFile, packagePrefix);
+                scanDirectory(catalog, pathFile);
             }
             else
             {
@@ -94,13 +73,13 @@ public class JavaClassPathAccessibleClassProvider extends AbstractJavaAccessible
         }
     }
 
-    private void scanDirectory(AccessibleClassCatalog catalog, File pathFile, String packagePrefix)
+    private void scanDirectory(AccessibleClassCatalog catalog, File pathFile)
     {
         LOG.debug("Scanning classpath directory : " + pathFile);
-        scanDirectory(catalog, pathFile, null, packagePrefix);
+        scanDirectory(catalog, pathFile, null);
     }
 
-    private void scanDirectory(AccessibleClassCatalog catalog, File pathFile, String root, String packagePrefix)
+    private void scanDirectory(AccessibleClassCatalog catalog, File pathFile, String root)
     {
         File children[] = pathFile.listFiles();
         String subRootPrefix = (root != null ? (root + ".") : "");
@@ -114,66 +93,18 @@ public class JavaClassPathAccessibleClassProvider extends AbstractJavaAccessible
             if (entry.isDirectory())
             {
                 String subRoot = subRootPrefix + entry.getName();
-                scanDirectory(catalog, entry, subRoot, packagePrefix);
+                scanDirectory(catalog, entry, subRoot);
             }
             else if (entry.getName().endsWith(".class"))
             {
                 String clz = subRootPrefix + entry.getName().substring(0, entry.getName().length() - ".class".length());
-                if (clz.startsWith(packagePrefix))
+                if (isClassInPackagePrefixes(clz))
                 {
                     addClass(catalog, clz);
                 }
             }
         }
 
-    }
-
-    private void scanJar(AccessibleClassCatalog catalog, File pathFile, String packagePrefix)
-    {
-        LOG.debug("Openning jar '" + pathFile.getAbsolutePath() + "'");
-        JarFile jarFile = null;
-        try
-        {
-            jarFile = new JarFile(pathFile);
-            Enumeration<JarEntry> entries = jarFile.entries();
-            while (entries.hasMoreElements())
-            {
-                JarEntry entry = entries.nextElement();
-                if (entry.getName().endsWith(".class") && !entry.getName().contains("$"))
-                {
-
-                    String clz = entry.getName().substring(0, entry.getName().length() - ".class".length());
-
-                    /**
-                     * Regardless on which platform we are on, convert both \\
-                     * and / to a dot.
-                     */
-                    clz = clz.replace('\\', '.').replace('/', '.');
-                    if (clz.startsWith(packagePrefix))
-                    {
-                        addClass(catalog, clz);
-                    }
-                }
-            }
-        }
-        catch (Throwable t)
-        {
-            LOG.error("Could not scan jar : " + pathFile.getAbsolutePath());
-        }
-        finally
-        {
-            if (jarFile != null)
-            {
-                try
-                {
-                    jarFile.close();
-                }
-                catch (IOException e)
-                {
-                    LOG.error("Could not close jar : " + pathFile.getAbsolutePath());
-                }
-            }
-        }
     }
 
 }
