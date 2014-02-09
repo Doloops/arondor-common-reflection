@@ -15,15 +15,14 @@
  */
 package com.arondor.common.reflection.gwt.client.view;
 
-import com.arondor.common.reflection.gwt.client.presenter.ClassDesignerPresenter;
-import com.arondor.common.reflection.gwt.client.presenter.HierarchicAccessibleClassPresenter;
+import com.arondor.common.reflection.gwt.client.presenter.ReflectionDesignerPresenter;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ClassDesignerView extends Composite implements ClassDesignerPresenter.Display
+public class ReflectionDesignerMenuView extends Composite implements ReflectionDesignerPresenter.MenuDisplay
 {
     private Button getConfigButton = new Button("Get");
 
@@ -31,7 +30,7 @@ public class ClassDesignerView extends Composite implements ClassDesignerPresent
 
     private final AbsolutePanel content = new AbsolutePanel();
 
-    public ClassDesignerView()
+    public ReflectionDesignerMenuView()
     {
         content.add(getConfigButton);
         content.add(setConfigButton);
@@ -43,11 +42,6 @@ public class ClassDesignerView extends Composite implements ClassDesignerPresent
         return this;
     }
 
-    public void setAccessibleClassView(HierarchicAccessibleClassPresenter.Display accessibleClassView)
-    {
-        this.content.add(accessibleClassView);
-    }
-
     public HasClickHandlers getGetConfigButton()
     {
         return getConfigButton;
@@ -57,4 +51,12 @@ public class ClassDesignerView extends Composite implements ClassDesignerPresent
     {
         return setConfigButton;
     }
+
+    // public void
+    // setAccessibleClassView(HierarchicAccessibleClassPresenter.Display
+    // accessibleClassView)
+    // {
+    // this.content.add(accessibleClassView);
+    // }
+
 }

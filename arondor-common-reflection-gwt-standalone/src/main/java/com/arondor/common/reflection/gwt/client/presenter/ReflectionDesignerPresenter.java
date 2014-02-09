@@ -20,11 +20,14 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 import com.arondor.common.reflection.bean.config.ObjectConfigurationFactoryBean;
+import com.arondor.common.reflection.gwt.client.api.ObjectConfigurationMapPresenter;
+import com.arondor.common.reflection.gwt.client.presenter.SimpleObjectConfigurationMapPresenter.ObjectConfigurationMapDisplay;
 import com.arondor.common.reflection.gwt.client.service.GWTObjectConfigurationService;
 import com.arondor.common.reflection.gwt.client.service.GWTObjectConfigurationServiceAsync;
-import com.arondor.common.reflection.gwt.client.service.GWTReflectionService;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
-import com.arondor.common.reflection.gwt.client.view.HierarchicAccessibleClassView;
+import com.arondor.common.reflection.gwt.client.view.ObjectConfigurationMapView;
+import com.arondor.common.reflection.gwt.client.view.ReflectionDesignerMenuView;
+import com.arondor.common.reflection.gwt.client.view.ReflectionDesignerView;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.MapConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
@@ -38,55 +41,76 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.IsWidget;
 
-public class ClassDesignerPresenter
+public class ReflectionDesignerPresenter
 {
-    private static final Logger LOG = Logger.getLogger(ClassDesignerPresenter.class.getName());
+    private static final Logger LOG = Logger.getLogger(ReflectionDesignerPresenter.class.getName());
 
     private final ObjectConfigurationFactory objectConfigurationFactory = new ObjectConfigurationFactoryBean();
 
-    public interface Display extends IsWidget
+    private final ObjectConfigurationMapPresenter objectConfigurationMapPresenter;
+
+    public interface MenuDisplay extends IsWidget
     {
         HasClickHandlers getGetConfigButton();
 
         HasClickHandlers getSetConfigButton();
-
-        void setAccessibleClassView(HierarchicAccessibleClassPresenter.Display classDisplay);
     }
 
-    private HierarchicAccessibleClassPresenter classPresenter;
+    private final MenuDisplay menuDisplay;
 
-    private final Display display;
-
-    public ClassDesignerPresenter(Display view, String baseClassName)
+    public MenuDisplay getMenuDisplay()
     {
-        this.display = view;
+        return menuDisplay;
+    }
 
+    public interface DesignerDisplay extends IsWidget
+    {
+        void setMenuDisplay(MenuDisplay menuDisplay);
+
+        void setObjectConfigurationMapDisplay(ObjectConfigurationMapDisplay objectConfigurationMapDisplay);
+    }
+
+    private final DesignerDisplay designerDisplay;
+
+    private final String fieldName = "fieldName";
+
+    private final ObjectConfigurationMapDisplay objectConfigurationMapDisplay = new ObjectConfigurationMapView();
+
+    public DesignerDisplay getDisplay()
+    {
+        return designerDisplay;
+    }
+
+    public ReflectionDesignerPresenter(GWTReflectionServiceAsync reflectionService, String baseClassName)
+    {
+        this.menuDisplay = new ReflectionDesignerMenuView();
+        this.designerDisplay = new ReflectionDesignerView();
+
+        this.designerDisplay.setMenuDisplay(menuDisplay);
+        this.designerDisplay.setObjectConfigurationMapDisplay(objectConfigurationMapDisplay);
+        this.objectConfigurationMapPresenter = new SimpleObjectConfigurationMapPresenter(reflectionService, fieldName,
+                objectConfigurationMapDisplay);
         bind();
-        GWTReflectionServiceAsync rpcService = GWT.create(GWTReflectionService.class);
-        classPresenter = new HierarchicAccessibleClassPresenter(rpcService, null, baseClassName,
-                new HierarchicAccessibleClassView());
-        display.setAccessibleClassView((HierarchicAccessibleClassView) classPresenter.getDisplay());
     }
 
     public void bind()
     {
 
-        display.getSetConfigButton().addClickHandler(new ClickHandler()
+        menuDisplay.getSetConfigButton().addClickHandler(new ClickHandler()
         {
             public void onClick(ClickEvent event)
             {
                 readObjectConfiguration();
-                // setDefaultObject();
             }
         });
 
-        display.getGetConfigButton().addClickHandler(new ClickHandler()
+        menuDisplay.getGetConfigButton().addClickHandler(new ClickHandler()
         {
             public void onClick(ClickEvent event)
             {
-                ObjectConfiguration objectConfiguration = classPresenter
-                        .getObjectConfiguration(objectConfigurationFactory);
-                LOG.info("GET - " + objectConfiguration);
+                // ObjectConfiguration objectConfiguration = classPresenter
+                // .getObjectConfiguration(objectConfigurationFactory);
+                // LOG.info("GET - " + objectConfiguration);
             }
         });
 
@@ -101,9 +125,10 @@ public class ClassDesignerPresenter
 
             public void onSuccess(ObjectConfigurationMap result)
             {
-                ObjectConfiguration objectConfiguration = result.get("localDocumentService");
-                classPresenter.setObjectConfiguration(objectConfiguration);
-
+                // ObjectConfiguration objectConfiguration =
+                // result.get("localDocumentService");
+                // classPresenter.setObjectConfiguration(objectConfiguration);
+                objectConfigurationMapPresenter.setObjectConfigurationMap(result);
             }
 
             public void onFailure(Throwable caught)
@@ -111,11 +136,6 @@ public class ClassDesignerPresenter
                 Window.alert("Error !");
             }
         });
-    }
-
-    public Display getDisplay()
-    {
-        return display;
     }
 
     protected void setDefaultObject()
@@ -160,7 +180,6 @@ public class ClassDesignerPresenter
         myString.getConstructorArguments().add(objectConfigurationFactory.createPrimitiveConfiguration("a value"));
         parentObjectConfiguration.getFields().put("anObject", myString);
 
-        classPresenter.setObjectConfiguration(parentObjectConfiguration);
+        // classPresenter.setObjectConfiguration(parentObjectConfiguration);
     }
-
 }

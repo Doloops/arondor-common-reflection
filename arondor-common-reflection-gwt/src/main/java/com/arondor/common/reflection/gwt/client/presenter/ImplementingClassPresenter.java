@@ -27,6 +27,8 @@ import com.arondor.common.reflection.gwt.client.view.MyValueChangeEvent;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.arondor.common.reflection.model.java.AccessibleClass;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -159,19 +161,19 @@ public class ImplementingClassPresenter
         }
         updateDisplayScheduled = true;
 
-        new DefferedScheduler().scheduleDeffered(new Runnable()
+        Scheduler.get().scheduleFixedDelay(new RepeatingCommand()
         {
-            public void run()
+
+            public boolean execute()
             {
                 doUpdateDisplay();
+                return false;
             }
-        });
+        }, 100);
     }
 
     private void doUpdateDisplay()
     {
-        updateDisplayScheduled = false;
-
         List<String> names = new ArrayList<String>();
         for (ImplementingClass implementingClass : implementingClasses)
         {
@@ -185,6 +187,8 @@ public class ImplementingClassPresenter
         {
             display.selectImplementingClass(currentImplementingClass.toString());
         }
+
+        updateDisplayScheduled = false;
     }
 
     private void fetchBaseClass()

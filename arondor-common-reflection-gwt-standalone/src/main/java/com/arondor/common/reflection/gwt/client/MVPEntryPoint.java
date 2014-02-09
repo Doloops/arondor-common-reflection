@@ -15,9 +15,12 @@
  */
 package com.arondor.common.reflection.gwt.client;
 
-import com.arondor.common.reflection.gwt.client.presenter.ClassDesignerPresenter;
-import com.arondor.common.reflection.gwt.client.view.ClassDesignerView;
+import com.arondor.common.reflection.gwt.client.presenter.ReflectionDesignerPresenter;
+import com.arondor.common.reflection.gwt.client.service.CacheGWTReflectionServiceAsync;
+import com.arondor.common.reflection.gwt.client.service.GWTReflectionService;
+import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.ui.RootPanel;
 
 public class MVPEntryPoint implements EntryPoint
@@ -25,9 +28,13 @@ public class MVPEntryPoint implements EntryPoint
 
     public void onModuleLoad()
     {
+        GWTReflectionServiceAsync reflectionService = GWT.create(GWTReflectionService.class);
+        GWTReflectionServiceAsync cachedReflectionService = new CacheGWTReflectionServiceAsync(reflectionService);
+
         bind();
         String baseClassName = java.lang.Object.class.getName();
-        ClassDesignerPresenter classPresenter = new ClassDesignerPresenter(new ClassDesignerView(), baseClassName);
+        ReflectionDesignerPresenter classPresenter = new ReflectionDesignerPresenter(cachedReflectionService,
+                baseClassName);
 
         RootPanel.get().clear();
         RootPanel.get().add(classPresenter.getDisplay());
