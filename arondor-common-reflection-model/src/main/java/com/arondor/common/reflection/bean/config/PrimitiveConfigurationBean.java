@@ -57,4 +57,20 @@ public class PrimitiveConfigurationBean extends ElementConfigurationBean impleme
         return "PrimitiveConfigurationBean [value=" + value + "]";
     }
 
+    @Override
+    public int hashCode()
+    {
+        return 1337 + value.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o instanceof PrimitiveConfiguration)
+        {
+            String other = ((PrimitiveConfiguration) o).getValue();
+            return value.equals(other);
+        }
+        return super.equals(o);
+    }
 }

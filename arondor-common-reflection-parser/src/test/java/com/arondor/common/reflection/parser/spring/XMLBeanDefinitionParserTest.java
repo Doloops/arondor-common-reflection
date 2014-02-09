@@ -8,32 +8,28 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.arondor.common.reflection.bean.config.ListConfigurationBean;
+import com.arondor.common.reflection.bean.config.ObjectConfigurationFactoryBean;
 import com.arondor.common.reflection.bean.config.PrimitiveConfigurationBean;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ElementConfiguration.ElementConfigurationType;
 import com.arondor.common.reflection.model.config.ListConfiguration;
+import com.arondor.common.reflection.model.config.MapConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
+import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
 import com.arondor.common.reflection.model.config.ReferenceConfiguration;
 
 public class XMLBeanDefinitionParserTest
 {
-    private XMLBeanDefinitionParser parser;
-
     private static final String XML_PATH = "/spring/simpleBeanDefinition.xml";
 
     private final String className = "com.arondor.test.TestBean";
 
-    @Before
-    public void setUp() throws Exception
-    {
-        parser = new XMLBeanDefinitionParser(XML_PATH);
-    }
+    private final ObjectConfigurationFactory objectConfigurationFactory = new ObjectConfigurationFactoryBean();
 
     @Test
     public void testParseBeanWithSinglePrimitiveValue() throws Exception
@@ -107,6 +103,8 @@ public class XMLBeanDefinitionParserTest
 
     private ObjectConfiguration getAndCheckParsedObjectConfiguration(String beanName)
     {
+        XMLBeanDefinitionParser parser = new XMLBeanDefinitionParser(XML_PATH);
+
         ObjectConfigurationMap parsedObjectConfiguration = parser.parse();
         ObjectConfiguration objectConfiguration = parsedObjectConfiguration.get(beanName);
         assertEquals(beanName, objectConfiguration.getObjectName());
@@ -148,6 +146,8 @@ public class XMLBeanDefinitionParserTest
     @Test
     public void testPrintButton()
     {
+        XMLBeanDefinitionParser parser = new XMLBeanDefinitionParser(XML_PATH);
+
         ObjectConfigurationMap parsedObjectConfiguration = parser.parse();
         ObjectConfiguration objectConfiguration = parsedObjectConfiguration.get("printButton");
 
@@ -177,6 +177,8 @@ public class XMLBeanDefinitionParserTest
     @Test
     public void testTypedEnum()
     {
+        XMLBeanDefinitionParser parser = new XMLBeanDefinitionParser(XML_PATH);
+
         ObjectConfigurationMap parsedObjectConfiguration = parser.parse();
         ObjectConfiguration objectConfiguration = parsedObjectConfiguration.get("typedEnum");
 
@@ -203,6 +205,8 @@ public class XMLBeanDefinitionParserTest
     @Test
     public void testSingleton()
     {
+        XMLBeanDefinitionParser parser = new XMLBeanDefinitionParser(XML_PATH);
+
         ObjectConfigurationMap parsedObjectConfiguration = parser.parse();
         ObjectConfiguration objectConfiguration = parsedObjectConfiguration.get("singletonObject");
         assertTrue("Shall be singleton !", objectConfiguration.isSingleton());
@@ -211,6 +215,8 @@ public class XMLBeanDefinitionParserTest
     @Test
     public void testNotSingleton()
     {
+        XMLBeanDefinitionParser parser = new XMLBeanDefinitionParser(XML_PATH);
+
         ObjectConfigurationMap parsedObjectConfiguration = parser.parse();
         ObjectConfiguration objectConfiguration = parsedObjectConfiguration.get("nonSingletonObject");
 
@@ -220,11 +226,32 @@ public class XMLBeanDefinitionParserTest
     @Test
     public void testContextPropertyPlaceHolder()
     {
-        parser = new XMLBeanDefinitionParser("/spring/arender-hmi-configuration.xml");
+        XMLBeanDefinitionParser parser = new XMLBeanDefinitionParser("/spring/arender-hmi-configuration.xml");
         ObjectConfigurationMap parsed = parser.parse();
         assertEquals(7, parsed.size());
         ElementConfiguration patternField = parsed.get("dateFormatter").getFields().get("pattern");
         assertTrue(patternField instanceof PrimitiveConfigurationBean);
         assertEquals("dd--MM--yyyy", ((PrimitiveConfigurationBean) patternField).getValue());
+    }
+
+    @Test
+    public void testPropertyMap()
+    {
+
+        XMLBeanDefinitionParser parser = new XMLBeanDefinitionParser("/spring/mapBeanDefinition.xml");
+        ObjectConfigurationMap parsedObjectConfiguration = parser.parse();
+        ObjectConfiguration objectConfiguration = parsedObjectConfiguration.get("beanWithMap");
+
+        ElementConfiguration elementConfiguration = objectConfiguration.getFields().get("factories");
+        assertNotNull("Null element", elementConfiguration);
+        assertTrue("Wrong class " + elementConfiguration.getClass().getName(),
+                elementConfiguration instanceof MapConfiguration);
+
+        MapConfiguration mapConfiguration = (MapConfiguration) elementConfiguration;
+        assertEquals(1, mapConfiguration.getMapConfiguration().size());
+        ElementConfiguration value = mapConfiguration.getMapConfiguration().get(
+                objectConfigurationFactory.createPrimitiveConfiguration("Key1"));
+        assertNotNull(value);
+        assertEquals(objectConfigurationFactory.createPrimitiveConfiguration("Value1"), value);
     }
 }

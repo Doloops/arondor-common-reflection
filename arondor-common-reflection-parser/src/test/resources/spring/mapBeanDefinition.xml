@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans default-lazy-init="true" default-autowire="no"
+	default-dependency-check="none">
+
+	<bean name="beanWithMap" class="BeanWithMap" singleton="false">
+		<property name="factories">
+			<map>
+				<entry>
+					<key>
+						<value>Key1</value>
+					</key>
+					<value>Value1</value>
+				</entry>
+			</map>
+		</property>
+
+	</bean>
+</beans>
+	

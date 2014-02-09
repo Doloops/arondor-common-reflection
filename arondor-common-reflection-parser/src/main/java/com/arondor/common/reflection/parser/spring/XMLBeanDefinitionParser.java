@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.ConstructorArgumentValues.ValueHolder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
@@ -66,7 +67,13 @@ public class XMLBeanDefinitionParser implements ObjectConfigurationMapParser
 
     public XMLBeanDefinitionParser(String xmlPath, String hashMethod)
     {
-        applicationContext = new ClassPathXmlApplicationContext(xmlPath);
+        applicationContext = new ClassPathXmlApplicationContext(xmlPath)
+        {
+            protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory)
+            {
+                LOGGER.info("Skipping default bean instantiation");
+            }
+        };
         this.hashHelper = new NoHashHelper();
         beanPropertyParser = new BeanPropertyParser(hashHelper, objectConfigurationFactory)
         {
@@ -106,6 +113,7 @@ public class XMLBeanDefinitionParser implements ObjectConfigurationMapParser
 
     private ObjectConfiguration parseBeanDefinition(BeanDefinition beanDefinition)
     {
+        LOGGER.debug("Resource description : " + beanDefinition.getResourceDescription());
         ObjectConfiguration objectConfiguration = objectConfigurationFactory.createObjectConfiguration();
         objectConfiguration.setClassName(hashHelper.hashClassName(beanDefinition.getBeanClassName()));
         objectConfiguration.setSingleton(beanDefinition.isSingleton());

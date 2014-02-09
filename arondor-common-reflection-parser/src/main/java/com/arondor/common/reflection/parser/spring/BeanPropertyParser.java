@@ -16,6 +16,8 @@
 package com.arondor.common.reflection.parser.spring;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -23,10 +25,12 @@ import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.config.TypedStringValue;
 import org.springframework.beans.factory.support.ManagedList;
+import org.springframework.beans.factory.support.ManagedMap;
 
 import com.arondor.common.reflection.api.hash.HashHelper;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ListConfiguration;
+import com.arondor.common.reflection.model.config.MapConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
@@ -75,6 +79,10 @@ abstract class BeanPropertyParser
         {
             return parseValueList((ManagedList<?>) value);
         }
+        else if (value instanceof ManagedMap<?, ?>)
+        {
+            return parseValueMap((ManagedMap<?, ?>) value);
+        }
         else if (value instanceof BeanDefinitionHolder)
         {
             BeanDefinitionHolder beanDefinitionHolder = (BeanDefinitionHolder) value;
@@ -101,31 +109,77 @@ abstract class BeanPropertyParser
 
     private ElementConfiguration parseValueList(ManagedList<?> value)
     {
-        try
-        {
-            return parseFieldList(value);
-        }
-        catch (ClassCastException e)
-        {
-            return parseBeanList(value);
-        }
+        return parseBeanList(value);
+        // try
+        // {
+        // return parseFieldList(value);
+        // }
+        // catch (ClassCastException e)
+        // {
+        //
+        // }
     }
 
-    private ElementConfiguration parseFieldList(ManagedList<?> value)
+    private ElementConfiguration parseValueMap(ManagedMap<?, ?> value)
     {
-        @SuppressWarnings("unchecked")
-        ManagedList<TypedStringValue> stringValueList = (ManagedList<TypedStringValue>) value;
+        MapConfiguration mapConfiguration = objectConfigurationFactory.createMapConfiguration();
+        mapConfiguration.setMapConfiguration(new HashMap<ElementConfiguration, ElementConfiguration>());
 
-        ListConfiguration listConfiguration = objectConfigurationFactory.createListConfiguration();
-        listConfiguration.setListConfiguration(new ArrayList<ElementConfiguration>());
-
-        for (TypedStringValue stringValue : stringValueList)
+        for (Entry<?, ?> entry : value.entrySet())
         {
+            LOGGER.debug("entry key=" + entry.getKey() + ", value=" + entry.getValue());
+            ElementConfiguration keyConfiguration = parseBeanObject(entry.getKey());
+            ElementConfiguration valueConfiguration = parseBeanObject(entry.getValue());
+            mapConfiguration.getMapConfiguration().put(keyConfiguration, valueConfiguration);
+        }
+
+        return mapConfiguration;
+    }
+
+    // private ElementConfiguration parseFieldList(ManagedList<?> value)
+    // {
+    // @SuppressWarnings("unchecked")
+    // ManagedList<TypedStringValue> stringValueList =
+    // (ManagedList<TypedStringValue>) value;
+    //
+    // ListConfiguration listConfiguration =
+    // objectConfigurationFactory.createListConfiguration();
+    // listConfiguration.setListConfiguration(new
+    // ArrayList<ElementConfiguration>());
+    //
+    // for (TypedStringValue stringValue : stringValueList)
+    // {
+    // ElementConfiguration primitiveConfiguration = objectConfigurationFactory
+    // .createPrimitiveConfiguration(stringValue.getValue());
+    // listConfiguration.getListConfiguration().add(primitiveConfiguration);
+    // }
+    // return listConfiguration;
+    // }
+
+    private ElementConfiguration parseBeanObject(Object item)
+    {
+        if (item instanceof TypedStringValue)
+        {
+            TypedStringValue stringValue = (TypedStringValue) item;
             ElementConfiguration primitiveConfiguration = objectConfigurationFactory
                     .createPrimitiveConfiguration(stringValue.getValue());
-            listConfiguration.getListConfiguration().add(primitiveConfiguration);
+            return primitiveConfiguration;
         }
-        return listConfiguration;
+        else if (item instanceof RuntimeBeanReference)
+        {
+            RuntimeBeanReference runtimeBeanReference = (RuntimeBeanReference) item;
+            return parseBeanDefinition(runtimeBeanReference.getBeanName());
+        }
+        else if (item instanceof BeanDefinitionHolder)
+        {
+            BeanDefinitionHolder beanDefinitionHolder = (BeanDefinitionHolder) item;
+            return parseBeanDefinition(beanDefinitionHolder.getBeanDefinition());
+        }
+        else
+        {
+            throw new IllegalArgumentException("Not supported : item class " + item.getClass().getName());
+        }
+
     }
 
     private ElementConfiguration parseBeanList(ManagedList<?> managedList)
@@ -135,21 +189,8 @@ abstract class BeanPropertyParser
 
         for (Object item : managedList)
         {
-            if (item instanceof RuntimeBeanReference)
-            {
-                RuntimeBeanReference runtimeBeanReference = (RuntimeBeanReference) item;
-                listConfiguration.getListConfiguration().add(parseBeanDefinition(runtimeBeanReference.getBeanName()));
-            }
-            else if (item instanceof BeanDefinitionHolder)
-            {
-                BeanDefinitionHolder beanDefinitionHolder = (BeanDefinitionHolder) item;
-                listConfiguration.getListConfiguration().add(
-                        parseBeanDefinition(beanDefinitionHolder.getBeanDefinition()));
-            }
-            else
-            {
-                throw new IllegalArgumentException("Not supported : item class " + item.getClass().getName());
-            }
+            ElementConfiguration elementConfiguration = parseBeanObject(item);
+            listConfiguration.getListConfiguration().add(elementConfiguration);
         }
         return listConfiguration;
     }
