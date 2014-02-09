@@ -161,6 +161,8 @@ public class ImplementingClassPresenter
         }
         updateDisplayScheduled = true;
 
+        Collections.sort(implementingClasses);
+
         if (GWT.isClient())
         {
             Scheduler.get().scheduleFixedDelay(new RepeatingCommand()
@@ -181,7 +183,6 @@ public class ImplementingClassPresenter
 
     private void doUpdateDisplay()
     {
-        Collections.sort(implementingClasses);
         List<String> names = new ArrayList<String>();
         for (ImplementingClass implementingClass : implementingClasses)
         {
