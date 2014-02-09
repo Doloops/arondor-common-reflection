@@ -26,7 +26,8 @@ public class MVPEntryPoint implements EntryPoint
     public void onModuleLoad()
     {
         bind();
-        ClassDesignerPresenter classPresenter = new ClassDesignerPresenter(new ClassDesignerView());
+        String baseClassName = java.lang.Object.class.getName();
+        ClassDesignerPresenter classPresenter = new ClassDesignerPresenter(new ClassDesignerView(), baseClassName);
 
         RootPanel.get().clear();
         RootPanel.get().add(classPresenter.getDisplay());

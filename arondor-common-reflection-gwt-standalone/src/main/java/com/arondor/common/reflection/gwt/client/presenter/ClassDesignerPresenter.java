@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 import com.arondor.common.reflection.bean.config.ObjectConfigurationFactoryBean;
+import com.arondor.common.reflection.gwt.client.service.GWTObjectConfigurationService;
+import com.arondor.common.reflection.gwt.client.service.GWTObjectConfigurationServiceAsync;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionService;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.gwt.client.view.HierarchicAccessibleClassView;
@@ -27,10 +29,13 @@ import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.MapConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
+import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.IsWidget;
 
 public class ClassDesignerPresenter
@@ -52,12 +57,11 @@ public class ClassDesignerPresenter
 
     private final Display display;
 
-    public ClassDesignerPresenter(Display view)
+    public ClassDesignerPresenter(Display view, String baseClassName)
     {
         this.display = view;
 
         bind();
-        String baseClassName = "com.arondor.common.reflection.gwt.server.samples.ParentTestClass";
         GWTReflectionServiceAsync rpcService = GWT.create(GWTReflectionService.class);
         classPresenter = new HierarchicAccessibleClassPresenter(rpcService, null, baseClassName,
                 new HierarchicAccessibleClassView());
@@ -71,49 +75,8 @@ public class ClassDesignerPresenter
         {
             public void onClick(ClickEvent event)
             {
-                ObjectConfiguration childObjectConfiguration = objectConfigurationFactory.createObjectConfiguration();
-                childObjectConfiguration.setClassName("com.arondor.common.reflection.gwt.server.samples.TestClass");
-
-                childObjectConfiguration.setFields(new HashMap<String, ElementConfiguration>());
-
-                childObjectConfiguration.getFields().put("aStringProperty",
-                        objectConfigurationFactory.createPrimitiveConfiguration("test"));
-                childObjectConfiguration.getFields().put("aLongProperty",
-                        objectConfigurationFactory.createPrimitiveConfiguration("123"));
-
-                ObjectConfiguration parentObjectConfiguration = objectConfigurationFactory.createObjectConfiguration();
-                parentObjectConfiguration
-                        .setClassName("com.arondor.common.reflection.gwt.server.samples.ParentTestClass");
-                parentObjectConfiguration.setFields(new HashMap<String, ElementConfiguration>());
-                parentObjectConfiguration.getFields().put("primitiveField",
-                        objectConfigurationFactory.createPrimitiveConfiguration("My Primitive Field"));
-                parentObjectConfiguration.getFields().put("testInterfaceField", childObjectConfiguration);
-
-                classPresenter.setObjectConfiguration(parentObjectConfiguration);
-
-                ObjectConfiguration otherObject = objectConfigurationFactory.createObjectConfiguration();
-                otherObject.setClassName("com.arondor.common.reflection.gwt.server.samples.TestClassBis");
-                parentObjectConfiguration.getFields().put("testClassBisField", otherObject);
-
-                MapConfiguration stringMapConfiguration = objectConfigurationFactory.createMapConfiguration();
-                otherObject.setFields(new HashMap<String, ElementConfiguration>());
-                otherObject.getFields().put("stringMapField", stringMapConfiguration);
-
-                stringMapConfiguration.setMapConfiguration(new HashMap<ElementConfiguration, ElementConfiguration>());
-                stringMapConfiguration.getMapConfiguration().put(
-                        objectConfigurationFactory.createPrimitiveConfiguration("key1"),
-                        objectConfigurationFactory.createPrimitiveConfiguration("value1"));
-                stringMapConfiguration.getMapConfiguration().put(
-                        objectConfigurationFactory.createPrimitiveConfiguration("key2"),
-                        objectConfigurationFactory.createPrimitiveConfiguration("value2"));
-
-                ObjectConfiguration myString = objectConfigurationFactory.createObjectConfiguration();
-                myString.setClassName("java.lang.String");
-                myString.setFields(new HashMap<String, ElementConfiguration>());
-                myString.setConstructorArguments(new ArrayList<ElementConfiguration>());
-                myString.getConstructorArguments().add(
-                        objectConfigurationFactory.createPrimitiveConfiguration("a value"));
-                parentObjectConfiguration.getFields().put("anObject", myString);
+                readObjectConfiguration();
+                // setDefaultObject();
             }
         });
 
@@ -129,8 +92,75 @@ public class ClassDesignerPresenter
 
     }
 
+    protected void readObjectConfiguration()
+    {
+        final String context = "file:///home/caroline/ARender-Rendition-2.2.2-rc0/conf/arender-rendition.xml";
+        GWTObjectConfigurationServiceAsync service = GWT.create(GWTObjectConfigurationService.class);
+        service.getObjectConfigurationMap(context, new AsyncCallback<ObjectConfigurationMap>()
+        {
+
+            public void onSuccess(ObjectConfigurationMap result)
+            {
+                ObjectConfiguration objectConfiguration = result.get("localDocumentService");
+                classPresenter.setObjectConfiguration(objectConfiguration);
+
+            }
+
+            public void onFailure(Throwable caught)
+            {
+                Window.alert("Error !");
+            }
+        });
+    }
+
     public Display getDisplay()
     {
         return display;
     }
+
+    protected void setDefaultObject()
+    {
+        ObjectConfiguration childObjectConfiguration = objectConfigurationFactory.createObjectConfiguration();
+        childObjectConfiguration.setClassName("com.arondor.common.reflection.gwt.server.samples.TestClass");
+
+        childObjectConfiguration.setFields(new HashMap<String, ElementConfiguration>());
+
+        childObjectConfiguration.getFields().put("aStringProperty",
+                objectConfigurationFactory.createPrimitiveConfiguration("test"));
+        childObjectConfiguration.getFields().put("aLongProperty",
+                objectConfigurationFactory.createPrimitiveConfiguration("123"));
+
+        ObjectConfiguration parentObjectConfiguration = objectConfigurationFactory.createObjectConfiguration();
+        parentObjectConfiguration.setClassName("com.arondor.common.reflection.gwt.server.samples.ParentTestClass");
+        parentObjectConfiguration.setFields(new HashMap<String, ElementConfiguration>());
+        parentObjectConfiguration.getFields().put("primitiveField",
+                objectConfigurationFactory.createPrimitiveConfiguration("My Primitive Field"));
+        parentObjectConfiguration.getFields().put("testInterfaceField", childObjectConfiguration);
+
+        ObjectConfiguration otherObject = objectConfigurationFactory.createObjectConfiguration();
+        otherObject.setClassName("com.arondor.common.reflection.gwt.server.samples.TestClassBis");
+        parentObjectConfiguration.getFields().put("testClassBisField", otherObject);
+
+        MapConfiguration stringMapConfiguration = objectConfigurationFactory.createMapConfiguration();
+        otherObject.setFields(new HashMap<String, ElementConfiguration>());
+        otherObject.getFields().put("stringMapField", stringMapConfiguration);
+
+        stringMapConfiguration.setMapConfiguration(new HashMap<ElementConfiguration, ElementConfiguration>());
+        stringMapConfiguration.getMapConfiguration().put(
+                objectConfigurationFactory.createPrimitiveConfiguration("key1"),
+                objectConfigurationFactory.createPrimitiveConfiguration("value1"));
+        stringMapConfiguration.getMapConfiguration().put(
+                objectConfigurationFactory.createPrimitiveConfiguration("key2"),
+                objectConfigurationFactory.createPrimitiveConfiguration("value2"));
+
+        ObjectConfiguration myString = objectConfigurationFactory.createObjectConfiguration();
+        myString.setClassName("java.lang.String");
+        myString.setFields(new HashMap<String, ElementConfiguration>());
+        myString.setConstructorArguments(new ArrayList<ElementConfiguration>());
+        myString.getConstructorArguments().add(objectConfigurationFactory.createPrimitiveConfiguration("a value"));
+        parentObjectConfiguration.getFields().put("anObject", myString);
+
+        classPresenter.setObjectConfiguration(parentObjectConfiguration);
+    }
+
 }
