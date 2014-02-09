@@ -33,6 +33,7 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 
 public class TestObjectConfigurationMapPresenter
 {
+    private final ObjectConfigurationFactory objectConfigurationFactory = new ObjectConfigurationFactoryBean();
 
     @Test
     public void testSetObjectConfigurationMap()
@@ -91,12 +92,11 @@ public class TestObjectConfigurationMapPresenter
         ElementConfiguration factories = localDS.getFields().get("factories");
         Assert.assertNotNull(factories);
         MapConfiguration factoriesMap = (MapConfiguration) factories;
-        ElementConfiguration factoryPdf = factoriesMap.getMapConfiguration().get("application/pdf");
+        ElementConfiguration factoryPdf = factoriesMap.getMapConfiguration().get(
+                objectConfigurationFactory.createPrimitiveConfiguration("application/pdf"));
         Assert.assertTrue(factoryPdf instanceof ReferenceConfiguration);
 
         objectConfigurationMapPresenter.setObjectConfigurationMap(objectConfigurationMap);
-
-        ObjectConfigurationFactory objectConfigurationFactory = new ObjectConfigurationFactoryBean();
 
         ObjectConfigurationMap result = objectConfigurationMapPresenter
                 .getObjectConfigurationMap(objectConfigurationFactory);
