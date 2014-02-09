@@ -56,6 +56,10 @@ public class ImplementingClassView extends Composite implements Display
     private void doSelect(String className)
     {
         selectedClass = className;
+        if (className == null)
+        {
+            return;
+        }
         LOG.finest("Selecting class : " + className + " from a choice of " + implementingListInput.getItemCount()
                 + " items");
         for (int idx = 0; idx < implementingListInput.getItemCount(); idx++)
@@ -66,7 +70,9 @@ public class ImplementingClassView extends Composite implements Display
                 return;
             }
         }
-        LOG.warning("Could not select class : " + className);
+        implementingListInput.addItem(className);
+        implementingListInput.setSelectedIndex(implementingListInput.getItemCount() - 1);
+        // LOG.warning("Could not select class : " + className);
     }
 
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<String> valueChangeHandler)
