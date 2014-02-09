@@ -34,19 +34,30 @@ import com.arondor.common.reflection.model.java.AccessibleClass;
 /**
  * Abstract stuff for java-based AccessibleClass provider
  * 
- * @author francois
+ * @author Francois Barre
  * 
  */
 public abstract class AbstractJavaAccessibleClassProvider implements AccessibleClassProvider
 {
-    private static final Logger LOG = Logger.getLogger(JavaAccessibleClassParser.class);
+    private static final Logger LOG = Logger.getLogger(AbstractJavaAccessibleClassProvider.class);
+
+    private ClassLoader classLoader = this.getClass().getClassLoader();
+
+    protected ClassLoader getEffectiveClassLoader()
+    {
+        return classLoader;
+    }
+
+    protected void setEffectiveClassLoader(ClassLoader classLoader)
+    {
+        this.classLoader = classLoader;
+    }
 
     private AccessibleClassParser accessibleClassParser = new JavaAccessibleClassParser();
 
     private boolean allowClassWithNoEmptyConstructor = true;
 
     private boolean allowInterfaces = true;
-
 
     private List<String> packagePrefixes;
 
@@ -62,16 +73,16 @@ public abstract class AbstractJavaAccessibleClassProvider implements AccessibleC
 
     protected boolean isClassInPackagePrefixes(String clazz)
     {
-        for ( String prefix : getPackagePrefixes() )
+        for (String prefix : getPackagePrefixes())
         {
-            if ( clazz.startsWith(prefix))
+            if (clazz.startsWith(prefix))
             {
                 return true;
             }
         }
         return false;
     }
-    
+
     protected boolean isValidClass(Class<?> clazz)
     {
         String className = clazz.getName();
@@ -140,7 +151,54 @@ public abstract class AbstractJavaAccessibleClassProvider implements AccessibleC
         return false;
     }
 
+    protected void scanDirectory(AccessibleClassCatalog catalog, File pathFile)
+    {
+        LOG.debug("Scanning directory : " + pathFile);
+        if (!pathFile.exists())
+        {
+            LOG.warn("Skipping directory " + pathFile.getAbsolutePath() + ", does not exist");
+            return;
+        }
+        scanDirectory(catalog, pathFile, null);
+    }
+
+    private void scanDirectory(AccessibleClassCatalog catalog, File pathFile, String root)
+    {
+        File children[] = pathFile.listFiles();
+        String subRootPrefix = (root != null ? (root + ".") : "");
+        for (int idx = 0; idx < children.length; idx++)
+        {
+            File entry = children[idx];
+            if (!entry.exists())
+            {
+                LOG.warn("Child " + entry.getAbsolutePath() + " does not exist !");
+            }
+            if (entry.isDirectory())
+            {
+                String subRoot = subRootPrefix + entry.getName();
+                scanDirectory(catalog, entry, subRoot);
+            }
+            else if (entry.getName().endsWith(".class"))
+            {
+                String clz = subRootPrefix + entry.getName().substring(0, entry.getName().length() - ".class".length());
+                if (isClassInPackagePrefixes(clz))
+                {
+                    addClass(catalog, clz);
+                }
+            }
+            else if (entry.getName().endsWith(".jar"))
+            {
+                scanJar(catalog, entry);
+            }
+        }
+    }
+
     protected void scanJar(AccessibleClassCatalog catalog, File pathFile)
+    {
+        doScanJar(catalog, pathFile);
+    }
+
+    protected void doScanJar(AccessibleClassCatalog catalog, File pathFile)
     {
         LOG.debug("Openning jar '" + pathFile.getAbsolutePath() + "'");
         JarFile jarFile = null;
@@ -170,7 +228,7 @@ public abstract class AbstractJavaAccessibleClassProvider implements AccessibleC
         }
         catch (Throwable t)
         {
-            LOG.error("Could not scan jar : " + pathFile.getAbsolutePath());
+            LOG.error("Could not scan jar : " + pathFile.getAbsolutePath(), t);
         }
         finally
         {
@@ -188,17 +246,16 @@ public abstract class AbstractJavaAccessibleClassProvider implements AccessibleC
         }
     }
 
-    
     protected void addClass(AccessibleClassCatalog catalog, String className)
     {
         try
         {
-            Class<?> clazz = Class.forName(className);
+            Class<?> clazz = Class.forName(className, false, getEffectiveClassLoader());
             addClass(catalog, clazz);
         }
         catch (ClassNotFoundException e)
         {
-            LOG.error("Could not get class for name : " + className);
+            LOG.error("Could not get class for name : " + className, e);
         }
     }
 
@@ -232,5 +289,4 @@ public abstract class AbstractJavaAccessibleClassProvider implements AccessibleC
     {
         this.allowInterfaces = allowInterfaces;
     }
-
 }

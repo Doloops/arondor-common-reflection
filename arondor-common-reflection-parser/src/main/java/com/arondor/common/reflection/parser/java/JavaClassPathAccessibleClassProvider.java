@@ -73,38 +73,4 @@ public class JavaClassPathAccessibleClassProvider extends AbstractJavaAccessible
         }
     }
 
-    private void scanDirectory(AccessibleClassCatalog catalog, File pathFile)
-    {
-        LOG.debug("Scanning classpath directory : " + pathFile);
-        scanDirectory(catalog, pathFile, null);
-    }
-
-    private void scanDirectory(AccessibleClassCatalog catalog, File pathFile, String root)
-    {
-        File children[] = pathFile.listFiles();
-        String subRootPrefix = (root != null ? (root + ".") : "");
-        for (int idx = 0; idx < children.length; idx++)
-        {
-            File entry = children[idx];
-            if (!entry.exists())
-            {
-                LOG.warn("Child " + entry.getAbsolutePath() + " does not exist !");
-            }
-            if (entry.isDirectory())
-            {
-                String subRoot = subRootPrefix + entry.getName();
-                scanDirectory(catalog, entry, subRoot);
-            }
-            else if (entry.getName().endsWith(".class"))
-            {
-                String clz = subRootPrefix + entry.getName().substring(0, entry.getName().length() - ".class".length());
-                if (isClassInPackagePrefixes(clz))
-                {
-                    addClass(catalog, clz);
-                }
-            }
-        }
-
-    }
-
 }

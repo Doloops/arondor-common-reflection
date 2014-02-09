@@ -74,6 +74,10 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         {
             throw new IllegalArgumentException("Invalid call to getterToAttribute('" + getterName + "')");
         }
+        if (getterName.length() == offset)
+        {
+            return "none";
+        }
         String rName = getterName.substring(offset, offset + 1);
         String rgName = getterName.substring(offset + 1);
         return rName.toLowerCase() + rgName;
@@ -179,6 +183,8 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
      * Parse method signatures and put it in exposed attributes or exposed
      * methods
      * 
+     * @param clazz
+     *            the class being parsed
      * @param methods
      *            the array of methods to parse
      * @param exposedAttributes
@@ -186,8 +192,8 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
      * @param exposedMethods
      *            list of exposed methods
      */
-    private void parseExposedMethodAndAttributes(Method[] methods, Map<String, AccessibleField> exposedAttributes,
-            List<Method> exposedMethods, boolean includeNonPrimitive)
+    private void parseExposedMethodAndAttributes(Class<?> clazz, Method[] methods,
+            Map<String, AccessibleField> exposedAttributes, List<Method> exposedMethods, boolean includeNonPrimitive)
     {
         for (int mth = 0; mth < methods.length; mth++)
         {
@@ -203,18 +209,18 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
             {
                 continue;
             }
-            parseExposedMethod(exposedAttributes, exposedMethods, includeNonPrimitive, method);
+            parseExposedMethod(clazz, exposedAttributes, exposedMethods, includeNonPrimitive, method);
         }
     }
 
-    private void parseExposedMethod(Map<String, AccessibleField> exposedAttributes, List<Method> exposedMethods,
-            boolean includeNonPrimitive, Method method)
+    private void parseExposedMethod(Class<?> clazz, Map<String, AccessibleField> exposedAttributes,
+            List<Method> exposedMethods, boolean includeNonPrimitive, Method method)
     {
         if (isGetterMethod(includeNonPrimitive, method))
         {
             String prop = getterToAttribute(method.getName());
             Class<?> fieldClass = method.getReturnType();
-            AccessibleFieldBean field = getBeanFromMethod(exposedAttributes, fieldClass, prop);
+            AccessibleFieldBean field = getBeanFromMethod(clazz, exposedAttributes, fieldClass, prop);
             field.setReadable();
             setFieldDeclaredInClass(field, method.getDeclaringClass());
             if (method.getName().startsWith("is"))
@@ -226,14 +232,15 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         {
             String prop = getterToAttribute(method.getName());
             Class<?> fieldType = method.getParameterTypes()[0];
-            AccessibleFieldBean field = getBeanFromMethod(exposedAttributes, fieldType, prop);
+            AccessibleFieldBean field = getBeanFromMethod(clazz, exposedAttributes, fieldType, prop);
             field.setWritable();
             setFieldDeclaredInClass(field, method.getDeclaringClass());
             if (!field.getClassName().equals(fieldType.getName()))
             {
-                LOG.warn("Incompatible setter type ! getter said " + field.getClassName() + ", setter said "
-                        + fieldType.getName());
-                LOG.warn("Overriding getter type to the setter type " + fieldType.getName());
+                LOG.warn("Incompatible setter type at class " + clazz.getName() + ", getter said "
+                        + field.getClassName() + ", setter said " + fieldType.getName());
+                // LOG.warn("Overriding getter type to the setter type " +
+                // fieldType.getName());
                 field.setClassName(fieldType.getName());
             }
             if (method.getGenericParameterTypes() != null && method.getGenericParameterTypes().length == 1)
@@ -346,7 +353,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
                 && method.getParameterTypes().length == 0;
     }
 
-    private AccessibleFieldBean getBeanFromMethod(Map<String, AccessibleField> exposedAttributes,
+    private AccessibleFieldBean getBeanFromMethod(Class<?> clazz, Map<String, AccessibleField> exposedAttributes,
             Class<?> propertyClass, String propertyName)
     {
         AccessibleFieldBean attributeInfo = (AccessibleFieldBean) exposedAttributes.get(propertyName);
@@ -363,8 +370,8 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         {
             if (!propertyClass.getName().equals(attributeInfo.getClassName()))
             {
-                LOG.warn("Diverging classes at setter for property " + propertyName + " : was "
-                        + attributeInfo.getClassName() + ", now is " + propertyClass.getName());
+                LOG.warn("Diverging classes at setter for class " + clazz.getName() + ", property " + propertyName
+                        + " : was " + attributeInfo.getClassName() + ", now is " + propertyClass.getName());
             }
         }
         return attributeInfo;
@@ -419,7 +426,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         Map<String, AccessibleField> exposedAttributes = new HashMap<String, AccessibleField>();
         List<Method> exposedMethods = new ArrayList<Method>();
 
-        parseExposedMethodAndAttributes(methods, exposedAttributes, exposedMethods, true);
+        parseExposedMethodAndAttributes(clazz, methods, exposedAttributes, exposedMethods, true);
 
         setAccessibleFieldsDescriptions(accessClass, clazz, exposedAttributes);
 

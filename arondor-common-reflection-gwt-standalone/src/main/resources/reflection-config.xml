@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans default-lazy-init="true" default-autowire="no"
+	default-dependency-check="none">
+	<bean id="accessibleClassProvider"
+		class="com.arondor.common.reflection.parser.tools.MultipleAccessibleClassProvider">
+		<property name="providers">
+			<list>
+				<bean
+					class="com.arondor.common.reflection.parser.java.JavaClassPathAccessibleClassProvider">
+					<property name="packagePrefixes">
+						<list>
+							<value>com.arondor.common.reflection.gwt.server.samples</value>
+						</list>
+					</property>
+				</bean>
+				<bean
+					class="com.arondor.common.reflection.parser.tools.CacheAccessibleClassProvider">
+					<property name="cacheFile" value="reflection-cache.tmp"/>
+					<property name="provider">
+						<bean
+							class="com.arondor.common.reflection.parser.java.DirectoryAccessibleClassProvider">
+							<property name="directories">
+								<list>
+									<value>/home/caroline/ARender-Rendition-2.2.2-rc0/lib</value>
+								</list>
+							</property>
+							<property name="packagePrefixes">
+								<list>
+									<value></value>
+								</list>
+							</property>
+						</bean>
+					</property>
+				</bean>
+			</list>
+
+		</property>
+	</bean>
+
+</beans>

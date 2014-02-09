@@ -15,11 +15,11 @@
  */
 package com.arondor.common.reflection.gwt.server;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.arondor.common.reflection.api.parser.AccessibleClassProvider;
 import com.arondor.common.reflection.api.service.ReflectionService;
-import com.arondor.common.reflection.parser.java.JavaClassPathAccessibleClassProvider;
 import com.arondor.common.reflection.service.DefaultReflectionService;
 import com.arondor.common.reflection.service.ReflectionServiceFactory;
 
@@ -34,11 +34,12 @@ public class DefaultGWTReflectionService extends GWTReflectionServiceStub
     {
         DefaultReflectionService defaultReflectionService = (DefaultReflectionService) getReflectionService();
 
-        JavaClassPathAccessibleClassProvider classPathProvider = new JavaClassPathAccessibleClassProvider();
-        List<String> packagePrefixes = new ArrayList<String>();
-        packagePrefixes.add("com.arondor.common.reflection.gwt.server.samples");
-        classPathProvider.setPackagePrefixes(packagePrefixes);
-        classPathProvider.provideClasses(defaultReflectionService.getAccessibleClassCatalog());
+        BeanFactory beanFactory = new ClassPathXmlApplicationContext("reflection-config.xml");
+
+        AccessibleClassProvider accessibleClassProvider = beanFactory.getBean("accessibleClassProvider",
+                AccessibleClassProvider.class);
+
+        accessibleClassProvider.provideClasses(defaultReflectionService.getAccessibleClassCatalog());
     }
 
     @Override
