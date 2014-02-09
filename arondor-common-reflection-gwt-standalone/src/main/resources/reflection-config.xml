@@ -28,7 +28,7 @@
 							</property>
 							<property name="packagePrefixes">
 								<list>
-									<value></value>
+									<value>com.arondor</value>
 								</list>
 							</property>
 						</bean>
