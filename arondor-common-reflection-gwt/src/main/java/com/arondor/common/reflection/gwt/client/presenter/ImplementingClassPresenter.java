@@ -29,6 +29,7 @@ import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -146,7 +147,6 @@ public class ImplementingClassPresenter
             return;
         }
         implementingClasses.add(implementingClass);
-        Collections.sort(implementingClasses);
 
         updateDisplay();
     }
@@ -161,19 +161,27 @@ public class ImplementingClassPresenter
         }
         updateDisplayScheduled = true;
 
-        Scheduler.get().scheduleFixedDelay(new RepeatingCommand()
+        if (GWT.isClient())
         {
-
-            public boolean execute()
+            Scheduler.get().scheduleFixedDelay(new RepeatingCommand()
             {
-                doUpdateDisplay();
-                return false;
-            }
-        }, 100);
+
+                public boolean execute()
+                {
+                    doUpdateDisplay();
+                    return false;
+                }
+            }, 2000);
+        }
+        else
+        {
+            doUpdateDisplay();
+        }
     }
 
     private void doUpdateDisplay()
     {
+        Collections.sort(implementingClasses);
         List<String> names = new ArrayList<String>();
         for (ImplementingClass implementingClass : implementingClasses)
         {
