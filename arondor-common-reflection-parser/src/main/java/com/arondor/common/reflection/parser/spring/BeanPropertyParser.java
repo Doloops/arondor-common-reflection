@@ -168,7 +168,10 @@ abstract class BeanPropertyParser
         else if (item instanceof RuntimeBeanReference)
         {
             RuntimeBeanReference runtimeBeanReference = (RuntimeBeanReference) item;
-            return parseBeanDefinition(runtimeBeanReference.getBeanName());
+            // return parseBeanDefinition(runtimeBeanReference.getBeanName());
+            ReferenceConfiguration reference = objectConfigurationFactory.createReferenceConfiguration();
+            reference.setReferenceName(runtimeBeanReference.getBeanName());
+            return reference;
         }
         else if (item instanceof BeanDefinitionHolder)
         {
