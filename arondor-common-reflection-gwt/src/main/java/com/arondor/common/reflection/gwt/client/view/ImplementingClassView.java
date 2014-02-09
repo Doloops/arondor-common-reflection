@@ -32,6 +32,8 @@ public class ImplementingClassView extends Composite implements Display
 
     private ListBox implementingListInput = new ListBox();
 
+    private String selectedClass = null;
+
     public ImplementingClassView()
     {
         initWidget(implementingListInput);
@@ -44,11 +46,16 @@ public class ImplementingClassView extends Composite implements Display
         for (String implementingClass : implementingClasses)
         {
             implementingListInput.addItem(implementingClass);
+            if (selectedClass != null && selectedClass.equals(implementingClass))
+            {
+                implementingListInput.setSelectedIndex(implementingListInput.getItemCount() - 1);
+            }
         }
     }
 
     private void doSelect(String className)
     {
+        selectedClass = className;
         LOG.finest("Selecting class : " + className + " from a choice of " + implementingListInput.getItemCount()
                 + " items");
         for (int idx = 0; idx < implementingListInput.getItemCount(); idx++)
@@ -70,8 +77,9 @@ public class ImplementingClassView extends Composite implements Display
             {
                 if (implementingListInput.getSelectedIndex() != -1)
                 {
-                    valueChangeHandler.onValueChange(new MyValueChangeEvent<String>(implementingListInput
-                            .getValue(implementingListInput.getSelectedIndex())));
+                    String value = implementingListInput.getValue(implementingListInput.getSelectedIndex());
+                    selectedClass = value;
+                    valueChangeHandler.onValueChange(new MyValueChangeEvent<String>(value));
                 }
             }
         });
