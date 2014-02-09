@@ -21,9 +21,11 @@ import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNo
 import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeNodePresenter.StringListDisplay;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
+import com.arondor.common.reflection.model.config.MapConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
+import com.arondor.common.reflection.model.config.ReferenceConfiguration;
 import com.arondor.common.reflection.parser.java.JavaAccessibleClassParser;
 import com.arondor.common.reflection.parser.spring.XMLBeanDefinitionParser;
 import com.arondor.common.reflection.service.DefaultReflectionService;
@@ -88,6 +90,9 @@ public class TestObjectConfigurationMapPresenter
         ObjectConfiguration localDS = objectConfigurationMap.get("localDocumentService");
         ElementConfiguration factories = localDS.getFields().get("factories");
         Assert.assertNotNull(factories);
+        MapConfiguration factoriesMap = (MapConfiguration) factories;
+        ElementConfiguration factoryPdf = factoriesMap.getMapConfiguration().get("application/pdf");
+        Assert.assertTrue(factoryPdf instanceof ReferenceConfiguration);
 
         objectConfigurationMapPresenter.setObjectConfigurationMap(objectConfigurationMap);
 
