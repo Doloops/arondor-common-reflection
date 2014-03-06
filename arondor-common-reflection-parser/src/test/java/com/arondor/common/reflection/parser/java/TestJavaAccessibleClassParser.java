@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 
 import com.arondor.common.management.mbean.annotation.Description;
+import com.arondor.common.management.mbean.annotation.Mandatory;
 import com.arondor.common.reflection.api.parser.AccessibleClassParser;
 import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.arondor.common.reflection.model.java.AccessibleField;
@@ -260,5 +261,49 @@ public class TestJavaAccessibleClassParser
         AccessibleClass clazz = parser.parseAccessibleClass(AbstractClass.class);
 
         assertTrue(clazz.isAbstract());
+    }
+
+    public static abstract class ClassWithMandatoryField
+    {
+        @Mandatory
+        private int myMandatoryField = 23;
+
+        public int getMyMandatoryField()
+        {
+            return myMandatoryField;
+        }
+
+        public void setMyMandatoryField(int myMandatoryField)
+        {
+            this.myMandatoryField = myMandatoryField;
+        }
+
+        public int getMyNonMandatoryField()
+        {
+            return myNonMandatoryField;
+        }
+
+        public void setMyNonMandatoryField(int myNonMandatoryField)
+        {
+            this.myNonMandatoryField = myNonMandatoryField;
+        }
+
+        private int myNonMandatoryField = 807;
+    }
+
+    @Test
+    public void testClassWithMandatoryField()
+    {
+        AccessibleClassParser parser = new JavaAccessibleClassParser();
+        AccessibleClass clazz = parser.parseAccessibleClass(ClassWithMandatoryField.class);
+
+        AccessibleField mandatoryField = clazz.getAccessibleFields().get("myMandatoryField");
+        assertNotNull(mandatoryField);
+        assertTrue(mandatoryField.isMandatory());
+
+        AccessibleField nonMandatoryField = clazz.getAccessibleFields().get("myNonMandatoryField");
+        assertNotNull(nonMandatoryField);
+        assertFalse(nonMandatoryField.isMandatory());
+
     }
 }
