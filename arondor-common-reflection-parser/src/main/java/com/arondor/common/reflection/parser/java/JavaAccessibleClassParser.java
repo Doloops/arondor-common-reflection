@@ -29,6 +29,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.arondor.common.management.mbean.annotation.Description;
+import com.arondor.common.management.mbean.annotation.Mandatory;
 import com.arondor.common.reflection.api.parser.AccessibleClassParser;
 import com.arondor.common.reflection.bean.java.AccessibleClassBean;
 import com.arondor.common.reflection.bean.java.AccessibleConstructorBean;
@@ -397,6 +398,16 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         return null;
     }
 
+    private boolean getFieldMandatory(Field field)
+    {
+        Mandatory mandatoryAnnotation = field.getAnnotation(Mandatory.class);
+        if (mandatoryAnnotation != null)
+        {
+            return mandatoryAnnotation.isMandatory();
+        }
+        return false;
+    }
+
     public AccessibleClass parseAccessibleClass(Class<?> clazz)
     {
         if (DEBUG)
@@ -457,7 +468,8 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         for (AccessibleField accessibleField : exposedAttributes.values())
         {
             /**
-             * We make an ugly
+             * We make an ugly cast because we do not want to expose setters in
+             * the AccessibleField interface.
              */
             ((AccessibleFieldBean) accessibleField).setClassName(normalizeClassName(accessibleField.getClassName()));
 
@@ -467,6 +479,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
                 {
                     Field field = superclass.getDeclaredField(accessibleField.getName());
                     ((AccessibleFieldBean) accessibleField).setDescription(getFieldDescription(field));
+                    ((AccessibleFieldBean) accessibleField).setMandatory(getFieldMandatory(field));
                     break;
                 }
                 catch (SecurityException e)

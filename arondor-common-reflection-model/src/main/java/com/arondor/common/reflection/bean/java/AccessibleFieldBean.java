@@ -65,6 +65,11 @@ public class AccessibleFieldBean implements AccessibleField
     private boolean writable;
 
     /**
+     * Is this attribute mandatory
+     */
+    private boolean mandatory;
+
+    /**
      * If this attribute is a boolean, does its getter have a 'is' prefix
      * instead of a 'get' prefix
      */
@@ -171,5 +176,15 @@ public class AccessibleFieldBean implements AccessibleField
     public void setDeclaredInClass(String declaredInClass)
     {
         this.declaredInClass = declaredInClass;
+    }
+
+    public boolean isMandatory()
+    {
+        return mandatory;
+    }
+
+    public void setMandatory(boolean mandatory)
+    {
+        this.mandatory = mandatory;
     }
 }

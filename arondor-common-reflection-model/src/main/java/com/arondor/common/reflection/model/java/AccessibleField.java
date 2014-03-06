@@ -65,6 +65,13 @@ public interface AccessibleField extends Serializable
     boolean getWritable();
 
     /**
+     * Is the field mandatory ?
+     * 
+     * @return true if the field is mandatory, false otherwise
+     */
+    boolean isMandatory();
+
+    /**
      * For booleans, we prefer declaring boolean isField() instead of boolean
      * getField() ; it is a matter of taste actually
      * 

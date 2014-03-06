@@ -25,6 +25,7 @@ public @interface Description
 {
     /**
      * The description associated with this element
+     * 
      * @return the description associated with this element
      */
     String value();
