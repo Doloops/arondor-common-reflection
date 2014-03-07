@@ -37,12 +37,12 @@ public class TreeNodePresenterFactory
         String fieldName = accessibleField.getName();
         String fieldClassName = accessibleField.getClassName();
         return createChildNodePresenter(rpcService, objectConfigurationMap, display, fieldName, fieldClassName,
-                accessibleField.getDescription(), accessibleField.getGenericParameterClassList());
+                accessibleField.getDescription(), accessibleField.isMandatory(), accessibleField.getGenericParameterClassList());
     }
 
     public TreeNodePresenter createChildNodePresenter(GWTReflectionServiceAsync rpcService,
             ObjectConfigurationMap objectConfigurationMap, TreeNodePresenter.ChildCreatorDisplay display,
-            String fieldName, String fieldClassName, String fieldDescription, List<String> genericTypes)
+            String fieldName, String fieldClassName, String fieldDescription, boolean isMandatory, List<String> genericTypes)
     {
         TreeNodePresenter childPresenter = null;
         if (PrimitiveTypeUtil.isPrimitiveType(fieldClassName))
@@ -70,25 +70,29 @@ public class TreeNodePresenterFactory
                     display.createClassChild());
         }
 
-        setNodeNameAndDescription(fieldName, fieldClassName, fieldDescription, childPresenter);
+        setNodeNameAndDescription(fieldName, fieldClassName, fieldDescription, isMandatory, childPresenter);
         return childPresenter;
     }
 
-    private void setNodeNameAndDescription(String fieldName, String fieldClassName, String fieldDescription,
+    private void setNodeNameAndDescription(String fieldName, String fieldClassName, String fieldDescription, boolean isMandatory,
             TreeNodePresenter childPresenter)
     {
         String nodeName;
         String nodeDescription = "";
+        if (isMandatory) {
+        	nodeDescription = "* ";
+        }
         if (fieldDescription != null)
         {
             if (fieldDescription.length() >= MAX_DESCRIPTION_LENGTH)
             {
-                nodeName = fieldDescription.substring(0, MAX_DESCRIPTION_LENGTH) + "...";
-                nodeDescription = fieldDescription;
+                nodeName = nodeDescription + fieldDescription.substring(0, MAX_DESCRIPTION_LENGTH) + "...";
+                nodeDescription += fieldDescription;
             }
             else
             {
-                nodeName = fieldDescription;
+                nodeName = nodeDescription + fieldDescription;
+                nodeDescription += fieldDescription;
             }
         }
         else

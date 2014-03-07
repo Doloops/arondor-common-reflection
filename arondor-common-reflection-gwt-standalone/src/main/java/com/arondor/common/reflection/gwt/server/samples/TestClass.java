@@ -16,10 +16,13 @@
 package com.arondor.common.reflection.gwt.server.samples;
 
 import com.arondor.common.management.mbean.annotation.Description;
+import com.arondor.common.management.mbean.annotation.Mandatory;
+
 
 public class TestClass implements TestInterface
 {
-    @Description("This is a string property")
+    @Description("This is a string property and it is mandatory")
+    @Mandatory
     private String aStringProperty;
 
     @Description("This is a long property")

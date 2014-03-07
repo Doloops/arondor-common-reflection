@@ -79,7 +79,7 @@ public class ListTreeNodePresenter implements TreeNodePresenter
     {
         listDisplay.setActive(true);
         final TreeNodePresenter childPresenter = TreeNodePresenterFactory.getInstance().createChildNodePresenter(
-                rpcService, objectConfigurationMap, listDisplay, "Entry", genericType, "Entry", null);
+                rpcService, objectConfigurationMap, listDisplay, "Entry", genericType, "Entry", false, null);
 
         childPresenter.getDisplay().addTreeNodeClearHandler(new TreeNodeClearEvent.Handler()
         {
