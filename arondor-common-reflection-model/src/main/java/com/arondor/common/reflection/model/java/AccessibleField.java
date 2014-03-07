@@ -72,6 +72,13 @@ public interface AccessibleField extends Serializable
     boolean isMandatory();
 
     /**
+     * Get default value of field (for primitive : String, Integer,Float, Boolean)
+     * 
+     * @return
+     */
+    String getDefaultValue ();
+    
+    /**
      * For booleans, we prefer declaring boolean isField() instead of boolean
      * getField() ; it is a matter of taste actually
      * 
@@ -84,4 +91,5 @@ public interface AccessibleField extends Serializable
      * In which class this field is declared
      */
     String getDeclaredInClass();
+
 }

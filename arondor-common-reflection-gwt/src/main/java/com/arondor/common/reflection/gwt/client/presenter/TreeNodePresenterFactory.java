@@ -17,12 +17,14 @@ package com.arondor.common.reflection.gwt.client.presenter;
 
 import java.util.List;
 
+import com.arondor.common.reflection.bean.config.PrimitiveConfigurationBean;
 import com.arondor.common.reflection.gwt.client.presenter.fields.ListTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
+import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
 import com.arondor.common.reflection.model.java.AccessibleField;
 import com.arondor.common.reflection.util.PrimitiveTypeUtil;
 
@@ -37,17 +39,22 @@ public class TreeNodePresenterFactory
         String fieldName = accessibleField.getName();
         String fieldClassName = accessibleField.getClassName();
         return createChildNodePresenter(rpcService, objectConfigurationMap, display, fieldName, fieldClassName,
-                accessibleField.getDescription(), accessibleField.isMandatory(), accessibleField.getGenericParameterClassList());
+                accessibleField.getDescription(), accessibleField.isMandatory(), accessibleField.getDefaultValue(), accessibleField.getGenericParameterClassList());
     }
 
     public TreeNodePresenter createChildNodePresenter(GWTReflectionServiceAsync rpcService,
             ObjectConfigurationMap objectConfigurationMap, TreeNodePresenter.ChildCreatorDisplay display,
-            String fieldName, String fieldClassName, String fieldDescription, boolean isMandatory, List<String> genericTypes)
+            String fieldName, String fieldClassName, String fieldDescription, boolean isMandatory, String defaultValue, List<String> genericTypes)
     {
         TreeNodePresenter childPresenter = null;
         if (PrimitiveTypeUtil.isPrimitiveType(fieldClassName))
         {
             childPresenter = new PrimitiveTreeNodePresenter(fieldName, display.createPrimitiveChild(fieldClassName));
+            if (defaultValue != null && !defaultValue.equals("")) {
+	            PrimitiveConfiguration primitiveConfiguration = new PrimitiveConfigurationBean();
+	            primitiveConfiguration.setValue(defaultValue);
+	            childPresenter.setElementConfiguration(primitiveConfiguration);
+            }
         }
         else if (isStringListField(fieldClassName, genericTypes))
         {

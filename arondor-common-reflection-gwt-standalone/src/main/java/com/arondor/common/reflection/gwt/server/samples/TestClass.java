@@ -23,7 +23,7 @@ public class TestClass implements TestInterface
 {
     @Description("This is a string property and it is mandatory")
     @Mandatory
-    private String aStringProperty;
+    private String aStringProperty = "TestDefaultValue";
 
     @Description("This is a long property")
     private long aLongProperty;

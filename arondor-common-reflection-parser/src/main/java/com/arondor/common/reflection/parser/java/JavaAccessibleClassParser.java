@@ -17,6 +17,7 @@ package com.arondor.common.reflection.parser.java;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -440,9 +441,122 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         parseExposedMethodAndAttributes(clazz, methods, exposedAttributes, exposedMethods, true);
 
         setAccessibleFieldsDescriptions(accessClass, clazz, exposedAttributes);
-
+        parseAccessibleFieldsDefaultValue(accessClass, clazz, exposedAttributes);
         setAccessibleMethods(accessClass, exposedMethods);
+
         return accessClass;
+    }
+
+    /**
+     * Method to parse default value associated with the field
+     * 
+     * @param accessClass
+     * @param clazz
+     * @param exposedAttributes
+     */
+    private void parseAccessibleFieldsDefaultValue(AccessibleClassBean accessClass, Class<?> clazz,
+            Map<String, AccessibleField> exposedAttributes)
+    {
+
+        Object o = instanciateObject(clazz);
+        if (o == null)
+        {
+            return;
+        }
+
+        for (AccessibleField field : exposedAttributes.values())
+        {
+
+            if (isPrimitiveType(field.getClassName()))
+            {
+
+                LOG.debug("Field " + field.getName() + " is a primitive type : " + field.getClassName());
+                Object defaultValue = getDefaultValueForAttribute(clazz, o, field);
+                if (defaultValue != null)
+                {
+                    LOG.debug("Field " + field.getName() + " has default value to " + defaultValue);
+                    ((AccessibleFieldBean) field).setDefaultValue(defaultValue.toString());
+                }
+            }
+            else
+            {
+                LOG.debug("Skipping field " + field.getName() + ", unsupported type " + field.getClassName()
+                        + " for default value retrieving");
+            }
+
+        }
+
+    }
+
+    /**
+     * Method to retrieve default value for attribute
+     * 
+     * @param clazz
+     * @param o
+     * @param field
+     * @return
+     */
+    private Object getDefaultValueForAttribute(Class<?> clazz, Object o, AccessibleField field)
+    {
+
+        try
+        {
+            Method getter = clazz.getMethod(attributeToGetter(field.getName()));
+            return getter.invoke(o);
+
+        }
+        catch (NoSuchMethodException e)
+        {
+            LOG.warn("NoSuchMethodException for attribute : " + field.getName(), e);
+            return null;
+        }
+        catch (SecurityException e)
+        {
+            LOG.warn("SecurityException : " + field.getName(), e);
+            return null;
+        }
+        catch (IllegalAccessException e)
+        {
+            LOG.warn("IllegalAccessException : " + field.getName(), e);
+            return null;
+        }
+        catch (IllegalArgumentException e)
+        {
+            LOG.warn("IllegalArgumentException : " + field.getName(), e);
+            return null;
+        }
+        catch (InvocationTargetException e)
+        {
+            LOG.warn("InvocationTargetException : " + field.getName(), e);
+            return null;
+        }
+
+    }
+
+    /**
+     * Method to instanciate specific class
+     * 
+     * @param clazz
+     * @return
+     */
+    private Object instanciateObject(Class<?> clazz)
+    {
+        Object o = null;
+        try
+        {
+            o = (Object) clazz.newInstance();
+        }
+        catch (InstantiationException e)
+        {
+            LOG.warn("InstanciationException : " + clazz.getName(), e);
+            return null;
+        }
+        catch (IllegalAccessException e)
+        {
+            LOG.warn("IllegalAccessException for class : " + clazz.getName(), e);
+            return null;
+        }
+        return o;
     }
 
     private void setAccessibleMethods(AccessibleClassBean accessClass, List<Method> exposedMethods)

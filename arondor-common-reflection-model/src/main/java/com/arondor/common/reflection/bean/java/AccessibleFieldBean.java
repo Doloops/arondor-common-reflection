@@ -70,6 +70,11 @@ public class AccessibleFieldBean implements AccessibleField
     private boolean mandatory;
 
     /**
+     * Attribute default value
+     */
+    private String defaultValue;
+
+    /**
      * If this attribute is a boolean, does its getter have a 'is' prefix
      * instead of a 'get' prefix
      */
@@ -187,4 +192,15 @@ public class AccessibleFieldBean implements AccessibleField
     {
         this.mandatory = mandatory;
     }
+
+    public String getDefaultValue()
+    {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue)
+    {
+        this.defaultValue = defaultValue;
+    }
+
 }
