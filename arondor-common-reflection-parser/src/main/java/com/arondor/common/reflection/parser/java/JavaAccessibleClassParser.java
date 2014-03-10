@@ -507,7 +507,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         }
         catch (NoSuchMethodException e)
         {
-            LOG.warn("NoSuchMethodException for attribute : " + field.getName(), e);
+            LOG.debug("NoSuchMethodException for attribute : " + field.getName(), e);
             return null;
         }
         catch (SecurityException e)
@@ -548,7 +548,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         }
         catch (InstantiationException e)
         {
-            LOG.warn("InstanciationException : " + clazz.getName(), e);
+            LOG.debug("InstanciationException : " + clazz.getName(), e);
             return null;
         }
         catch (IllegalAccessException e)
