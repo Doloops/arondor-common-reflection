@@ -21,9 +21,10 @@ import com.arondor.common.reflection.gwt.client.service.GWTReflectionService;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.RootPanel;
 
-public class MVPEntryPoint implements EntryPoint
+public class ReflectionDesignerEntryPoint implements EntryPoint
 {
 
     public void onModuleLoad()
@@ -38,6 +39,31 @@ public class MVPEntryPoint implements EntryPoint
 
         RootPanel.get().clear();
         RootPanel.get().add(classPresenter.getDisplay());
+
+        // String Window.Location.getParameter("config");
+        String allTokens = History.getToken();
+        if (allTokens != null)
+        {
+            String tokens[] = allTokens.split("\\|");
+            for (String token : tokens)
+            {
+                String tokenPart[] = token.split("=");
+                if (tokenPart.length == 2)
+                {
+                    String name = tokenPart[0];
+                    String value = tokenPart[1];
+
+                    if (name.equals("config"))
+                    {
+                        classPresenter.getMenuDisplay().setLoadConfigContext(value);
+                    }
+                    else if (name.equals("libs"))
+                    {
+                        classPresenter.getMenuDisplay().setLoadLibsContext(value);
+                    }
+                }
+            }
+        }
     }
 
     private void bind()

@@ -6,3 +6,6 @@ gwt-unitCache
 war
 *.log
 reflection-cache.tmp
+*/.gitignore
+arondor-common-reflection-gwt-standalone/src/main/webapp/WEB-INF/deploy
+arondor-common-reflection-gwt-standalone/src/main/webapp/ArondorReflectionGWT

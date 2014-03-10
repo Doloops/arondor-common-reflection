@@ -17,6 +17,7 @@ package com.arondor.common.reflection.gwt.client.presenter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Logger;
 
 import com.arondor.common.reflection.bean.config.ObjectConfigurationFactoryBean;
@@ -45,15 +46,27 @@ public class ReflectionDesignerPresenter
 {
     private static final Logger LOG = Logger.getLogger(ReflectionDesignerPresenter.class.getName());
 
+    private final static GWTObjectConfigurationServiceAsync SERVICE = GWT.create(GWTObjectConfigurationService.class);
+
     private final ObjectConfigurationFactory objectConfigurationFactory = new ObjectConfigurationFactoryBean();
 
     private final ObjectConfigurationMapPresenter objectConfigurationMapPresenter;
 
     public interface MenuDisplay extends IsWidget
     {
-        HasClickHandlers getGetConfigButton();
+        String getLoadConfigContext();
 
-        HasClickHandlers getSetConfigButton();
+        void setLoadConfigContext(String context);
+
+        HasClickHandlers getLoadConfigButton();
+
+        String getLoadLibsContext();
+
+        void setLoadLibsContext(String context);
+
+        HasClickHandlers getLoadLibsButton();
+
+        HasClickHandlers getSaveButton();
     }
 
     private final MenuDisplay menuDisplay;
@@ -96,44 +109,63 @@ public class ReflectionDesignerPresenter
     public void bind()
     {
 
-        menuDisplay.getSetConfigButton().addClickHandler(new ClickHandler()
+        menuDisplay.getSaveButton().addClickHandler(new ClickHandler()
         {
             public void onClick(ClickEvent event)
             {
-                readObjectConfiguration();
+
             }
         });
 
-        menuDisplay.getGetConfigButton().addClickHandler(new ClickHandler()
+        menuDisplay.getLoadConfigButton().addClickHandler(new ClickHandler()
         {
             public void onClick(ClickEvent event)
             {
-                // ObjectConfiguration objectConfiguration = classPresenter
-                // .getObjectConfiguration(objectConfigurationFactory);
-                // LOG.info("GET - " + objectConfiguration);
+                String context = menuDisplay.getLoadConfigContext();
+                readObjectConfiguration(context);
+            }
+        });
+
+        menuDisplay.getLoadLibsButton().addClickHandler(new ClickHandler()
+        {
+            public void onClick(ClickEvent event)
+            {
+                String context = menuDisplay.getLoadLibsContext();
+                List<String> packagePrefixes = new ArrayList<String>();
+                packagePrefixes.add("com.arondor");
+
+                SERVICE.loadLib(context, packagePrefixes, new AsyncCallback<Void>()
+                {
+
+                    public void onFailure(Throwable caught)
+                    {
+                        Window.alert("Could not parse" + caught);
+                    }
+
+                    public void onSuccess(Void result)
+                    {
+                    }
+                });
+
             }
         });
 
     }
 
-    protected void readObjectConfiguration()
+    protected void readObjectConfiguration(final String context)
     {
-        final String context = "file:///home/caroline/ARender-Rendition-2.2.2-rc0/conf/arender-rendition.xml";
-        GWTObjectConfigurationServiceAsync service = GWT.create(GWTObjectConfigurationService.class);
-        service.getObjectConfigurationMap(context, new AsyncCallback<ObjectConfigurationMap>()
+        // final String context =
+        // "file:///home/caroline/ARender-Rendition-2.2.2-rc0/conf/arender-rendition.xml";
+        SERVICE.getObjectConfigurationMap(context, new AsyncCallback<ObjectConfigurationMap>()
         {
-
             public void onSuccess(ObjectConfigurationMap result)
             {
-                // ObjectConfiguration objectConfiguration =
-                // result.get("localDocumentService");
-                // classPresenter.setObjectConfiguration(objectConfiguration);
                 objectConfigurationMapPresenter.setObjectConfigurationMap(result);
             }
 
             public void onFailure(Throwable caught)
             {
-                Window.alert("Error !");
+                Window.alert("Error ! context:" + context);
             }
         });
     }

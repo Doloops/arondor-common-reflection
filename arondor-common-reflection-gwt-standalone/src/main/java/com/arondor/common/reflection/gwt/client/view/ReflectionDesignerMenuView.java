@@ -17,24 +17,50 @@ package com.arondor.common.reflection.gwt.client.view;
 
 import com.arondor.common.reflection.gwt.client.presenter.ReflectionDesignerPresenter;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ReflectionDesignerMenuView extends Composite implements ReflectionDesignerPresenter.MenuDisplay
 {
-    private Button getConfigButton = new Button("Get");
+    private Button loadConfigButton = new Button("Load Config");
 
-    private Button setConfigButton = new Button("Set");
+    private TextBox loadConfigContext = new TextBox();
 
-    private final AbsolutePanel content = new AbsolutePanel();
+    private Button loadLibsButton = new Button("Load Libs");
+
+    private TextBox loadLibsContext = new TextBox();
+
+    private Button saveConfigButton = new Button("Save");
 
     public ReflectionDesignerMenuView()
     {
-        content.add(getConfigButton);
-        content.add(setConfigButton);
-        initWidget(content);
+        if (false)
+        {
+            loadConfigContext
+                    .setText("file:///home/francois/ARender-Rendition-2.2.0/conf/arender-rendition-alterdocumentcontent.xml");
+            loadLibsContext.setText("/home/francois/ARender-Rendition-2.2.0/lib");
+        }
+        loadConfigContext.setWidth("300px");
+        loadLibsContext.setWidth("300px");
+        VerticalPanel verticalPanel = new VerticalPanel();
+        {
+            HorizontalPanel hz = new HorizontalPanel();
+            hz.add(loadLibsContext);
+            hz.add(loadLibsButton);
+            verticalPanel.add(hz);
+        }
+        {
+            HorizontalPanel hz = new HorizontalPanel();
+            hz.add(loadConfigContext);
+            hz.add(loadConfigButton);
+            verticalPanel.add(hz);
+        }
+        verticalPanel.add(saveConfigButton);
+        initWidget(verticalPanel);
     }
 
     public Widget asWidget()
@@ -42,21 +68,39 @@ public class ReflectionDesignerMenuView extends Composite implements ReflectionD
         return this;
     }
 
-    public HasClickHandlers getGetConfigButton()
+    public HasClickHandlers getLoadConfigButton()
     {
-        return getConfigButton;
+        return loadConfigButton;
     }
 
-    public HasClickHandlers getSetConfigButton()
+    public HasClickHandlers getSaveButton()
     {
-        return setConfigButton;
+        return saveConfigButton;
     }
 
-    // public void
-    // setAccessibleClassView(HierarchicAccessibleClassPresenter.Display
-    // accessibleClassView)
-    // {
-    // this.content.add(accessibleClassView);
-    // }
+    public String getLoadConfigContext()
+    {
+        return loadConfigContext.getText();
+    }
+
+    public void setLoadConfigContext(String context)
+    {
+        loadConfigContext.setText(context);
+    }
+
+    public String getLoadLibsContext()
+    {
+        return loadLibsContext.getText();
+    }
+
+    public void setLoadLibsContext(String context)
+    {
+        loadLibsContext.setText(context);
+    }
+
+    public HasClickHandlers getLoadLibsButton()
+    {
+        return loadLibsButton;
+    }
 
 }
