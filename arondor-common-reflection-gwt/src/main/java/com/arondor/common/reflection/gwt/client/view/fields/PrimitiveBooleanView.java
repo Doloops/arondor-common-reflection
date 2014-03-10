@@ -37,7 +37,7 @@ public class PrimitiveBooleanView extends AbstractTreeNodeView implements Primit
 
     public void clear()
     {
-        checkBox.setValue(false);
+        checkBox.setValue(null);
     }
 
     public void setValue(String value)
@@ -57,4 +57,10 @@ public class PrimitiveBooleanView extends AbstractTreeNodeView implements Primit
             }
         });
     }
+
+    public void setDefaultValue(String value)
+    {
+        checkBox.setValue(Boolean.parseBoolean(value));
+    }
+
 }

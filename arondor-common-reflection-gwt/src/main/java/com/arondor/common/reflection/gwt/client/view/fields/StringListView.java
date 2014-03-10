@@ -74,4 +74,16 @@ public class StringListView extends AbstractTreeNodeView implements StringListDi
         });
     }
 
+    public void setDefaultValue(List<String> values)
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String value : values)
+        {
+            stringBuilder.append(value);
+            stringBuilder.append('\n');
+        }
+        textArea.setValue(stringBuilder.toString());
+    }
+
+
 }

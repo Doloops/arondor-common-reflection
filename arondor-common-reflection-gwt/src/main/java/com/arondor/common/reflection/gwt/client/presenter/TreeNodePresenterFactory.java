@@ -50,11 +50,11 @@ public class TreeNodePresenterFactory
         if (PrimitiveTypeUtil.isPrimitiveType(fieldClassName))
         {
             childPresenter = new PrimitiveTreeNodePresenter(fieldName, display.createPrimitiveChild(fieldClassName));
-            if (defaultValue != null && !defaultValue.equals("")) {
-	            PrimitiveConfiguration primitiveConfiguration = new PrimitiveConfigurationBean();
-	            primitiveConfiguration.setValue(defaultValue);
-	            childPresenter.setElementConfiguration(primitiveConfiguration);
+            if (defaultValue != null && !defaultValue.equals("")) {	            
+                ((PrimitiveTreeNodePresenter)childPresenter).setDefaultValue(defaultValue);
             }
+            PrimitiveConfiguration primitiveConfiguration = new PrimitiveConfigurationBean();
+            childPresenter.setElementConfiguration(primitiveConfiguration);
         }
         else if (isStringListField(fieldClassName, genericTypes))
         {

@@ -62,4 +62,10 @@ public class PrimitiveStringView extends AbstractTreeNodeView implements Primiti
         });
     }
 
+    public void setDefaultValue(String value)
+    {
+        textBox.setValue(value);        
+    }
+
+
 }

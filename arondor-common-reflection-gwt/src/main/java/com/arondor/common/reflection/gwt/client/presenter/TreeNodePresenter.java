@@ -24,6 +24,7 @@ import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeN
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 
 public interface TreeNodePresenter
@@ -40,14 +41,17 @@ public interface TreeNodePresenter
 
         void clear();
 
-        void addTreeNodeClearHandler(TreeNodeClearEvent.Handler hanlder);
+        void addTreeNodeClearHandler(TreeNodeClearEvent.Handler handler);
     }
 
     public interface ValueDisplay<T> extends Display
     {
         void setValue(T value);
 
+        void setDefaultValue(T value);
+
         HandlerRegistration addValueChangeHandler(ValueChangeHandler<T> valueChangeHandler);
+              
     }
 
     public interface ChildCreatorDisplay extends Display

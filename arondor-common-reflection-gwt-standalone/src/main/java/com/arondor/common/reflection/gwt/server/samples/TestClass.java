@@ -30,6 +30,10 @@ public class TestClass implements TestInterface
 
     @Description("This is a sub class")
     private SubTestClass subClass;
+    
+    @Description("This is a boolean property")
+    private boolean aBooleanProperty;
+
 
     public String getAStringProperty()
     {
@@ -65,5 +69,15 @@ public class TestClass implements TestInterface
     public void setSubClass(SubTestClass subClass)
     {
         this.subClass = subClass;
+    }
+
+    public boolean isaBooleanProperty()
+    {
+        return aBooleanProperty;
+    }
+
+    public void setaBooleanProperty(boolean aBooleanProperty)
+    {
+        this.aBooleanProperty = aBooleanProperty;
     }
 }
