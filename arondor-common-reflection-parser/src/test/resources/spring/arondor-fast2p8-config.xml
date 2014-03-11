@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans default-lazy-init="false" default-autowire="no"
+	default-dependency-check="none">
+
+	<bean id="traceManager" class="com.arondor.fast2p8.tracemanager.BaseTraceManager"
+		singleton="true">
+		<property name="taskFlowFactory">
+			<bean
+				class="com.arondor.fast2p8.xstream.factory.taskflow.GenericTaskFlowFactory">
+				<property name="taskFlowDesignFactory">
+					<ref bean="taskFlowDesignFactory" />
+				</property>
+
+				<property name="punnetFactory">
+					<ref bean="punnetFactory" />
+				</property>
+
+				<property name="campaignFactory">
+					<bean
+						class="com.arondor.fast2p8.xstream.factory.taskflow.campaign.XMLCampaignFactory">
+						<property name="campaignFile" value="../conf/campaigns.xml" />
+					</bean>
+				</property>
+
+				<property name="punnetTraceFactory">
+					<!-- Default : In-memory PunnetTrace storage (no database persistence) -->
+					<ref bean="cachePunnetTraceFactory" />
+
+					<!-- EXPERIMENTAL : Use Mongo database to store punnets and punnet traces -->
+					<!-- <ref bean="mongoPunnetTraceFactory" /> -->
+				</property>
+
+				<!-- Alternative : Use Hibernate persistence for PunnetTraces -->
+				<!-- <property name="punnetTraceFactory"> <bean class="com.arondor.fast2p8.xstream.factory.taskflow.HibernatePunnetTraceFactory"> 
+					<property name="entityManagerFactoryName" value="fast2p8-trace"/> <property 
+					name="punnetReferenceFactory"> <bean class="com.arondor.fast2p8.xstream.factory.taskflow.HibernatePunnetReferenceFactoryAsync" 
+					/> </property> </bean> </property> -->
+
+
+			</bean>
+		</property>
+
+		<property name="namingScheme">
+			<ref bean="namingScheme" />
+		</property>
+
+		<property name="threadPoolManager">
+			<bean class="com.arondor.fast2p8.tracemanager.PersistentThreadPoolManager">
+				<property name="threadPoolConfigurationFactory">
+					<bean
+						class="com.arondor.fast2p8.xstream.factory.threadpool.XMLThreadPoolConfigurationFactory">
+						<property name="configurationFile" value="../conf/threadpools.xml" />
+					</bean>
+				</property>
+			</bean>
+		</property>
+
+		<property name="objectConfigurationMapHandler">
+			<bean
+				class="com.arondor.fast2p8.xstream.factory.taskflow.design.XMLObjectConfigurationMapHandler">
+				<property name="configurationFile" value="../conf/objectConfigurationMap.xml" />
+			</bean>
+		</property>
+		<property name="traceManagerScheduler">
+			<bean
+				class="com.arondor.fast2p8.tracemanager.scheduler.TraceManagerSchedulerQuartz">
+				<property name="jobDefinitionFactory">
+					<bean
+						class="com.arondor.fast2p8.xstream.factory.schedule.XMLJobDefinitionFactory">
+						<property name="configurationFile" value="../conf/jobDefinitions.xml" />
+					</bean>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="punnetFactory"
+		class="com.arondor.fast2p8.xstream.factory.XStreamPunnetFactory">
+		<property name="punnetContentFactory">
+			<bean
+				class="com.arondor.fast2p8.xstream.factory.XStreamPunnetContentFactoryFileSystem">
+				<property name="namingScheme">
+					<ref bean="namingScheme" />
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+
+	<bean id="cachePunnetTraceFactory" singleton="false"
+		class="com.arondor.fast2p8.xstream.factory.taskflow.CachePunnetTraceFactory">
+		<property name="punnetReferenceFactory">
+			<bean
+				class="com.arondor.fast2p8.xstream.factory.XStreamPunnetReferenceFactoryHashMap">
+				<property name="skipPersistPunnetReference" value="true" />
+				<property name="punnetMap">
+					<bean class="com.arondor.common.ehmap.EHMap">
+						<constructor-arg>
+							<value>com.arondor.fast2p8.xstream.factory.XStreamPunnetReferenceFactoryHashMap.punnetReferences</value>
+						</constructor-arg>
+					</bean>
+				</property>
+			</bean>
+		</property>
+		<!-- When processing is finished, delete PunnetTrace from cache -->
+		<property name="deletePunnetTraceHistoryWhenFinished" value="true" />
+
+		<!-- When processing is finished, do not delete PunnetTrace if an exception 
+			occured in processing -->
+		<property name="keepInExceptionPunnetTraceHistory" value="true" />
+
+		<!-- PunnetList auto-limitator to avoid risks of OutOfMemory exceptions -->
+		<!-- <property name="autoPunnetListLimitator"> <bean class="com.arondor.fast2p8.xstream.factory.taskflow.cache.AutoPunnetListLimitator"> 
+			<property name="hasPunnetListLimitator"> <ref bean="traceManager" /> </property> 
+			<property name="refreshDelay" value="100" /> <property name="polynom" value="[-1000.0, 
+			1.0]" /> <property name="minValue" value="1" /> <property name="maxValue" 
+			value="5000" /> </bean> </property> -->
+	</bean>
+
+	<bean id="mongoPunnetTraceFactory" class="com.arondor.fast2p8.mongo.MongoPunnetTraceFactory">
+		<property name="punnetReferenceFactory">
+			<bean class="com.arondor.fast2p8.mongo.MongoPunnetReferenceFactory">
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="namingScheme"
+		class="com.arondor.fast2p8.namingscheme.tracenamingscheme.CampaignTraceNamingScheme">
+		<property name="directory" value="/tmp/fast2p8/" />
+	</bean>
+
+	<bean id="taskFlowDesignFactory"
+		class="com.arondor.fast2p8.xstream.factory.taskflow.design.XMLTaskFlowDesignFactory">
+		<property name="taskFlowMapStorePath" value="../maps" />
+		<property name="defaultTaskFlowMaps">
+			<list>
+				<value>com/arondor/fast2p8/tracemanager/default/defaulttaskflowmap.xml</value>
+				<value>com/arondor/fast2p8/tracemanager/default/InjectFileNetP8.xml</value>
+				<value>com/arondor/fast2p8/tracemanager/default/ExtractImageServices.xml</value>
+				<value>com/arondor/fast2p8/tracemanager/default/SimpleTiffConversion.xml</value>
+				<value>com/arondor/fast2p8/tracemanager/default/ExtractFileNetP8.xml</value>
+				<value>com/arondor/fast2p8/tracemanager/default/Extract_Inactif_NCompte_Prod.xml</value>
+				<value>com/arondor/fast2p8/tracemanager/default/RE_Abbyy.xml</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- <bean id="reflectionManager" class="com.arondor.common.management.mbean.reflection.impl.ReflectionManagerImpl" 
+		singleton="true"> <property name="scanClasspathForPackages"> <list> <value>com.arondor</value> 
+		</list> </property> </bean> -->
+
+	<bean id="reflectionService"
+		class="com.arondor.common.reflection.service.DefaultReflectionService">
+		<property name="accessibleClassCatalog">
+			<bean
+				class="com.arondor.common.reflection.catalog.SimpleAccessibleClassCatalog" />
+		</property>
+		<property name="accessibleClassParser">
+			<bean
+				class="com.arondor.common.reflection.parser.java.JavaAccessibleClassParser" />
+		</property>
+		<property name="accessibleClassProviders">
+			<list>
+				<bean
+					class="com.arondor.common.reflection.parser.java.JavaClassPathAccessibleClassProvider">
+					<property name="packagePrefixes">
+						<list>
+							<value>com.arondor.</value>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+		<!-- <constructor-arg> <ref bean="reflectionManager" /> </constructor-arg> -->
+	</bean>
+
+	<bean id="taskFlowDesignService" singleton="true"
+		class="com.arondor.fast2p8.model.service.taskflow.facade.TaskFlowDesignServiceImpl">
+		<constructor-arg>
+			<ref bean="traceManager" />
+		</constructor-arg>
+	</bean>
+
+	<bean id="taskFlowTraceService" singleton="true"
+		class="com.arondor.fast2p8.model.service.taskflow.facade.TaskFlowTraceServiceImpl">
+		<constructor-arg>
+			<ref bean="traceManager" />
+		</constructor-arg>
+	</bean>
+
+	<bean id="server" class="java.util.HashMap" singleton="true">
+		<constructor-arg>
+			<map>
+				<entry>
+					<key>
+						<value>reflectionService</value>
+					</key>
+					<ref bean="reflectionService" />
+				</entry>
+				<entry>
+					<key>
+						<value>taskFlowDesignService</value>
+					</key>
+					<ref bean="taskFlowDesignService" />
+				</entry>
+				<entry>
+					<key>
+						<value>taskFlowTraceService</value>
+					</key>
+					<ref bean="taskFlowTraceService" />
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+
+</beans>
