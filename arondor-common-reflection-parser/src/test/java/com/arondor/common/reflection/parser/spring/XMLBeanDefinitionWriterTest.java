@@ -26,7 +26,6 @@ public class XMLBeanDefinitionWriterTest
     {
 
         XMLBeanDefinitionParser parser = new XMLBeanDefinitionParser("spring/arondor-fast2p8-config.xml");
-//        XMLBeanDefinitionParser parser = new XMLBeanDefinitionParser("spring/mapBeanDefinitionToWrite.xml");
         
         ObjectConfigurationMap expectedObjectConfiguration = parser.parse();
 
