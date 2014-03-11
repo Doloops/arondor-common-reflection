@@ -16,7 +16,7 @@
 package com.arondor.common.reflection.parser.spring;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -118,7 +118,7 @@ public class XMLBeanDefinitionParser implements ObjectConfigurationMapParser
         objectConfiguration.setClassName(hashHelper.hashClassName(beanDefinition.getBeanClassName()));
         objectConfiguration.setSingleton(beanDefinition.isSingleton());
 
-        Map<String, ElementConfiguration> fields = new HashMap<String, ElementConfiguration>();
+        Map<String, ElementConfiguration> fields = new LinkedHashMap<String, ElementConfiguration>();
         objectConfiguration.setFields(fields);
 
         for (PropertyValue ppt : beanDefinition.getPropertyValues().getPropertyValueList())

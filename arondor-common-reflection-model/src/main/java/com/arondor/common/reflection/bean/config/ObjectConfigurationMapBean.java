@@ -16,7 +16,7 @@
 package com.arondor.common.reflection.bean.config;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -56,7 +56,7 @@ public class ObjectConfigurationMapBean implements ObjectConfigurationMap
 
     @OneToMany(cascade = CascadeType.ALL, targetEntity = ObjectConfigurationBean.class)
     @JoinTable(name = "TaskFlowObjectConfigMap", joinColumns = @JoinColumn(name = "taskFlowId"), inverseJoinColumns = @JoinColumn(name = "objectConfigId"))
-    private Map<String, ObjectConfiguration> map = new HashMap<String, ObjectConfiguration>();
+    private Map<String, ObjectConfiguration> map = new LinkedHashMap<String, ObjectConfiguration>();
 
     public void clear()
     {

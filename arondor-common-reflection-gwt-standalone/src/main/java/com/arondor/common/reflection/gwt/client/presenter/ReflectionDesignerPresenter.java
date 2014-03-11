@@ -17,6 +17,7 @@ package com.arondor.common.reflection.gwt.client.presenter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -175,7 +176,7 @@ public class ReflectionDesignerPresenter
         ObjectConfiguration childObjectConfiguration = objectConfigurationFactory.createObjectConfiguration();
         childObjectConfiguration.setClassName("com.arondor.common.reflection.gwt.server.samples.TestClass");
 
-        childObjectConfiguration.setFields(new HashMap<String, ElementConfiguration>());
+        childObjectConfiguration.setFields(new LinkedHashMap<String, ElementConfiguration>());
 
         childObjectConfiguration.getFields().put("aStringProperty",
                 objectConfigurationFactory.createPrimitiveConfiguration("test"));

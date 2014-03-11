@@ -18,6 +18,7 @@ package com.arondor.common.reflection.gwt.client.presenter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -224,7 +225,7 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
                             .getElementConfiguration(objectConfigurationFactory);
                     ObjectConfiguration objectConfiguration = objectConfigurationFactory.createObjectConfiguration();
                     objectConfiguration.setClassName(implementingClass);
-                    objectConfiguration.setFields(new HashMap<String, ElementConfiguration>());
+                    objectConfiguration.setFields(new LinkedHashMap<String, ElementConfiguration>());
                     objectConfiguration.setConstructorArguments(new ArrayList<ElementConfiguration>());
                     objectConfiguration.getConstructorArguments().add(valueConfiguration);
                     return objectConfiguration;
@@ -248,7 +249,7 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
     private ElementConfiguration getObjectConfiguration(ObjectConfigurationFactory objectConfigurationFactory)
     {
         ObjectConfiguration objectConfiguration = objectConfigurationFactory.createObjectConfiguration();
-        objectConfiguration.setFields(new HashMap<String, ElementConfiguration>());
+        objectConfiguration.setFields(new LinkedHashMap<String, ElementConfiguration>());
         objectConfiguration.setClassName(implementingClassPresenter.getImplementingClass().getName());
 
         updateChildObjectConfigurations(objectConfigurationFactory, objectConfiguration);
