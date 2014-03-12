@@ -443,7 +443,11 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         parseExposedMethodAndAttributes(clazz, methods, exposedAttributes, exposedMethods, true);
 
         setAccessibleFieldsDescriptions(accessClass, clazz, exposedAttributes);
-        parseAccessibleFieldsDefaultValue(accessClass, clazz, exposedAttributes);
+
+        if (isTryInstantiateClassForDefaultValue())
+        {
+            parseAccessibleFieldsDefaultValue(accessClass, clazz, exposedAttributes);
+        }
         setAccessibleMethods(accessClass, exposedMethods);
 
         return accessClass;
