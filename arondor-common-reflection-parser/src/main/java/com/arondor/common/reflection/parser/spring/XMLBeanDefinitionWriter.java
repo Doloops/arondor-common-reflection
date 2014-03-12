@@ -1,6 +1,5 @@
 package com.arondor.common.reflection.parser.spring;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -35,10 +34,13 @@ public class XMLBeanDefinitionWriter
     /**
      * Serialize objectConfigurationMap and save it on target xml file
      * 
-     * @param objectConfigurationMap {@link ObjectConfigurationMap} : to serialize and save to target file
+     * @param objectConfigurationMap
+     *            {@link ObjectConfigurationMap} : to serialize and save to
+     *            target file
      * @param path
+     * @throws IOException
      */
-    public void write(ObjectConfigurationMap objectConfigurationMap, String path)
+    public void write(ObjectConfigurationMap objectConfigurationMap, String path) throws IOException
     {
 
         if (objectConfigurationMap == null || objectConfigurationMap.isEmpty())
@@ -52,13 +54,12 @@ public class XMLBeanDefinitionWriter
         /**
          * For each objectConfiguration, serialize it
          */
-        for (String beanDefinitionName : objectConfigurationMap.keySet())
+        for (Entry<String, ObjectConfiguration> objectConfEntry : objectConfigurationMap.entrySet())
         {
-            LOGGER.debug("Bean defintion name : " + beanDefinitionName);
+            LOGGER.debug("Bean defintion name : " + objectConfEntry.getKey());
             Element objectConfElement = new Element(XMLBeanTagsConstant.BEAN_TAG, XMLBeanTagsConstant.NAMESPACE);
             rootElement.addContent(objectConfElement);
-            serializeBeanConfiguration(objectConfElement, beanDefinitionName,
-                    objectConfigurationMap.get(beanDefinitionName), false);
+            serializeBeanConfiguration(objectConfElement, objectConfEntry.getKey(), objectConfEntry.getValue(), true);
         }
 
         /**
@@ -97,11 +98,12 @@ public class XMLBeanDefinitionWriter
      * 
      * @param objectConfElement
      * @param elementConfiguration
-     * @param newElement
-     *            : create a new JDOM element
+     * @param isProperty
+     *            : no new JDOM element created because it is a property (only
+     *            used for PrimitiveConfiguration)
      */
     private void serializeElementConfiguration(Element objectConfElement, ElementConfiguration elementConfiguration,
-            boolean newElement)
+            boolean isProperty)
     {
 
         switch (elementConfiguration.getFieldConfigurationType())
@@ -113,11 +115,11 @@ public class XMLBeanDefinitionWriter
             serializeListConfiguration(objectConfElement, (ListConfiguration) elementConfiguration);
             break;
         case Object:
-            serializeBeanConfiguration(objectConfElement, null, (ObjectConfiguration) elementConfiguration, newElement);
+            serializeBeanConfiguration(objectConfElement, null, (ObjectConfiguration) elementConfiguration, false);
             break;
         case Primitive:
             serializePrimitiveConfiguration(objectConfElement, (PrimitiveConfiguration) elementConfiguration,
-                    newElement);
+                    isProperty);
             break;
         case Reference:
             serializeReferenceConfiguration(objectConfElement, (ReferenceConfiguration) elementConfiguration);
@@ -132,16 +134,16 @@ public class XMLBeanDefinitionWriter
      * @param objectConfElement
      * @param beanName
      * @param objectConfiguration
-     * @param newElement
+     * @param isParent
      *            : create a new JDOM element
      * @return
      */
     private void serializeBeanConfiguration(Element objectConfElement, String beanName,
-            ObjectConfiguration objectConfiguration, boolean newElement)
+            ObjectConfiguration objectConfiguration, boolean isParent)
     {
 
         Element beanDefinitionElement = objectConfElement;
-        if (newElement)
+        if (!isParent)
         {
             beanDefinitionElement = new Element(XMLBeanTagsConstant.BEAN_TAG, XMLBeanTagsConstant.NAMESPACE);
             objectConfElement.addContent(beanDefinitionElement);
@@ -152,16 +154,20 @@ public class XMLBeanDefinitionWriter
         boolean singleton = objectConfiguration.isSingleton();
         if (objectName != null)
         {
-            // TODO it must be an error if objectName is null ?
             LOGGER.debug("Bean definition name : " + objectName);
-            beanName = objectName;
             beanDefinitionElement.setAttribute(XMLBeanTagsConstant.BEAN_ID_TAG, objectName);
         }
-        LOGGER.debug("Bean definition name = " + beanName + ", class name = " + className + ", isSingleton = " + singleton);
+        else
+        {
+            // Just use for log message to have contextual value
+            objectName = beanName;
+        }
+        LOGGER.debug("Bean definition name = " + objectName + ", class name = " + className + ", isSingleton = "
+                + singleton);
         if (className == null)
         {
-            LOGGER.error("No class name defined for bean definition=" + beanName);
-            throw new RuntimeException("Bean definition=" + beanName + " has no class name defined");
+            LOGGER.error("No class name defined for bean definition=" + objectName);
+            throw new RuntimeException("Bean definition=" + objectName + " has no class name defined");
         }
 
         beanDefinitionElement.setAttribute(XMLBeanTagsConstant.BEAN_CLASS_TAG, className);
@@ -174,9 +180,9 @@ public class XMLBeanDefinitionWriter
             beanDefinitionElement.setAttribute(XMLBeanTagsConstant.BEAN_SCOPE_TAG, XMLBeanTagsConstant.PROTOTYPE);
         }
 
-        serializeConstructorArg(beanDefinitionElement, beanName, objectConfiguration.getConstructorArguments());
+        serializeConstructorArg(beanDefinitionElement, objectName, objectConfiguration.getConstructorArguments());
 
-        serializeBeanDefinitionProperties(beanDefinitionElement, beanName, objectConfiguration.getFields());
+        serializeBeanDefinitionProperties(beanDefinitionElement, objectName, objectConfiguration.getFields());
 
     }
 
@@ -201,7 +207,7 @@ public class XMLBeanDefinitionWriter
 
         for (ElementConfiguration elementConfiguration : constructorArguments)
         {
-            serializeElementConfiguration(constructorArg, elementConfiguration, true);
+            serializeElementConfiguration(constructorArg, elementConfiguration, false);
         }
 
     }
@@ -222,13 +228,13 @@ public class XMLBeanDefinitionWriter
             return;
         }
 
-        for (String fieldName : fields.keySet())
+        for (Entry<String, ElementConfiguration> fieldEntry : fields.entrySet())
         {
-            LOGGER.debug("Add property " + fieldName + " for bean definition " + beanName);
+            LOGGER.debug("Add property " + fieldEntry.getKey() + " for bean definition " + beanName);
             Element propertyElement = new Element(XMLBeanTagsConstant.PROPERTY_TAG, XMLBeanTagsConstant.NAMESPACE);
-            propertyElement.setAttribute(XMLBeanTagsConstant.PROPERTY_NAME_TAG, fieldName);
+            propertyElement.setAttribute(XMLBeanTagsConstant.PROPERTY_NAME_TAG, fieldEntry.getKey());
             beanDefinitionElement.addContent(propertyElement);
-            serializeElementConfiguration(propertyElement, fields.get(fieldName), true);
+            serializeElementConfiguration(propertyElement, fieldEntry.getValue(), true);
         }
 
     }
@@ -248,9 +254,8 @@ public class XMLBeanDefinitionWriter
         String reference = refConfiguration.getReferenceName();
         if (reference == null)
         {
-            // TODO check if it must be an error ?
             LOGGER.error("No reference defined");
-            throw new RuntimeException("No reference defined");
+            throw new BeanSerializeException("No reference defined");
         }
         refElement.setAttribute(XMLBeanTagsConstant.BEAN_TAG, reference);
 
@@ -264,17 +269,16 @@ public class XMLBeanDefinitionWriter
      * @return
      */
     private void serializePrimitiveConfiguration(Element parentElement, PrimitiveConfiguration primitiveConfiguration,
-            boolean newElement)
+            boolean isProperty)
     {
 
         String value = primitiveConfiguration.getValue();
         if (value == null)
         {
-            // TODO check if it must be an error ?
             LOGGER.error("No value defined");
-            throw new RuntimeException("No value defined");
+            throw new BeanSerializeException("No value defined");
         }
-        if (newElement)
+        if (!isProperty)
         {
             Element valueElement = new Element(XMLBeanTagsConstant.PROPERTY_VALUE_TAG, XMLBeanTagsConstant.NAMESPACE);
             parentElement.addContent(valueElement);
@@ -300,15 +304,14 @@ public class XMLBeanDefinitionWriter
         parentElement.addContent(listElement);
 
         List<ElementConfiguration> elementConfigurationList = listConfiguration.getListConfiguration();
-        if (elementConfigurationList == null || elementConfigurationList.isEmpty())
+        if (elementConfigurationList == null)
         {
-            // TODO check if it must be an error ?
             LOGGER.error("No list defined");
-            throw new RuntimeException("No list defined");
+            throw new BeanSerializeException("No list defined");
         }
         for (ElementConfiguration elementConfiguration : elementConfigurationList)
         {
-            serializeElementConfiguration(listElement, elementConfiguration, true);
+            serializeElementConfiguration(listElement, elementConfiguration, false);
         }
 
     }
@@ -325,23 +328,22 @@ public class XMLBeanDefinitionWriter
         parentElement.addContent(mapElement);
 
         Map<ElementConfiguration, ElementConfiguration> elementConfMap = mapConfiguration.getMapConfiguration();
-        if (elementConfMap == null || elementConfMap.isEmpty())
+        if (elementConfMap == null)
         {
-            // TODO check if it must be an error ?
             LOGGER.error("No map defined");
-            throw new RuntimeException("No map defined");
+            throw new BeanSerializeException("No map defined");
         }
 
-        for (ElementConfiguration key : elementConfMap.keySet())
+        for (Entry<ElementConfiguration, ElementConfiguration> elementConfEntry : elementConfMap.entrySet())
         {
 
             Element entryElement = new Element(XMLBeanTagsConstant.ENTRY_TAG, XMLBeanTagsConstant.NAMESPACE);
             mapElement.addContent(entryElement);
             Element keyElement = new Element(XMLBeanTagsConstant.KEY_TAG, XMLBeanTagsConstant.NAMESPACE);
             entryElement.addContent(keyElement);
-            serializeElementConfiguration(keyElement, key, true);
+            serializeElementConfiguration(keyElement, elementConfEntry.getKey(), false);
 
-            ElementConfiguration value = elementConfMap.get(key);
+            ElementConfiguration value = elementConfEntry.getValue();
             serializeElementConfiguration(entryElement, value, true);
 
         }
@@ -353,25 +355,12 @@ public class XMLBeanDefinitionWriter
      * 
      * @param path
      * @param document
+     * @throws IOException
+     * @throws
      */
-    private void writeConfigurationFile(String path, Document document)
+    private void writeConfigurationFile(String path, Document document) throws IOException
     {
         XMLOutputter xmlOutputter = new XMLOutputter(Format.getPrettyFormat());
-        try
-        {
-            xmlOutputter.output(document, new FileOutputStream(path));
-        }
-        catch (FileNotFoundException e)
-        {
-            LOGGER.error("Error during xml configuration file saving", e);
-            // TODO which exception ?
-            throw new RuntimeException(e);
-        }
-        catch (IOException e)
-        {
-            LOGGER.error("Error during xml configuration file saving", e);
-            // TODO which exception ?
-            throw new RuntimeException(e);
-        }
+        xmlOutputter.output(document, new FileOutputStream(path));
     }
 }
