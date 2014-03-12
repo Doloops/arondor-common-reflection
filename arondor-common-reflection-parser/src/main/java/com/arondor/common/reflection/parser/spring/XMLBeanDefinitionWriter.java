@@ -54,13 +54,12 @@ public class XMLBeanDefinitionWriter
         /**
          * For each objectConfiguration, serialize it
          */
-        for (String beanDefinitionName : objectConfigurationMap.keySet())
+        for (Entry<String, ObjectConfiguration> objectConfEntry : objectConfigurationMap.entrySet())
         {
-            LOGGER.debug("Bean defintion name : " + beanDefinitionName);
+            LOGGER.debug("Bean defintion name : " + objectConfEntry.getKey());
             Element objectConfElement = new Element(XMLBeanTagsConstant.BEAN_TAG, XMLBeanTagsConstant.NAMESPACE);
             rootElement.addContent(objectConfElement);
-            serializeBeanConfiguration(objectConfElement, beanDefinitionName,
-                    objectConfigurationMap.get(beanDefinitionName), true);
+            serializeBeanConfiguration(objectConfElement, objectConfEntry.getKey(), objectConfEntry.getValue(), true);
         }
 
         /**
@@ -156,15 +155,19 @@ public class XMLBeanDefinitionWriter
         if (objectName != null)
         {
             LOGGER.debug("Bean definition name : " + objectName);
-            beanName = objectName;
             beanDefinitionElement.setAttribute(XMLBeanTagsConstant.BEAN_ID_TAG, objectName);
         }
-        LOGGER.debug("Bean definition name = " + beanName + ", class name = " + className + ", isSingleton = "
+        else
+        {
+            // Just use for log message to have contextual value
+            objectName = beanName;
+        }
+        LOGGER.debug("Bean definition name = " + objectName + ", class name = " + className + ", isSingleton = "
                 + singleton);
         if (className == null)
         {
-            LOGGER.error("No class name defined for bean definition=" + beanName);
-            throw new RuntimeException("Bean definition=" + beanName + " has no class name defined");
+            LOGGER.error("No class name defined for bean definition=" + objectName);
+            throw new RuntimeException("Bean definition=" + objectName + " has no class name defined");
         }
 
         beanDefinitionElement.setAttribute(XMLBeanTagsConstant.BEAN_CLASS_TAG, className);
@@ -177,9 +180,9 @@ public class XMLBeanDefinitionWriter
             beanDefinitionElement.setAttribute(XMLBeanTagsConstant.BEAN_SCOPE_TAG, XMLBeanTagsConstant.PROTOTYPE);
         }
 
-        serializeConstructorArg(beanDefinitionElement, beanName, objectConfiguration.getConstructorArguments());
+        serializeConstructorArg(beanDefinitionElement, objectName, objectConfiguration.getConstructorArguments());
 
-        serializeBeanDefinitionProperties(beanDefinitionElement, beanName, objectConfiguration.getFields());
+        serializeBeanDefinitionProperties(beanDefinitionElement, objectName, objectConfiguration.getFields());
 
     }
 
@@ -225,13 +228,13 @@ public class XMLBeanDefinitionWriter
             return;
         }
 
-        for (String fieldName : fields.keySet())
+        for (Entry<String, ElementConfiguration> fieldEntry : fields.entrySet())
         {
-            LOGGER.debug("Add property " + fieldName + " for bean definition " + beanName);
+            LOGGER.debug("Add property " + fieldEntry.getKey() + " for bean definition " + beanName);
             Element propertyElement = new Element(XMLBeanTagsConstant.PROPERTY_TAG, XMLBeanTagsConstant.NAMESPACE);
-            propertyElement.setAttribute(XMLBeanTagsConstant.PROPERTY_NAME_TAG, fieldName);
+            propertyElement.setAttribute(XMLBeanTagsConstant.PROPERTY_NAME_TAG, fieldEntry.getKey());
             beanDefinitionElement.addContent(propertyElement);
-            serializeElementConfiguration(propertyElement, fields.get(fieldName), true);
+            serializeElementConfiguration(propertyElement, fieldEntry.getValue(), true);
         }
 
     }
@@ -331,16 +334,16 @@ public class XMLBeanDefinitionWriter
             throw new BeanSerializeException("No map defined");
         }
 
-        for (ElementConfiguration key : elementConfMap.keySet())
+        for (Entry<ElementConfiguration, ElementConfiguration> elementConfEntry : elementConfMap.entrySet())
         {
 
             Element entryElement = new Element(XMLBeanTagsConstant.ENTRY_TAG, XMLBeanTagsConstant.NAMESPACE);
             mapElement.addContent(entryElement);
             Element keyElement = new Element(XMLBeanTagsConstant.KEY_TAG, XMLBeanTagsConstant.NAMESPACE);
             entryElement.addContent(keyElement);
-            serializeElementConfiguration(keyElement, key, false);
+            serializeElementConfiguration(keyElement, elementConfEntry.getKey(), false);
 
-            ElementConfiguration value = elementConfMap.get(key);
+            ElementConfiguration value = elementConfEntry.getValue();
             serializeElementConfiguration(entryElement, value, true);
 
         }
@@ -358,8 +361,6 @@ public class XMLBeanDefinitionWriter
     private void writeConfigurationFile(String path, Document document) throws IOException
     {
         XMLOutputter xmlOutputter = new XMLOutputter(Format.getPrettyFormat());
-
         xmlOutputter.output(document, new FileOutputStream(path));
-
     }
 }
