@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 
 import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.arondor.common.reflection.noreflect.generator.NoReflectRegistrarGenerator;
+import com.arondor.common.reflection.parser.java.JavaAccessibleClassParser;
 import com.google.gwt.core.ext.Generator;
 import com.google.gwt.core.ext.GeneratorContext;
 import com.google.gwt.core.ext.TreeLogger;
@@ -61,6 +62,10 @@ public abstract class GWTNoReflectRegistrarGenerator extends Generator
         NoReflectRegistrarGenerator noReflect = new NoReflectRegistrarGenerator();
         noReflect.setClassName(className);
         noReflect.setPackageName(packageName);
+
+        JavaAccessibleClassParser accessibleClassParser = new JavaAccessibleClassParser();
+        accessibleClassParser.setTryInstantiateClassForDefaultValue(false);
+        noReflect.setAccessibleClassParser(accessibleClassParser);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(baos);
