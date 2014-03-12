@@ -53,6 +53,8 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
 
     private boolean replaceDollarByPointForEmbeddedClasses = false;
 
+    private boolean tryInstantiateClassForDefaultValue = true;
+
     /**
      * Convert a getter method name to an attribute name, in Java naming
      * conventions
@@ -549,12 +551,18 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         catch (InstantiationException e)
         {
             LOG.debug("InstanciationException : " + clazz.getName(), e);
-            return null;
         }
         catch (IllegalAccessException e)
         {
             LOG.warn("IllegalAccessException for class : " + clazz.getName(), e);
-            return null;
+        }
+        catch (UnsupportedOperationException e)
+        {
+            LOG.warn("IllegalAccessException for class : " + clazz.getName(), e);
+        }
+        catch (RuntimeException e)
+        {
+            LOG.warn("IllegalAccessException for class : " + clazz.getName(), e);
         }
         return o;
     }
@@ -668,16 +676,6 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         return accessClass;
     }
 
-    public boolean isReplaceDollarByPointForEmbeddedClasses()
-    {
-        return replaceDollarByPointForEmbeddedClasses;
-    }
-
-    public void setReplaceDollarByPointForEmbeddedClasses(boolean replaceDollarByPointForEmbeddedClasses)
-    {
-        this.replaceDollarByPointForEmbeddedClasses = replaceDollarByPointForEmbeddedClasses;
-    }
-
     private String normalizeClassName(final String className)
     {
         if (isReplaceDollarByPointForEmbeddedClasses())
@@ -693,5 +691,25 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
     public boolean isPrimitiveType(String className)
     {
         return PrimitiveTypeUtil.isPrimitiveType(className);
+    }
+
+    public boolean isReplaceDollarByPointForEmbeddedClasses()
+    {
+        return replaceDollarByPointForEmbeddedClasses;
+    }
+
+    public void setReplaceDollarByPointForEmbeddedClasses(boolean replaceDollarByPointForEmbeddedClasses)
+    {
+        this.replaceDollarByPointForEmbeddedClasses = replaceDollarByPointForEmbeddedClasses;
+    }
+
+    public boolean isTryInstantiateClassForDefaultValue()
+    {
+        return tryInstantiateClassForDefaultValue;
+    }
+
+    public void setTryInstantiateClassForDefaultValue(boolean tryInstantiateClassForDefaultValue)
+    {
+        this.tryInstantiateClassForDefaultValue = tryInstantiateClassForDefaultValue;
     }
 }
