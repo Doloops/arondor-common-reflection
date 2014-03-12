@@ -267,15 +267,16 @@ public class TestJavaAccessibleClassParser
     {
         @Mandatory
         private int myMandatoryField = 23;
-        
+
         private int myNonMandatoryField;
-        
+
         private String myDefaultValueString = "TestReflection";
-        
+
         private String myValueString;
-        
-        public ClassWithMandatoryField () {
-        	
+
+        public ClassWithMandatoryField()
+        {
+
         }
 
         public int getMyMandatoryField()
@@ -298,21 +299,25 @@ public class TestJavaAccessibleClassParser
             this.myNonMandatoryField = myNonMandatoryField;
         }
 
-		public String getMyDefaultValueString() {
-			return myDefaultValueString;
-		}
+        public String getMyDefaultValueString()
+        {
+            return myDefaultValueString;
+        }
 
-		public void setMyDefaultValueString(String myDefaultValueString) {
-			this.myDefaultValueString = myDefaultValueString;
-		}
+        public void setMyDefaultValueString(String myDefaultValueString)
+        {
+            this.myDefaultValueString = myDefaultValueString;
+        }
 
-		public String getMyValueString() {
-			return myValueString;
-		}
+        public String getMyValueString()
+        {
+            return myValueString;
+        }
 
-		public void setMyValueString(String myValueString) {
-			this.myValueString = myValueString;
-		}
+        public void setMyValueString(String myValueString)
+        {
+            this.myValueString = myValueString;
+        }
 
     }
 
@@ -331,28 +336,29 @@ public class TestJavaAccessibleClassParser
         assertFalse(nonMandatoryField.isMandatory());
 
     }
-    
+
     @Test
     public void testClassWithFieldDefaultValue()
     {
-        AccessibleClassParser parser = new JavaAccessibleClassParser();
+        JavaAccessibleClassParser parser = new JavaAccessibleClassParser();
+        parser.setTryInstantiateClassForDefaultValue(true);
         AccessibleClass clazz = parser.parseAccessibleClass(ClassWithMandatoryField.class);
 
         AccessibleField mandatoryField = clazz.getAccessibleFields().get("myMandatoryField");
         assertNotNull(mandatoryField);
-        assertEquals("23",mandatoryField.getDefaultValue());
+        assertEquals("23", mandatoryField.getDefaultValue());
 
         AccessibleField nonMandatoryField = clazz.getAccessibleFields().get("myNonMandatoryField");
         assertNotNull(nonMandatoryField);
-        assertEquals("0",nonMandatoryField.getDefaultValue());
-        
+        assertEquals("0", nonMandatoryField.getDefaultValue());
+
         AccessibleField defaultStringField = clazz.getAccessibleFields().get("myDefaultValueString");
         assertNotNull(defaultStringField);
-        assertEquals("TestReflection",defaultStringField.getDefaultValue());
-        
+        assertEquals("TestReflection", defaultStringField.getDefaultValue());
+
         AccessibleField stringField = clazz.getAccessibleFields().get("myValueString");
         assertNotNull(stringField);
-        assertEquals(null,stringField.getDefaultValue());
+        assertEquals(null, stringField.getDefaultValue());
 
     }
 }
