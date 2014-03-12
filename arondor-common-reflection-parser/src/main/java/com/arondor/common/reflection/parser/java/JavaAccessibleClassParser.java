@@ -53,7 +53,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
 
     private boolean replaceDollarByPointForEmbeddedClasses = false;
 
-    private boolean tryInstantiateClassForDefaultValue = false;
+    private boolean tryInstantiateClassForDefaultValue = true;
 
     /**
      * Convert a getter method name to an attribute name, in Java naming
