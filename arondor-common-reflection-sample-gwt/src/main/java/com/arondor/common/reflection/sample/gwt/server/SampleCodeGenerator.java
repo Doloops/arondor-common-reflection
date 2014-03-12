@@ -39,6 +39,7 @@ public class SampleCodeGenerator extends GWTNoReflectRegistrarGenerator
     public Collection<com.arondor.common.reflection.model.java.AccessibleClass> getAccessibleClasses()
     {
         AccessibleClassListParser accessibleClassListParser = new AccessibleClassListParser();
+        accessibleClassListParser.getAccesssibleClassParser().setTryInstantiateClassForDefaultValue(false);
         try
         {
             Collection<String> classNames = accessibleClassListParser.parseClassNames(this.getClass().getClassLoader()

@@ -30,7 +30,17 @@ public class AccessibleClassListParser
 {
     private static final Logger LOGGER = Logger.getLogger(AccessibleClassListParser.class.getName());
 
-    private final JavaAccessibleClassParser parser = new JavaAccessibleClassParser();
+    private JavaAccessibleClassParser accesssibleClassParser = new JavaAccessibleClassParser();
+
+    public JavaAccessibleClassParser getAccesssibleClassParser()
+    {
+        return accesssibleClassParser;
+    }
+
+    public void setAccesssibleClassParser(JavaAccessibleClassParser accesssibleClassParser)
+    {
+        this.accesssibleClassParser = accesssibleClassParser;
+    }
 
     private static final Logger getLog()
     {
@@ -57,7 +67,7 @@ public class AccessibleClassListParser
         {
             getLog().finest("Parsing AccessibleClass for class : " + className);
             Class<?> srcClazz = classLoader.loadClass(className);
-            AccessibleClass clazz = parser.parseAccessibleClass(srcClazz);
+            AccessibleClass clazz = accesssibleClassParser.parseAccessibleClass(srcClazz);
             accessibleClasses.add(clazz);
         }
         return accessibleClasses;
