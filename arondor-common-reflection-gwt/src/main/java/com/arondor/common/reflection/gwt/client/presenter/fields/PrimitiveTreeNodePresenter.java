@@ -84,7 +84,10 @@ public class PrimitiveTreeNodePresenter implements TreeNodePresenter
         {
             PrimitiveConfiguration primitiveConfiguration = (PrimitiveConfiguration) elementConfiguration;
             fieldValue = primitiveConfiguration.getValue();
-            primitiveDisplay.setDefaultValue(defaultValue);
+            if (defaultValue != null)
+            {
+                primitiveDisplay.setDefaultValue(defaultValue);
+            }
             if (fieldValue != null)
             {
                 primitiveDisplay.setValue(fieldValue);
