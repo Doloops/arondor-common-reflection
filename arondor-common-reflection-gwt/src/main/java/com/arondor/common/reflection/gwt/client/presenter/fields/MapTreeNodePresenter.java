@@ -50,11 +50,24 @@ public class MapTreeNodePresenter implements TreeNodePresenter
 
     private final String fieldName;
 
+    /**
+     * First generic type for keys, Second generic type for values
+     */
     private final List<String> genericTypes;
 
     private final GWTReflectionServiceAsync rpcService;
 
-    private final ObjectConfigurationMap objectConfigurationMap;
+    private ObjectConfigurationMap objectConfigurationMap;
+
+    public ObjectConfigurationMap getObjectConfigurationMap()
+    {
+        return objectConfigurationMap;
+    }
+
+    public void setObjectConfigurationMap(ObjectConfigurationMap objectConfigurationMap)
+    {
+        this.objectConfigurationMap = objectConfigurationMap;
+    }
 
     public String getFieldName()
     {
@@ -106,10 +119,11 @@ public class MapTreeNodePresenter implements TreeNodePresenter
         childNode.setNodeName("Entry");
 
         TreeNodePresenter keyPresenter = TreeNodePresenterFactory.getInstance().createChildNodePresenter(rpcService,
-                objectConfigurationMap, childNode, "Key", genericTypes.get(0), "Key", false, null, null);
+                objectConfigurationMap, childNode, "Key", genericTypes.get(0), "Key", false, null, false, null, null);
 
         TreeNodePresenter valuePresenter = TreeNodePresenterFactory.getInstance().createChildNodePresenter(rpcService,
-                objectConfigurationMap, childNode, "Value", genericTypes.get(1), "Value", false, null, null);
+                objectConfigurationMap, childNode, "Value", genericTypes.get(1), "Value", false, null, false, null,
+                null);
 
         final KeyValuePresenterPair keyValuePresenterPair = new KeyValuePresenterPair(keyPresenter, valuePresenter);
         keyValuePresenters.add(keyValuePresenterPair);

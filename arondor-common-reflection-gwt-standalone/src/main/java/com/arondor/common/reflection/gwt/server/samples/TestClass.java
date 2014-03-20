@@ -18,7 +18,6 @@ package com.arondor.common.reflection.gwt.server.samples;
 import com.arondor.common.management.mbean.annotation.Description;
 import com.arondor.common.management.mbean.annotation.Mandatory;
 
-
 public class TestClass implements TestInterface
 {
     @Description("This is a string property and it is mandatory")
@@ -30,10 +29,22 @@ public class TestClass implements TestInterface
 
     @Description("This is a sub class")
     private SubTestClass subClass;
-    
+
     @Description("This is a boolean property")
     private boolean aBooleanProperty;
 
+    @Description("This is an enum property")
+    private TestEnum anEnumProperty;
+
+    public TestEnum getAnEnumProperty()
+    {
+        return anEnumProperty;
+    }
+
+    public void setAnEnumProperty(TestEnum anEnumProperty)
+    {
+        this.anEnumProperty = anEnumProperty;
+    }
 
     public String getAStringProperty()
     {

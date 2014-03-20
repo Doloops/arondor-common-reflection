@@ -72,12 +72,20 @@ public interface AccessibleField extends Serializable
     boolean isMandatory();
 
     /**
-     * Get default value of field (for primitive : String, Integer,Float, Boolean)
+     * Get default value of field (for primitive : String, Integer,Float,
+     * Boolean)
      * 
      * @return
      */
-    String getDefaultValue ();
-    
+    String getDefaultValue();
+
+    /**
+     * Is the field bind to enum type
+     * 
+     * @return
+     */
+    boolean isEnumProperty();
+
     /**
      * For booleans, we prefer declaring boolean isField() instead of boolean
      * getField() ; it is a matter of taste actually

@@ -53,6 +53,8 @@ public interface AccessibleClass extends Serializable
 
     public Map<String, AccessibleField> getAccessibleFields();
 
+    public Map<String, List<String>> getAccessibleEnums();
+
     public String getClassBaseName();
 
     public String getPackageName();

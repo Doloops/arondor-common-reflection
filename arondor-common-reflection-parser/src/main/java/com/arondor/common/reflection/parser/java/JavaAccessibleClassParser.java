@@ -23,6 +23,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -411,6 +412,25 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         return false;
     }
 
+    private List<String> getFieldEnumValue(Field field)
+    {
+
+        Class<?> fieldClass = field.getType();
+        List<String> enumNames = new ArrayList<String>();
+        if (fieldClass.isEnum())
+        {
+            LOG.debug("Field " + field.getName() + " is an enum type of class=" + fieldClass.getName());
+            Enum<?>[] enumConstantsTab = (Enum<?>[]) fieldClass.getEnumConstants();
+            for (Enum<?> o : Arrays.asList(enumConstantsTab))
+            {
+                enumNames.add(o.name());
+            }
+        }
+
+        return enumNames;
+
+    }
+
     public AccessibleClass parseAccessibleClass(Class<?> clazz)
     {
         if (DEBUG)
@@ -424,7 +444,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         }
         catch (NoClassDefFoundError e)
         {
-            LOG.warn("Could not get methods :", e);
+            LOG.warn("Could not get methods fro clazz " + clazz.getName());
             return null;
         }
         AccessibleClassBean accessClass = createBaseAccessibleClass(clazz);
@@ -448,6 +468,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         {
             parseAccessibleFieldsDefaultValue(accessClass, clazz, exposedAttributes);
         }
+
         setAccessibleMethods(accessClass, exposedMethods);
 
         return accessClass;
@@ -504,43 +525,41 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
      */
     private Object getDefaultValueForAttribute(Class<?> clazz, Object o, AccessibleField field)
     {
-
+        Object result = null;
         try
         {
             Method getter = clazz.getMethod(attributeToGetter(field.getName()));
-            return getter.invoke(o);
-
+            result = getter.invoke(o);
         }
         catch (NoSuchMethodException e)
         {
-            LOG.debug("NoSuchMethodException for attribute : " + field.getName(), e);
-            return null;
+            LOG.warn("NoSuchMethodException for attribute : " + field.getName());
         }
         catch (SecurityException e)
         {
-            LOG.warn("SecurityException : " + field.getName(), e);
-            return null;
+            LOG.warn("SecurityException : " + field.getName());
         }
         catch (IllegalAccessException e)
         {
-            LOG.warn("IllegalAccessException : " + field.getName(), e);
-            return null;
+            LOG.warn("IllegalAccessException : " + field.getName());
         }
         catch (IllegalArgumentException e)
         {
-            LOG.warn("IllegalArgumentException : " + field.getName(), e);
-            return null;
+            LOG.warn("IllegalArgumentException : " + field.getName());
         }
         catch (InvocationTargetException e)
         {
-            LOG.warn("InvocationTargetException : " + field.getName(), e);
-            return null;
+            LOG.warn("InvocationTargetException : " + field.getName());
         }
-
+        finally
+        {
+            LOG.debug("Finally : result=" + result);
+        }
+        return result;
     }
 
     /**
-     * Method to instanciate specific class
+     * Method to instantiate specific class
      * 
      * @param clazz
      * @return
@@ -554,7 +573,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         }
         catch (InstantiationException e)
         {
-            LOG.debug("InstanciationException : " + clazz.getName(), e);
+            LOG.debug("InstanciationException for class : " + clazz.getName(), e);
         }
         catch (IllegalAccessException e)
         {
@@ -606,6 +625,8 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
                     Field field = superclass.getDeclaredField(accessibleField.getName());
                     ((AccessibleFieldBean) accessibleField).setDescription(getFieldDescription(field));
                     ((AccessibleFieldBean) accessibleField).setMandatory(getFieldMandatory(field));
+                    ((AccessibleFieldBean) accessibleField).setEnumProperty(getAccessibleEnums(accessibleClass, field));
+
                     break;
                 }
                 catch (SecurityException e)
@@ -625,6 +646,27 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
             }
         }
         accessibleClass.setAccessibleFields(exposedAttributes);
+    }
+
+    private boolean getAccessibleEnums(AccessibleClassBean accessibleClass, Field field)
+    {
+
+        String fieldType = field.getType().getName();
+        if (accessibleClass.containsEnum(fieldType))
+        {
+            LOG.debug("Enum " + fieldType + " is already loaded in accesibleEnums");
+            return true;
+        }
+
+        List<String> enumValues = getFieldEnumValue(field);
+        if (!enumValues.isEmpty())
+        {
+            LOG.debug("Add enum " + fieldType + " to accessibleClass " + accessibleClass.getName());
+            accessibleClass.putAccessibleEnum(fieldType, enumValues);
+            return true;
+        }
+
+        return false;
     }
 
     private void setAccessibleClassConstructors(Class<?> clazz, AccessibleClassBean accessClass)

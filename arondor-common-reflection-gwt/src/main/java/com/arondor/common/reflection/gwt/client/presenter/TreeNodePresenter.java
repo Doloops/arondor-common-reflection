@@ -17,6 +17,7 @@ package com.arondor.common.reflection.gwt.client.presenter;
 
 import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter.ClassDisplay;
+import com.arondor.common.reflection.gwt.client.presenter.fields.EnumTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.fields.ListTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter;
@@ -24,7 +25,6 @@ import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeN
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 
 public interface TreeNodePresenter
@@ -51,7 +51,7 @@ public interface TreeNodePresenter
         void setDefaultValue(T value);
 
         HandlerRegistration addValueChangeHandler(ValueChangeHandler<T> valueChangeHandler);
-              
+
     }
 
     public interface ChildCreatorDisplay extends Display
@@ -59,6 +59,8 @@ public interface TreeNodePresenter
         ClassDisplay createClassChild();
 
         PrimitiveTreeNodePresenter.PrimitiveDisplay createPrimitiveChild(String fieldClassName);
+
+        EnumTreeNodePresenter.EnumDisplay createEnumListChild();
 
         StringListTreeNodePresenter.StringListDisplay createStringListChild();
 

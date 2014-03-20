@@ -96,6 +96,7 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter 
         {
             return;
         }
+        super.setObjectConfigurationMap(objectConfigurationMap);
         for (Map.Entry<String, ObjectConfiguration> entry : objectConfigurationMap.entrySet())
         {
             addChild(new MyPrimitiveConfiguration(entry.getKey()), entry.getValue());

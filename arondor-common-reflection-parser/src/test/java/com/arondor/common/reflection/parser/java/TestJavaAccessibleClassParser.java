@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.arondor.common.management.mbean.annotation.Description;
@@ -263,12 +264,35 @@ public class TestJavaAccessibleClassParser
         assertTrue(clazz.isAbstract());
     }
 
+    public enum TestEnum
+    {
+
+        VALUE1("value1"), VALUE2("value2");
+
+        private String value;
+
+        TestEnum(String value)
+        {
+
+            this.value = value;
+
+        }
+
+        String getValue()
+        {
+            return value;
+        }
+
+    }
+
     public static class ClassWithMandatoryField
     {
         @Mandatory
         private int myMandatoryField = 23;
 
         private int myNonMandatoryField;
+
+        public TestEnum myEnumField;
 
         private String myDefaultValueString = "TestReflection";
 
@@ -319,6 +343,16 @@ public class TestJavaAccessibleClassParser
             this.myValueString = myValueString;
         }
 
+        public TestEnum getMyEnumField()
+        {
+            return myEnumField;
+        }
+
+        public void setMyEnumField(TestEnum myEnumField)
+        {
+            this.myEnumField = myEnumField;
+        }
+
     }
 
     @Test
@@ -359,6 +393,26 @@ public class TestJavaAccessibleClassParser
         AccessibleField stringField = clazz.getAccessibleFields().get("myValueString");
         assertNotNull(stringField);
         assertEquals(null, stringField.getDefaultValue());
+
+    }
+
+    @Test
+    public void testGetEnumList() throws ClassNotFoundException, NoSuchFieldException, SecurityException
+    {
+
+        JavaAccessibleClassParser parser = new JavaAccessibleClassParser();
+        AccessibleClass clazz = parser.parseAccessibleClass(ClassWithMandatoryField.class);
+
+        AccessibleField myEnumField = clazz.getAccessibleFields().get("myEnumField");
+        assertNotNull(myEnumField);
+
+        List<String> values = clazz.getAccessibleEnums().get(myEnumField.getClassName());
+
+        Assert.assertEquals(2, values.size());
+        Assert.assertTrue(values.contains(TestEnum.VALUE1.name()));
+        Assert.assertTrue(values.contains("VALUE1"));
+        Assert.assertTrue(values.contains(TestEnum.VALUE2.name()));
+        Assert.assertTrue(values.contains("VALUE2"));
 
     }
 }

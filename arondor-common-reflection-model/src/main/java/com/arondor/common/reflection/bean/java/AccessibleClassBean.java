@@ -15,6 +15,7 @@
  */
 package com.arondor.common.reflection.bean.java;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +32,8 @@ public class AccessibleClassBean implements AccessibleClass
     private static final long serialVersionUID = 5205325249459644854L;
 
     private Map<String, AccessibleField> accessibleFields;
+
+    private Map<String, List<String>> accessibleEnums;
 
     public AccessibleClassBean()
     {
@@ -161,5 +164,37 @@ public class AccessibleClassBean implements AccessibleClass
     public void setAbstract(boolean abstractClass)
     {
         this.abstactClass = abstractClass;
+    }
+
+    public Map<String, List<String>> getAccessibleEnums()
+    {
+        return accessibleEnums;
+    }
+
+    public void setAccessibleEnums(Map<String, List<String>> accessibleEnums)
+    {
+        this.accessibleEnums = accessibleEnums;
+    }
+
+    public boolean containsEnum(String enumName)
+    {
+
+        if (accessibleEnums == null)
+        {
+            return false;
+        }
+        return accessibleEnums.containsKey(enumName);
+
+    }
+
+    public void putAccessibleEnum(String enumName, List<String> values)
+    {
+
+        if (accessibleEnums == null)
+        {
+            accessibleEnums = new HashMap<String, List<String>>();
+        }
+        accessibleEnums.put(enumName, values);
+
     }
 }

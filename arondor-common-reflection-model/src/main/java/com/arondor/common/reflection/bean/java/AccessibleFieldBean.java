@@ -75,6 +75,11 @@ public class AccessibleFieldBean implements AccessibleField
     private String defaultValue;
 
     /**
+     * If this attribute is associated with enum type
+     */
+    private boolean enumProperty = false;
+
+    /**
      * If this attribute is a boolean, does its getter have a 'is' prefix
      * instead of a 'get' prefix
      */
@@ -201,6 +206,16 @@ public class AccessibleFieldBean implements AccessibleField
     public void setDefaultValue(String defaultValue)
     {
         this.defaultValue = defaultValue;
+    }
+
+    public void setEnumProperty(boolean enumProperty)
+    {
+        this.enumProperty = enumProperty;
+    }
+
+    public boolean isEnumProperty()
+    {
+        return enumProperty;
     }
 
 }
