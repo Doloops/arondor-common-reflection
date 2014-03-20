@@ -76,8 +76,8 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
 
         LOG.finest("Create new TreeNodePresenter for fieldName=" + fieldName + ", baseClassName=" + baseClassName);
 
-        implementingClassPresenter = new ImplementingClassPresenter(rpcService, objectConfigurationMap, baseClassName,
-                display.getImplementingClassDisplay());
+        implementingClassPresenter = new DefaultImplementingClassPresenter(rpcService, objectConfigurationMap,
+                baseClassName, display.getImplementingClassDisplay());
         bind();
     }
 
