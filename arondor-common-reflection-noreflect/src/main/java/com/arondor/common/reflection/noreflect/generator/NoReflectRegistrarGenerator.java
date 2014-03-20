@@ -204,7 +204,7 @@ public class NoReflectRegistrarGenerator
         }
         if (field.getDeclaredInClass() != null && !field.getDeclaredInClass().equals(accessibleClass.getName()))
         {
-            LOG.warn("Skipping field " + field.getName() + " from class " + accessibleClass.getName()
+            LOG.debug("Skipping field " + field.getName() + " from class " + accessibleClass.getName()
                     + " because it is said to be declared in " + field.getDeclaredInClass());
             return;
         }
