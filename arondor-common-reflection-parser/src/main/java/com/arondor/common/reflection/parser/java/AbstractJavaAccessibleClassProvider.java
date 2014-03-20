@@ -55,6 +55,16 @@ public abstract class AbstractJavaAccessibleClassProvider implements AccessibleC
 
     private AccessibleClassParser accessibleClassParser = new JavaAccessibleClassParser();
 
+    public AccessibleClassParser getAccessibleClassParser()
+    {
+        return accessibleClassParser;
+    }
+
+    public void setAccessibleClassParser(AccessibleClassParser accessibleClassParser)
+    {
+        this.accessibleClassParser = accessibleClassParser;
+    }
+
     private boolean allowClassWithNoEmptyConstructor = true;
 
     private boolean allowInterfaces = true;
@@ -209,6 +219,7 @@ public abstract class AbstractJavaAccessibleClassProvider implements AccessibleC
             while (entries.hasMoreElements())
             {
                 JarEntry entry = entries.nextElement();
+                LOG.debug("Opening entry : " + entry.getName());
                 if (entry.getName().endsWith(".class") && !entry.getName().contains("$"))
                 {
 
@@ -255,7 +266,11 @@ public abstract class AbstractJavaAccessibleClassProvider implements AccessibleC
         }
         catch (ClassNotFoundException e)
         {
-            LOG.error("Could not get class for name : " + className, e);
+            LOG.error("Could not get class for name : " + className);
+        }
+        catch (NoClassDefFoundError e)
+        {
+            LOG.error("Could not get class for name : " + className);
         }
     }
 
