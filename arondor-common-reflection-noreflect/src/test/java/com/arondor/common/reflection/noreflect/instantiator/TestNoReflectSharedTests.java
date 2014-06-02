@@ -19,6 +19,7 @@ import com.arondor.common.reflection.api.parser.AccessibleClassParser;
 import com.arondor.common.reflection.bean.config.ObjectConfigurationFactoryBean;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ListConfiguration;
+import com.arondor.common.reflection.model.config.MapConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
@@ -31,6 +32,7 @@ import com.arondor.common.reflection.noreflect.testclasses.TestClassB;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassC;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassC.EnumValue;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassD;
+import com.arondor.common.reflection.noreflect.testclasses.TestClassE;
 import com.arondor.common.reflection.noreflect.testclasses.TestGrandChildClass;
 import com.arondor.common.reflection.noreflect.testclasses.TestNestedClass;
 
@@ -224,6 +226,47 @@ public abstract class TestNoReflectSharedTests
         for (int idx = 0; idx < classD.getListClassA().size(); idx++)
         {
             Assert.assertEquals(10000 + idx, classD.getListClassA().get(idx).getProperty2());
+        }
+    }
+
+    @Test
+    public void testClassE_Map()
+    {
+        ObjectConfiguration configurationE = objectConfigurationFactory.createObjectConfiguration();
+        configurationE.setClassName(TestClassE.class.getName());
+        configurationE.setFields(new HashMap<String, ElementConfiguration>());
+
+        MapConfiguration fieldConfList = objectConfigurationFactory.createMapConfiguration();
+        fieldConfList.setMapConfiguration(new HashMap<ElementConfiguration, ElementConfiguration>());
+
+        configurationE.getFields().put("mapClassA", fieldConfList);
+
+        for (int i = 0; i < 10; i++)
+        {
+            ObjectConfiguration configurationA = objectConfigurationFactory.createObjectConfiguration();
+            configurationA.setClassName(TestClassA.class.getName());
+            configurationA.setFields(new HashMap<String, ElementConfiguration>());
+
+            ElementConfiguration fieldConf2 = objectConfigurationFactory.createPrimitiveConfiguration(Integer
+                    .toString(10000 + i));
+            configurationA.getFields().put("property2", fieldConf2);
+
+            PrimitiveConfiguration keyC = objectConfigurationFactory.createPrimitiveConfiguration("Key " + i);
+            fieldConfList.getMapConfiguration().put(keyC, configurationA);
+        }
+        Object objectE = reflectionInstantiator.instanciateObject(configurationE, Object.class, instantationContext);
+
+        Assert.assertNotNull(objectE);
+        Assert.assertTrue(objectE instanceof TestClassE);
+
+        TestClassE classE = (TestClassE) objectE;
+        Assert.assertNotNull(classE.getMapClassA());
+        Assert.assertEquals(10, classE.getMapClassA().size());
+
+        for (int i = 0; i < classE.getMapClassA().size(); i++)
+        {
+            TestClassA value = classE.getMapClassA().get("Key " + i);
+            Assert.assertEquals(10000 + i, value.getProperty2());
         }
     }
 

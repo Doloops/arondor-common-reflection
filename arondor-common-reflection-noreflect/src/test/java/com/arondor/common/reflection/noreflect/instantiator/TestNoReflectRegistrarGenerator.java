@@ -23,6 +23,7 @@ import com.arondor.common.reflection.noreflect.testclasses.TestClassA;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassB;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassC;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassD;
+import com.arondor.common.reflection.noreflect.testclasses.TestClassE;
 import com.arondor.common.reflection.noreflect.testclasses.TestGrandChildClass;
 import com.arondor.common.reflection.noreflect.testclasses.TestNestedClass;
 import com.arondor.common.reflection.noreflect.testclasses.TestParentClass;
@@ -44,6 +45,7 @@ public class TestNoReflectRegistrarGenerator extends TestNoReflectSharedTests
         classes.add(parser.parseAccessibleClass(TestClassC.class));
         classes.add(parser.parseAccessibleClass(TestClassC.EnumValue.class));
         classes.add(parser.parseAccessibleClass(TestClassD.class));
+        classes.add(parser.parseAccessibleClass(TestClassE.class));
         classes.add(parser.parseAccessibleClass(TestParentClass.class));
         classes.add(parser.parseAccessibleClass(TestChildClass.class));
         classes.add(parser.parseAccessibleClass(TestGrandChildClass.class));

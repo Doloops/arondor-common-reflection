@@ -16,8 +16,10 @@
 package com.arondor.common.reflection.noreflect.instantiator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,6 +27,7 @@ import com.arondor.common.reflection.api.instantiator.InstantiationContext;
 import com.arondor.common.reflection.api.instantiator.ReflectionInstantiator;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ListConfiguration;
+import com.arondor.common.reflection.model.config.MapConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
 import com.arondor.common.reflection.model.config.ReferenceConfiguration;
@@ -173,6 +176,19 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
         case Reference:
         {
             return instantiateSharedObjectReference((ReferenceConfiguration) fieldConfiguration, context);
+        }
+        case Map:
+        {
+            Map<Object, Object> objectMap = new HashMap<Object, Object>();
+            Map<ElementConfiguration, ElementConfiguration> mapConfiguration = ((MapConfiguration) fieldConfiguration)
+                    .getMapConfiguration();
+            for (Entry<ElementConfiguration, ElementConfiguration> entry : mapConfiguration.entrySet())
+            {
+                Object key = instanciateObjectField(entry.getKey(), context);
+                Object value = instanciateObjectField(entry.getValue(), context);
+                objectMap.put(key, value);
+            }
+            return objectMap;
         }
         default:
             throw new NoReflectRuntimeException("Not implemented yet : ElementConfiguration type:"

@@ -3,6 +3,7 @@ package com.arondor.common.reflection.noreflect.instantiator;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 
@@ -18,6 +19,7 @@ import com.arondor.common.reflection.noreflect.testclasses.TestClassB;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassC;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassC.EnumValue;
 import com.arondor.common.reflection.noreflect.testclasses.TestClassD;
+import com.arondor.common.reflection.noreflect.testclasses.TestClassE;
 import com.arondor.common.reflection.noreflect.testclasses.TestGrandChildClass;
 import com.arondor.common.reflection.noreflect.testclasses.TestNestedClass;
 import com.arondor.common.reflection.noreflect.testclasses.TestParentClass;
@@ -134,6 +136,23 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
             public void set(Object object, Object value)
             {
                 ((TestClassD) object).setListClassA((List<TestClassA>) value);
+            }
+        });
+
+        catalog.registerObjectConstructor(TestClassE.class.getName(), new ObjectConstructor()
+        {
+            public Object create(List<Object> arguments)
+            {
+                return new TestClassE();
+            }
+        });
+
+        catalog.registerFieldSetter(TestClassE.class.getName(), "mapClassA", new FieldSetter()
+        {
+            @SuppressWarnings("unchecked")
+            public void set(Object object, Object value)
+            {
+                ((TestClassE) object).setMapClassA((Map<String, TestClassA>) value);
             }
         });
 
