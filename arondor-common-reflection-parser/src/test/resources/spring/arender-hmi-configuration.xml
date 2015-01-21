@@ -43,4 +43,8 @@
 		<property name="pattern" value="${date.format}" />
 	</bean>
 
+	<bean id="spel" class="com.arondor.viewer.ARenderBean" scope="prototype">
+		<property name="and"
+			value="#{ ${is.mobile} and ${is.mobile} and  !false}" />
+	</bean>
 </beans>

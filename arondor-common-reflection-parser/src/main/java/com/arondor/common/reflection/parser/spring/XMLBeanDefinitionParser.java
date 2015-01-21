@@ -131,7 +131,7 @@ public class XMLBeanDefinitionParser implements ObjectConfigurationMapParser
             }
             catch (Exception e)
             {
-                LOGGER.error("The value " + ppt.getValue() + " of property " + ppt + " cannot be parsed");
+                LOGGER.error("The value " + ppt.getValue() + " of property " + ppt + " cannot be parsed", e);
             }
         }
 

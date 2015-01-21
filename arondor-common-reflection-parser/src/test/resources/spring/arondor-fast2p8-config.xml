@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
-<beans default-lazy-init="false" default-autowire="no"
-	default-dependency-check="none">
+<beans default-lazy-init="true" default-autowire="no"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<bean id="traceManager" class="com.arondor.fast2p8.tracemanager.BaseTraceManager"
-		singleton="true">
+		scope="singleton">
 		<property name="taskFlowFactory">
 			<bean
 				class="com.arondor.fast2p8.xstream.factory.taskflow.GenericTaskFlowFactory">
@@ -89,7 +90,7 @@
 	</bean>
 
 
-	<bean id="cachePunnetTraceFactory" singleton="false"
+	<bean id="cachePunnetTraceFactory" scope="prototype"
 		class="com.arondor.fast2p8.xstream.factory.taskflow.CachePunnetTraceFactory">
 		<property name="punnetReferenceFactory">
 			<bean
@@ -148,7 +149,7 @@
 	</bean>
 
 	<!-- <bean id="reflectionManager" class="com.arondor.common.management.mbean.reflection.impl.ReflectionManagerImpl" 
-		singleton="true"> <property name="scanClasspathForPackages"> <list> <value>com.arondor</value> 
+		scope="singleton"> <property name="scanClasspathForPackages"> <list> <value>com.arondor</value> 
 		</list> </property> </bean> -->
 
 	<bean id="reflectionService"
@@ -176,21 +177,21 @@
 		<!-- <constructor-arg> <ref bean="reflectionManager" /> </constructor-arg> -->
 	</bean>
 
-	<bean id="taskFlowDesignService" singleton="true"
+	<bean id="taskFlowDesignService" scope="singleton"
 		class="com.arondor.fast2p8.model.service.taskflow.facade.TaskFlowDesignServiceImpl">
 		<constructor-arg>
 			<ref bean="traceManager" />
 		</constructor-arg>
 	</bean>
 
-	<bean id="taskFlowTraceService" singleton="true"
+	<bean id="taskFlowTraceService" scope="singleton"
 		class="com.arondor.fast2p8.model.service.taskflow.facade.TaskFlowTraceServiceImpl">
 		<constructor-arg>
 			<ref bean="traceManager" />
 		</constructor-arg>
 	</bean>
 
-	<bean id="server" class="java.util.HashMap" singleton="true">
+	<bean id="server" class="java.util.HashMap" scope="singleton">
 		<constructor-arg>
 			<map>
 				<entry>

@@ -26,6 +26,14 @@ import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.config.TypedStringValue;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.support.ManagedMap;
+import org.springframework.context.expression.BeanExpressionContextAccessor;
+import org.springframework.context.expression.BeanFactoryAccessor;
+import org.springframework.context.expression.EnvironmentAccessor;
+import org.springframework.context.expression.MapAccessor;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import com.arondor.common.reflection.api.hash.HashHelper;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
@@ -43,6 +51,8 @@ abstract class BeanPropertyParser
     private final HashHelper hashHelper;
 
     private final ObjectConfigurationFactory objectConfigurationFactory;
+
+    private boolean enableSPEL = true;
 
     public BeanPropertyParser(HashHelper hashHelper, ObjectConfigurationFactory objectConfigurationFactory)
     {
@@ -64,7 +74,32 @@ abstract class BeanPropertyParser
             {
                 PrimitiveConfiguration primitiveConfiguration = objectConfigurationFactory
                         .createPrimitiveConfiguration();
-                primitiveConfiguration.setValue(stringValue.getValue());
+                if (useSPEL(stringValue))
+                {
+                    ExpressionParser parser = new SpelExpressionParser();
+                    String expAsStringWithToken = stringValue.getValue().trim();
+                    String expAsString = expAsStringWithToken.substring(2, expAsStringWithToken.length() - 1).trim();
+                    LOGGER.trace("This property is a SPEL expression: " + expAsString);
+
+                    // String regex = "systemProperties\\['([^\\s]+)'\\]";
+
+                    Expression exp = parser.parseExpression(expAsString);
+                    StandardEvaluationContext sec = null;
+                    if (sec == null)
+                    {
+                        sec = new StandardEvaluationContext();
+                        sec.addPropertyAccessor(new EnvironmentAccessor());
+                        sec.addPropertyAccessor(new BeanExpressionContextAccessor());
+                        sec.addPropertyAccessor(new BeanFactoryAccessor());
+                        sec.addPropertyAccessor(new MapAccessor());
+                    }
+                    primitiveConfiguration.setValue(String.valueOf(exp.getValue()));
+                }
+                else
+                {
+                    LOGGER.trace("This property is NOT a SPEL expression: " + stringValue.getValue());
+                    primitiveConfiguration.setValue(stringValue.getValue());
+                }
                 return primitiveConfiguration;
             }
         }
@@ -95,6 +130,16 @@ abstract class BeanPropertyParser
         }
     }
 
+    private boolean useSPEL(TypedStringValue stringValue)
+    {
+        if (!enableSPEL || stringValue == null || stringValue.getValue() == null)
+        {
+            return false;
+        }
+        String trimmedValue = stringValue.getValue().trim();
+        return trimmedValue.startsWith("#{") && trimmedValue.endsWith("}");
+    }
+
     private ObjectConfiguration getEnumObjectConfiguration(TypedStringValue stringValue)
     {
         ObjectConfiguration enumObjectConfiguration = objectConfigurationFactory.createObjectConfiguration();
@@ -110,14 +155,6 @@ abstract class BeanPropertyParser
     private ElementConfiguration parseValueList(ManagedList<?> value)
     {
         return parseBeanList(value);
-        // try
-        // {
-        // return parseFieldList(value);
-        // }
-        // catch (ClassCastException e)
-        // {
-        //
-        // }
     }
 
     private ElementConfiguration parseValueMap(ManagedMap<?, ?> value)
@@ -201,4 +238,14 @@ abstract class BeanPropertyParser
     public abstract ObjectConfiguration parseBeanDefinition(String beanDefinitionName);
 
     public abstract ObjectConfiguration parseBeanDefinition(BeanDefinition beanDefinition);
+
+    public boolean isEnableSPEL()
+    {
+        return enableSPEL;
+    }
+
+    public void setEnableSPEL(boolean enableSPEL)
+    {
+        this.enableSPEL = enableSPEL;
+    }
 }

@@ -175,6 +175,28 @@ public class XMLBeanDefinitionParserTest
     }
 
     @Test
+    public void testSPELResolution()
+    {
+        System.setProperty("is.mobile", "true");
+        XMLBeanDefinitionParser parser = new XMLBeanDefinitionParser("/spring/arender-hmi-configuration.xml");
+
+        ObjectConfigurationMap parsedObjectConfiguration = parser.parse();
+        ObjectConfiguration objectConfiguration = parsedObjectConfiguration.get("spel");
+
+        assertNotNull(objectConfiguration);
+        assertEquals("com.arondor.viewer.ARenderBean", objectConfiguration.getClassName());
+        assertEquals("spel", objectConfiguration.getObjectName());
+        assertNotNull(objectConfiguration.getConstructorArguments());
+        assertEquals(0, objectConfiguration.getConstructorArguments().size());
+
+        Map<String, ElementConfiguration> fields = objectConfiguration.getFields();
+        ElementConfiguration andField = fields.get("and");
+
+        assertTrue(andField instanceof PrimitiveConfigurationBean);
+        assertEquals("true", ((PrimitiveConfigurationBean) andField).getValue());
+    }
+
+    @Test
     public void testTypedEnum()
     {
         XMLBeanDefinitionParser parser = new XMLBeanDefinitionParser(XML_PATH);
@@ -228,7 +250,7 @@ public class XMLBeanDefinitionParserTest
     {
         XMLBeanDefinitionParser parser = new XMLBeanDefinitionParser("/spring/arender-hmi-configuration.xml");
         ObjectConfigurationMap parsed = parser.parse();
-        assertEquals(7, parsed.size());
+        assertEquals(8, parsed.size());
         ElementConfiguration patternField = parsed.get("dateFormatter").getFields().get("pattern");
         assertTrue(patternField instanceof PrimitiveConfigurationBean);
         assertEquals("dd--MM--yyyy", ((PrimitiveConfigurationBean) patternField).getValue());

@@ -83,6 +83,21 @@ public class BeanPropertyParserTest
     }
 
     @Test
+    public void testParsePropertyWithBasicSPELValue() throws Exception
+    {
+        TypedStringValue property = mockTypedStringValue(null, "#{ true or false }");
+
+        ElementConfiguration parsedFieldConfiguration = beanPropertyParser.parseProperty(property);
+        assertEquals(ElementConfigurationType.Primitive, parsedFieldConfiguration.getFieldConfigurationType());
+        assertEquals("true", ((PrimitiveConfiguration) parsedFieldConfiguration).getValue());
+
+        beanPropertyParser.setEnableSPEL(false);
+        parsedFieldConfiguration = beanPropertyParser.parseProperty(property);
+        assertEquals(ElementConfigurationType.Primitive, parsedFieldConfiguration.getFieldConfigurationType());
+        assertEquals("#{ true or false }", ((PrimitiveConfiguration) parsedFieldConfiguration).getValue());
+    }
+
+    @Test
     public void testParsePropertyClassicList()
     {
         ManagedList<TypedStringValue> list = new ManagedList<TypedStringValue>();
