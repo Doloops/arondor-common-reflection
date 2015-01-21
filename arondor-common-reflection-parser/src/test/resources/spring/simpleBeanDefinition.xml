@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans default-lazy-init="true" default-autowire="no"
-	default-dependency-check="none">
+	xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
 
 	<bean id="beanWithSinglePrimitiveValue" class="com.arondor.test.TestBean"
-		singleton="false">
+		scope="prototype">
 		<property name="name" value="my object name" />
 	</bean>
 
 	<bean id="beanWithMultiplePrimitiveValue" class="com.arondor.test.TestBean"
-		singleton="false">
+		scope="prototype">
 		<property name="names">
 			<list>
 				<value>name1</value>
@@ -21,20 +23,20 @@
 	</bean>
 
 	<bean id="beanWithSingleObjectValue" class="com.arondor.test.TestBean"
-		singleton="false">
+		scope="prototype">
 		<property name="object">
 			<ref bean="beanWithSinglePrimitiveValue" />
 		</property>
 	</bean>
 
 	<bean id="beanWithMultipleObjectValue" class="com.arondor.test.TestBean"
-		singleton="false">
+		scope="prototype">
 		<property name="objects">
 			<list>
-				<bean class="com.arondor.test.TestBean" singleton="false">
+				<bean class="com.arondor.test.TestBean" scope="prototype">
 					<property name="name" value="my object name" />
 				</bean>
-				<bean class="com.arondor.test.TestBean" singleton="false">
+				<bean class="com.arondor.test.TestBean" scope="prototype">
 					<property name="names">
 						<list>
 							<value>name1</value>
@@ -49,7 +51,7 @@
 	</bean>
 
 	<bean id="beanWithPrimitiveConstructorArgs" class="com.arondor.test.TestBean"
-		singleton="false">
+		scope="prototype">
 		<constructor-arg>
 			<value>my arg 1</value>
 		</constructor-arg>
@@ -59,7 +61,7 @@
 	</bean>
 
 	<bean id="beanWithBothPrimitiveAndObjectConstructorArgs" class="com.arondor.test.TestBean"
-		singleton="false">
+		scope="prototype">
 		<constructor-arg>
 			<ref bean="beanWithSinglePrimitiveValue" />
 		</constructor-arg>
@@ -74,7 +76,7 @@
 
 	<bean id="printButton"
 		class="com.arondor.viewer.client.toppanel.presenter.ButtonPresenter"
-		singleton="false">
+		scope="prototype">
 		<constructor-arg>
 			<ref bean="images#printDocument" />
 		</constructor-arg>
@@ -94,18 +96,16 @@
 
 	<bean name="typedEnum"
 		class="com.arondor.viewer.client.events.downupload.AskDocumentUploadEvent"
-		singleton="false">
+		scope="prototype">
 		<constructor-arg>
 			<value
 				type="com.arondor.viewer.client.events.downupload.AskDocumentUploadEvent.Behavior">UPLOAD_FILE</value>
 		</constructor-arg>
 	</bean>
 
-	<bean name="singletonObject" class="IAmASingleton" singleton="true" />
+	<bean name="singletonObject" class="IAmASingleton" scope="singleton" />
 
-	<bean name="nonSingletonObject" class="IAmNotASingleton"
-		singleton="false" />
-
+	<bean name="nonSingletonObject" class="IAmNotASingleton" scope="prototype" />
 
 </beans>
 	

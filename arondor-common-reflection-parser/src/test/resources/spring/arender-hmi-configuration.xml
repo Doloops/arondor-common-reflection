@@ -2,17 +2,19 @@
 
 <beans default-lazy-init="true" default-autowire="no"
 	xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans 
-	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
-	http://www.springframework.org/schema/context
-	http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<context:property-placeholder location="classpath:*/arender.properties" />
-	
-<!-- 	<import resource="alterdocumentcontent-configuration.xml" /> -->
-<!-- 	<import resource="toppanel-annotations-configuration.xml" /> -->
-<!-- 	<import resource="toppanel-configuration.xml" /> -->
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+		<property name="locations">
+			<list>
+				<value>classpath:*/arender.properties</value>
+			</list>
+		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+	</bean>
 
 	<bean id="pageImagePool"
 		class="com.arondor.viewer.client.controllers.asyncmap.impl.PageImagePoolImpl"
@@ -40,4 +42,5 @@
 	<bean id="dateFormatter" class="com.arondor.viewer.client.utils.DateFormatter">
 		<property name="pattern" value="${date.format}" />
 	</bean>
+
 </beans>
