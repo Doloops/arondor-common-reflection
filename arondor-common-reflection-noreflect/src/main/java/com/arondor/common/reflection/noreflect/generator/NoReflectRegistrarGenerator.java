@@ -22,17 +22,21 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.arondor.common.reflection.api.instantiator.InstantiationCallback;
 import com.arondor.common.reflection.api.parser.AccessibleClassParser;
 import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.arondor.common.reflection.model.java.AccessibleConstructor;
 import com.arondor.common.reflection.model.java.AccessibleField;
 import com.arondor.common.reflection.noreflect.model.FieldSetter;
 import com.arondor.common.reflection.noreflect.model.ObjectConstructor;
+import com.arondor.common.reflection.noreflect.model.ObjectConstructorAsync;
 import com.arondor.common.reflection.noreflect.model.ReflectionInstantiatorCatalog;
 import com.arondor.common.reflection.noreflect.model.ReflectionInstantiatorRegistrar;
 import com.arondor.common.reflection.noreflect.runtime.PrimitiveStringConverter;
 import com.arondor.common.reflection.parser.java.JavaAccessibleClassParser;
 import com.arondor.common.reflection.util.PrimitiveTypeUtil;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.RunAsyncCallback;
 
 public class NoReflectRegistrarGenerator
 {
@@ -68,6 +72,10 @@ public class NoReflectRegistrarGenerator
         out.println("");
         out.println(IMPORT_KEYWORD + ReflectionInstantiatorCatalog.class.getName() + ";");
         out.println(IMPORT_KEYWORD + ObjectConstructor.class.getName() + ";");
+        out.println(IMPORT_KEYWORD + ObjectConstructorAsync.class.getName() + ";");
+        out.println(IMPORT_KEYWORD + InstantiationCallback.class.getName() + ";");
+        out.println(IMPORT_KEYWORD + RunAsyncCallback.class.getName() + ";");
+        out.println(IMPORT_KEYWORD + GWT.class.getName() + ";");
         out.println(IMPORT_KEYWORD + FieldSetter.class.getName() + ";");
         out.println(IMPORT_KEYWORD + PrimitiveStringConverter.class.getName() + ";");
         out.println(IMPORT_KEYWORD + ReflectionInstantiatorRegistrar.class.getName() + ";");
@@ -79,7 +87,7 @@ public class NoReflectRegistrarGenerator
 
         out.println("    public " + getClassName() + "() {}");
 
-        out.println("    public void register(ReflectionInstantiatorCatalog catalog)");
+        out.println("    public void register(final ReflectionInstantiatorCatalog catalog)");
         out.println("    {");
         for (AccessibleClass accessibleClass : accessibleClasses)
         {
@@ -102,14 +110,44 @@ public class NoReflectRegistrarGenerator
     private void generateClassMethodCall(PrintStream out, AccessibleClass accessibleClass)
     {
         String classUniqueName = generateClassUniqueName(accessibleClass);
-        out.println("        register_" + classUniqueName + "(catalog);");
+
+        if (accessibleClass.getName().equals("com.arondor.viewer.client.toppanel.TopPanel"))
+        {
+            out.println("        catalog.registerObjectConstructor(\"" + accessibleClass.getName()
+                    + "\", new ObjectConstructorAsync(){");
+            out.println("            public void getObjectConstructor(final InstantiationCallback<ObjectConstructor> callback)");
+            out.println("            {");
+            out.println("                GWT.runAsync(new RunAsyncCallback()");
+            out.println("                {");
+            out.println("                    public void onSuccess()");
+            out.println("                    {");
+            out.println("                       ObjectConstructor constructor = register_" + classUniqueName
+                    + "(catalog);");
+            out.println("                       callback.onSuccess(constructor);");
+            out.println("                    }");
+            out.println("                    public void onFailure(Throwable reason)");
+            out.println("                    {");
+            out.println("                       callback.onFailure(reason);");
+            out.println("                    }");
+            out.println("                });");
+            out.println("            }");
+            out.println("        });");
+            // catalog.register
+
+        }
+        else
+        {
+            out.println("        register_" + classUniqueName + "(catalog);");
+        }
+        // com.arondor.viewer.client.toppanel.TopPanel
     }
 
     private void generateClassMethod(PrintStream out, AccessibleClass accessibleClass)
     {
         String classUniqueName = generateClassUniqueName(accessibleClass);
         out.println("    // Class " + accessibleClass.getName());
-        out.println("    private void register_" + classUniqueName + "(ReflectionInstantiatorCatalog catalog)");
+        out.println("    private ObjectConstructor register_" + classUniqueName
+                + "(ReflectionInstantiatorCatalog catalog)");
         out.println("    {");
         generateClassContents(out, accessibleClass);
         out.println("    }");
@@ -131,18 +169,24 @@ public class NoReflectRegistrarGenerator
 
         if (!accessibleClass.isAbstract())
         {
-            out.println("        catalog.registerObjectConstructor(\"" + accessibleClass.getName() + "\",");
-            out.println("            new ObjectConstructor(){");
+            out.println("        ObjectConstructor objectConstructor = new ObjectConstructor(){");
             out.println("                public Object create(List<Object> constructorArguments){");
             generateClassConstructor(out, accessibleClass);
             out.println("            }");
-            out.println("            });");
+            out.println("            };");
+            out.println("        catalog.registerObjectConstructor(\"" + accessibleClass.getName()
+                    + "\", objectConstructor);");
+        }
+        else
+        {
+            out.println("        ObjectConstructor objectConstructor = null;");
         }
 
         for (AccessibleField field : accessibleClass.getAccessibleFields().values())
         {
             generateField(out, accessibleClass, field);
         }
+        out.println("        return objectConstructor;");
     }
 
     private void generateClassConstructor(PrintStream out, AccessibleClass accessibleClass)

@@ -20,8 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import com.arondor.common.reflection.api.instantiator.InstantiationCallback;
 import com.arondor.common.reflection.noreflect.model.FieldSetter;
 import com.arondor.common.reflection.noreflect.model.ObjectConstructor;
+import com.arondor.common.reflection.noreflect.model.ObjectConstructorAsync;
 import com.arondor.common.reflection.noreflect.model.ReflectionInstantiatorCatalog;
 
 public class SimpleReflectionInstantiatorCatalog implements ReflectionInstantiatorCatalog
@@ -31,6 +33,8 @@ public class SimpleReflectionInstantiatorCatalog implements ReflectionInstantiat
     private final Map<String, Collection<String>> inheritanceMap = new HashMap<String, Collection<String>>();
 
     private final Map<String, ObjectConstructor> objectConstructorMap = new HashMap<String, ObjectConstructor>();
+
+    private final Map<String, ObjectConstructorAsync> objectConstructorAsyncMap = new HashMap<String, ObjectConstructorAsync>();
 
     private final Map<String, FieldSetter> fieldSetterMap = new HashMap<String, FieldSetter>();
 
@@ -43,6 +47,12 @@ public class SimpleReflectionInstantiatorCatalog implements ReflectionInstantiat
     {
         LOG.finest("registerObjectConstructor(" + name + ", ...)");
         objectConstructorMap.put(name, objectConstructor);
+    }
+
+    public void registerObjectConstructor(String name, ObjectConstructorAsync objectConstructor)
+    {
+        LOG.finest("registerObjectConstructor(" + name + ", ...)");
+        objectConstructorAsyncMap.put(name, objectConstructor);
     }
 
     public void registerFieldSetter(String className, String fieldName, FieldSetter fieldSetter)
@@ -58,6 +68,21 @@ public class SimpleReflectionInstantiatorCatalog implements ReflectionInstantiat
     public ObjectConstructor getObjectConstructor(String className)
     {
         return objectConstructorMap.get(className);
+    }
+
+    public void getObjectConstructorAsync(String className, InstantiationCallback<ObjectConstructor> callback)
+    {
+        ObjectConstructor sync = objectConstructorMap.get(className);
+        if (sync != null)
+        {
+            callback.onSuccess(sync);
+        }
+        ObjectConstructorAsync async = objectConstructorAsyncMap.get(className);
+        if (async == null)
+        {
+            callback.onFailure(new IllegalArgumentException("No async callback for :" + className));
+        }
+        async.getObjectConstructor(callback);
     }
 
     public FieldSetter getFieldSetter(String className, String fieldName)

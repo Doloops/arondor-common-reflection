@@ -16,9 +16,13 @@
 package com.arondor.common.reflection.noreflect.gwtgenerator;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.arondor.common.reflection.model.java.AccessibleClass;
@@ -79,6 +83,17 @@ public abstract class GWTNoReflectRegistrarGenerator extends Generator
         LOGGER.info("Generated : " + srcCode.length() + " bytes for " + completeName);
 
         src.append(srcCode);
+
+        try
+        {
+            OutputStream os = new FileOutputStream("/tmp/gwtnoreflect-generated.java");
+            os.write(baos.toByteArray());
+            os.close();
+        }
+        catch (IOException e)
+        {
+            LOGGER.log(Level.SEVERE, "Could not log", e);
+        }
 
         context.commit(logger, src);
 

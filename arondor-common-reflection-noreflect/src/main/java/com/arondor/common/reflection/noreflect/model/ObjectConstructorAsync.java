@@ -15,29 +15,22 @@
  */
 package com.arondor.common.reflection.noreflect.model;
 
-import java.util.Collection;
-
 import com.arondor.common.reflection.api.instantiator.InstantiationCallback;
 
 /**
- * Runtime hardwired Object reflection catalog : Create objects and Set fields
+ * Object constructor prototype
  * 
  * @author Francois Barre
  * 
  */
-public interface ReflectionInstantiatorCatalog
+public interface ObjectConstructorAsync
 {
-    void registerObjectInheritance(String className, Collection<String> inheritance);
-
-    void registerObjectConstructor(String className, ObjectConstructor objectConstructor);
-
-    void registerObjectConstructor(String className, ObjectConstructorAsync objectConstructor);
-
-    void registerFieldSetter(String className, String fieldName, FieldSetter fieldSetter);
-
-    ObjectConstructor getObjectConstructor(String className);
-
-    FieldSetter getFieldSetter(String className, String fieldName);
-
-    void getObjectConstructorAsync(String className, InstantiationCallback<ObjectConstructor> callback);
+    /**
+     * Create a new instance of an object
+     * 
+     * @param arguments
+     *            the provided arguments
+     * @return the new instance of this object
+     */
+    void getObjectConstructor(InstantiationCallback<ObjectConstructor> callback);
 }

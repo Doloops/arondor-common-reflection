@@ -23,8 +23,10 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.arondor.common.reflection.api.instantiator.InstantiationCallback;
 import com.arondor.common.reflection.api.instantiator.InstantiationContext;
 import com.arondor.common.reflection.api.instantiator.ReflectionInstantiator;
+import com.arondor.common.reflection.api.instantiator.ReflectionInstantiatorAsync;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ListConfiguration;
 import com.arondor.common.reflection.model.config.MapConfiguration;
@@ -41,7 +43,7 @@ import com.arondor.common.reflection.noreflect.runtime.SimpleInstantiationContex
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
+public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator, ReflectionInstantiatorAsync
 {
     private static final Logger LOGGER = Logger.getLogger(ReflectionInstantiatorNoReflect.class.getName());
 
@@ -263,5 +265,50 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator
             context.putSharedObject(beanName, result);
         }
         return result;
+    }
+
+    public <T> void instanciateObject(ObjectConfiguration objectConfiguration, Class<T> desiredClass,
+            InstantiationContext context, InstantiationCallback<T> callback)
+    {
+        T result = instanciateObject(objectConfiguration, desiredClass, context);
+        callback.onSuccess(result);
+    }
+
+    public <T> void instanciateObject(String beanName, final Class<T> desiredClass, final InstantiationContext context,
+            final InstantiationCallback<T> callback)
+    {
+        final ObjectConfiguration objectConfiguration = context.getSharedObjectConfiguration(beanName);
+        ObjectConstructor sync = reflectionInstantiatorCatalog.getObjectConstructor(objectConfiguration.getClassName());
+
+        if (sync != null)
+        {
+            T result = instanciateObject(beanName, desiredClass, context);
+            callback.onSuccess(result);
+            return;
+        }
+        reflectionInstantiatorCatalog.getObjectConstructorAsync(objectConfiguration.getClassName(),
+                new InstantiationCallback<ObjectConstructor>()
+                {
+                    public void onFailure(Throwable caught)
+                    {
+                        callback.onFailure(caught);
+                    }
+
+                    public void onSuccess(ObjectConstructor objectConstructor)
+                    {
+                        if (objectConstructor == null)
+                        {
+                            callback.onFailure(new IllegalArgumentException("No class name found : "
+                                    + objectConfiguration.getClassName()));
+                        }
+                        List<Object> constructorArguments = instanciateObjectConstructorArguments(objectConfiguration,
+                                context);
+                        Object object = objectConstructor.create(constructorArguments);
+                        instanciateObjectFields(objectConfiguration, context, object);
+
+                        T castedObject = castObject(object, desiredClass);
+                        callback.onSuccess(castedObject);
+                    }
+                });
     }
 }
