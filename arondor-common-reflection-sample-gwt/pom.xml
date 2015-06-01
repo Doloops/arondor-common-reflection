@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>com.arondor.common.reflection</groupId>
 	<artifactId>arondor-common-reflection-sample-gwt</artifactId>
-	<name>Standalone package for GWT-based Reflection Designer</name>
+	<name>Usage sample for Arondor Common Reflection</name>
 	<packaging>war</packaging>
 	
 	<dependencies>
