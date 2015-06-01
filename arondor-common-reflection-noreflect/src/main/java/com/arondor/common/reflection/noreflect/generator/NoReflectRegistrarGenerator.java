@@ -124,45 +124,14 @@ public class NoReflectRegistrarGenerator
     {
         String classUniqueName = generateClassUniqueName(accessibleClass);
         out.println("        register_sync_" + classUniqueName + "(catalog);");
-
-        if (false) // accessibleClass.getName().equals("com.arondor.viewer.client.toppanel.TopPanel"))
-        {
-            out.println("        catalog.registerObjectConstructor(\"" + accessibleClass.getName()
-                    + "\", new ObjectConstructorAsync(){");
-            out.println("            public void getObjectConstructor(final InstantiationCallback<ObjectConstructor> callback)");
-            out.println("            {");
-            out.println("                GWT.runAsync(new RunAsyncCallback()");
-            out.println("                {");
-            out.println("                    public void onSuccess()");
-            out.println("                    {");
-            out.println("                       ObjectConstructor constructor = register_" + classUniqueName
-                    + "(catalog);");
-            out.println("                       callback.onSuccess(constructor);");
-            out.println("                    }");
-            out.println("                    public void onFailure(Throwable reason)");
-            out.println("                    {");
-            out.println("                       callback.onFailure(reason);");
-            out.println("                    }");
-            out.println("                });");
-            out.println("            }");
-            out.println("        });");
-            // catalog.register
-
-        }
-        else
-        {
-        }
-        // com.arondor.viewer.client.toppanel.TopPanel
     }
 
     private void generateAsyncPackageCall(PrintStream out, String key, List<AccessibleClass> classes)
     {
-        // out.println("        register_async_package_" + key + "(catalog);");
         for (AccessibleClass asyncClass : classes)
         {
             out.println("    register_async_" + generateClassUniqueName(asyncClass) + "(catalog);");
         }
-
     }
 
     private void generateAsyncPackageMethod(PrintStream out, String packageName, List<AccessibleClass> classes)
@@ -229,24 +198,6 @@ public class NoReflectRegistrarGenerator
         out.println("        });");
 
         out.println("    }");
-
-        // out.println("                GWT.runAsync(new RunAsyncCallback()");
-        // out.println("                {");
-        // out.println("                    public void onSuccess()");
-        // out.println("                    {");
-        // out.println("                       ObjectConstructor constructor = register_"
-        // + classUniqueName + "(catalog);");
-        // out.println("                       callback.onSuccess(constructor);");
-        // out.println("                    }");
-        // out.println("                    public void onFailure(Throwable reason)");
-        // out.println("                    {");
-        // out.println("                       callback.onFailure(reason);");
-        // out.println("                    }");
-        // out.println("                });");
-        // out.println("            }");
-        // out.println("        });");
-        // out.println("    }");
-
     }
 
     private void generateClassMethod(PrintStream out, AccessibleClass accessibleClass)
@@ -262,7 +213,7 @@ public class NoReflectRegistrarGenerator
 
     private void generateClassContents(PrintStream out, AccessibleClass accessibleClass)
     {
-        LOG.info("Generating stub for " + accessibleClass.getName());
+        LOG.debug("Generating stub for " + accessibleClass.getName());
         out.println("        List<String> inheritance = new ArrayList<String>();");
         for (String inherits : accessibleClass.getInterfaces())
         {
