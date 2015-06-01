@@ -18,7 +18,9 @@ package com.arondor.common.reflection.sample.gwt.server;
 import java.io.IOException;
 import java.util.Collection;
 
+import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.arondor.common.reflection.noreflect.gwtgenerator.GWTNoReflectRegistrarGenerator;
+import com.arondor.common.reflection.noreflect.model.AsyncPackages;
 import com.arondor.common.reflection.parser.java.AccessibleClassListParser;
 
 public class SampleCodeGenerator extends GWTNoReflectRegistrarGenerator
@@ -35,8 +37,7 @@ public class SampleCodeGenerator extends GWTNoReflectRegistrarGenerator
         return "SampleGWYNoReflectGenerator";
     }
 
-    @Override
-    public Collection<com.arondor.common.reflection.model.java.AccessibleClass> getAccessibleClasses()
+    private Collection<com.arondor.common.reflection.model.java.AccessibleClass> getAccessibleClasses()
     {
         AccessibleClassListParser accessibleClassListParser = new AccessibleClassListParser();
         accessibleClassListParser.getAccesssibleClassParser().setTryInstantiateClassForDefaultValue(false);
@@ -54,5 +55,17 @@ public class SampleCodeGenerator extends GWTNoReflectRegistrarGenerator
         {
             throw new IllegalArgumentException("Could not parse", e);
         }
+    }
+
+    @Override
+    public Collection<AccessibleClass> getSyncClasses()
+    {
+        return getAccessibleClasses();
+    }
+
+    @Override
+    public AsyncPackages getAsyncPackages()
+    {
+        return new AsyncPackages();
     }
 }
