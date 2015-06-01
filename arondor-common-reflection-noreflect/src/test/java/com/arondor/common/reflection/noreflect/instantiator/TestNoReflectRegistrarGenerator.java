@@ -71,7 +71,7 @@ public class TestNoReflectRegistrarGenerator extends TestNoReflectSharedTests
         OutputStream os = new FileOutputStream(path);
         PrintStream out = new PrintStream(os);
 
-        gen.generate(out, classes);
+        gen.generate(out, classes, null);
         out.close();
 
         Class<?> clazz = runtimeCompileAndLoadClass(path, completeClassName);

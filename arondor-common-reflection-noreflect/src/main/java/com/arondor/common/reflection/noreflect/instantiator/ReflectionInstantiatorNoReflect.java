@@ -92,6 +92,7 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator, 
                 .getClassName());
         if (objectConstructor == null)
         {
+            LOGGER.log(Level.SEVERE, "No class name found : " + objectConfiguration.getClassName());
             throw new IllegalArgumentException("No class name found : " + objectConfiguration.getClassName());
         }
         List<Object> constructorArguments = instanciateObjectConstructorArguments(objectConfiguration, context);
@@ -202,32 +203,40 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator, 
     private void instanciateObjectField(final Object object, String className, String propertyName,
             ElementConfiguration fieldConfiguration, InstantiationContext context)
     {
-        final FieldSetter fieldSetter = reflectionInstantiatorCatalog.getFieldSetter(className, propertyName);
-        if (fieldSetter == null)
+        try
         {
-            throw new NoReflectRuntimeException("No setter found : className:" + className + ", propertyName:"
-                    + propertyName);
-        }
-        Object value = instanciateObjectField(fieldConfiguration, context);
-        if (value instanceof AsynchronousObject)
-        {
-            ((AsynchronousObject) value).addCallback(new AsyncCallback<Object>()
+            final FieldSetter fieldSetter = reflectionInstantiatorCatalog.getFieldSetter(className, propertyName);
+            if (fieldSetter == null)
             {
-
-                public void onSuccess(Object result)
+                throw new NoReflectRuntimeException("No setter found : className:" + className + ", propertyName:"
+                        + propertyName);
+            }
+            Object value = instanciateObjectField(fieldConfiguration, context);
+            if (value instanceof AsynchronousObject)
+            {
+                ((AsynchronousObject) value).addCallback(new AsyncCallback<Object>()
                 {
-                    fieldSetter.set(object, result);
-                }
 
-                public void onFailure(Throwable caught)
-                {
-                    LOGGER.log(Level.SEVERE, "Could not set asynchronous object", caught);
-                }
-            });
+                    public void onSuccess(Object result)
+                    {
+                        fieldSetter.set(object, result);
+                    }
+
+                    public void onFailure(Throwable caught)
+                    {
+                        LOGGER.log(Level.SEVERE, "Could not set asynchronous object", caught);
+                    }
+                });
+            }
+            else
+            {
+                fieldSetter.set(object, value);
+            }
         }
-        else
+        catch (IllegalArgumentException e)
         {
-            fieldSetter.set(object, value);
+            LOGGER.log(Level.SEVERE, "At " + className + ":" + propertyName);
+            throw (e);
         }
     }
 
@@ -274,41 +283,167 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator, 
         callback.onSuccess(result);
     }
 
-    public <T> void instanciateObject(String beanName, final Class<T> desiredClass, final InstantiationContext context,
-            final InstantiationCallback<T> callback)
+    private void putAsyncClass(List<String> asyncClasses, String clazz)
     {
-        final ObjectConfiguration objectConfiguration = context.getSharedObjectConfiguration(beanName);
-        ObjectConstructor sync = reflectionInstantiatorCatalog.getObjectConstructor(objectConfiguration.getClassName());
+        if (reflectionInstantiatorCatalog.getObjectConstructor(clazz) != null)
+        {
+            return;
+        }
+        if (!asyncClasses.contains(clazz))
+        {
+            asyncClasses.add(clazz);
+        }
+    }
 
-        if (sync != null)
+    private void walkElementConfigurationForClass(final InstantiationContext context, List<String> asyncClasses,
+            ElementConfiguration fieldConfiguration)
+    {
+        switch (fieldConfiguration.getFieldConfigurationType())
+        {
+        case Primitive:
+        {
+            break;
+        }
+        case Object:
+        {
+            ObjectConfiguration objectConfiguration = (ObjectConfiguration) fieldConfiguration;
+            putAsyncClass(asyncClasses, objectConfiguration.getClassName());
+            if (objectConfiguration.getConstructorArguments() != null)
+            {
+                for (ElementConfiguration arg : objectConfiguration.getConstructorArguments())
+                {
+                    walkElementConfigurationForClass(context, asyncClasses, arg);
+                }
+            }
+            if (objectConfiguration.getFields() != null)
+            {
+                for (ElementConfiguration field : objectConfiguration.getFields().values())
+                {
+                    walkElementConfigurationForClass(context, asyncClasses, field);
+                }
+            }
+            break;
+        }
+        case List:
+        {
+            List<ElementConfiguration> list = ((ListConfiguration) fieldConfiguration).getListConfiguration();
+            for (ElementConfiguration child : list)
+            {
+                walkElementConfigurationForClass(context, asyncClasses, child);
+            }
+            break;
+        }
+        case Reference:
+        {
+            ReferenceConfiguration ref = (ReferenceConfiguration) fieldConfiguration;
+            if (context.getSharedObject(ref.getReferenceName()) != null)
+            {
+                break;
+            }
+            ObjectConfiguration sharedConf = context.getSharedObjectConfiguration(ref.getReferenceName());
+            if (sharedConf != null)
+            {
+                walkElementConfigurationForClass(context, asyncClasses, sharedConf);
+            }
+            break;
+        }
+        case Map:
+        {
+            Map<ElementConfiguration, ElementConfiguration> mapConfiguration = ((MapConfiguration) fieldConfiguration)
+                    .getMapConfiguration();
+            for (Entry<ElementConfiguration, ElementConfiguration> entry : mapConfiguration.entrySet())
+            {
+                walkElementConfigurationForClass(context, asyncClasses, entry.getKey());
+                walkElementConfigurationForClass(context, asyncClasses, entry.getValue());
+            }
+            break;
+        }
+        default:
+            throw new NoReflectRuntimeException("Not implemented yet : ElementConfiguration type:"
+                    + fieldConfiguration.getFieldConfigurationType());
+        }
+
+    }
+
+    public <T> void instanciateObject(final String beanName, final Class<T> desiredClass,
+            final InstantiationContext context, final InstantiationCallback<T> callback)
+    {
+        List<String> asyncClasses = new ArrayList<String>();
+
+        final ObjectConfiguration objectConfiguration = context.getSharedObjectConfiguration(beanName);
+        walkElementConfigurationForClass(context, asyncClasses, objectConfiguration);
+
+        if (asyncClasses.isEmpty())
         {
             T result = instanciateObject(beanName, desiredClass, context);
             callback.onSuccess(result);
             return;
         }
-        reflectionInstantiatorCatalog.getObjectConstructorAsync(objectConfiguration.getClassName(),
-                new InstantiationCallback<ObjectConstructor>()
-                {
-                    public void onFailure(Throwable caught)
-                    {
-                        callback.onFailure(caught);
-                    }
 
-                    public void onSuccess(ObjectConstructor objectConstructor)
-                    {
-                        if (objectConstructor == null)
-                        {
-                            callback.onFailure(new IllegalArgumentException("No class name found : "
-                                    + objectConfiguration.getClassName()));
-                        }
-                        List<Object> constructorArguments = instanciateObjectConstructorArguments(objectConfiguration,
-                                context);
-                        Object object = objectConstructor.create(constructorArguments);
-                        instanciateObjectFields(objectConfiguration, context, object);
+        LOGGER.info("Instantiating async bean " + beanName + ", asyncClasses are :" + asyncClasses);
 
-                        T castedObject = castObject(object, desiredClass);
-                        callback.onSuccess(castedObject);
-                    }
-                });
+        callAsyncRecursive(asyncClasses, 0, new AsyncCallback<Void>()
+        {
+            public void onFailure(Throwable caught)
+            {
+                callback.onFailure(caught);
+            }
+
+            public void onSuccess(Void __void)
+            {
+                T result = instanciateObject(beanName, desiredClass, context);
+                callback.onSuccess(result);
+            }
+        });
+        //
+        // reflectionInstantiatorCatalog.getObjectConstructorAsync(objectConfiguration.getClassName(),
+        // new InstantiationCallback<ObjectConstructor>()
+        // {
+        // public void onFailure(Throwable caught)
+        // {
+        // callback.onFailure(caught);
+        // }
+        //
+        // public void onSuccess(ObjectConstructor objectConstructor)
+        // {
+        // if (objectConstructor == null)
+        // {
+        // callback.onFailure(new
+        // IllegalArgumentException("No class name found : "
+        // + objectConfiguration.getClassName()));
+        // }
+        // List<Object> constructorArguments =
+        // instanciateObjectConstructorArguments(objectConfiguration,
+        // context);
+        // Object object = objectConstructor.create(constructorArguments);
+        // instanciateObjectFields(objectConfiguration, context, object);
+        //
+        // T castedObject = castObject(object, desiredClass);
+        // callback.onSuccess(castedObject);
+        // }
+        // });
+    }
+
+    private void callAsyncRecursive(final List<String> asyncClasses, final int index, final AsyncCallback<Void> callback)
+    {
+        if (index == asyncClasses.size())
+        {
+            callback.onSuccess(null);
+            return;
+        }
+        String clazz = asyncClasses.get(index);
+        LOGGER.info("Now instantiate async :" + clazz);
+        reflectionInstantiatorCatalog.getObjectConstructorAsync(clazz, new InstantiationCallback<ObjectConstructor>()
+        {
+            public void onFailure(Throwable caught)
+            {
+                callback.onFailure(caught);
+            }
+
+            public void onSuccess(ObjectConstructor objectConstructor)
+            {
+                callAsyncRecursive(asyncClasses, index + 1, callback);
+            }
+        });
     }
 }

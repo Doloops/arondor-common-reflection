@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 
 import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.arondor.common.reflection.noreflect.generator.NoReflectRegistrarGenerator;
+import com.arondor.common.reflection.noreflect.model.AsyncPackages;
 import com.arondor.common.reflection.parser.java.JavaAccessibleClassParser;
 import com.google.gwt.core.ext.Generator;
 import com.google.gwt.core.ext.GeneratorContext;
@@ -41,7 +42,9 @@ public abstract class GWTNoReflectRegistrarGenerator extends Generator
 
     public abstract String getClassName();
 
-    public abstract Collection<AccessibleClass> getAccessibleClasses();
+    public abstract Collection<AccessibleClass> getSyncClasses();
+
+    public abstract AsyncPackages getAsyncPackages();
 
     @Override
     public String generate(TreeLogger logger, GeneratorContext context, String typeName)
@@ -61,8 +64,6 @@ public abstract class GWTNoReflectRegistrarGenerator extends Generator
             return completeName;
         }
 
-        Collection<AccessibleClass> accessibleClasses = getAccessibleClasses();
-
         NoReflectRegistrarGenerator noReflect = new NoReflectRegistrarGenerator();
         noReflect.setClassName(className);
         noReflect.setPackageName(packageName);
@@ -74,7 +75,10 @@ public abstract class GWTNoReflectRegistrarGenerator extends Generator
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(baos);
 
-        noReflect.generate(printStream, accessibleClasses);
+        Collection<AccessibleClass> accessibleClasses = getSyncClasses();
+        AsyncPackages asynPackages = getAsyncPackages();
+
+        noReflect.generate(printStream, accessibleClasses, asynPackages);
 
         printStream.close();
 
