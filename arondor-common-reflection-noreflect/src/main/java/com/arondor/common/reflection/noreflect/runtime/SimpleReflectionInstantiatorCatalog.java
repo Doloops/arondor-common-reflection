@@ -76,6 +76,7 @@ public class SimpleReflectionInstantiatorCatalog implements ReflectionInstantiat
         if (sync != null)
         {
             callback.onSuccess(sync);
+            return;
         }
         ObjectConstructorAsync async = objectConstructorAsyncMap.get(className);
         if (async == null)
