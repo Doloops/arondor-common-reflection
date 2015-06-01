@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.arondor.common</groupId>
 		<artifactId>arondor-common-reflection</artifactId>
-		<version>0.2.2-SNAPSHOT</version>
+		<version>0.3.0-SNAPSHOT</version>
 	</parent>
 	<groupId>com.arondor.common.reflection</groupId>
 	<artifactId>arondor-common-reflection-model</artifactId>
