@@ -168,10 +168,12 @@ public class NoReflectRegistrarGenerator
     private void generateAsyncPackageMethod(PrintStream out, String packageName, List<AccessibleClass> classes)
     {
         out.println("    // Async package : " + packageName);
+        out.println("    private boolean async_package_" + packageName + "_inited=false;");
         out.println("    private void register_async_package_" + packageName
                 + "(final ReflectionInstantiatorCatalog catalog, final InstantiationCallback<Void> callback)");
         out.println("    {");
-
+        out.println("                if ( async_package_" + packageName + "_inited )");
+        out.println("                { callback.onSuccess(null); return; }");
         out.println("                GWT.runAsync(new RunAsyncCallback()");
         out.println("                {");
         out.println("                    public void onSuccess()");
@@ -181,6 +183,7 @@ public class NoReflectRegistrarGenerator
             generateClassMethodCall(out, asyncClass);
         }
         out.println("                       callback.onSuccess(null);");
+        out.println("                       async_package_" + packageName + "_inited=true;");
         out.println("                    }");
         out.println("                    public void onFailure(Throwable reason)");
         out.println("                    {");
