@@ -13,6 +13,7 @@ import org.junit.Before;
 
 import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.arondor.common.reflection.noreflect.generator.NoReflectRegistrarGenerator;
+import com.arondor.common.reflection.noreflect.model.AsyncPackages;
 import com.arondor.common.reflection.noreflect.model.ReflectionInstantiatorCatalog;
 import com.arondor.common.reflection.noreflect.model.ReflectionInstantiatorRegistrar;
 import com.arondor.common.reflection.noreflect.runtime.SimpleReflectionInstantiatorCatalog;
@@ -54,6 +55,8 @@ public class TestNoReflectRegistrarGenerator extends TestNoReflectSharedTests
         classes.add(parser.parseAccessibleClass(TestNestedClass.class));
         classes.add(parser.parseAccessibleClass(TestNestedClass.EmbeddedClass.class));
 
+        AsyncPackages asyncPackages = new AsyncPackages();
+
         NoReflectRegistrarGenerator gen = new NoReflectRegistrarGenerator();
 
         gen.setAccessibleClassParser(parser);
@@ -71,7 +74,7 @@ public class TestNoReflectRegistrarGenerator extends TestNoReflectSharedTests
         OutputStream os = new FileOutputStream(path);
         PrintStream out = new PrintStream(os);
 
-        gen.generate(out, classes, null);
+        gen.generate(out, classes, asyncPackages);
         out.close();
 
         Class<?> clazz = runtimeCompileAndLoadClass(path, completeClassName);
