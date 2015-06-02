@@ -21,5 +21,4 @@
 	<set-property name="gwt.logging.logLevel" value="FINEST" />
 	<set-property name="gwt.logging.systemHandler" value="ENABLED" />
 	<set-property name="gwt.logging.consoleHandler" value="ENABLED" />
-	<set-property name="gwt.logging.popupHandler" value="DISABLED" />
 </module> 
