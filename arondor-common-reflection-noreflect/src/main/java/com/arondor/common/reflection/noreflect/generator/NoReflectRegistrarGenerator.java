@@ -219,11 +219,17 @@ public class NoReflectRegistrarGenerator
         out.println("        List<String> inheritance = new ArrayList<String>();");
         for (String inherits : accessibleClass.getInterfaces())
         {
-            out.println("        inheritance.add(\"" + inherits + "\");");
+            if (!inherits.equals(Object.class.getName()))
+            {
+                out.println("        inheritance.add(\"" + inherits + "\");");
+            }
         }
         if (accessibleClass.getSuperclass() != null)
         {
-            out.println("        inheritance.add(\"" + accessibleClass.getSuperclass() + "\");");
+            if (!accessibleClass.getSuperclass().equals(Object.class.getName()))
+            {
+                out.println("        inheritance.add(\"" + accessibleClass.getSuperclass() + "\");");
+            }
         }
         out.println("        catalog.registerObjectInheritance(\"" + accessibleClass.getName() + "\", inheritance);");
 
