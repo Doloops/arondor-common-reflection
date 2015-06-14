@@ -51,6 +51,8 @@ public class NoReflectRegistrarGenerator
 
     private String className;
 
+    private String gwtRunAsyncMethod = "GWT.runAsync";
+
     private AccessibleClassParser accessibleClassParser;
 
     public AccessibleClassParser getAccessibleClassParser()
@@ -143,7 +145,7 @@ public class NoReflectRegistrarGenerator
         out.println("    {");
         out.println("                if ( async_package_" + packageName + "_inited )");
         out.println("                { callback.onSuccess(null); return; }");
-        out.println("                GWT.runAsync(new RunAsyncCallback()");
+        out.println("                " + getGwtRunAsyncMethod() + "(new RunAsyncCallback()");
         out.println("                {");
         out.println("                    public void onSuccess()");
         out.println("                    {");
@@ -350,6 +352,16 @@ public class NoReflectRegistrarGenerator
     private String normalizeClassName(final String className)
     {
         return className.replace('$', '.');
+    }
+
+    public String getGwtRunAsyncMethod()
+    {
+        return gwtRunAsyncMethod;
+    }
+
+    public void setGwtRunAsyncMethod(String gwtRunAsyncMethod)
+    {
+        this.gwtRunAsyncMethod = gwtRunAsyncMethod;
     }
 
 }

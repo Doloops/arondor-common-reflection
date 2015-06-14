@@ -276,13 +276,6 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator, 
         return result;
     }
 
-    public <T> void instanciateObject(ObjectConfiguration objectConfiguration, Class<T> desiredClass,
-            InstantiationContext context, InstantiationCallback<T> callback)
-    {
-        T result = instanciateObject(objectConfiguration, desiredClass, context);
-        callback.onSuccess(result);
-    }
-
     private void putAsyncClass(List<String> asyncClasses, String clazz)
     {
         if (reflectionInstantiatorCatalog.getObjectConstructor(clazz) != null)
@@ -365,17 +358,17 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator, 
 
     }
 
-    public <T> void instanciateObject(final String beanName, final Class<T> desiredClass,
+    public <T> void instanciateObject(final ObjectConfiguration objectConfiguration, final Class<T> desiredClass,
             final InstantiationContext context, final InstantiationCallback<T> callback)
     {
+        String beanName = objectConfiguration.getObjectName();
         List<String> asyncClasses = new ArrayList<String>();
 
-        final ObjectConfiguration objectConfiguration = context.getSharedObjectConfiguration(beanName);
         walkElementConfigurationForClass(context, asyncClasses, objectConfiguration);
 
         if (asyncClasses.isEmpty())
         {
-            T result = instanciateObject(beanName, desiredClass, context);
+            T result = instanciateObject(objectConfiguration, desiredClass, context);
             callback.onSuccess(result);
             return;
         }
@@ -391,37 +384,17 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator, 
 
             public void onSuccess(Void __void)
             {
-                T result = instanciateObject(beanName, desiredClass, context);
+                T result = instanciateObject(objectConfiguration, desiredClass, context);
                 callback.onSuccess(result);
             }
         });
-        //
-        // reflectionInstantiatorCatalog.getObjectConstructorAsync(objectConfiguration.getClassName(),
-        // new InstantiationCallback<ObjectConstructor>()
-        // {
-        // public void onFailure(Throwable caught)
-        // {
-        // callback.onFailure(caught);
-        // }
-        //
-        // public void onSuccess(ObjectConstructor objectConstructor)
-        // {
-        // if (objectConstructor == null)
-        // {
-        // callback.onFailure(new
-        // IllegalArgumentException("No class name found : "
-        // + objectConfiguration.getClassName()));
-        // }
-        // List<Object> constructorArguments =
-        // instanciateObjectConstructorArguments(objectConfiguration,
-        // context);
-        // Object object = objectConstructor.create(constructorArguments);
-        // instanciateObjectFields(objectConfiguration, context, object);
-        //
-        // T castedObject = castObject(object, desiredClass);
-        // callback.onSuccess(castedObject);
-        // }
-        // });
+    }
+
+    public <T> void instanciateObject(final String beanName, final Class<T> desiredClass,
+            final InstantiationContext context, final InstantiationCallback<T> callback)
+    {
+        final ObjectConfiguration objectConfiguration = context.getSharedObjectConfiguration(beanName);
+        instanciateObject(objectConfiguration, desiredClass, context, callback);
     }
 
     private void callAsyncRecursive(final List<String> asyncClasses, final int index, final AsyncCallback<Void> callback)
