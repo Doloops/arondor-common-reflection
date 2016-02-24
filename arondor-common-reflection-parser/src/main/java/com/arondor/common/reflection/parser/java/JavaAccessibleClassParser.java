@@ -444,7 +444,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         }
         catch (NoClassDefFoundError e)
         {
-            LOG.warn("Could not get methods fro clazz " + clazz.getName());
+            LOG.warn("Could not get methods for clazz " + clazz.getName());
             return null;
         }
         AccessibleClassBean accessClass = createBaseAccessibleClass(clazz);
