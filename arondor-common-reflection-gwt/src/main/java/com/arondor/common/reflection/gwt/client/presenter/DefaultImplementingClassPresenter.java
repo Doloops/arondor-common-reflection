@@ -192,7 +192,7 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
 
     protected boolean isInstantiatable(AccessibleClass result)
     {
-        return result.getSuperclass() != null;
+        return result.getSuperclass() != null && !result.isAbstract();
     }
 
     private void fetchImplementations()
@@ -201,9 +201,12 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
         {
             public void onSuccess(Collection<AccessibleClass> result)
             {
-                for (AccessibleClass classes : result)
+                for (AccessibleClass clazz : result)
                 {
-                    addImplementingClass(new ImplementingClass(false, classes.getName()));
+                    if (isInstantiatable(clazz))
+                    {
+                        addImplementingClass(new ImplementingClass(false, clazz.getName()));
+                    }
                 }
             }
 
