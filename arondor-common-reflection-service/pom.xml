@@ -4,19 +4,19 @@
 	<parent>
 		<groupId>com.arondor.common</groupId>
 		<artifactId>arondor-common-reflection</artifactId>
-		<version>0.3.0-SNAPSHOT</version>
+		<version>0.3.0-rc2</version>
 	</parent>
 	<artifactId>arondor-common-reflection-service</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-api</artifactId>
-			<version>0.3.0-SNAPSHOT</version>
+			<version>0.3.0-rc2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-parser</artifactId>
-			<version>0.3.0-SNAPSHOT</version>
+			<version>0.3.0-rc2</version>
 		</dependency>
 	</dependencies>
 	<groupId>com.arondor.common.reflection</groupId>
