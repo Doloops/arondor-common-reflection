@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.arondor.common</groupId>
 		<artifactId>arondor-common-reflection</artifactId>
-		<version>0.3.0-SNAPSHOT</version>
+		<version>0.3.0</version>
 	</parent>
 	<groupId>com.arondor.common.reflection</groupId>
 	<artifactId>arondor-common-reflection-sample-gwt</artifactId>
@@ -30,26 +29,26 @@
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-noreflect</artifactId>
-			<version>0.3.0-SNAPSHOT</version>
+			<version>0.3.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-noreflect</artifactId>
-			<version>0.3.0-SNAPSHOT</version>
+			<version>0.3.0</version>
 			<scope>provided</scope>
 			<classifier>sources</classifier>
 		</dependency>
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-api</artifactId>
-			<version>0.3.0-SNAPSHOT</version>
+			<version>0.3.0</version>
 			<scope>provided</scope>
 			<classifier>sources</classifier>
 		</dependency>
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-model</artifactId>
-			<version>0.3.0-SNAPSHOT</version>
+			<version>0.3.0</version>
 			<scope>provided</scope>
 			<classifier>sources</classifier>
 		</dependency>				
