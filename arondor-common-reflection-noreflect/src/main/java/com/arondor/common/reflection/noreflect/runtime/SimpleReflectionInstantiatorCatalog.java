@@ -15,7 +15,6 @@
  */
 package com.arondor.common.reflection.noreflect.runtime;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -31,7 +30,7 @@ public class SimpleReflectionInstantiatorCatalog implements ReflectionInstantiat
 {
     private final static Logger LOG = Logger.getLogger(SimpleReflectionInstantiatorCatalog.class.getName());
 
-    private final Map<String, Collection<String>> inheritanceMap = new HashMap<String, Collection<String>>();
+    private final Map<String, String[]> inheritanceMap = new HashMap<String, String[]>();
 
     private final Map<String, ObjectConstructor> objectConstructorMap = new HashMap<String, ObjectConstructor>();
 
@@ -44,7 +43,7 @@ public class SimpleReflectionInstantiatorCatalog implements ReflectionInstantiat
     private final Map<String, String> class2package = new HashMap<String, String>();
 
     @Override
-    public void registerObjectInheritance(String className, Collection<String> inheritance)
+    public void registerObjectInheritance(String className, String inheritance[])
     {
         inheritanceMap.put(className, inheritance);
     }
@@ -105,7 +104,7 @@ public class SimpleReflectionInstantiatorCatalog implements ReflectionInstantiat
         {
             return fieldSetter;
         }
-        Collection<String> inheritance = inheritanceMap.get(className);
+        String inheritance[] = inheritanceMap.get(className);
         if (inheritance != null)
         {
             for (String parent : inheritance)

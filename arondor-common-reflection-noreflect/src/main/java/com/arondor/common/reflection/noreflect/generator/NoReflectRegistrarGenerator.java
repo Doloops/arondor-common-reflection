@@ -18,6 +18,7 @@ package com.arondor.common.reflection.noreflect.generator;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -245,25 +246,56 @@ public class NoReflectRegistrarGenerator
         out.println("    }");
     }
 
+    private String list2StaticStringArray(List<String> stringList)
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append('{');
+        boolean first = true;
+        for (String stringValue : stringList)
+        {
+            if (first)
+            {
+                first = false;
+            }
+            else
+            {
+                stringBuilder.append("\n,");
+            }
+            stringBuilder.append('"');
+            stringBuilder.append(stringValue);
+            stringBuilder.append('"');
+        }
+        stringBuilder.append('}');
+        return stringBuilder.toString();
+    }
+
     private void generateClassContents(PrintStream out, AccessibleClass accessibleClass)
     {
         LOG.debug("Generating stub for " + accessibleClass.getName());
-        out.println("        List<String> inheritance = new ArrayList<String>();");
+
+        List<String> inheritance = new ArrayList<String>();
         for (String inherits : accessibleClass.getInterfaces())
         {
             if (!inherits.equals(Object.class.getName()))
             {
-                out.println("        inheritance.add(\"" + inherits + "\");");
+                inheritance.add(inherits);
             }
         }
         if (accessibleClass.getSuperclass() != null)
         {
             if (!accessibleClass.getSuperclass().equals(Object.class.getName()))
             {
-                out.println("        inheritance.add(\"" + accessibleClass.getSuperclass() + "\");");
+                inheritance.add(accessibleClass.getSuperclass());
             }
         }
-        out.println("        catalog.registerObjectInheritance(\"" + accessibleClass.getName() + "\", inheritance);");
+        Collections.sort(inheritance);
+
+        if (!inheritance.isEmpty())
+        {
+            out.println("        String inheritance[] = " + list2StaticStringArray(inheritance) + ";");
+            out.println("        catalog.registerObjectInheritance(\"" + accessibleClass.getName()
+                    + "\", inheritance);");
+        }
 
         if (!accessibleClass.isAbstract())
         {

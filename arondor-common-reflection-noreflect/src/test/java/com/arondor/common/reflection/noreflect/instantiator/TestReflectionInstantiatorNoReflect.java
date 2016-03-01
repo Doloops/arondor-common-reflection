@@ -1,7 +1,6 @@
 package com.arondor.common.reflection.noreflect.instantiator;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +34,7 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
 
         catalog.registerObjectConstructor(TestClassA.class.getName(), new ObjectConstructor()
         {
+            @Override
             public Object create(List<Object> arguments)
             {
                 if (arguments.isEmpty())
@@ -55,6 +55,7 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
         });
         catalog.registerFieldSetter(TestClassA.class.getName(), "property1", new FieldSetter()
         {
+            @Override
             public void set(Object object, Object value)
             {
                 ((TestClassA) object).setProperty1((String) value);
@@ -63,6 +64,7 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
 
         catalog.registerFieldSetter(TestClassA.class.getName(), "property2", new FieldSetter()
         {
+            @Override
             public void set(Object object, Object value)
             {
                 ((TestClassA) object).setProperty2(Long.parseLong((String) value));
@@ -71,6 +73,7 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
 
         catalog.registerObjectConstructor(TestClassB.class.getName(), new ObjectConstructor()
         {
+            @Override
             public Object create(List<Object> arguments)
             {
                 return new com.arondor.common.reflection.noreflect.testclasses.TestClassB();
@@ -80,6 +83,7 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
         catalog.registerFieldSetter(TestClassB.class.getName(), "nestedClassA", new FieldSetter()
         {
 
+            @Override
             public void set(Object object, Object value)
             {
                 ((TestClassB) object).setNestedClassA((TestClassA) value);
@@ -88,6 +92,7 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
 
         catalog.registerObjectConstructor(TestClassC.class.getName(), new ObjectConstructor()
         {
+            @Override
             public Object create(List<Object> arguments)
             {
                 if (arguments.isEmpty())
@@ -104,6 +109,7 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
 
         catalog.registerFieldSetter(TestClassC.class.getName(), "enumValue", new FieldSetter()
         {
+            @Override
             public void set(Object object, Object value)
             {
                 ((TestClassC) object).setEnumValue((EnumValue) value);
@@ -112,6 +118,7 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
 
         catalog.registerObjectConstructor(EnumValue.class.getName(), new ObjectConstructor()
         {
+            @Override
             public Object create(List<Object> arguments)
             {
                 if (arguments.size() != 1)
@@ -124,6 +131,7 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
 
         catalog.registerObjectConstructor(TestClassD.class.getName(), new ObjectConstructor()
         {
+            @Override
             public Object create(List<Object> arguments)
             {
                 return new TestClassD();
@@ -132,6 +140,7 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
 
         catalog.registerFieldSetter(TestClassD.class.getName(), "listClassA", new FieldSetter()
         {
+            @Override
             @SuppressWarnings("unchecked")
             public void set(Object object, Object value)
             {
@@ -141,6 +150,7 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
 
         catalog.registerObjectConstructor(TestClassE.class.getName(), new ObjectConstructor()
         {
+            @Override
             public Object create(List<Object> arguments)
             {
                 return new TestClassE();
@@ -149,6 +159,7 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
 
         catalog.registerFieldSetter(TestClassE.class.getName(), "mapClassA", new FieldSetter()
         {
+            @Override
             @SuppressWarnings("unchecked")
             public void set(Object object, Object value)
             {
@@ -158,6 +169,7 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
 
         catalog.registerObjectConstructor(TestChildClass.class.getName(), new ObjectConstructor()
         {
+            @Override
             public Object create(List<Object> arguments)
             {
                 return new TestChildClass();
@@ -166,6 +178,7 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
 
         catalog.registerFieldSetter(TestParentClass.class.getName(), "parentField", new FieldSetter()
         {
+            @Override
             public void set(Object object, Object value)
             {
                 ((TestParentClass) object).setParentField((String) value);
@@ -174,22 +187,22 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
 
         catalog.registerFieldSetter(TestChildClass.class.getName(), "childField", new FieldSetter()
         {
+            @Override
             public void set(Object object, Object value)
             {
                 ((TestChildClass) object).setChildField((String) value);
             }
         });
 
-        List<String> childClassInheritance = new ArrayList<String>();
-        childClassInheritance.add(TestParentClass.class.getName());
+        String childClassInheritance[] = { TestParentClass.class.getName() };
         catalog.registerObjectInheritance(TestChildClass.class.getName(), childClassInheritance);
 
-        List<String> grandChildClassInheritance = new ArrayList<String>();
-        grandChildClassInheritance.add(TestChildClass.class.getName());
+        String grandChildClassInheritance[] = { TestChildClass.class.getName() };
         catalog.registerObjectInheritance(TestGrandChildClass.class.getName(), grandChildClassInheritance);
 
         catalog.registerObjectConstructor(TestGrandChildClass.class.getName(), new ObjectConstructor()
         {
+            @Override
             public Object create(List<Object> arguments)
             {
                 return new TestGrandChildClass();
@@ -198,6 +211,7 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
 
         catalog.registerFieldSetter(TestAbstractParent.class.getName(), "abstractField", new FieldSetter()
         {
+            @Override
             public void set(Object object, Object value)
             {
                 ((TestAbstractParent) object).setAbstractField((String) value);
@@ -206,18 +220,19 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
 
         catalog.registerObjectConstructor(TestChildWithAbstractParent.class.getName(), new ObjectConstructor()
         {
+            @Override
             public Object create(List<Object> arguments)
             {
                 return new TestChildWithAbstractParent();
             }
         });
 
-        List<String> childAbstractInheritance = new ArrayList<String>();
-        childAbstractInheritance.add(TestAbstractParent.class.getName());
+        String childAbstractInheritance[] = { TestAbstractParent.class.getName() };
         catalog.registerObjectInheritance(TestChildWithAbstractParent.class.getName(), childAbstractInheritance);
 
         catalog.registerObjectConstructor(TestNestedClass.class.getName(), new ObjectConstructor()
         {
+            @Override
             public Object create(List<Object> arguments)
             {
                 return new TestNestedClass();
@@ -226,6 +241,7 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
 
         catalog.registerObjectConstructor(TestNestedClass.EmbeddedClass.class.getName(), new ObjectConstructor()
         {
+            @Override
             public Object create(List<Object> arguments)
             {
                 return new TestNestedClass.EmbeddedClass();
@@ -234,6 +250,7 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
 
         catalog.registerFieldSetter(TestNestedClass.class.getName(), "embeddedClass", new FieldSetter()
         {
+            @Override
             public void set(Object object, Object value)
             {
                 ((TestNestedClass) object).setEmbeddedClass((TestNestedClass.EmbeddedClass) value);
@@ -242,6 +259,7 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
 
         catalog.registerFieldSetter(TestNestedClass.EmbeddedClass.class.getName(), "fieldInEmbedded", new FieldSetter()
         {
+            @Override
             public void set(Object object, Object value)
             {
                 ((TestNestedClass.EmbeddedClass) object).setFieldInEmbedded((String) value);
@@ -253,5 +271,4 @@ public class TestReflectionInstantiatorNoReflect extends TestNoReflectSharedTest
         this.reflectionInstantiator = reflectionInstantiator;
         this.instantationContext = reflectionInstantiator.createDefaultInstantiationContext();
     }
-
 }

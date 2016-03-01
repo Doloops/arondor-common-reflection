@@ -15,8 +15,6 @@
  */
 package com.arondor.common.reflection.noreflect.model;
 
-import java.util.Collection;
-
 import com.arondor.common.reflection.api.instantiator.InstantiationCallback;
 
 /**
@@ -27,7 +25,7 @@ import com.arondor.common.reflection.api.instantiator.InstantiationCallback;
  */
 public interface ReflectionInstantiatorCatalog
 {
-    void registerObjectInheritance(String className, Collection<String> inheritance);
+    void registerObjectInheritance(String className, String inheritance[]);
 
     void registerObjectConstructor(String className, ObjectConstructor objectConstructor);
 
