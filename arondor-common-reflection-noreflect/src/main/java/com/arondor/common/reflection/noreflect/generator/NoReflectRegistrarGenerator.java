@@ -171,24 +171,24 @@ public class NoReflectRegistrarGenerator
         out.println("    private final void register_async_package_" + packageName
                 + "(final ReflectionInstantiatorCatalog catalog, final InstantiationCallback<Void> callback)");
         out.println("    {");
-        out.println("                if ( async_package_" + packageName + "_inited )");
-        out.println("                { callback.onSuccess(null); return; }");
-        out.println("                " + getGwtRunAsyncMethod() + "(new RunAsyncCallback()");
-        out.println("                {");
-        out.println("                    public void onSuccess()");
-        out.println("                    {");
+        out.println("        if ( async_package_" + packageName + "_inited )");
+        out.println("        { callback.onSuccess(null); return; }");
+        out.println("        " + getGwtRunAsyncMethod() + "(new RunAsyncCallback()");
+        out.println("        {");
+        out.println("            public void onSuccess()");
+        out.println("            {");
         for (AccessibleClass asyncClass : classes)
         {
             generateClassMethodCall(out, asyncClass);
         }
-        out.println("                       callback.onSuccess(null);");
-        out.println("                       async_package_" + packageName + "_inited=true;");
-        out.println("                    }");
-        out.println("                    public void onFailure(Throwable reason)");
-        out.println("                    {");
-        out.println("                       callback.onFailure(reason);");
-        out.println("                    }");
-        out.println("                });");
+        out.println("                callback.onSuccess(null);");
+        out.println("                async_package_" + packageName + "_inited=true;");
+        out.println("            }");
+        out.println("            public void onFailure(Throwable reason)");
+        out.println("            {");
+        out.println("                callback.onFailure(reason);");
+        out.println("            }");
+        out.println("        });");
         out.println("    }");
 
         for (AccessibleClass asyncClass : classes)
@@ -387,16 +387,15 @@ public class NoReflectRegistrarGenerator
         out.println("        catalog.registerFieldSetter(\"" + accessibleClass.getName() + "\",\"" + field.getName()
                 + "\",");
         out.println("             new FieldSetter() {");
-        out.println("                          public void set(Object object, Object value) {");
+        out.println("                 public void set(Object object, Object value) {");
         out.print("                          ((" + normalizeClassName(accessibleClass.getName()) + ")object)."
                 + setterName + "(");
 
         generateCast(out, field.getClassName(), "value");
 
         out.println(");");
-        out.println("                          ");
-        out.println("                          }");
-        out.println("            });");
+        out.println("                 }");
+        out.println("             });");
     }
 
     public String getPackageName()

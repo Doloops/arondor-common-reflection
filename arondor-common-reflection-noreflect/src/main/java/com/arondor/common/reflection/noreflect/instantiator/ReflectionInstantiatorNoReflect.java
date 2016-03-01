@@ -433,7 +433,9 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator, 
                 LOGGER.info("End of asyncRecursive=" + (endAsyncRecursive - endWalk) + "ms");
                 T result = instanciateObject(objectConfiguration, desiredClass, context);
                 long endInstanciateObject = System.currentTimeMillis();
-                LOGGER.info("End of instanciateObject=" + (endInstanciateObject - endAsyncRecursive) + "ms");
+                LOGGER.info("instanciateObject(name=" + objectConfiguration.getObjectName() + ", class="
+                        + objectConfiguration.getClassName() + ")" + " took:"
+                        + (endInstanciateObject - endAsyncRecursive) + "ms");
                 callback.onSuccess(result);
 
             }
