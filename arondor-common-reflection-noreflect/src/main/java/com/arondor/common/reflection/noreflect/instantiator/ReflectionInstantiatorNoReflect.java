@@ -398,14 +398,14 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator, 
 
         AsyncPackages asyncPackages = new AsyncPackages();
 
-        long startWalk = System.nanoTime();
+        long startWalk = System.currentTimeMillis();
 
         walkElementConfigurationForClass(context, asyncPackages, objectConfiguration);
 
-        final long endWalk = System.nanoTime();
+        final long endWalk = System.currentTimeMillis();
         if (LOGGER.isLoggable(Level.INFO))
         {
-            LOGGER.info("walkElementConfigurationForClass() took " + (endWalk - startWalk) + "ns");
+            LOGGER.info("walkElementConfigurationForClass() took " + (endWalk - startWalk) + "ms");
         }
 
         if (asyncPackages.getPackages().isEmpty())
@@ -429,11 +429,11 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator, 
             @Override
             public void onSuccess(Void __void)
             {
-                long endAsyncRecursive = System.nanoTime();
-                LOGGER.info("End of asyncRecursive=" + (endAsyncRecursive - endWalk) + "ns");
+                long endAsyncRecursive = System.currentTimeMillis();
+                LOGGER.info("End of asyncRecursive=" + (endAsyncRecursive - endWalk) + "ms");
                 T result = instanciateObject(objectConfiguration, desiredClass, context);
-                long endInstanciateObject = System.nanoTime();
-                LOGGER.info("End of instanciateObject=" + (endInstanciateObject - endAsyncRecursive) + "ns");
+                long endInstanciateObject = System.currentTimeMillis();
+                LOGGER.info("End of instanciateObject=" + (endInstanciateObject - endAsyncRecursive) + "ms");
                 callback.onSuccess(result);
 
             }
@@ -457,7 +457,7 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator, 
             return;
         }
         final String packageName = asyncPackages.get(index);
-        final long startGetObjectConstructor = System.nanoTime();
+        final long startGetObjectConstructor = System.currentTimeMillis();
         LOGGER.info("Now instantiate async :" + packageName + ", index=" + index + "/" + asyncPackages.size());
 
         reflectionInstantiatorCatalog.getPackageInstantiator(packageName).instantiatePackage(
@@ -472,10 +472,10 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator, 
                     @Override
                     public void onSuccess(Void result)
                     {
-                        long endGetObjectConstructor = System.nanoTime();
+                        long endGetObjectConstructor = System.currentTimeMillis();
                         LOGGER.info("Instantiated async :" + packageName + ", index=" + index + "/"
                                 + asyncPackages.size() + ", time="
-                                + (endGetObjectConstructor - startGetObjectConstructor) + "ns");
+                                + (endGetObjectConstructor - startGetObjectConstructor) + "ms");
                         callAsyncRecursive(asyncPackages, index + 1, callback);
                     }
                 });
