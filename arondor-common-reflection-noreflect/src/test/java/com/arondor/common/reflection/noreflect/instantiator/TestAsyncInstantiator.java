@@ -39,7 +39,7 @@ import com.arondor.common.reflection.parser.java.JavaAccessibleClassParser;
 import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.thirdparty.guava.common.collect.Lists;
 
-public class TestAsyncInstiantiator
+public class TestAsyncInstantiator
 {
     protected InstantiationContext instantationContext;
 
@@ -93,7 +93,7 @@ public class TestAsyncInstiantiator
         NoReflectRegistrarGenerator gen = new NoReflectRegistrarGenerator();
 
         gen.setAccessibleClassParser(parser);
-        gen.setGwtRunAsyncMethod(TestAsyncInstiantiator.class.getName() + ".junitRunAsync");
+        gen.setGwtRunAsyncMethod(TestAsyncInstantiator.class.getName() + ".junitRunAsync");
 
         String packageName = "testing_";
         String className = "AutoGen" + (int) (Math.random() * 10000);

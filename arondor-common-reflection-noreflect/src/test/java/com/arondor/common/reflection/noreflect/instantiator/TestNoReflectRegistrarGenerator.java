@@ -97,7 +97,7 @@ public class TestNoReflectRegistrarGenerator extends TestNoReflectSharedTests
         @SuppressWarnings("restriction")
         javax.tools.JavaCompiler javaCompiler = javax.tools.ToolProvider.getSystemJavaCompiler();
         @SuppressWarnings("restriction")
-        int result = javaCompiler.run(null, null, null, "-d", "target/classes/", path);
+        int result = javaCompiler.run(null, null, null, "-Xlint:unchecked", "-d", "target/classes/", path);
         LOG.info("Compile result : " + result);
         @SuppressWarnings("restriction")
         ClassLoader classLoader = javax.tools.ToolProvider.getSystemToolClassLoader();
