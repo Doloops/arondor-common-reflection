@@ -19,6 +19,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -125,12 +126,59 @@ public class NoReflectRegistrarGenerator
             generateAsyncPackageMethod(out, asyncEntry.getKey(), asyncEntry.getValue());
         }
 
+        generateStaticLabels(out);
+
         out.println("}");
+    }
+
+    private final boolean useStaticLabels = true;
+
+    private final Map<String, String> staticLabels = new HashMap<String, String>();
+
+    private final String labelPrefix = "__label";
+
+    private String generateLabel(String labelName)
+    {
+        if (useStaticLabels)
+        {
+            String labelShortName;
+            if (staticLabels.containsKey(labelName))
+            {
+                labelShortName = staticLabels.get(labelName);
+            }
+            else
+            {
+                labelShortName = labelPrefix + (staticLabels.size() + 1) + "_" + protectSymbolName(labelName);
+                staticLabels.put(labelName, labelShortName);
+            }
+            return labelShortName;
+        }
+        else
+        {
+            return "\"" + labelName + "\"";
+        }
+    }
+
+    private void generateStaticLabels(PrintStream out)
+    {
+        if (useStaticLabels)
+        {
+            out.println("    // Static Labels");
+            for (Map.Entry<String, String> entry : staticLabels.entrySet())
+            {
+                out.println("    private static final String " + entry.getValue() + " = \"" + entry.getKey() + "\";");
+            }
+        }
+    }
+
+    private String protectSymbolName(String className)
+    {
+        return className.replace('.', '_').replace('$', '_');
     }
 
     private String generateClassUniqueName(AccessibleClass accessibleClass)
     {
-        return accessibleClass.getName().replace('.', '_').replace('$', '_');
+        return protectSymbolName(accessibleClass.getName());
     }
 
     private void generateClassMethodCall(PrintStream out, AccessibleClass accessibleClass)
@@ -153,8 +201,8 @@ public class NoReflectRegistrarGenerator
         out.println("    private final void register_async_package_instantiator_" + packageName
                 + "(final ReflectionInstantiatorCatalog catalog)");
         out.println("    {");
-        out.println("        catalog.registerPackageInstantiator(\"" + packageName
-                + "\", new PackageInstantiatorAsync()");
+        out.println("        catalog.registerPackageInstantiator(" + generateLabel(packageName)
+                + ", new PackageInstantiatorAsync()");
         out.println("        {");
         out.println("            public void instantiatePackage(final InstantiationCallback<Void> callback)");
         out.println("            {");
@@ -205,13 +253,13 @@ public class NoReflectRegistrarGenerator
         out.println("    private final void register_async_" + classUniqueName
                 + "(final ReflectionInstantiatorCatalog catalog)");
         out.println("    {");
-        out.println("        catalog.registerClassInPackage(\"" + packageName + "\", \"" + asyncClass.getName()
-                + "\");");
+        out.println("        catalog.registerClassInPackage(" + generateLabel(packageName) + ", "
+                + generateLabel(asyncClass.getName()) + ");");
 
         if (isGenerateAsyncObjectConstructors())
         {
-            out.println("        catalog.registerObjectConstructor(\"" + asyncClass.getName()
-                    + "\", new ObjectConstructorAsync(){");
+            out.println("        catalog.registerObjectConstructor(" + generateLabel(asyncClass.getName())
+                    + ", new ObjectConstructorAsync(){");
             out.println("            public void getObjectConstructor(final InstantiationCallback<ObjectConstructor> callback)");
             out.println("            {");
             out.println("                register_async_package_" + packageName
@@ -219,8 +267,8 @@ public class NoReflectRegistrarGenerator
 
             out.println("                    public void onSuccess(Void __void)");
             out.println("                    {");
-            out.println("                       ObjectConstructor constructor = catalog.getObjectConstructor(\""
-                    + asyncClass.getName() + "\");");
+            out.println("                       ObjectConstructor constructor = catalog.getObjectConstructor("
+                    + generateLabel(asyncClass.getName()) + ");");
             out.println("                       callback.onSuccess(constructor);");
             out.println("                    }");
             out.println("                    public void onFailure(Throwable reason)");
@@ -259,11 +307,9 @@ public class NoReflectRegistrarGenerator
             }
             else
             {
-                stringBuilder.append("\n,");
+                stringBuilder.append(", ");
             }
-            stringBuilder.append('"');
-            stringBuilder.append(stringValue);
-            stringBuilder.append('"');
+            stringBuilder.append(generateLabel(stringValue));
         }
         stringBuilder.append('}');
         return stringBuilder.toString();
@@ -293,8 +339,8 @@ public class NoReflectRegistrarGenerator
         if (!inheritance.isEmpty())
         {
             out.println("        String inheritance[] = " + list2StaticStringArray(inheritance) + ";");
-            out.println("        catalog.registerObjectInheritance(\"" + accessibleClass.getName()
-                    + "\", inheritance);");
+            out.println("        catalog.registerObjectInheritance(" + generateLabel(accessibleClass.getName())
+                    + ", inheritance);");
         }
 
         if (!accessibleClass.isAbstract())
@@ -304,8 +350,8 @@ public class NoReflectRegistrarGenerator
             generateClassConstructor(out, accessibleClass);
             out.println("            }");
             out.println("            };");
-            out.println("        catalog.registerObjectConstructor(\"" + accessibleClass.getName()
-                    + "\", objectConstructor);");
+            out.println("        catalog.registerObjectConstructor(" + generateLabel(accessibleClass.getName())
+                    + ", objectConstructor);");
         }
         else
         {
@@ -384,8 +430,8 @@ public class NoReflectRegistrarGenerator
         }
         String setterName = getAccessibleClassParser().attributeToSetter(field.getName());
 
-        out.println("        catalog.registerFieldSetter(\"" + accessibleClass.getName() + "\",\"" + field.getName()
-                + "\",");
+        out.println("        catalog.registerFieldSetter(" + generateLabel(accessibleClass.getName()) + ","
+                + generateLabel(field.getName()) + ",");
         out.println("             new FieldSetter() {");
         out.println("                 public void set(Object object, Object value) {");
         out.print("                          ((" + normalizeClassName(accessibleClass.getName()) + ")object)."
