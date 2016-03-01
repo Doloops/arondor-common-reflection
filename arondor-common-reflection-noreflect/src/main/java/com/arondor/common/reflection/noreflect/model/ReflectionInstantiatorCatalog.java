@@ -40,4 +40,38 @@ public interface ReflectionInstantiatorCatalog
     FieldSetter getFieldSetter(String className, String fieldName);
 
     void getObjectConstructorAsync(String className, InstantiationCallback<ObjectConstructor> callback);
+
+    /**
+     * 
+     * @param moduleName
+     * @param callback
+     * 
+     * @since 0.3.1
+     */
+    void registerPackageInstantiator(String moduleName, PackageInstantiatorAsync callback);
+
+    /**
+     * 
+     * @param moduleName
+     * @return
+     * 
+     * @since 0.3.1
+     */
+    PackageInstantiatorAsync getPackageInstantiator(String moduleName);
+
+    /**
+     * @param packageName
+     * @param className
+     * @since 0.3.1
+     */
+    void registerClassInPackage(String packageName, String className);
+
+    /**
+     * 
+     * @param className
+     * @return
+     * 
+     * @since 0.3.1
+     */
+    String getPackageForClass(String className);
 }

@@ -24,6 +24,7 @@ import com.arondor.common.reflection.api.instantiator.InstantiationCallback;
 import com.arondor.common.reflection.noreflect.model.FieldSetter;
 import com.arondor.common.reflection.noreflect.model.ObjectConstructor;
 import com.arondor.common.reflection.noreflect.model.ObjectConstructorAsync;
+import com.arondor.common.reflection.noreflect.model.PackageInstantiatorAsync;
 import com.arondor.common.reflection.noreflect.model.ReflectionInstantiatorCatalog;
 
 public class SimpleReflectionInstantiatorCatalog implements ReflectionInstantiatorCatalog
@@ -38,23 +39,31 @@ public class SimpleReflectionInstantiatorCatalog implements ReflectionInstantiat
 
     private final Map<String, FieldSetter> fieldSetterMap = new HashMap<String, FieldSetter>();
 
+    private final Map<String, PackageInstantiatorAsync> packageInstantiatorMap = new HashMap<String, PackageInstantiatorAsync>();
+
+    private final Map<String, String> class2package = new HashMap<String, String>();
+
+    @Override
     public void registerObjectInheritance(String className, Collection<String> inheritance)
     {
         inheritanceMap.put(className, inheritance);
     }
 
+    @Override
     public void registerObjectConstructor(String name, ObjectConstructor objectConstructor)
     {
         LOG.finest("registerObjectConstructor(" + name + ", ...)");
         objectConstructorMap.put(name, objectConstructor);
     }
 
+    @Override
     public void registerObjectConstructor(String name, ObjectConstructorAsync objectConstructor)
     {
         LOG.finest("registerObjectConstructor(" + name + ", ...)");
         objectConstructorAsyncMap.put(name, objectConstructor);
     }
 
+    @Override
     public void registerFieldSetter(String className, String fieldName, FieldSetter fieldSetter)
     {
         fieldSetterMap.put(getFieldSetterName(className, fieldName), fieldSetter);
@@ -65,11 +74,13 @@ public class SimpleReflectionInstantiatorCatalog implements ReflectionInstantiat
         return className + "." + fieldName;
     }
 
+    @Override
     public ObjectConstructor getObjectConstructor(String className)
     {
         return objectConstructorMap.get(className);
     }
 
+    @Override
     public void getObjectConstructorAsync(String className, InstantiationCallback<ObjectConstructor> callback)
     {
         ObjectConstructor sync = objectConstructorMap.get(className);
@@ -86,6 +97,7 @@ public class SimpleReflectionInstantiatorCatalog implements ReflectionInstantiat
         async.getObjectConstructor(callback);
     }
 
+    @Override
     public FieldSetter getFieldSetter(String className, String fieldName)
     {
         FieldSetter fieldSetter = fieldSetterMap.get(getFieldSetterName(className, fieldName));
@@ -106,5 +118,29 @@ public class SimpleReflectionInstantiatorCatalog implements ReflectionInstantiat
             }
         }
         return null;
+    }
+
+    @Override
+    public void registerPackageInstantiator(String packageName, PackageInstantiatorAsync instantiator)
+    {
+        packageInstantiatorMap.put(packageName, instantiator);
+    }
+
+    @Override
+    public PackageInstantiatorAsync getPackageInstantiator(String packageName)
+    {
+        return packageInstantiatorMap.get(packageName);
+    }
+
+    @Override
+    public void registerClassInPackage(String packageName, String className)
+    {
+        class2package.put(className, packageName);
+    }
+
+    @Override
+    public String getPackageForClass(String className)
+    {
+        return class2package.get(className);
     }
 }

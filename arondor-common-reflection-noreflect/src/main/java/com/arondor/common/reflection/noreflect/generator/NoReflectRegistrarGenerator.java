@@ -32,6 +32,7 @@ import com.arondor.common.reflection.noreflect.model.AsyncPackages;
 import com.arondor.common.reflection.noreflect.model.FieldSetter;
 import com.arondor.common.reflection.noreflect.model.ObjectConstructor;
 import com.arondor.common.reflection.noreflect.model.ObjectConstructorAsync;
+import com.arondor.common.reflection.noreflect.model.PackageInstantiatorAsync;
 import com.arondor.common.reflection.noreflect.model.ReflectionInstantiatorCatalog;
 import com.arondor.common.reflection.noreflect.model.ReflectionInstantiatorRegistrar;
 import com.arondor.common.reflection.noreflect.runtime.PrimitiveStringConverter;
@@ -50,6 +51,8 @@ public class NoReflectRegistrarGenerator
     private String packageName;
 
     private String className;
+
+    private boolean generateAsyncObjectConstructors = false;
 
     private String gwtRunAsyncMethod = "GWT.runAsync";
 
@@ -76,6 +79,7 @@ public class NoReflectRegistrarGenerator
         out.println(IMPORT_KEYWORD + ReflectionInstantiatorCatalog.class.getName() + ";");
         out.println(IMPORT_KEYWORD + ObjectConstructor.class.getName() + ";");
         out.println(IMPORT_KEYWORD + ObjectConstructorAsync.class.getName() + ";");
+        out.println(IMPORT_KEYWORD + PackageInstantiatorAsync.class.getName() + ";");
         out.println(IMPORT_KEYWORD + InstantiationCallback.class.getName() + ";");
         out.println(IMPORT_KEYWORD + RunAsyncCallback.class.getName() + ";");
         out.println(IMPORT_KEYWORD + GWT.class.getName() + ";");
@@ -108,6 +112,12 @@ public class NoReflectRegistrarGenerator
             generateClassMethod(out, accessibleClass);
         }
 
+        out.println("    // ASync Packages");
+        for (String packageName : asyncPackages.keySet())
+        {
+            generateAsyncPackageInstantiator(out, packageName);
+        }
+
         out.println("    // ASync classes");
         for (Map.Entry<String, List<AccessibleClass>> asyncEntry : asyncPackages.entrySet())
         {
@@ -128,19 +138,36 @@ public class NoReflectRegistrarGenerator
         out.println("        register_sync_" + classUniqueName + "(catalog);");
     }
 
-    private void generateAsyncPackageCall(PrintStream out, String key, List<AccessibleClass> classes)
+    private void generateAsyncPackageCall(PrintStream out, String packageName, List<AccessibleClass> classes)
     {
+        out.println("        register_async_package_instantiator_" + packageName + "(catalog);");
         for (AccessibleClass asyncClass : classes)
         {
-            out.println("    register_async_" + generateClassUniqueName(asyncClass) + "(catalog);");
+            out.println("        register_async_" + generateClassUniqueName(asyncClass) + "(catalog);");
         }
+    }
+
+    private void generateAsyncPackageInstantiator(PrintStream out, String packageName)
+    {
+        out.println("    private final void register_async_package_instantiator_" + packageName
+                + "(final ReflectionInstantiatorCatalog catalog)");
+        out.println("    {");
+        out.println("        catalog.registerPackageInstantiator(\"" + packageName
+                + "\", new PackageInstantiatorAsync()");
+        out.println("        {");
+        out.println("            public void instantiatePackage(final InstantiationCallback<Void> callback)");
+        out.println("            {");
+        out.println("                register_async_package_" + packageName + "(catalog, callback);");
+        out.println("            }");
+        out.println("        });");
+        out.println("    }");
     }
 
     private void generateAsyncPackageMethod(PrintStream out, String packageName, List<AccessibleClass> classes)
     {
         out.println("    // Async package : " + packageName);
         out.println("    private boolean async_package_" + packageName + "_inited=false;");
-        out.println("    private void register_async_package_" + packageName
+        out.println("    private final void register_async_package_" + packageName
                 + "(final ReflectionInstantiatorCatalog catalog, final InstantiationCallback<Void> callback)");
         out.println("    {");
         out.println("                if ( async_package_" + packageName + "_inited )");
@@ -174,31 +201,36 @@ public class NoReflectRegistrarGenerator
     {
         String classUniqueName = generateClassUniqueName(asyncClass);
         out.println("    // Async Class " + asyncClass.getName());
-        out.println("    private void register_async_" + classUniqueName
+        out.println("    private final void register_async_" + classUniqueName
                 + "(final ReflectionInstantiatorCatalog catalog)");
         out.println("    {");
-        out.println("        catalog.registerObjectConstructor(\"" + asyncClass.getName()
-                + "\", new ObjectConstructorAsync(){");
-        out.println("            public void getObjectConstructor(final InstantiationCallback<ObjectConstructor> callback)");
-        out.println("            {");
-        out.println("                register_async_package_" + packageName
-                + "(catalog, new InstantiationCallback<Void>(){");
+        out.println("        catalog.registerClassInPackage(\"" + packageName + "\", \"" + asyncClass.getName()
+                + "\");");
 
-        out.println("                    public void onSuccess(Void __void)");
-        out.println("                    {");
-        out.println("                       ObjectConstructor constructor = catalog.getObjectConstructor(\""
-                + asyncClass.getName() + "\");");
-        out.println("                       callback.onSuccess(constructor);");
-        out.println("                    }");
-        out.println("                    public void onFailure(Throwable reason)");
-        out.println("                    {");
-        out.println("                       callback.onFailure(reason);");
-        out.println("                    }");
+        if (isGenerateAsyncObjectConstructors())
+        {
+            out.println("        catalog.registerObjectConstructor(\"" + asyncClass.getName()
+                    + "\", new ObjectConstructorAsync(){");
+            out.println("            public void getObjectConstructor(final InstantiationCallback<ObjectConstructor> callback)");
+            out.println("            {");
+            out.println("                register_async_package_" + packageName
+                    + "(catalog, new InstantiationCallback<Void>(){");
 
-        out.println("                });");
-        out.println("            }");
-        out.println("        });");
+            out.println("                    public void onSuccess(Void __void)");
+            out.println("                    {");
+            out.println("                       ObjectConstructor constructor = catalog.getObjectConstructor(\""
+                    + asyncClass.getName() + "\");");
+            out.println("                       callback.onSuccess(constructor);");
+            out.println("                    }");
+            out.println("                    public void onFailure(Throwable reason)");
+            out.println("                    {");
+            out.println("                       callback.onFailure(reason);");
+            out.println("                    }");
 
+            out.println("                });");
+            out.println("            }");
+            out.println("        });");
+        }
         out.println("    }");
     }
 
@@ -206,7 +238,7 @@ public class NoReflectRegistrarGenerator
     {
         String classUniqueName = generateClassUniqueName(accessibleClass);
         out.println("    // Class " + accessibleClass.getName());
-        out.println("    private ObjectConstructor register_sync_" + classUniqueName
+        out.println("    private final ObjectConstructor register_sync_" + classUniqueName
                 + "(ReflectionInstantiatorCatalog catalog)");
         out.println("    {");
         generateClassContents(out, accessibleClass);
@@ -368,6 +400,16 @@ public class NoReflectRegistrarGenerator
     public void setGwtRunAsyncMethod(String gwtRunAsyncMethod)
     {
         this.gwtRunAsyncMethod = gwtRunAsyncMethod;
+    }
+
+    public boolean isGenerateAsyncObjectConstructors()
+    {
+        return generateAsyncObjectConstructors;
+    }
+
+    public void setGenerateAsyncObjectConstructors(boolean generateAsyncObjectConstructors)
+    {
+        this.generateAsyncObjectConstructors = generateAsyncObjectConstructors;
     }
 
 }

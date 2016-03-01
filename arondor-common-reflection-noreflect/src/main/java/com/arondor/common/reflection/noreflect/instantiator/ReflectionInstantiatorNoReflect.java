@@ -47,6 +47,28 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator, 
 {
     private static final Logger LOGGER = Logger.getLogger(ReflectionInstantiatorNoReflect.class.getName());
 
+    private static class AsyncPackages
+    {
+        private final List<String> packageNames = new ArrayList<String>();
+
+        private final Map<String, Boolean> packagesMap = new HashMap<String, Boolean>();
+
+        public void addPackage(String packageName)
+        {
+            if (!packagesMap.containsKey(packageName))
+            {
+                packageNames.add(packageName);
+                packagesMap.put(packageName, true);
+            }
+        }
+
+        public List<String> getPackages()
+        {
+            return packageNames;
+        }
+    }
+
+    @Override
     public InstantiationContext createDefaultInstantiationContext()
     {
         return new SimpleInstantiationContext();
@@ -81,6 +103,7 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator, 
         return (T) object;
     }
 
+    @Override
     public <T> T instanciateObject(ObjectConfiguration objectConfiguration, Class<T> desiredClass,
             InstantiationContext context)
     {
@@ -217,11 +240,13 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator, 
                 ((AsynchronousObject) value).addCallback(new AsyncCallback<Object>()
                 {
 
+                    @Override
                     public void onSuccess(Object result)
                     {
                         fieldSetter.set(object, result);
                     }
 
+                    @Override
                     public void onFailure(Throwable caught)
                     {
                         LOGGER.log(Level.SEVERE, "Could not set asynchronous object", caught);
@@ -245,6 +270,7 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator, 
         throw new NoReflectRuntimeException("Not implemented : instanciatePrimite()");
     }
 
+    @Override
     public <T> T instanciateObject(String beanName, Class<T> desiredClass, InstantiationContext context)
     {
         {
@@ -276,19 +302,25 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator, 
         return result;
     }
 
-    private void putAsyncClass(List<String> asyncClasses, String clazz)
+    private void putAsyncClass(AsyncPackages asyncPackages, String clazz)
     {
-        if (reflectionInstantiatorCatalog.getObjectConstructor(clazz) != null)
+        // if (reflectionInstantiatorCatalog.getObjectConstructor(clazz) !=
+        // null)
+        // {
+        // return;
+        // }
+        // if (!asyncClasses.contains(clazz))
+        // {
+        // asyncClasses.add(clazz);
+        // }
+        String packageName = reflectionInstantiatorCatalog.getPackageForClass(clazz);
+        if (packageName != null)
         {
-            return;
-        }
-        if (!asyncClasses.contains(clazz))
-        {
-            asyncClasses.add(clazz);
+            asyncPackages.addPackage(packageName);
         }
     }
 
-    private void walkElementConfigurationForClass(final InstantiationContext context, List<String> asyncClasses,
+    private void walkElementConfigurationForClass(final InstantiationContext context, AsyncPackages asyncClasses,
             ElementConfiguration fieldConfiguration)
     {
         switch (fieldConfiguration.getFieldConfigurationType())
@@ -358,38 +390,57 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator, 
 
     }
 
+    @Override
     public <T> void instanciateObject(final ObjectConfiguration objectConfiguration, final Class<T> desiredClass,
             final InstantiationContext context, final InstantiationCallback<T> callback)
     {
         String beanName = objectConfiguration.getObjectName();
-        List<String> asyncClasses = new ArrayList<String>();
 
-        walkElementConfigurationForClass(context, asyncClasses, objectConfiguration);
+        AsyncPackages asyncPackages = new AsyncPackages();
 
-        if (asyncClasses.isEmpty())
+        long startWalk = System.nanoTime();
+
+        walkElementConfigurationForClass(context, asyncPackages, objectConfiguration);
+
+        final long endWalk = System.nanoTime();
+        if (LOGGER.isLoggable(Level.INFO))
+        {
+            LOGGER.info("walkElementConfigurationForClass() took " + (endWalk - startWalk) + "ns");
+        }
+
+        if (asyncPackages.getPackages().isEmpty())
         {
             T result = instanciateObject(objectConfiguration, desiredClass, context);
             callback.onSuccess(result);
             return;
         }
 
-        LOGGER.info("Instantiating async bean " + beanName + ", asyncClasses are :" + asyncClasses);
+        List<String> asyncPackagesList = asyncPackages.getPackages();
+        LOGGER.info("Instantiating async bean " + beanName + ", asyncPackages are :" + asyncPackagesList);
 
-        callAsyncRecursive(asyncClasses, 0, new AsyncCallback<Void>()
+        callAsyncRecursive(asyncPackagesList, 0, new AsyncCallback<Void>()
         {
+            @Override
             public void onFailure(Throwable caught)
             {
                 callback.onFailure(caught);
             }
 
+            @Override
             public void onSuccess(Void __void)
             {
+                long endAsyncRecursive = System.nanoTime();
+                LOGGER.info("End of asyncRecursive=" + (endAsyncRecursive - endWalk) + "ns");
                 T result = instanciateObject(objectConfiguration, desiredClass, context);
+                long endInstanciateObject = System.nanoTime();
+                LOGGER.info("End of instanciateObject=" + (endInstanciateObject - endAsyncRecursive) + "ns");
                 callback.onSuccess(result);
+
             }
         });
     }
 
+    @Override
     public <T> void instanciateObject(final String beanName, final Class<T> desiredClass,
             final InstantiationContext context, final InstantiationCallback<T> callback)
     {
@@ -397,26 +448,36 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator, 
         instanciateObject(objectConfiguration, desiredClass, context, callback);
     }
 
-    private void callAsyncRecursive(final List<String> asyncClasses, final int index, final AsyncCallback<Void> callback)
+    private void callAsyncRecursive(final List<String> asyncPackages, final int index,
+            final AsyncCallback<Void> callback)
     {
-        if (index == asyncClasses.size())
+        if (index == asyncPackages.size())
         {
             callback.onSuccess(null);
             return;
         }
-        String clazz = asyncClasses.get(index);
-        LOGGER.info("Now instantiate async :" + clazz);
-        reflectionInstantiatorCatalog.getObjectConstructorAsync(clazz, new InstantiationCallback<ObjectConstructor>()
-        {
-            public void onFailure(Throwable caught)
-            {
-                callback.onFailure(caught);
-            }
+        final String packageName = asyncPackages.get(index);
+        final long startGetObjectConstructor = System.nanoTime();
+        LOGGER.info("Now instantiate async :" + packageName + ", index=" + index + "/" + asyncPackages.size());
 
-            public void onSuccess(ObjectConstructor objectConstructor)
-            {
-                callAsyncRecursive(asyncClasses, index + 1, callback);
-            }
-        });
+        reflectionInstantiatorCatalog.getPackageInstantiator(packageName).instantiatePackage(
+                new InstantiationCallback<Void>()
+                {
+                    @Override
+                    public void onFailure(Throwable caught)
+                    {
+                        callback.onFailure(caught);
+                    }
+
+                    @Override
+                    public void onSuccess(Void result)
+                    {
+                        long endGetObjectConstructor = System.nanoTime();
+                        LOGGER.info("Instantiated async :" + packageName + ", index=" + index + "/"
+                                + asyncPackages.size() + ", time="
+                                + (endGetObjectConstructor - startGetObjectConstructor) + "ns");
+                        callAsyncRecursive(asyncPackages, index + 1, callback);
+                    }
+                });
     }
 }

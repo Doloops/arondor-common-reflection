@@ -2,7 +2,7 @@ package com.arondor.common.reflection.noreflect.testclasses.async.submodule1;
 
 import com.arondor.common.reflection.noreflect.testclasses.async.submodule0.TestModule1Class1;
 
-public class TestModule2Class1
+public class TestModule2Class2
 {
     private TestModule1Class1 testModule1Class1;
 
