@@ -58,4 +58,29 @@ public interface ReflectionInstantiator
      */
     public <T> T instanciateObject(String beanName, Class<T> desiredClass, InstantiationContext context);
 
+    /**
+     * Hook interface triggered each time an object has been created
+     */
+    interface ObjectInstanciationHook
+    {
+        void onObjectInstanciated(ObjectConfiguration objectConfiguration, Object object);
+    }
+
+    /**
+     * Hook remover
+     */
+    interface HookHandler
+    {
+        void remove();
+    }
+
+    /**
+     * Add a {@link ObjectInstanciationHook} which will be triggered each time
+     * an object is instanciated
+     * 
+     * @param hook
+     *            the hook to add, must not be null
+     * @return the {@link HookHandler}, an easy way to remove this hook
+     */
+    HookHandler addObjectInstanciationHook(ObjectInstanciationHook hook);
 }

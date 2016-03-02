@@ -122,6 +122,11 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator, 
         Object object = objectConstructor.create(constructorArguments);
 
         instanciateObjectFields(objectConfiguration, context, object);
+
+        for (ObjectInstanciationHook hook : objectInstanciationHook)
+        {
+            hook.onObjectInstanciated(objectConfiguration, object);
+        }
         return castObject(object, desiredClass);
     }
 
@@ -481,5 +486,32 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator, 
                         callAsyncRecursive(asyncPackages, index + 1, callback);
                     }
                 });
+    }
+
+    private final List<ObjectInstanciationHook> objectInstanciationHook = new ArrayList<ReflectionInstantiator.ObjectInstanciationHook>();
+
+    @Override
+    public HookHandler addObjectInstanciationHook(final ObjectInstanciationHook hook)
+    {
+        if (hook == null)
+        {
+            LOGGER.severe("Invalid null hook provided !");
+            return new HookHandler()
+            {
+                @Override
+                public void remove()
+                {
+                }
+            };
+        }
+        objectInstanciationHook.add(hook);
+        return new HookHandler()
+        {
+            @Override
+            public void remove()
+            {
+                objectInstanciationHook.remove(hook);
+            }
+        };
     }
 }

@@ -57,11 +57,13 @@ public class MockitoReflectionInstantiator implements ReflectionInstantiator
         objectConfigurations = beanDefinitionParser.parse();
     }
 
+    @Override
     public InstantiationContext createDefaultInstantiationContext()
     {
         throw new RuntimeException("This method should not be used. This class is only for test purposes.");
     }
 
+    @Override
     public <T> T instanciateObject(ObjectConfiguration objectConfiguration, Class<T> desiredClass,
             InstantiationContext context)
     {
@@ -74,6 +76,7 @@ public class MockitoReflectionInstantiator implements ReflectionInstantiator
      * 
      * @see Mockito#mock(Class)
      */
+    @Override
     public <T> T instanciateObject(String beanName, Class<T> desiredClass, InstantiationContext context)
     {
         ObjectConfiguration objectConfiguration = objectConfigurations.get(beanName);
@@ -93,6 +96,12 @@ public class MockitoReflectionInstantiator implements ReflectionInstantiator
             }
         }
         return mock(desiredClass);
+    }
+
+    @Override
+    public HookHandler addObjectInstanciationHook(ObjectInstanciationHook hook)
+    {
+        return null;
     }
 
 }
