@@ -73,6 +73,7 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
         this.accessibleClassCatalog = accessibleClassCatalog;
     }
 
+    @Override
     public InstantiationContext createDefaultInstantiationContext()
     {
         return new SimpleInstantiationContext();
@@ -83,7 +84,7 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
         initLocalClassCache();
     }
 
-    private Map<String, Class<?>> localClassCache = new HashMap<String, Class<?>>();
+    private final Map<String, Class<?>> localClassCache = new HashMap<String, Class<?>>();
 
     private void initLocalClassCache()
     {
@@ -137,7 +138,7 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
             throws ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException,
             SecurityException
     {
-    	
+
         Class<T> clazz = (Class<T>) resolveClass(className);
         if (clazz.equals(String.class))
         {
@@ -166,6 +167,7 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
         return doInstantiateObject(objectConfiguration, context, clazz);
     }
 
+    @Override
     public <T> T instanciateObject(ObjectConfiguration objectConfiguration, Class<T> desiredClass,
             InstantiationContext context)
     {
@@ -177,6 +179,10 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
             {
                 throw new InstantiationException("Could not assign " + instantiatedObject.getClass().getName() + " to "
                         + desiredClass.getName());
+            }
+            for (ObjectInstanciationHook hook : objectInstanciationHook)
+            {
+                hook.onObjectInstanciated(objectConfiguration, instantiatedObject);
             }
             return (T) instantiatedObject;
         }
@@ -240,7 +246,7 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
                 arguments[argumentIndex] = instantiateElementConfiguration(argumentConfiguration, argumentClassName,
                         context);
             }
-            object = (T) constructor.newInstance(arguments);
+            object = constructor.newInstance(arguments);
         }
         setFields(object, objectConfiguration, context);
         if (objectConfiguration.isSingleton())
@@ -326,6 +332,7 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
         return fastPrimitiveConverter.convert(value, fieldClassName);
     }
 
+    @Override
     public <T> T instanciateObject(String beanName, Class<T> desiredClass, InstantiationContext context)
     {
         {
@@ -346,5 +353,31 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
             context.putSharedObject(beanName, object);
         }
         return object;
+    }
+
+    private final List<ObjectInstanciationHook> objectInstanciationHook = new ArrayList<ReflectionInstantiator.ObjectInstanciationHook>();
+
+    @Override
+    public HookHandler addObjectInstanciationHook(final ObjectInstanciationHook hook)
+    {
+        if (hook == null)
+        {
+            return new HookHandler()
+            {
+                @Override
+                public void remove()
+                {
+                }
+            };
+        }
+        objectInstanciationHook.add(hook);
+        return new HookHandler()
+        {
+            @Override
+            public void remove()
+            {
+                objectInstanciationHook.remove(hook);
+            }
+        };
     }
 }
