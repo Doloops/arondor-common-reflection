@@ -278,12 +278,10 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator, 
     @Override
     public <T> T instanciateObject(String beanName, Class<T> desiredClass, InstantiationContext context)
     {
+        T result = instanciateObjectFromShared(beanName, desiredClass, context);
+        if (result != null)
         {
-            Object sharedObject = context.getSharedObject(beanName);
-            if (sharedObject != null)
-            {
-                return castObject(sharedObject, desiredClass);
-            }
+            return result;
         }
         ObjectConfiguration objectConfiguration = context.getSharedObjectConfiguration(beanName);
         if (objectConfiguration == null)
@@ -292,32 +290,33 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator, 
                     + desiredClass.getName());
         }
         if (objectConfiguration.isSingleton())
-        {
-            Object singleton = context.getSharedObject(beanName);
-            if (singleton != null)
-            {
-                return castObject(singleton, desiredClass);
-            }
-        }
-        T result = instanciateObject(objectConfiguration, desiredClass, context);
+            instanciateObjectFromShared(beanName, desiredClass, context);
+        result = instanciateObject(objectConfiguration, desiredClass, context);
+        mayPutSharedObject(beanName, objectConfiguration, context, result);
+        return result;
+    }
+
+    private <T> void mayPutSharedObject(String beanName, ObjectConfiguration objectConfiguration,
+            InstantiationContext context, T result)
+    {
         if (objectConfiguration.isSingleton())
         {
             context.putSharedObject(beanName, result);
         }
-        return result;
+    }
+
+    private <T> T instanciateObjectFromShared(String beanName, Class<T> desiredClass, InstantiationContext context)
+    {
+        Object sharedObject = context.getSharedObject(beanName);
+        if (sharedObject != null)
+        {
+            return (T) castObject(sharedObject, desiredClass);
+        }
+        return null;
     }
 
     private void putAsyncClass(AsyncPackages asyncPackages, String clazz)
     {
-        // if (reflectionInstantiatorCatalog.getObjectConstructor(clazz) !=
-        // null)
-        // {
-        // return;
-        // }
-        // if (!asyncClasses.contains(clazz))
-        // {
-        // asyncClasses.add(clazz);
-        // }
         String packageName = reflectionInstantiatorCatalog.getPackageForClass(clazz);
         if (packageName != null)
         {
@@ -451,8 +450,28 @@ public class ReflectionInstantiatorNoReflect implements ReflectionInstantiator, 
     public <T> void instanciateObject(final String beanName, final Class<T> desiredClass,
             final InstantiationContext context, final InstantiationCallback<T> callback)
     {
+        T result = instanciateObjectFromShared(beanName, desiredClass, context);
+        if (result != null)
+        {
+            callback.onSuccess(result);
+            return;
+        }
         final ObjectConfiguration objectConfiguration = context.getSharedObjectConfiguration(beanName);
-        instanciateObject(objectConfiguration, desiredClass, context, callback);
+        instanciateObject(objectConfiguration, desiredClass, context, new InstantiationCallback<T>()
+        {
+            @Override
+            public void onFailure(Throwable caught)
+            {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(T result)
+            {
+                mayPutSharedObject(beanName, objectConfiguration, context, result);
+                callback.onSuccess(result);
+            }
+        });
     }
 
     private void callAsyncRecursive(final List<String> asyncPackages, final int index,

@@ -18,6 +18,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 
 import org.apache.log4j.Logger;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,9 +28,11 @@ import com.arondor.common.reflection.api.instantiator.ReflectionInstantiator;
 import com.arondor.common.reflection.api.instantiator.ReflectionInstantiatorAsync;
 import com.arondor.common.reflection.api.parser.AccessibleClassParser;
 import com.arondor.common.reflection.bean.config.ObjectConfigurationFactoryBean;
+import com.arondor.common.reflection.bean.config.ObjectConfigurationMapBean;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
+import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.arondor.common.reflection.noreflect.generator.NoReflectRegistrarGenerator;
 import com.arondor.common.reflection.noreflect.model.AsyncPackages;
@@ -65,6 +68,7 @@ public class TestAsyncInstantiator
     {
         new Thread()
         {
+            @Override
             public void run()
             {
                 if (RUN_ASYNC_DELAY > 0)
@@ -168,6 +172,98 @@ public class TestAsyncInstantiator
     }
 
     @Test(timeout = 1000)
+    public void testAsyncSingleton() throws InterruptedException
+    {
+        ObjectConfiguration root = objectConfigurationFactory.createObjectConfiguration();
+        root.setObjectName("Root");
+        root.setClassName(TestClass1.class.getName());
+        root.setSingleton(true);
+
+        ObjectConfigurationMap objetConfigurations = new ObjectConfigurationMapBean();
+        objetConfigurations.put(root.getObjectName(), root);
+        instantationContext.addSharedObjectConfigurations(objetConfigurations);
+
+        asyncInstantiator.instanciateObject("Root", TestClass1.class, instantationContext,
+                new InstantiationCallback<TestClass1>()
+                {
+
+                    @Override
+                    public void onFailure(Throwable caught)
+                    {
+                        Assert.fail("Failed : " + caught);
+                    }
+
+                    @Override
+                    public void onSuccess(final TestClass1 result1)
+                    {
+                        Assert.assertNotNull(result1);
+                        asyncInstantiator.instanciateObject("Root", TestClass1.class, instantationContext,
+                                new InstantiationCallback<TestClass1>()
+                                {
+
+                                    @Override
+                                    public void onFailure(Throwable caught)
+                                    {
+                                        Assert.fail("Failed : " + caught);
+                                    }
+
+                                    @Override
+                                    public void onSuccess(TestClass1 result2)
+                                    {
+                                        Assert.assertNotNull(result2);
+                                        Assert.assertTrue("Diverging results !", result1 == result2);
+                                    }
+                                });
+                    }
+                });
+    }
+
+    @Test
+    public void testAsyncNonSingleton() throws InterruptedException
+    {
+        ObjectConfiguration root = objectConfigurationFactory.createObjectConfiguration();
+        root.setObjectName("Root");
+        root.setClassName(TestClass1.class.getName());
+        root.setSingleton(false);
+
+        ObjectConfigurationMap objetConfigurations = new ObjectConfigurationMapBean();
+        objetConfigurations.put(root.getObjectName(), root);
+        instantationContext.addSharedObjectConfigurations(objetConfigurations);
+
+        asyncInstantiator.instanciateObject("Root", TestClass1.class, instantationContext,
+                new InstantiationCallback<TestClass1>()
+                {
+
+                    @Override
+                    public void onFailure(Throwable caught)
+                    {
+                        Assert.fail("Failed : " + caught);
+                    }
+
+                    @Override
+                    public void onSuccess(final TestClass1 result1)
+                    {
+                        asyncInstantiator.instanciateObject("Root", TestClass1.class, instantationContext,
+                                new InstantiationCallback<TestClass1>()
+                                {
+
+                                    @Override
+                                    public void onFailure(Throwable caught)
+                                    {
+                                        Assert.fail("Failed : " + caught);
+                                    }
+
+                                    @Override
+                                    public void onSuccess(TestClass1 result2)
+                                    {
+                                        Assert.assertTrue("Equal results !", result1 != result2);
+                                    }
+                                });
+                    }
+                });
+    }
+
+    @Test(timeout = 1000)
     public void testSimpleDependency() throws InterruptedException
     {
         ObjectConfiguration root = objectConfigurationFactory.createObjectConfiguration();
@@ -188,6 +284,7 @@ public class TestAsyncInstantiator
                     @Override
                     public void onFailure(Throwable caught)
                     {
+                        Assert.fail("Failed : " + caught);
                     }
 
                     @Override
