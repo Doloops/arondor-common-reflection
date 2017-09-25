@@ -16,6 +16,7 @@
 package com.arondor.common.reflection.noreflect.gwtgenerator;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -90,7 +91,8 @@ public abstract class GWTNoReflectRegistrarGenerator extends Generator
 
         try
         {
-            OutputStream os = new FileOutputStream("/tmp/gwtnoreflect-generated.java");
+            OutputStream os = new FileOutputStream(System.getProperty("java.io.tmpdir") + File.separator 
+            		+ "gwtnoreflect-generated.java");
             os.write(baos.toByteArray());
             os.close();
         }
