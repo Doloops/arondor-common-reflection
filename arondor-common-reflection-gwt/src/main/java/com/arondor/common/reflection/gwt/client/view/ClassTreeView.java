@@ -17,6 +17,9 @@ package com.arondor.common.reflection.gwt.client.view;
 
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreePresenter;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Tree;
@@ -24,7 +27,26 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ClassTreeView extends Composite implements ClassTreePresenter.Display
 {
-    private Tree tree = new Tree();
+    private Tree tree = new Tree()
+    {
+        @Override
+        public void onBrowserEvent(Event event)
+        {
+            int eventType = DOM.eventGetType(event);
+            switch (eventType)
+            {
+            case Event.ONKEYDOWN:
+            case Event.ONKEYUP:
+            {
+                if (KeyCodes.isArrowKey(event.getKeyCode()))
+                {
+                    return;
+                }
+            }
+            }
+            super.onBrowserEvent(event);
+        }
+    };
 
     public ClassTreeView()
     {
@@ -39,11 +61,13 @@ public class ClassTreeView extends Composite implements ClassTreePresenter.Displ
         return tree;
     }
 
+    @Override
     public ClassTreeNodePresenter.ClassDisplay createRootView(String baseClassName)
     {
         return new ClassTreeNodeView(getTree());
     }
 
+    @Override
     public Widget asWidget()
     {
         return this;

@@ -39,6 +39,7 @@ public class ImplementingClassView extends Composite implements Display
         initWidget(implementingListInput);
     }
 
+    @Override
     public void setImplementingClasses(Collection<String> implementingClasses)
     {
         LOG.finest("Selected classes : " + implementingClasses);
@@ -58,8 +59,9 @@ public class ImplementingClassView extends Composite implements Display
         selectedClass = className;
         if (className == null)
         {
-            return;
+            className = "null";
         }
+
         LOG.finest("Selecting class : " + className + " from a choice of " + implementingListInput.getItemCount()
                 + " items");
         for (int idx = 0; idx < implementingListInput.getItemCount(); idx++)
@@ -70,15 +72,18 @@ public class ImplementingClassView extends Composite implements Display
                 return;
             }
         }
+
         implementingListInput.addItem(className);
         implementingListInput.setSelectedIndex(implementingListInput.getItemCount() - 1);
         // LOG.warning("Could not select class : " + className);
     }
 
+    @Override
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<String> valueChangeHandler)
     {
         return implementingListInput.addChangeHandler(new ChangeHandler()
         {
+            @Override
             public void onChange(ChangeEvent event)
             {
                 if (implementingListInput.getSelectedIndex() != -1)
@@ -91,11 +96,13 @@ public class ImplementingClassView extends Composite implements Display
         });
     }
 
+    @Override
     public void setBaseClassName(String baseClassName)
     {
         doSelect(baseClassName);
     }
 
+    @Override
     public void selectImplementingClass(String implementingClassName)
     {
         doSelect(implementingClassName);
