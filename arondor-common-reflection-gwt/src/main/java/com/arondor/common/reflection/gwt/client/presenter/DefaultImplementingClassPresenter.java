@@ -143,7 +143,7 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
                     doUpdateDisplay();
                     return false;
                 }
-            }, 2000);
+            }, 20);
         }
         else
         {
