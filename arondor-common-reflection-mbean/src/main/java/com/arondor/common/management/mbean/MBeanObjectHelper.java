@@ -1,6 +1,7 @@
 package com.arondor.common.management.mbean;
 
 import java.lang.management.ManagementFactory;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,6 +9,8 @@ import java.util.Map;
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.AttributeNotFoundException;
+import javax.management.DynamicMBean;
+import javax.management.InstanceNotFoundException;
 import javax.management.InvalidAttributeValueException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanConstructorInfo;
@@ -15,6 +18,7 @@ import javax.management.MBeanException;
 import javax.management.MBeanInfo;
 import javax.management.MBeanNotificationInfo;
 import javax.management.MBeanOperationInfo;
+import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
@@ -45,6 +49,76 @@ public class MBeanObjectHelper
      * Expensive log for this class
      */
     private static final boolean verbose = LOG.isDebugEnabled();
+
+    private static final class WeakDynamicMBean implements javax.management.DynamicMBean
+    {
+        private final WeakReference<javax.management.DynamicMBean> weakRef;
+
+        private final ObjectName objectName;
+
+        protected WeakDynamicMBean(javax.management.DynamicMBean target, ObjectName objectName)
+        {
+            this.weakRef = new WeakReference<javax.management.DynamicMBean>(target);
+            this.objectName = objectName;
+        }
+
+        private javax.management.DynamicMBean get()
+        {
+            DynamicMBean mbean = weakRef.get();
+            if (mbean == null)
+            {
+                MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+                LOG.warn("Could not resolve weak reference for " + objectName.getCanonicalName());
+                try
+                {
+                    mbs.unregisterMBean(objectName);
+                }
+                catch (MBeanRegistrationException e)
+                {
+                    LOG.error("Could not unregister " + objectName.getCanonicalName(), e);
+                }
+                catch (InstanceNotFoundException e)
+                {
+                    LOG.error("Could not unregister " + objectName.getCanonicalName(), e);
+                }
+                throw new IllegalStateException("The bean has already been freed !");
+            }
+            return mbean;
+        }
+
+        public Object getAttribute(String attribute)
+                throws AttributeNotFoundException, MBeanException, ReflectionException
+        {
+            return get().getAttribute(attribute);
+        }
+
+        public void setAttribute(Attribute attribute)
+                throws AttributeNotFoundException, InvalidAttributeValueException, MBeanException, ReflectionException
+        {
+            get().setAttribute(attribute);
+        }
+
+        public AttributeList getAttributes(String[] attributes)
+        {
+            return get().getAttributes(attributes);
+        }
+
+        public AttributeList setAttributes(AttributeList attributes)
+        {
+            return get().setAttributes(attributes);
+        }
+
+        public Object invoke(String actionName, Object[] params, String[] signature)
+                throws MBeanException, ReflectionException
+        {
+            return get().invoke(actionName, params, signature);
+        }
+
+        public MBeanInfo getMBeanInfo()
+        {
+            return get().getMBeanInfo();
+        }
+    }
 
     private int maximumDuplicateObjects = 1024;
 
@@ -95,11 +169,12 @@ public class MBeanObjectHelper
         idx = 0;
         for (AccessibleMethod accessibleMethod : accessibleClass.getAccessibleMethods())
         {
-            operations[idx++] = new MBeanOperationInfo(accessibleMethod.getName(), toMethod(assignedObject.getClass(),
-                    accessibleMethod));
+            operations[idx++] = new MBeanOperationInfo(accessibleMethod.getName(),
+                    toMethod(assignedObject.getClass(), accessibleMethod));
         }
         MBeanNotificationInfo[] notifications = null;
-        MBeanInfo mbeanInfo = new MBeanInfo(className, description, attributes, constructors, operations, notifications);
+        MBeanInfo mbeanInfo = new MBeanInfo(className, description, attributes, constructors, operations,
+                notifications);
 
         mbeanInfoCache.put(className, mbeanInfo);
         return mbeanInfo;
@@ -153,7 +228,16 @@ public class MBeanObjectHelper
                 }
                 try
                 {
-                    mbs.registerMBean(o, objectName);
+                    if (o instanceof DynamicMBean)
+                    {
+                        DynamicMBean dynamicMBean = (DynamicMBean) o;
+                        WeakDynamicMBean weakRef = new WeakDynamicMBean(dynamicMBean, objectName);
+                        mbs.registerMBean(weakRef, objectName);
+                    }
+                    else
+                    {
+                        mbs.registerMBean(o, objectName);
+                    }
                 }
                 catch (javax.management.InstanceAlreadyExistsException iaee)
                 {
@@ -202,8 +286,8 @@ public class MBeanObjectHelper
      * @throws MBeanException
      * @throws ReflectionException
      */
-    public Object getAttribute(Object assignedObject, String arg0) throws AttributeNotFoundException, MBeanException,
-            ReflectionException
+    public Object getAttribute(Object assignedObject, String arg0)
+            throws AttributeNotFoundException, MBeanException, ReflectionException
     {
         String methodName = accessibleClassParser.attributeToGetter(arg0);
         try
@@ -405,8 +489,9 @@ public class MBeanObjectHelper
                 }
             }
         }
-        throw new ReflectionException(new Exception("Could not find method '" + methodName + "(" + clazz.getName()
-                + ")'"), "Reflection Exception on mbean=" + assignedObject);
+        throw new ReflectionException(
+                new Exception("Could not find method '" + methodName + "(" + clazz.getName() + ")'"),
+                "Reflection Exception on mbean=" + assignedObject);
     }
 
     /**
@@ -419,8 +504,8 @@ public class MBeanObjectHelper
      * @throws MBeanException
      * @throws ReflectionException
      */
-    public void setAttribute(Object assignedObject, Attribute arg0) throws AttributeNotFoundException,
-            InvalidAttributeValueException, MBeanException, ReflectionException
+    public void setAttribute(Object assignedObject, Attribute arg0)
+            throws AttributeNotFoundException, InvalidAttributeValueException, MBeanException, ReflectionException
     {
         String name = arg0.getName();
         String methodName = accessibleClassParser.attributeToSetter(name);
