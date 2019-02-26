@@ -1,0 +1,18 @@
+{
+	"@class": "com.arondor.common.reflection.bean.config.ObjectConfigurationBean",
+	"className": "com.arondor.common.reflection.reflect.testclasses.TestClassA",
+	"fields": {
+		"@class": "java.util.HashMap",
+		"property2": {
+			"@class": "com.arondor.common.reflection.bean.config.PrimitiveConfigurationBean",
+			"value": "82377"
+		},
+		"property1": {
+			"@class": "com.arondor.common.reflection.bean.config.PrimitiveConfigurationBean",
+			"value": "Serialized from JSON"
+		}
+	},
+	"referenceName": null,
+	"constructorArguments": null,
+	"singleton": false
+}
