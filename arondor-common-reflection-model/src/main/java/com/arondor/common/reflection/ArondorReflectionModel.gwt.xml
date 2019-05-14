@@ -5,4 +5,6 @@
 	<source path='model' />
 	<source path='bean' />
 	<source path='util' />
+	<source path='api/catalog' />
+	<source path='catalog' />
 </module>

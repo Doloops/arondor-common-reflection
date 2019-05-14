@@ -20,7 +20,9 @@ import java.util.Collection;
 import com.arondor.common.reflection.model.java.AccessibleClass;
 
 /**
- * Interface for parsed AccessibleClass catalog
+ * Interface for parsed AccessibleClass catalog.
+ * 
+ * Package should be renamed to something else than .api.
  * 
  * @author Francois Barre
  * 
