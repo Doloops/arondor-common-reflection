@@ -15,27 +15,134 @@
  */
 package com.arondor.common.reflection.gwt.client;
 
+import java.util.Collection;
+import java.util.logging.Logger;
+
+import com.arondor.common.reflection.api.catalog.AccessibleClassCatalog;
+import com.arondor.common.reflection.bean.config.ObjectConfigurationMapBean;
+import com.arondor.common.reflection.gwt.client.api.AccessibleClassPresenter;
 import com.arondor.common.reflection.gwt.client.presenter.ReflectionDesignerPresenter;
-import com.arondor.common.reflection.gwt.client.service.CacheGWTReflectionServiceAsync;
-import com.arondor.common.reflection.gwt.client.service.GWTReflectionService;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
+import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
+import com.arondor.common.reflection.model.java.AccessibleClass;
+import com.arondor.common.reflection.xstream.catalog.GWTAccessibleClassCatalogParser;
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.shared.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 
 public class ReflectionDesignerEntryPoint implements EntryPoint
 {
+    private static final Logger LOG = Logger.getLogger(ReflectionDesignerEntryPoint.class.getName());
 
+    @Override
     public void onModuleLoad()
     {
-        GWTReflectionServiceAsync reflectionService = GWT.create(GWTReflectionService.class);
-        GWTReflectionServiceAsync cachedReflectionService = new CacheGWTReflectionServiceAsync(reflectionService);
+        RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, "/allclasses.xml");
+        requestBuilder.setCallback(new RequestCallback()
+        {
 
-        bind();
+            @Override
+            public void onResponseReceived(Request request, Response response)
+            {
+                String xml = response.getText();
+                GWTAccessibleClassCatalogParser parser = new GWTAccessibleClassCatalogParser();
+                final AccessibleClassCatalog catalog = parser.parse(xml);
+                // Collection<AccessibleClass> classes = catalog
+                // .getImplementingAccessibleClasses("com.arondor.fast2p8.model.task.Task");
+                // for (AccessibleClass ac : classes)
+                // {
+                // LOG.info("At Task class : " + ac.getName());
+                // }
+
+                GWTReflectionServiceAsync simpleReflectionService = new GWTReflectionServiceAsync()
+                {
+                    @Override
+                    public void getImplementingAccessibleClasses(final String name,
+                            final AsyncCallback<Collection<AccessibleClass>> callback)
+                    {
+                        Scheduler.get().scheduleDeferred(new ScheduledCommand()
+                        {
+                            @Override
+                            public void execute()
+                            {
+                                callback.onSuccess(catalog.getImplementingAccessibleClasses(name));
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void getAccessibleClass(final String className,
+                            final AsyncCallback<AccessibleClass> callback)
+                    {
+                        Scheduler.get().scheduleDeferred(new ScheduledCommand()
+                        {
+                            @Override
+                            public void execute()
+                            {
+                                callback.onSuccess(catalog.getAccessibleClass(className));
+                            }
+                        });
+                    }
+                };
+
+                continueLoading(simpleReflectionService);
+            }
+
+            @Override
+            public void onError(Request request, Throwable exception)
+            {
+                Window.alert("Could not get resources !");
+            }
+        });
+
+        try
+        {
+            requestBuilder.send();
+        }
+        catch (RequestException e)
+        {
+            LOG.warning("Could not send !" + e.getMessage());
+        }
+
+        if (true)
+        {
+            return;
+        }
+
+        // GWTReflectionServiceAsync reflectionService =
+        // GWT.create(GWTReflectionService.class);
+        // GWTReflectionServiceAsync cachedReflectionService = new
+        // CacheGWTReflectionServiceAsync(reflectionService);
+    }
+
+    private void continueLoading(GWTReflectionServiceAsync reflectionService)
+    {
+
+        String baseClassName = "com.arondor.fast2p8.model.task.Task";
+
+        ObjectConfigurationMap objectConfigurationMap = new ObjectConfigurationMapBean();
+        // ReflectionDesignerPresenter classPresenter = new
+        // ReflectionDesignerPresenter(reflectionService, baseClassName);
+        AccessibleClassPresenter presenter = AccessibleClassPresenterFactory
+                .createAccessibleClassPresenter(reflectionService, objectConfigurationMap, baseClassName);
+
+        RootPanel.get().clear();
+        RootPanel.get().add(presenter.getDisplayWidget());
+    }
+
+    private void continueLoading__(GWTReflectionServiceAsync reflectionService)
+    {
         String baseClassName = java.lang.Object.class.getName();
-        ReflectionDesignerPresenter classPresenter = new ReflectionDesignerPresenter(cachedReflectionService,
-                baseClassName);
+        ReflectionDesignerPresenter classPresenter = new ReflectionDesignerPresenter(reflectionService, baseClassName);
 
         RootPanel.get().clear();
         RootPanel.get().add(classPresenter.getDisplay());
@@ -66,7 +173,4 @@ public class ReflectionDesignerEntryPoint implements EntryPoint
         }
     }
 
-    private void bind()
-    {
-    }
 }

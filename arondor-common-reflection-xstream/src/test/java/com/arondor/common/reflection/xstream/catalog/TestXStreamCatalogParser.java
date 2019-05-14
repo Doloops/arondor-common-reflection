@@ -30,6 +30,7 @@ public class TestXStreamCatalogParser extends GWTTestCase
                 + "            </com.arondor.common.reflection.bean.java.AccessibleFieldBean>" + "          </entry>"
                 + "          <entry>" + "            <string>campaignFile</string>"
                 + "            <com.arondor.common.reflection.bean.java.AccessibleFieldBean>"
+                + "              <description>Some Valuable Text</description>"
                 + "              <name>campaignFile</name>" + "              <className>java.lang.String</className>"
                 + "              <readable>true</readable>" + "              <writable>true</writable>"
                 + "              <mandatory>false</mandatory>" + "              <enumProperty>false</enumProperty>"
@@ -142,6 +143,8 @@ public class TestXStreamCatalogParser extends GWTTestCase
 
         AccessibleField field1 = clazz.getAccessibleFields().get("campaignFile");
         assertNotNull(field0);
+        assertEquals("campaignFile", field1.getName());
+        assertEquals("Some Valuable Text", field1.getDescription());
         assertTrue(field1.getReadable());
         assertTrue(field1.getWritable());
         assertEquals("java.lang.String", field1.getClassName());

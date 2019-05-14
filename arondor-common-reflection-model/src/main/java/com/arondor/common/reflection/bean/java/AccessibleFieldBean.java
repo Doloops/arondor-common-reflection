@@ -118,11 +118,18 @@ public class AccessibleFieldBean implements AccessibleField
         this.writable = true;
     }
 
+    @Override
     public String getName()
     {
         return name;
     }
 
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    @Override
     public String getClassName()
     {
         return className;
@@ -134,6 +141,7 @@ public class AccessibleFieldBean implements AccessibleField
 
     }
 
+    @Override
     public String getDescription()
     {
         return description;
@@ -144,6 +152,7 @@ public class AccessibleFieldBean implements AccessibleField
         this.description = description;
     }
 
+    @Override
     public boolean isIs()
     {
         return is;
@@ -154,11 +163,13 @@ public class AccessibleFieldBean implements AccessibleField
         this.is = is;
     }
 
+    @Override
     public boolean getReadable()
     {
         return readable;
     }
 
+    @Override
     public boolean getWritable()
     {
         return writable;
@@ -171,6 +182,7 @@ public class AccessibleFieldBean implements AccessibleField
         this.genericParameterClassList = genericParameterClassList;
     }
 
+    @Override
     public List<String> getGenericParameterClassList()
     {
         return genericParameterClassList;
@@ -178,6 +190,7 @@ public class AccessibleFieldBean implements AccessibleField
 
     private String declaredInClass;
 
+    @Override
     public String getDeclaredInClass()
     {
         return declaredInClass;
@@ -188,6 +201,7 @@ public class AccessibleFieldBean implements AccessibleField
         this.declaredInClass = declaredInClass;
     }
 
+    @Override
     public boolean isMandatory()
     {
         return mandatory;
@@ -198,6 +212,7 @@ public class AccessibleFieldBean implements AccessibleField
         this.mandatory = mandatory;
     }
 
+    @Override
     public String getDefaultValue()
     {
         return defaultValue;
@@ -213,6 +228,7 @@ public class AccessibleFieldBean implements AccessibleField
         this.enumProperty = enumProperty;
     }
 
+    @Override
     public boolean isEnumProperty()
     {
         return enumProperty;

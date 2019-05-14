@@ -137,6 +137,8 @@ public class GWTAccessibleClassCatalogParser
                 "com.arondor.common.reflection.bean.java.AccessibleFieldBean");
 
         AccessibleFieldBean fieldBean = new AccessibleFieldBean();
+        fieldBean.setName(getChildValue(fieldElement, "name"));
+        fieldBean.setDescription(getChildValue(fieldElement, "description"));
         fieldBean.setClassName(getChildValue(fieldElement, "className"));
         if ("true".equals(getChildValue(fieldElement, "readable")))
         {
