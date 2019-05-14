@@ -112,6 +112,7 @@ public class ReflectionDesignerPresenter
 
         menuDisplay.getSaveButton().addClickHandler(new ClickHandler()
         {
+            @Override
             public void onClick(ClickEvent event)
             {
 
@@ -120,6 +121,7 @@ public class ReflectionDesignerPresenter
 
         menuDisplay.getLoadConfigButton().addClickHandler(new ClickHandler()
         {
+            @Override
             public void onClick(ClickEvent event)
             {
                 String context = menuDisplay.getLoadConfigContext();
@@ -129,6 +131,7 @@ public class ReflectionDesignerPresenter
 
         menuDisplay.getLoadLibsButton().addClickHandler(new ClickHandler()
         {
+            @Override
             public void onClick(ClickEvent event)
             {
                 String context = menuDisplay.getLoadLibsContext();
@@ -138,11 +141,13 @@ public class ReflectionDesignerPresenter
                 SERVICE.loadLib(context, packagePrefixes, new AsyncCallback<Void>()
                 {
 
+                    @Override
                     public void onFailure(Throwable caught)
                     {
                         Window.alert("Could not parse" + caught);
                     }
 
+                    @Override
                     public void onSuccess(Void result)
                     {
                     }
@@ -155,15 +160,15 @@ public class ReflectionDesignerPresenter
 
     protected void readObjectConfiguration(final String context)
     {
-        // final String context =
-        // "file:///home/caroline/ARender-Rendition-2.2.2-rc0/conf/arender-rendition.xml";
         SERVICE.getObjectConfigurationMap(context, new AsyncCallback<ObjectConfigurationMap>()
         {
+            @Override
             public void onSuccess(ObjectConfigurationMap result)
             {
                 objectConfigurationMapPresenter.setObjectConfigurationMap(result);
             }
 
+            @Override
             public void onFailure(Throwable caught)
             {
                 Window.alert("Error ! context:" + context);
