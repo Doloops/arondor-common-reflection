@@ -7,10 +7,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ListConfiguration;
@@ -32,21 +32,19 @@ public class XMLBeanDefinitionWriter
     private static final Logger LOGGER = Logger.getLogger(XMLBeanDefinitionWriter.class);
 
     /**
-     * Serialize objectConfigurationMap and save it on target xml file
+     * Serialize objectConfigurationMap to a JDOM object
      * 
      * @param objectConfigurationMap
-     *            {@link ObjectConfigurationMap} : to serialize and save to
-     *            target file
-     * @param path
-     * @throws IOException
+     *            object configuration to serialize
+     * @return a JDOM Document
      */
-    public void write(ObjectConfigurationMap objectConfigurationMap, String path) throws IOException
+    public Document write(ObjectConfigurationMap objectConfigurationMap)
     {
 
         if (objectConfigurationMap == null || objectConfigurationMap.isEmpty())
         {
             LOGGER.warn("ObjectConfigurationMap is empty, skipping objectConfiguration writting");
-            return;
+            return null;
         }
 
         Element rootElement = initConfigurationSerializing();
@@ -66,8 +64,25 @@ public class XMLBeanDefinitionWriter
          * Xml document construction and save it as target file
          */
         Document document = new Document(rootElement);
-        writeConfigurationFile(path, document);
+        return document;
+    }
 
+    /**
+     * Serialize objectConfigurationMap and save it on target xml file
+     * 
+     * @param objectConfigurationMap
+     *            {@link ObjectConfigurationMap} : to serialize and save to
+     *            target file
+     * @param path
+     * @throws IOException
+     */
+    public void write(ObjectConfigurationMap objectConfigurationMap, String path) throws IOException
+    {
+        Document document = write(objectConfigurationMap);
+        if (document != null)
+        {
+            writeConfigurationFile(path, document);
+        }
     }
 
     /**
@@ -356,7 +371,7 @@ public class XMLBeanDefinitionWriter
      * @param path
      * @param document
      * @throws IOException
-     * @throws
+     *             @throws
      */
     private void writeConfigurationFile(String path, Document document) throws IOException
     {

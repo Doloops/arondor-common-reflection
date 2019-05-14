@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jdom.Namespace;
+import org.jdom2.Namespace;
 
 /**
  * Final class to store all tags name and global attribute used by
@@ -17,7 +17,8 @@ public final class XMLBeanTagsConstant
 {
 
     /**
-     * List of tags used by XMLBeanDefinitionWriter to serialize objectConfigurationMap
+     * List of tags used by XMLBeanDefinitionWriter to serialize
+     * objectConfigurationMap
      */
     public static final String ALL_BEANS_TAG = "beans";
 
@@ -52,7 +53,8 @@ public final class XMLBeanTagsConstant
     public static final String REF_TAG = "ref";
 
     /**
-     * Default Namespace used by XMLBeanDefinitionWriter to serialize objectConfigurationMap
+     * Default Namespace used by XMLBeanDefinitionWriter to serialize
+     * objectConfigurationMap
      */
     public static final Namespace NAMESPACE = Namespace.getNamespace("http://www.springframework.org/schema/beans");
 
@@ -63,7 +65,8 @@ public final class XMLBeanTagsConstant
             "http://www.springframework.org/schema/context");
 
     /**
-     * Default Schema Location used by XMLBeanDefinitionWriter to serialize objectConfigurationMap
+     * Default Schema Location used by XMLBeanDefinitionWriter to serialize
+     * objectConfigurationMap
      */
     public static final String SCHEMA_LOCATION_NAME = "schemaLocation";
 
