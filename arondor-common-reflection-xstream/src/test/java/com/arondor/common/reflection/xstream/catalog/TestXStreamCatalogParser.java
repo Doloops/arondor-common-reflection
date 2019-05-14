@@ -127,8 +127,26 @@ public class TestXStreamCatalogParser extends GWTTestCase
 
         assertEquals("java.lang.Object", clazz.getSuperclass());
 
-        AccessibleField field = clazz.getAccessibleFields().get("campaignIncantations");
-        assertNotNull(field);
+        assertNotNull(clazz.getInterfaces());
+        assertEquals(2, clazz.getInterfaces().size());
+        assertEquals("java.lang.Object", clazz.getInterfaces().get(0));
+        assertEquals("com.arondor.fast2p8.model.factory.taskflow.CampaignFactory", clazz.getInterfaces().get(1));
+
+        assertNotNull(clazz.getAllInterfaces());
+        assertEquals(2, clazz.getAllInterfaces().size());
+        assertEquals("java.lang.Object", clazz.getAllInterfaces().get(0));
+        assertEquals("com.arondor.fast2p8.model.factory.taskflow.CampaignFactory", clazz.getAllInterfaces().get(1));
+
+        AccessibleField field0 = clazz.getAccessibleFields().get("campaignIncantations");
+        assertNotNull(field0);
+
+        AccessibleField field1 = clazz.getAccessibleFields().get("campaignFile");
+        assertNotNull(field0);
+        assertTrue(field1.getReadable());
+        assertTrue(field1.getWritable());
+        assertEquals("java.lang.String", field1.getClassName());
+        assertEquals("com.arondor.fast2p8.xstream.factory.taskflow.campaign.XMLCampaignFactory",
+                field1.getDeclaredInClass());
     }
 
 }

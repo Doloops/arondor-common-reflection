@@ -98,6 +98,25 @@ public class GWTAccessibleClassCatalogParser
         ac.setSuperclass(getChildValue(entry, "superclass"));
 
         Element classElement = getSingleChild(entry, "com.arondor.common.reflection.bean.java.AccessibleClassBean");
+        ac.setInterfaces(new ArrayList<String>());
+        Element interfacesElement = getSingleChild(classElement, "interfaces");
+        if (interfacesElement != null)
+        {
+            for (Element interfaceElement : getChildrenByTagName(interfacesElement, "string"))
+            {
+                ac.getInterfaces().add(interfaceElement.getFirstChild().toString());
+            }
+        }
+
+        ac.setAllInterfaces(new ArrayList<String>());
+        Element allInterfacesElement = getSingleChild(classElement, "allInterfaces");
+        if (allInterfacesElement != null)
+        {
+            for (Element interfaceElement : getChildrenByTagName(allInterfacesElement, "string"))
+            {
+                ac.getAllInterfaces().add(interfaceElement.getFirstChild().toString());
+            }
+        }
 
         Element accessibleFields = getSingleChild(classElement, "accessibleFields");
         if (accessibleFields != null)
