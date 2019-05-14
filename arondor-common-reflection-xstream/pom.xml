@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.arondor.common</groupId>
 		<artifactId>arondor-common-reflection</artifactId>
-		<version>0.4.2-SNAPSHOT</version>
+		<version>0.4.3-SNAPSHOT</version>
 	</parent>
 	<groupId>com.arondor.common.reflection</groupId>
 	<artifactId>arondor-common-reflection-xstream</artifactId>

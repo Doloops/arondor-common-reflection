@@ -16,7 +16,8 @@
 		<module>arondor-common-reflection-reflect</module>
 		<module>arondor-common-reflection-mbean</module>
 		
-		<module>arondor-common-reflection-gwt</module>		
+		<module>arondor-common-reflection-gwt</module>
+		<module>arondor-common-reflection-xstream</module>		
 		<module>arondor-common-reflection-gwt-standalone</module>
 		<!-- <module>arondor-common-reflection-sample-gwt</module> -->
 	</modules>
