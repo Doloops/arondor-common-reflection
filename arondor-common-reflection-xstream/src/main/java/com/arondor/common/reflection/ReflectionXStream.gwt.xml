@@ -4,4 +4,6 @@
     <source path='xstream'/>
     
     <inherits name="com.google.gwt.xml.XML" />
+    
+    <inherits name='com.arondor.common.reflection.ArondorReflectionModel' />
 </module>

@@ -8,17 +8,17 @@ import org.junit.Test;
 
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ElementConfiguration.ElementConfigurationType;
+import com.arondor.common.reflection.xstream.testing.ChildClass;
+import com.arondor.common.reflection.xstream.testing.OtherChildClass;
+import com.arondor.common.reflection.xstream.testing.ParentClass;
+import com.arondor.common.reflection.xstream.testing.orchard.Apple;
+import com.arondor.common.reflection.xstream.testing.orchard.Banana;
+import com.arondor.common.reflection.xstream.testing.orchard.Fruit;
+import com.arondor.common.reflection.xstream.testing.orchard.FruitBasket;
+import com.arondor.common.reflection.xstream.testing.orchard.SingleFruitBasket;
 import com.arondor.common.reflection.model.config.ListConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
-import com.arondor.common.reflection.xtream.testing.ChildClass;
-import com.arondor.common.reflection.xtream.testing.OtherChildClass;
-import com.arondor.common.reflection.xtream.testing.ParentClass;
-import com.arondor.common.reflection.xtream.testing.orchard.Apple;
-import com.arondor.common.reflection.xtream.testing.orchard.Banana;
-import com.arondor.common.reflection.xtream.testing.orchard.Fruit;
-import com.arondor.common.reflection.xtream.testing.orchard.FruitBasket;
-import com.arondor.common.reflection.xtream.testing.orchard.SingleFruitBasket;
 
 public class TestClassHierarchy extends AbstractTestXStream
 {
