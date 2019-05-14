@@ -35,6 +35,7 @@ import com.arondor.common.reflection.model.config.MapConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
+import com.arondor.common.reflection.xstream.GWTObjectConfigurationSerializer;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -115,6 +116,17 @@ public class ReflectionDesignerPresenter
             @Override
             public void onClick(ClickEvent event)
             {
+                ObjectConfigurationMap map = objectConfigurationMapPresenter
+                        .getObjectConfigurationMap(objectConfigurationFactory);
+                if (map.size() == 1)
+                {
+                    ObjectConfiguration firstOne = map.get(map.keySet().iterator().next());
+
+                    GWTObjectConfigurationSerializer serializer = new GWTObjectConfigurationSerializer();
+                    String xml = serializer.serialize(firstOne);
+
+                    LOG.info("Serialized : " + xml);
+                }
 
             }
         });
