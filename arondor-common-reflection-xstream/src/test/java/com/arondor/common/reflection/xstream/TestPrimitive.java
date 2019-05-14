@@ -15,8 +15,8 @@ import com.arondor.common.reflection.model.config.ElementConfiguration.ElementCo
 import com.arondor.common.reflection.model.config.ListConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
-import com.arondor.common.reflection.xtream.testing.PrimitiveClass;
-import com.arondor.common.reflection.xtream.testing.PrimitiveListClass;
+import com.arondor.common.reflection.xstream.testing.PrimitiveClass;
+import com.arondor.common.reflection.xstream.testing.PrimitiveListClass;
 
 public class TestPrimitive extends AbstractTestXStream
 {
@@ -46,13 +46,6 @@ public class TestPrimitive extends AbstractTestXStream
 
         ElementConfiguration ec2 = oc.getFields().get("stringValue");
         Assert.assertEquals("Some string", ((PrimitiveConfiguration) ec2).getValue());
-
-    }
-
-    @Test
-    public void testPrimitive0_Instantiate()
-    {
-
     }
 
     @Test

@@ -1,4 +1,4 @@
-package com.arondor.common.reflection.xtream.testing;
+package com.arondor.common.reflection.xstream.testing;
 
 public class ChildClass
 {

@@ -73,7 +73,23 @@
 			<version>${gwt.version}</version>
 			<scope>provided</scope>
 		</dependency>		
+
+
 		
+		<dependency>
+			<groupId>com.arondor.common.reflection</groupId>
+			<artifactId>arondor-common-reflection-api</artifactId>
+			<version>0.4.3-SNAPSHOT</version>
+			<scope>provided</scope>
+			<classifier>sources</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.arondor.common.reflection</groupId>
+			<artifactId>arondor-common-reflection-model</artifactId>
+			<version>0.4.3-SNAPSHOT</version>
+			<scope>provided</scope>
+			<classifier>sources</classifier>
+		</dependency>		
 	</dependencies>
 
 	<build>

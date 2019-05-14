@@ -1,4 +1,4 @@
-package com.arondor.common.reflection.xtream.testing.orchard;
+package com.arondor.common.reflection.xstream.testing.orchard;
 
 import java.util.List;
 
