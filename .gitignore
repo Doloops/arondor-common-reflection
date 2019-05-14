@@ -9,3 +9,7 @@ reflection-cache.tmp
 */.gitignore
 arondor-common-reflection-gwt-standalone/src/main/webapp/WEB-INF/deploy
 arondor-common-reflection-gwt-standalone/src/main/webapp/ArondorReflectionGWT
+arondor-common-reflection-gwt-standalone/www-test
+arondor-common-reflection-gwt-standalone/reflection.log*
+arondor-common-reflection-xstream/war
+arondor-common-reflection-xstream/www-test
