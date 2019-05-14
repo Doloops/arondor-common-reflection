@@ -29,7 +29,11 @@
 			<artifactId>arondor-common-reflection-gwt</artifactId>
 			<version>0.4.3-SNAPSHOT</version>
 		</dependency>
-		
+		<dependency>
+			<groupId>com.arondor.common.reflection</groupId>
+			<artifactId>arondor-common-reflection-xstream</artifactId>
+			<version>0.4.3-SNAPSHOT</version>
+		</dependency>				
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-service</artifactId>
@@ -64,7 +68,13 @@
 			<scope>provided</scope>
 			<classifier>sources</classifier>
 		</dependency>				
-
+		<dependency>
+			<groupId>com.arondor.common.reflection</groupId>
+			<artifactId>arondor-common-reflection-xstream</artifactId>
+			<version>0.4.3-SNAPSHOT</version>
+			<scope>provided</scope>
+			<classifier>sources</classifier>
+		</dependency>		
 	</dependencies>
 
 	<build>

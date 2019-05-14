@@ -5,6 +5,7 @@
 	<inherits name="com.google.gwt.logging.Logging" />
 
 	<inherits name='com.arondor.common.reflection.gwt.ArondorReflectionGWT' />
+	<inherits name='com.arondor.common.reflection.ReflectionXStream' />
 
 	<inherits name='com.google.gwt.user.theme.clean.Clean' />
 
