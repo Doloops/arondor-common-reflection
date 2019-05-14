@@ -51,7 +51,8 @@ public class SimpleAccessibleClassCatalog implements AccessibleClassCatalog
         stringClass.setAllInterfaces(new ArrayList<String>());
         stringClass.getAllInterfaces().add(Object.class.getName());
 
-        AccessibleFieldBean stringValue = new AccessibleFieldBean("value", "The String value", String.class, true, true);
+        AccessibleFieldBean stringValue = new AccessibleFieldBean("value", "The String value", String.class, true,
+                true);
         stringClass.getAccessibleFields().put(stringValue.getName(), stringValue);
 
         accessibleClassMap.put(stringClass.getName(), stringClass);
@@ -69,22 +70,27 @@ public class SimpleAccessibleClassCatalog implements AccessibleClassCatalog
         this.allowSuperclassesInImplementingClases = allowSuperclassesInImplementingClases;
     }
 
+    @Override
     public void addAccessibleClass(AccessibleClass accessibleClass)
     {
         accessibleClassMap.put(accessibleClass.getName(), accessibleClass);
     }
 
-    public AccessibleClass getAccessibleClass(final String className) throws ClassNotFoundException
+    @Override
+    public AccessibleClass getAccessibleClass(final String className)
     {
         String name = className;
         AccessibleClass accessibleClass = accessibleClassMap.get(name);
         if (accessibleClass == null)
         {
-            throw new ClassNotFoundException("No class " + name + " defined in catalog !");
+            // throw new ClassNotFoundException("No class " + name + " defined
+            // in catalog !");
+            return null;
         }
         return accessibleClass;
     }
 
+    @Override
     public Collection<AccessibleClass> getImplementingAccessibleClasses(String desiredInterfaceName)
     {
         List<AccessibleClass> result = new ArrayList<AccessibleClass>();

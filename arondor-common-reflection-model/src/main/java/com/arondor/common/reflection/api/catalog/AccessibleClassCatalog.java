@@ -42,9 +42,9 @@ public interface AccessibleClassCatalog
      * 
      * @param className
      *            name of the class to retrieve
-     * @return the AccessibleClass
+     * @return the AccessibleClass, or null if no class matched
      */
-    AccessibleClass getAccessibleClass(String className) throws ClassNotFoundException;
+    AccessibleClass getAccessibleClass(String className);
 
     /**
      * Get all parsed AccessibleClass implementing a given interface
