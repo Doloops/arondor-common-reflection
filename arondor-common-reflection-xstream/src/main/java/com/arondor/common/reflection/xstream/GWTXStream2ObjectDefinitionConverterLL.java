@@ -143,7 +143,7 @@ public class GWTXStream2ObjectDefinitionConverterLL
 
     private boolean isList(String guessedClass)
     {
-        return java.util.List.class.getName().equals(guessedClass);
+        return "java.util.List".equals(guessedClass);
     }
 
     private boolean isPrimitive(Element element)
