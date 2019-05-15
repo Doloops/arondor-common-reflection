@@ -1,9 +1,11 @@
 <!DOCTYPE module PUBLIC "//gwt-module/"
         "http://google-web-toolkit.googlecode.com/svn/tags/1.6.2/distro-source/core/src/gwt-module.dtd">
 <module rename-to="ReflectionXStreamTest">
-    <source path='xstream'/>
-    
+   	<inherits name='com.google.gwt.core.Core' />
+    	
     <inherits name="com.google.gwt.xml.XML" />
     
     <inherits name='com.arondor.common.reflection.ArondorReflectionModel' />
+
+    <source path='xstream'/>
 </module>

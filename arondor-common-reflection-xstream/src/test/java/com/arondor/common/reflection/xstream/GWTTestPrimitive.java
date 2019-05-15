@@ -12,13 +12,11 @@ import com.google.gwt.junit.client.GWTTestCase;
 public class GWTTestPrimitive extends GWTTestCase
 {
     private static final Logger LOG = Logger.getLogger(GWTTestPrimitive.class.getName());
-    // private static final Logger LOG =
-    // Logger.getLogger(GWTTestPrimitive.class);
 
     @Override
     public String getModuleName()
     {
-        return "com.arondor.common.reflection.ReflectionXStreamTest";
+        return "com.arondor.common.reflection.ReflectionXStream";
     }
 
     public void testPrimitive0_Parse0()

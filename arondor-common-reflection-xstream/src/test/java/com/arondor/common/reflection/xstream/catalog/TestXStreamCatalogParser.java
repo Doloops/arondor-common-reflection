@@ -11,7 +11,7 @@ public class TestXStreamCatalogParser extends GWTTestCase
     @Override
     public String getModuleName()
     {
-        return "com.arondor.common.reflection.ReflectionXStreamTest";
+        return "com.arondor.common.reflection.ReflectionXStream";
     }
 
     public void testSimple()
