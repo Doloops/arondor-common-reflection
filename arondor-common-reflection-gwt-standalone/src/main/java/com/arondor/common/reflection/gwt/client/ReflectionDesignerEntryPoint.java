@@ -19,12 +19,17 @@ import java.util.Collection;
 import java.util.logging.Logger;
 
 import com.arondor.common.reflection.api.catalog.AccessibleClassCatalog;
+import com.arondor.common.reflection.bean.config.ObjectConfigurationFactoryBean;
 import com.arondor.common.reflection.bean.config.ObjectConfigurationMapBean;
 import com.arondor.common.reflection.gwt.client.api.AccessibleClassPresenter;
 import com.arondor.common.reflection.gwt.client.presenter.ReflectionDesignerPresenter;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
+import com.arondor.common.reflection.model.config.ObjectConfiguration;
+import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.arondor.common.reflection.model.java.AccessibleClass;
+import com.arondor.common.reflection.xstream.GWTObjectConfigurationParser;
+import com.arondor.common.reflection.xstream.GWTObjectConfigurationSerializer;
 import com.arondor.common.reflection.xstream.catalog.GWTAccessibleClassCatalogParser;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.Scheduler;
@@ -43,10 +48,16 @@ public class ReflectionDesignerEntryPoint implements EntryPoint
 {
     private static final Logger LOG = Logger.getLogger(ReflectionDesignerEntryPoint.class.getName());
 
+    private final ObjectConfigurationFactory objectConfigurationFactory = new ObjectConfigurationFactoryBean();
+
+    private static ReflectionDesignerEntryPoint INSTANCE;
+
     @Override
     public void onModuleLoad()
     {
-        RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, "/allclasses.xml");
+        INSTANCE = this;
+
+        RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, "allclasses.xml");
         requestBuilder.setCallback(new RequestCallback()
         {
 
@@ -56,12 +67,6 @@ public class ReflectionDesignerEntryPoint implements EntryPoint
                 String xml = response.getText();
                 GWTAccessibleClassCatalogParser parser = new GWTAccessibleClassCatalogParser();
                 final AccessibleClassCatalog catalog = parser.parse(xml);
-                // Collection<AccessibleClass> classes = catalog
-                // .getImplementingAccessibleClasses("com.arondor.fast2p8.model.task.Task");
-                // for (AccessibleClass ac : classes)
-                // {
-                // LOG.info("At Task class : " + ac.getName());
-                // }
 
                 GWTReflectionServiceAsync simpleReflectionService = new GWTReflectionServiceAsync()
                 {
@@ -112,31 +117,62 @@ public class ReflectionDesignerEntryPoint implements EntryPoint
         {
             LOG.warning("Could not send !" + e.getMessage());
         }
-
-        if (true)
-        {
-            return;
-        }
-
-        // GWTReflectionServiceAsync reflectionService =
-        // GWT.create(GWTReflectionService.class);
-        // GWTReflectionServiceAsync cachedReflectionService = new
-        // CacheGWTReflectionServiceAsync(reflectionService);
     }
+
+    private GWTObjectConfigurationSerializer serializer = new GWTObjectConfigurationSerializer();
+
+    private GWTObjectConfigurationParser parser = new GWTObjectConfigurationParser();
+
+    private ObjectConfigurationMap objectConfigurationMap = new ObjectConfigurationMapBean();
+
+    private AccessibleClassPresenter rootPresenter;
 
     private void continueLoading(GWTReflectionServiceAsync reflectionService)
     {
 
         String baseClassName = "com.arondor.fast2p8.model.task.Task";
 
-        ObjectConfigurationMap objectConfigurationMap = new ObjectConfigurationMapBean();
-        // ReflectionDesignerPresenter classPresenter = new
-        // ReflectionDesignerPresenter(reflectionService, baseClassName);
-        AccessibleClassPresenter presenter = AccessibleClassPresenterFactory
-                .createAccessibleClassPresenter(reflectionService, objectConfigurationMap, baseClassName);
+        rootPresenter = AccessibleClassPresenterFactory.createAccessibleClassPresenter(reflectionService,
+                objectConfigurationMap, baseClassName);
 
         RootPanel.get().clear();
-        RootPanel.get().add(presenter.getDisplayWidget());
+        RootPanel.get().add(rootPresenter.getDisplayWidget());
+
+        bindJSNI();
+
+    }
+
+    private native void bindJSNI() /*-{
+		$wnd.getConfiguration = $entry(@com.arondor.common.reflection.gwt.client.ReflectionDesignerEntryPoint::getConfigurationStatic());
+		$wnd.setConfiguration = $entry(@com.arondor.common.reflection.gwt.client.ReflectionDesignerEntryPoint::setConfigurationStatic(Ljava/lang/String;));
+    }-*/;
+
+    public static String getConfigurationStatic()
+    {
+        return INSTANCE.getConfiguration();
+    }
+
+    public String getConfiguration()
+    {
+        ObjectConfiguration objectConfiguration = rootPresenter.getObjectConfiguration(objectConfigurationFactory);
+
+        String xml = serializer.serialize(objectConfiguration);
+
+        LOG.info("Serialized : " + xml);
+
+        return xml;
+    }
+
+    public static void setConfigurationStatic(String xml)
+    {
+        INSTANCE.setConfiguration(xml);
+    }
+
+    public void setConfiguration(String xml)
+    {
+        LOG.info("XML : " + xml);
+        ObjectConfiguration objectConfiguration = parser.parse(xml);
+        rootPresenter.setObjectConfiguration(objectConfiguration);
     }
 
     private void continueLoading__(GWTReflectionServiceAsync reflectionService)
@@ -147,7 +183,6 @@ public class ReflectionDesignerEntryPoint implements EntryPoint
         RootPanel.get().clear();
         RootPanel.get().add(classPresenter.getDisplay());
 
-        // String Window.Location.getParameter("config");
         String allTokens = History.getToken();
         if (allTokens != null)
         {
