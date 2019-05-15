@@ -27,15 +27,7 @@ public class TestDirectoryAccessibleClassParser
         provider.provideClasses(catalog);
 
         Assert.assertNotNull(catalog.getAccessibleClass("org.junit.Test"));
-        try
-        {
-            catalog.getAccessibleClass("org.apache.log4j.Logger");
-            Assert.fail();
-        }
-        catch (ClassNotFoundException e)
-        {
-
-        }
+        Assert.assertNull(catalog.getAccessibleClass("org.apache.log4j.Logger"));
 
     }
 }
