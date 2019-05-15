@@ -28,25 +28,22 @@ public class GWTObjectConfigurationSerializer
     public Element doSerialize(Document document, ElementConfiguration ec, String name)
     {
         String tagName = name, className = null;
-        if (tagName == null)
+        if (ec instanceof ObjectConfiguration)
         {
-            if (ec instanceof ObjectConfiguration)
+            ObjectConfiguration oc = (ObjectConfiguration) ec;
+            if (oc.getObjectName() != null)
             {
-                ObjectConfiguration oc = (ObjectConfiguration) ec;
-                if (oc.getObjectName() != null)
+                tagName = oc.getObjectName();
+            }
+            if (oc.getClassName() != null)
+            {
+                if (tagName == null)
                 {
-                    tagName = oc.getObjectName();
+                    tagName = oc.getClassName();
                 }
-                if (oc.getClassName() != null)
+                else
                 {
-                    if (tagName == null)
-                    {
-                        tagName = oc.getClassName();
-                    }
-                    else
-                    {
-                        className = oc.getClassName();
-                    }
+                    className = oc.getClassName();
                 }
             }
         }
