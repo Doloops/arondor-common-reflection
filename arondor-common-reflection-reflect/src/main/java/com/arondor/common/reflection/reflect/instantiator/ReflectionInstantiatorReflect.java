@@ -108,15 +108,7 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
 
     private synchronized AccessibleClass resolveAccessibleClass(String className) throws ClassNotFoundException
     {
-        AccessibleClass accessibleClass = null;
-        try
-        {
-            accessibleClass = getAccessibleClassCatalog().getAccessibleClass(className);
-        }
-        catch (ClassNotFoundException e)
-        {
-        }
-
+        AccessibleClass accessibleClass = getAccessibleClassCatalog().getAccessibleClass(className);
         if (accessibleClass == null)
         {
             Class<?> clazz = resolveClass(className);
@@ -138,7 +130,6 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
             throws ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException,
             SecurityException
     {
-
         Class<T> clazz = (Class<T>) resolveClass(className);
         if (clazz.equals(String.class))
         {
@@ -229,8 +220,8 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
         }
         else if (objectConfiguration.getConstructorArguments().size() == 1 && Enum.class.isAssignableFrom(clazz))
         {
-            String enumValue = (String) instantiateElementConfiguration(objectConfiguration.getConstructorArguments()
-                    .get(0), String.class.getName(), context);
+            String enumValue = (String) instantiateElementConfiguration(
+                    objectConfiguration.getConstructorArguments().get(0), String.class.getName(), context);
             return (T) Enum.valueOf((Class<Enum>) clazz, enumValue);
         }
         else
@@ -241,8 +232,8 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
             for (int argumentIndex = 0; argumentIndex < constructor.getParameterTypes().length; argumentIndex++)
             {
                 String argumentClassName = constructor.getParameterTypes()[argumentIndex].getName();
-                ElementConfiguration argumentConfiguration = objectConfiguration.getConstructorArguments().get(
-                        argumentIndex);
+                ElementConfiguration argumentConfiguration = objectConfiguration.getConstructorArguments()
+                        .get(argumentIndex);
                 arguments[argumentIndex] = instantiateElementConfiguration(argumentConfiguration, argumentClassName,
                         context);
             }

@@ -51,16 +51,15 @@ public class DefaultReflectionService implements ReflectionService
         this.accessibleClassParser = accessibleClassParser;
     }
 
+    @Override
     public AccessibleClass getAccessibleClass(String clazzName) throws RemoteException
     {
         if (getAccessibleClassCatalog() != null)
         {
-            try
+            AccessibleClass clazz = getAccessibleClassCatalog().getAccessibleClass(clazzName);
+            if (clazz != null)
             {
-                return getAccessibleClassCatalog().getAccessibleClass(clazzName);
-            }
-            catch (ClassNotFoundException e)
-            {
+                return clazz;
             }
         }
         Class<?> clazz;
@@ -75,6 +74,7 @@ public class DefaultReflectionService implements ReflectionService
         }
     }
 
+    @Override
     public Collection<AccessibleClass> getImplementingAccessibleClasses(String name) throws RemoteException
     {
         return getAccessibleClassCatalog().getImplementingAccessibleClasses(name);
