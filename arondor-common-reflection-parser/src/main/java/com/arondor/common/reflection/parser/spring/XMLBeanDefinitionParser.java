@@ -69,6 +69,7 @@ public class XMLBeanDefinitionParser implements ObjectConfigurationMapParser
     {
         applicationContext = new ClassPathXmlApplicationContext(xmlPath)
         {
+            @Override
             protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory)
             {
                 LOGGER.info("Skipping default bean instantiation");
@@ -91,6 +92,7 @@ public class XMLBeanDefinitionParser implements ObjectConfigurationMapParser
         };
     }
 
+    @Override
     public ObjectConfigurationMap parse()
     {
         BeanDefinitionRegistry registry = getBeanDefinitionRegistry();
