@@ -81,7 +81,8 @@ public class XMLBeanDefinitionWriter
         Document document = write(objectConfigurationMap);
         if (document != null)
         {
-            writeConfigurationFile(path, document);
+            XMLOutputter xmlOutputter = new XMLOutputter(Format.getPrettyFormat());
+            xmlOutputter.output(document, new FileOutputStream(path));
         }
     }
 
@@ -363,19 +364,5 @@ public class XMLBeanDefinitionWriter
 
         }
 
-    }
-
-    /**
-     * Write objectConfigurationMap serialized to the target file
-     * 
-     * @param path
-     * @param document
-     * @throws IOException
-     *             @throws
-     */
-    private void writeConfigurationFile(String path, Document document) throws IOException
-    {
-        XMLOutputter xmlOutputter = new XMLOutputter(Format.getPrettyFormat());
-        xmlOutputter.output(document, new FileOutputStream(path));
     }
 }
