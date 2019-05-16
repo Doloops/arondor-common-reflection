@@ -27,8 +27,6 @@ public class XMLBeanDefinitionParserTest
 {
     private static final String XML_PATH = "/spring/simpleBeanDefinition.xml";
 
-    private final String className = "com.arondor.test.TestBean";
-
     private final ObjectConfigurationFactory objectConfigurationFactory = new ObjectConfigurationFactoryBean();
 
     @Test
@@ -41,7 +39,8 @@ public class XMLBeanDefinitionParserTest
     @Test
     public void testParseBeanWithMultiplePrimitiveValue()
     {
-        ObjectConfiguration objectConfiguration = getAndCheckParsedObjectConfiguration("beanWithMultiplePrimitiveValue");
+        ObjectConfiguration objectConfiguration = getAndCheckParsedObjectConfiguration(
+                "beanWithMultiplePrimitiveValue");
         checkIsValidObjectConfigurationForBeanWithMultiplePrimitiveValue(objectConfiguration);
     }
 
@@ -77,7 +76,8 @@ public class XMLBeanDefinitionParserTest
     @Test
     public void testParseBeanWithPrimitiveConstructorArgs()
     {
-        ObjectConfiguration objectConfiguration = getAndCheckParsedObjectConfiguration("beanWithPrimitiveConstructorArgs");
+        ObjectConfiguration objectConfiguration = getAndCheckParsedObjectConfiguration(
+                "beanWithPrimitiveConstructorArgs");
         assertEquals(0, objectConfiguration.getFields().size());
         assertEquals(2, objectConfiguration.getConstructorArguments().size());
         assertEquals("my arg 1",
@@ -89,11 +89,12 @@ public class XMLBeanDefinitionParserTest
     @Test
     public void testParseBeanWithBothPrimitiveAndObjectConstructorArgs()
     {
-        ObjectConfiguration objectConfiguration = getAndCheckParsedObjectConfiguration("beanWithBothPrimitiveAndObjectConstructorArgs");
+        ObjectConfiguration objectConfiguration = getAndCheckParsedObjectConfiguration(
+                "beanWithBothPrimitiveAndObjectConstructorArgs");
         assertEquals(0, objectConfiguration.getFields().size());
         assertEquals(3, objectConfiguration.getConstructorArguments().size());
-        assertEquals("beanWithSinglePrimitiveValue", ((ReferenceConfiguration) objectConfiguration
-                .getConstructorArguments().get(0)).getReferenceName());
+        assertEquals("beanWithSinglePrimitiveValue",
+                ((ReferenceConfiguration) objectConfiguration.getConstructorArguments().get(0)).getReferenceName());
         assertEquals("my arg 1",
                 ((PrimitiveConfiguration) objectConfiguration.getConstructorArguments().get(1)).getValue());
 
@@ -109,7 +110,7 @@ public class XMLBeanDefinitionParserTest
         ObjectConfiguration objectConfiguration = parsedObjectConfiguration.get(beanName);
         assertEquals(beanName, objectConfiguration.getObjectName());
         assertNotNull(objectConfiguration);
-        assertEquals(className, objectConfiguration.getClassName());
+        assertEquals("com.arondor.test.TestBean", objectConfiguration.getClassName());
         return objectConfiguration;
     }
 
@@ -152,23 +153,24 @@ public class XMLBeanDefinitionParserTest
         ObjectConfiguration objectConfiguration = parsedObjectConfiguration.get("printButton");
 
         assertNotNull(objectConfiguration);
-        assertEquals("com.arondor.viewer.client.toppanel.presenter.ButtonPresenter", objectConfiguration.getClassName());
+        assertEquals("com.arondor.viewer.client.toppanel.presenter.ButtonPresenter",
+                objectConfiguration.getClassName());
         assertEquals("printButton", objectConfiguration.getObjectName());
         assertNotNull(objectConfiguration.getConstructorArguments());
         assertEquals(3, objectConfiguration.getConstructorArguments().size());
 
-        assertEquals(ElementConfigurationType.Reference, objectConfiguration.getConstructorArguments().get(0)
-                .getFieldConfigurationType());
-        assertEquals("images#printDocument", ((ReferenceConfiguration) objectConfiguration.getConstructorArguments()
-                .get(0)).getReferenceName());
+        assertEquals(ElementConfigurationType.Reference,
+                objectConfiguration.getConstructorArguments().get(0).getFieldConfigurationType());
+        assertEquals("images#printDocument",
+                ((ReferenceConfiguration) objectConfiguration.getConstructorArguments().get(0)).getReferenceName());
 
-        assertEquals(ElementConfigurationType.Primitive, objectConfiguration.getConstructorArguments().get(1)
-                .getFieldConfigurationType());
+        assertEquals(ElementConfigurationType.Primitive,
+                objectConfiguration.getConstructorArguments().get(1).getFieldConfigurationType());
         assertEquals("Print",
                 ((PrimitiveConfiguration) objectConfiguration.getConstructorArguments().get(1)).getValue());
 
-        assertEquals(ElementConfigurationType.Object, objectConfiguration.getConstructorArguments().get(2)
-                .getFieldConfigurationType());
+        assertEquals(ElementConfigurationType.Object,
+                objectConfiguration.getConstructorArguments().get(2).getFieldConfigurationType());
         assertEquals("com.arondor.viewer.client.toppanel.behavior.document.DocumentPrintHandler",
                 ((ObjectConfiguration) objectConfiguration.getConstructorArguments().get(2)).getClassName());
 
@@ -209,8 +211,8 @@ public class XMLBeanDefinitionParserTest
                 objectConfiguration.getClassName());
         assertEquals(1, objectConfiguration.getConstructorArguments().size());
 
-        assertEquals(ElementConfigurationType.Object, objectConfiguration.getConstructorArguments().get(0)
-                .getFieldConfigurationType());
+        assertEquals(ElementConfigurationType.Object,
+                objectConfiguration.getConstructorArguments().get(0).getFieldConfigurationType());
 
         ObjectConfiguration enumConfig = (ObjectConfiguration) objectConfiguration.getConstructorArguments().get(0);
         assertNotNull(enumConfig);
@@ -219,8 +221,8 @@ public class XMLBeanDefinitionParserTest
 
         assertEquals(1, enumConfig.getConstructorArguments().size());
 
-        assertEquals(ElementConfigurationType.Primitive, enumConfig.getConstructorArguments().get(0)
-                .getFieldConfigurationType());
+        assertEquals(ElementConfigurationType.Primitive,
+                enumConfig.getConstructorArguments().get(0).getFieldConfigurationType());
         assertEquals("UPLOAD_FILE", ((PrimitiveConfiguration) enumConfig.getConstructorArguments().get(0)).getValue());
     }
 
@@ -271,8 +273,8 @@ public class XMLBeanDefinitionParserTest
 
         MapConfiguration mapConfiguration = (MapConfiguration) elementConfiguration;
         assertEquals(1, mapConfiguration.getMapConfiguration().size());
-        ElementConfiguration value = mapConfiguration.getMapConfiguration().get(
-                objectConfigurationFactory.createPrimitiveConfiguration("Key1"));
+        ElementConfiguration value = mapConfiguration.getMapConfiguration()
+                .get(objectConfigurationFactory.createPrimitiveConfiguration("Key1"));
         assertNotNull(value);
         assertEquals(objectConfigurationFactory.createPrimitiveConfiguration("Value1"), value);
     }
