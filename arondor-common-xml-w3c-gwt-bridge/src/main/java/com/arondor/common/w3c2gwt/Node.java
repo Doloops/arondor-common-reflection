@@ -1,4 +1,4 @@
-package com.arondor.common.reflection.w3cgwt;
+package com.arondor.common.w3c2gwt;
 
 import java.util.logging.Logger;
 
@@ -19,7 +19,6 @@ public abstract class Node implements com.google.gwt.xml.client.Node
         {
             return null;
         }
-        LOG.info("At node : " + impl.getNodeType());
         switch (impl.getNodeType())
         {
         case org.w3c.dom.Node.ELEMENT_NODE:

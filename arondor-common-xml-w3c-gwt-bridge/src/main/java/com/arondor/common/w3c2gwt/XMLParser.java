@@ -1,4 +1,4 @@
-package com.arondor.common.reflection.w3cgwt;
+package com.arondor.common.w3c2gwt;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -36,7 +36,7 @@ public class XMLParser
         }
     }
 
-    public static com.arondor.common.reflection.w3cgwt.Document createDocument()
+    public static com.arondor.common.w3c2gwt.Document createDocument()
     {
         try
         {

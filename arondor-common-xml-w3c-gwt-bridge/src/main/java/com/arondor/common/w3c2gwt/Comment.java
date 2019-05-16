@@ -1,4 +1,4 @@
-package com.arondor.common.reflection.w3cgwt;
+package com.arondor.common.w3c2gwt;
 
 public class Comment extends CharacterData implements com.google.gwt.xml.client.Comment
 {

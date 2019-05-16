@@ -7,7 +7,7 @@ public class GWTObjectConfigurationSerializerJava extends GWTObjectConfiguration
 {
     public String serialize(ObjectConfiguration ec)
     {
-        com.arondor.common.reflection.w3cgwt.Document document = com.arondor.common.reflection.w3cgwt.XMLParser
+        com.arondor.common.w3c2gwt.Document document = com.arondor.common.w3c2gwt.XMLParser
                 .createDocument();
         return serialize(document, ec);
     }

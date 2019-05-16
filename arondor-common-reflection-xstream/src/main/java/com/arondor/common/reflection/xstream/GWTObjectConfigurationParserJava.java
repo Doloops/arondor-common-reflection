@@ -8,7 +8,7 @@ public class GWTObjectConfigurationParserJava extends GWTXStream2ObjectDefinitio
     @Override
     public ObjectConfiguration parse(String xmlString)
     {
-        com.arondor.common.reflection.w3cgwt.Document document = com.arondor.common.reflection.w3cgwt.XMLParser
+        com.arondor.common.w3c2gwt.Document document = com.arondor.common.w3c2gwt.XMLParser
                 .parse(xmlString);
         return parseObject(document.getDocumentElement(), null);
     }
