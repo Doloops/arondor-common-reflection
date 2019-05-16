@@ -27,6 +27,7 @@
 		<maven.compiler.target>1.6</maven.compiler.target>
 		<org.springframework.version>4.1.6.RELEASE</org.springframework.version>
 		<gwt.version>2.7.0</gwt.version>
+		<jdom.version>2.0.2</jdom.version>
 	</properties>
 
 	<dependencies>
