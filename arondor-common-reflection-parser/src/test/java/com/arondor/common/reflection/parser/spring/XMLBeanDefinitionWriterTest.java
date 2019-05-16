@@ -18,15 +18,13 @@ import com.arondor.common.reflection.model.config.ReferenceConfiguration;
 
 public class XMLBeanDefinitionWriterTest
 {
-
     private static final Logger LOGGER = Logger.getLogger(XMLBeanDefinitionWriterTest.class);
 
     @Test
     public void testWriteSimple() throws IOException
     {
-
         XMLBeanDefinitionParser parser = new XMLBeanDefinitionParser("spring/arondor-fast2p8-config.xml");
-        
+
         ObjectConfigurationMap expectedObjectConfiguration = parser.parse();
 
         XMLBeanDefinitionWriter writer = new XMLBeanDefinitionWriter();
@@ -40,16 +38,18 @@ public class XMLBeanDefinitionWriterTest
         XMLBeanDefinitionParser parser2 = new XMLBeanDefinitionParser("file:///" + targetFile.getAbsolutePath());
         ObjectConfigurationMap resultObjectConfiguration = parser2.parse();
 
-        for (String confName : expectedObjectConfiguration.keySet()) {            
+        for (String confName : expectedObjectConfiguration.keySet())
+        {
             ObjectConfiguration objectConf = expectedObjectConfiguration.get(confName);
             ObjectConfiguration objectConf2 = resultObjectConfiguration.get(confName);
-            compareObjectConfiguration(objectConf, objectConf2);            
+            compareObjectConfiguration(objectConf, objectConf2);
         }
     }
 
     private void compareObjectConfiguration(ObjectConfiguration expectedObjConf, ObjectConfiguration resultObjConf)
     {
-        LOGGER.debug("Bean definition, name=" + expectedObjConf.getObjectName() + ", class=" + expectedObjConf.getClassName() + ",isSingleton=" + expectedObjConf.isSingleton());
+        LOGGER.debug("Bean definition, name=" + expectedObjConf.getObjectName() + ", class="
+                + expectedObjConf.getClassName() + ",isSingleton=" + expectedObjConf.isSingleton());
         Assert.assertEquals(expectedObjConf.getObjectName(), resultObjConf.getObjectName());
         Assert.assertEquals(expectedObjConf.getClassName(), resultObjConf.getClassName());
         Assert.assertEquals(expectedObjConf.isSingleton(), resultObjConf.isSingleton());
@@ -113,15 +113,16 @@ public class XMLBeanDefinitionWriterTest
                     {
                         ElementConfiguration valueResultElementConf = resultMap.get(keyResultElementConf);
                         compareElementConfiguration(valueExpectedElementConf, valueResultElementConf);
-                        compareElementConfiguration(keyExpectedElementConf, keyResultElementConf);                        
+                        compareElementConfiguration(keyExpectedElementConf, keyResultElementConf);
                     }
                     resultMapIdx++;
                 }
                 expectedMapIdx++;
             }
             break;
-        case Reference :
-            Assert.assertEquals(((ReferenceConfiguration)expectedElementConf).getReferenceName(), ((ReferenceConfiguration)resultElementConf).getReferenceName());
+        case Reference:
+            Assert.assertEquals(((ReferenceConfiguration) expectedElementConf).getReferenceName(),
+                    ((ReferenceConfiguration) resultElementConf).getReferenceName());
             break;
         }
     }
