@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import com.arondor.common.reflection.model.config.ElementConfiguration;
+import com.arondor.common.reflection.model.config.ListConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
 import com.google.gwt.xml.client.Document;
@@ -46,7 +47,15 @@ public class GWTObjectConfigurationSerializerLL
         }
         if (tagName == null)
         {
-            tagName = "{unknown}";
+            if (ec instanceof PrimitiveConfiguration)
+            {
+                tagName = "string";
+            }
+            else
+            {
+                // tagName = "{unknown}";
+                throw new RuntimeException("Could not get a valid tag Name !");
+            }
         }
         Element child = document.createElement(tagName);
         if (className != null)
@@ -66,6 +75,19 @@ public class GWTObjectConfigurationSerializerLL
         {
             PrimitiveConfiguration pc = (PrimitiveConfiguration) ec;
             child.appendChild(document.createTextNode(pc.getValue()));
+        }
+        else if (ec instanceof ListConfiguration)
+        {
+            ListConfiguration lc = (ListConfiguration) ec;
+            for (ElementConfiguration childEc : lc.getListConfiguration())
+            {
+                Element childElement = doSerialize(document, childEc, null);
+                child.appendChild(childElement);
+            }
+        }
+        else
+        {
+            LOG.severe("Not supported ! " + ec.getClass().getName());
         }
         return child;
     }

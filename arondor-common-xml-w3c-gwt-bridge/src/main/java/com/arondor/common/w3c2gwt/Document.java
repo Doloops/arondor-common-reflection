@@ -1,5 +1,13 @@
 package com.arondor.common.w3c2gwt;
 
+import java.io.StringWriter;
+
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 public class Document extends Node implements com.google.gwt.xml.client.Document
 {
     private Document(org.w3c.dom.Document impl)
@@ -80,5 +88,22 @@ public class Document extends Node implements com.google.gwt.xml.client.Document
     public com.google.gwt.xml.client.Node importNode(com.google.gwt.xml.client.Node importedNode, boolean deep)
     {
         return Node._build(_as().importNode(Node._as(importedNode), deep));
+    }
+
+    @Override
+    public String toString()
+    {
+        try
+        {
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer trans = tf.newTransformer();
+            StringWriter sw = new StringWriter();
+            trans.transform(new DOMSource(_as()), new StreamResult(sw));
+            return sw.toString();
+        }
+        catch (TransformerException e)
+        {
+            return "#document";
+        }
     }
 }

@@ -67,6 +67,5 @@ public class AbstractTestXStream
 
         ObjectConfiguration oc = converter.parse(xml);
         return oc;
-
     }
 }
