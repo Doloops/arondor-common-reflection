@@ -130,8 +130,11 @@ public class ReflectionDesignerEntryPoint implements EntryPoint
     private void continueLoading(GWTReflectionServiceAsync reflectionService)
     {
 
-        String baseClassName = "com.arondor.fast2p8.model.task.Task";
-
+        String baseClassName = Window.Location.getParameter("baseClassName");
+        if (baseClassName == null || baseClassName.isEmpty())
+        {
+            baseClassName = "com.arondor.fast2p8.model.task.Task";
+        }
         rootPresenter = AccessibleClassPresenterFactory.createAccessibleClassPresenter(reflectionService,
                 objectConfigurationMap, baseClassName);
 
