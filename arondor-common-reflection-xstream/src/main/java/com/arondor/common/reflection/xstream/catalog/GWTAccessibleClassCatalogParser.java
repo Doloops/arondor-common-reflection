@@ -70,11 +70,11 @@ public class GWTAccessibleClassCatalogParser
         return finalList;
     }
 
-    private AccessibleClassCatalog parseCatalog(Element element)
+    protected AccessibleClassCatalog parseCatalog(Element element)
     {
         SimpleAccessibleClassCatalog catalog = new SimpleAccessibleClassCatalog();
-        catalog.setAllowSuperclassesInImplementingClases(
-                "true".equals(getChildValue(element, "allowSuperclassesInImplementingClases")));
+        String value = getChildValue(element, "allowSuperclassesInImplementingClases");
+        catalog.setAllowSuperclassesInImplementingClases("true".equals(value));
         Element accessibleClassMap = getSingleChild(element, "accessibleClassMap");
         if (accessibleClassMap != null)
         {
@@ -152,7 +152,25 @@ public class GWTAccessibleClassCatalogParser
         {
             fieldBean.setWritable();
         }
+        fieldBean.setMandatory("true".equals(getChildValue(fieldElement, "mandatory")));
+        fieldBean.setEnumProperty("true".equals(getChildValue(fieldElement, "enumProperty")));
         fieldBean.setDeclaredInClass(getChildValue(fieldElement, "declaredInClass"));
+        fieldBean.setIs("true".equals(getChildValue(fieldElement, "is")));
+
+        Element generics = getSingleChild(fieldElement, "genericParameterClassList");
+        if (generics != null && generics.hasChildNodes())
+        {
+            fieldBean.setGenericParameterClassList(new ArrayList<String>());
+            for (int child = 0; child < generics.getChildNodes().getLength(); child++)
+            {
+                Node childNode = generics.getChildNodes().item(child);
+                if (childNode.getNodeType() == Node.ELEMENT_NODE && childNode.getNodeName() == "string"
+                        && childNode.hasChildNodes())
+                {
+                    fieldBean.getGenericParameterClassList().add(childNode.getFirstChild().toString());
+                }
+            }
+        }
         ac.getAccessibleFields().put(key, fieldBean);
     }
 }

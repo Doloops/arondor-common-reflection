@@ -65,4 +65,10 @@ public class CharacterData extends Node implements com.google.gwt.xml.client.Cha
     {
         return _as().substringData(offset, count);
     }
+
+    @Override
+    public String toString()
+    {
+        return getData();
+    }
 }
