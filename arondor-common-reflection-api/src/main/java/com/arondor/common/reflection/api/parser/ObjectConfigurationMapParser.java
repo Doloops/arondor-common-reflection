@@ -22,7 +22,7 @@ import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
  * Defines bean definitions parser. This parser allows to get
  * {@link ObjectConfiguration}
  * 
- * @author cla
+ * @author Christopher Laszczuk
  * 
  */
 public interface ObjectConfigurationMapParser

@@ -14,7 +14,7 @@ public class AbstractTestXStream
 {
     private static final Logger LOG = Logger.getLogger(AbstractTestXStream.class);
 
-    private final W3CXStream2ObjectDefinitionConverter converter = new W3CXStream2ObjectDefinitionConverter();
+    private final ObjectConfigurationReader converter = new GWTObjectConfigurationParserJava();
 
     private final XStream xstream = new XStream(new DomDriver());
 

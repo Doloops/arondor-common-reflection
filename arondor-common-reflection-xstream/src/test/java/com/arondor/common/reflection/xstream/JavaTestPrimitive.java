@@ -1,24 +1,33 @@
 package com.arondor.common.reflection.xstream;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.logging.Logger;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
-import com.google.gwt.junit.client.GWTTestCase;
 
-public class GWTTestPrimitive extends GWTTestCase
+public class JavaTestPrimitive
 {
-    private static final Logger LOG = Logger.getLogger(GWTTestPrimitive.class.getName());
+    private static final Logger LOG = Logger.getLogger(JavaTestPrimitive.class.getName());
 
-    @Override
-    public String getModuleName()
+    private ObjectConfigurationReader parser;
+
+    private ObjectConfigurationSerializer serializer;
+
+    @Before
+    public void init()
     {
-        return "com.arondor.common.reflection.ReflectionXStream";
+        parser = new GWTObjectConfigurationParserJava();
+        serializer = new GWTObjectConfigurationSerializerJava();
     }
 
+    @Test
     public void testPrimitive0_Parse0()
     {
         /*
@@ -34,8 +43,7 @@ public class GWTTestPrimitive extends GWTTestCase
 
         LOG.info("Result xml :" + xml);
 
-        GWTObjectConfigurationParser converter = new GWTObjectConfigurationParser();
-        ObjectConfiguration oc = converter.parse(xml);
+        ObjectConfiguration oc = parser.parse(xml);
 
         assertEquals("com.arondor.common.reflection.xstream.testing.PrimitiveClass", oc.getClassName());
         assertEquals(3, oc.getFields().size());
@@ -48,8 +56,7 @@ public class GWTTestPrimitive extends GWTTestCase
 
         LOG.info("Result xml :" + xml);
 
-        GWTObjectConfigurationParser converter = new GWTObjectConfigurationParser();
-        ObjectConfiguration oc = converter.parse(xml);
+        ObjectConfiguration oc = parser.parse(xml);
 
         assertEquals("a", oc.getClassName());
         assertEquals(1, oc.getFields().size());
@@ -72,12 +79,7 @@ public class GWTTestPrimitive extends GWTTestCase
     public void testPrimitive0_Serialize()
     {
         String xml = "<a class=\"com.arondor.testing.TestCase\"><titi>value23</titi></a>";
-
-        GWTObjectConfigurationParser converter = new GWTObjectConfigurationParser();
-        ObjectConfiguration oc = converter.parse(xml);
-
-        GWTObjectConfigurationSerializer serializer = new GWTObjectConfigurationSerializer();
-
+        ObjectConfiguration oc = parser.parse(xml);
         String resultXml = serializer.serialize(oc);
         LOG.info("resultXml=" + resultXml);
     }

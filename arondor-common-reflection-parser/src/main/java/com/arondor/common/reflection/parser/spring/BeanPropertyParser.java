@@ -81,8 +81,6 @@ abstract class BeanPropertyParser
                     String expAsString = expAsStringWithToken.substring(2, expAsStringWithToken.length() - 1).trim();
                     LOGGER.trace("This property is a SPEL expression: " + expAsString);
 
-                    // String regex = "systemProperties\\['([^\\s]+)'\\]";
-
                     Expression exp = parser.parseExpression(expAsString);
                     StandardEvaluationContext sec = null;
                     if (sec == null)
@@ -173,26 +171,6 @@ abstract class BeanPropertyParser
         return mapConfiguration;
     }
 
-    // private ElementConfiguration parseFieldList(ManagedList<?> value)
-    // {
-    // @SuppressWarnings("unchecked")
-    // ManagedList<TypedStringValue> stringValueList =
-    // (ManagedList<TypedStringValue>) value;
-    //
-    // ListConfiguration listConfiguration =
-    // objectConfigurationFactory.createListConfiguration();
-    // listConfiguration.setListConfiguration(new
-    // ArrayList<ElementConfiguration>());
-    //
-    // for (TypedStringValue stringValue : stringValueList)
-    // {
-    // ElementConfiguration primitiveConfiguration = objectConfigurationFactory
-    // .createPrimitiveConfiguration(stringValue.getValue());
-    // listConfiguration.getListConfiguration().add(primitiveConfiguration);
-    // }
-    // return listConfiguration;
-    // }
-
     private ElementConfiguration parseBeanObject(Object item)
     {
         if (item instanceof TypedStringValue)
@@ -205,7 +183,6 @@ abstract class BeanPropertyParser
         else if (item instanceof RuntimeBeanReference)
         {
             RuntimeBeanReference runtimeBeanReference = (RuntimeBeanReference) item;
-            // return parseBeanDefinition(runtimeBeanReference.getBeanName());
             ReferenceConfiguration reference = objectConfigurationFactory.createReferenceConfiguration();
             reference.setReferenceName(runtimeBeanReference.getBeanName());
             return reference;

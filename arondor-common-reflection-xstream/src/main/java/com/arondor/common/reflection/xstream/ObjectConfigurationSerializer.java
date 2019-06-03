@@ -2,7 +2,7 @@ package com.arondor.common.reflection.xstream;
 
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 
-public interface ObjectDefinitionReader
+public interface ObjectConfigurationSerializer
 {
-    ObjectConfiguration parse(String xmlString);
+    String serialize(ObjectConfiguration ec);
 }

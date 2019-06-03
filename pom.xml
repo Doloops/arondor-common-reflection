@@ -15,6 +15,7 @@
 		<module>arondor-common-reflection-service</module>
 		<module>arondor-common-reflection-reflect</module>
 		<module>arondor-common-reflection-mbean</module>
+		<module>arondor-common-xml-w3c-gwt-bridge</module>
 		
 		<module>arondor-common-reflection-gwt</module>
 		<module>arondor-common-reflection-xstream</module>		
@@ -27,6 +28,7 @@
 		<maven.compiler.target>1.6</maven.compiler.target>
 		<org.springframework.version>4.1.6.RELEASE</org.springframework.version>
 		<gwt.version>2.7.0</gwt.version>
+		<jdom.version>2.0.2</jdom.version>
 	</properties>
 
 	<dependencies>
