@@ -1,6 +1,7 @@
 package com.arondor.common.reflection.parser.spring;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
@@ -8,6 +9,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
+import com.arondor.common.w3c2gwt.XMLParser;
+import com.google.gwt.xml.client.Document;
 
 public class XMLBeanDefinitionWriterTest
 {
@@ -22,9 +25,17 @@ public class XMLBeanDefinitionWriterTest
 
         XMLBeanDefinitionWriter writer = new XMLBeanDefinitionWriter();
 
+        Document document = XMLParser.createDocument();
+
+        writer.write(document, expectedObjectConfigurationMap);
+
         File targetFile = new File("target/mapBeanDefinition.out.xml");
-        targetFile.delete();
-        writer.write(expectedObjectConfigurationMap, targetFile.getAbsolutePath());
+        FileOutputStream fos = new FileOutputStream(targetFile);
+        fos.write(document.toString().getBytes());
+        fos.close();
+        // targetFile.delete();
+        // writer.write(expectedObjectConfigurationMap,
+        // targetFile.getAbsolutePath());
 
         Assert.assertTrue("Target " + targetFile.getAbsolutePath() + " does not exist", targetFile.exists());
 

@@ -4,8 +4,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jdom2.Namespace;
-
 /**
  * Final class to store all tags name and global attribute used by
  * XMLBeanDefinitionWriter
@@ -56,7 +54,40 @@ public final class XMLBeanTagsConstant
      * Default Namespace used by XMLBeanDefinitionWriter to serialize
      * objectConfigurationMap
      */
-    public static final Namespace NAMESPACE = Namespace.getNamespace("http://www.springframework.org/schema/beans");
+    public static class Namespace
+    {
+        private final String prefix;
+
+        private final String uri;
+
+        public Namespace(String prefix, String uri)
+        {
+            this.prefix = prefix;
+            this.uri = uri;
+        }
+
+        public static Namespace getNamespace(String uri)
+        {
+            return new Namespace(null, uri);
+        }
+
+        public static Namespace getNamespace(String prefix, String uri)
+        {
+            return new Namespace(prefix, uri);
+        }
+
+        public String getPrefix()
+        {
+            return prefix;
+        }
+
+        public String getUri()
+        {
+            return uri;
+        }
+    }
+
+    public static final Namespace NAMESPACE_BEANS = Namespace.getNamespace("http://www.springframework.org/schema/beans");
 
     public static final Namespace NAMESPACE_XSI = Namespace.getNamespace("xsi",
             "http://www.w3.org/2001/XMLSchema-instance");
