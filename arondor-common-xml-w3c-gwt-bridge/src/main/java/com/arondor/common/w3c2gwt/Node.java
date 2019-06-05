@@ -29,6 +29,8 @@ public abstract class Node implements com.google.gwt.xml.client.Node
             return (T) new Text((org.w3c.dom.Text) impl);
         case org.w3c.dom.Node.CDATA_SECTION_NODE:
             return (T) new CDATASection((org.w3c.dom.CDATASection) impl);
+        case org.w3c.dom.Node.COMMENT_NODE:
+            return (T) new Comment((org.w3c.dom.Comment) impl);
         }
         throw new IllegalArgumentException(
                 "Not supported : type=" + impl.getNodeType() + ", class=" + impl.getClass().getName());
