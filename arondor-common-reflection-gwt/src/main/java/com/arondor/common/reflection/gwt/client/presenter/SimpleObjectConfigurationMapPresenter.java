@@ -30,8 +30,8 @@ import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
 import com.google.gwt.user.client.ui.IsWidget;
 
-public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter implements
-        ObjectConfigurationMapPresenter
+public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
+        implements ObjectConfigurationMapPresenter
 {
 
     private static final List<String> GENERIC_TYPES = new ArrayList<String>();
@@ -51,7 +51,7 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter 
             ObjectConfigurationMapDisplay mapDisplay)
     {
         super(rpcService, null, fieldName, GENERIC_TYPES, mapDisplay);
-        mapDisplay.setNodeName("Shared Objects");
+        mapDisplay.setNodeName(fieldName);
     }
 
     /**
@@ -73,16 +73,19 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter 
             this.value = value;
         }
 
+        @Override
         public ElementConfigurationType getFieldConfigurationType()
         {
             return ElementConfigurationType.Primitive;
         }
 
+        @Override
         public String getValue()
         {
             return value;
         }
 
+        @Override
         public void setValue(String value)
         {
             this.value = value;
@@ -90,6 +93,7 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter 
 
     }
 
+    @Override
     public void setObjectConfigurationMap(ObjectConfigurationMap objectConfigurationMap)
     {
         if (objectConfigurationMap == null)
@@ -103,21 +107,22 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter 
         }
     }
 
+    @Override
     public ObjectConfigurationMap getObjectConfigurationMap(ObjectConfigurationFactory objectConfigurationFactory)
     {
         ObjectConfigurationMap objectConfigurationMap = objectConfigurationFactory.createObjectConfigurationMap();
         for (KeyValuePresenterPair presenter : getKeyValuePresenters())
         {
-            ElementConfiguration keyElementConfiguration = presenter.getKeyPresenter().getElementConfiguration(
-                    objectConfigurationFactory);
+            ElementConfiguration keyElementConfiguration = presenter.getKeyPresenter()
+                    .getElementConfiguration(objectConfigurationFactory);
             if (!(keyElementConfiguration instanceof PrimitiveConfiguration))
             {
                 continue;
             }
             PrimitiveConfiguration primitiveKey = (PrimitiveConfiguration) keyElementConfiguration;
             String keyString = primitiveKey.getValue();
-            ElementConfiguration valueConfiguration = presenter.getValuePresenter().getElementConfiguration(
-                    objectConfigurationFactory);
+            ElementConfiguration valueConfiguration = presenter.getValuePresenter()
+                    .getElementConfiguration(objectConfigurationFactory);
             if (!(valueConfiguration instanceof ObjectConfiguration))
             {
                 continue;
@@ -128,6 +133,7 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter 
         return objectConfigurationMap;
     }
 
+    @Override
     public IsWidget getDisplayWidget()
     {
         return ((ObjectConfigurationMapDisplay) getDisplay()).getDisplayWidget();
