@@ -69,6 +69,7 @@ public class MapTreeNodePresenter implements TreeNodePresenter
         this.objectConfigurationMap = objectConfigurationMap;
     }
 
+    @Override
     public String getFieldName()
     {
         return fieldName;
@@ -90,6 +91,7 @@ public class MapTreeNodePresenter implements TreeNodePresenter
     {
         mapRootDisplay.addElementClickHandler().addClickHandler(new ClickHandler()
         {
+            @Override
             public void onClick(ClickEvent event)
             {
                 addChild();
@@ -98,6 +100,7 @@ public class MapTreeNodePresenter implements TreeNodePresenter
 
         mapRootDisplay.addTreeNodeClearHandler(new TreeNodeClearEvent.Handler()
         {
+            @Override
             public void onTreeNodeClearEvent(TreeNodeClearEvent treeNodeClearEvent)
             {
                 keyValuePresenters.clear();
@@ -130,6 +133,7 @@ public class MapTreeNodePresenter implements TreeNodePresenter
 
         childNode.addTreeNodeClearHandler(new TreeNodeClearEvent.Handler()
         {
+            @Override
             public void onTreeNodeClearEvent(TreeNodeClearEvent treeNodeClearEvent)
             {
                 keyValuePresenters.remove(keyValuePresenterPair);
@@ -138,6 +142,7 @@ public class MapTreeNodePresenter implements TreeNodePresenter
         return keyValuePresenterPair;
     }
 
+    @Override
     public ElementConfiguration getElementConfiguration(ObjectConfigurationFactory objectConfigurationFactory)
     {
         if (!mapRootDisplay.isActive())
@@ -149,10 +154,10 @@ public class MapTreeNodePresenter implements TreeNodePresenter
 
         for (KeyValuePresenterPair keyValuePresenterPair : keyValuePresenters)
         {
-            ElementConfiguration key = keyValuePresenterPair.getKeyPresenter().getElementConfiguration(
-                    objectConfigurationFactory);
-            ElementConfiguration value = keyValuePresenterPair.getValuePresenter().getElementConfiguration(
-                    objectConfigurationFactory);
+            ElementConfiguration key = keyValuePresenterPair.getKeyPresenter()
+                    .getElementConfiguration(objectConfigurationFactory);
+            ElementConfiguration value = keyValuePresenterPair.getValuePresenter()
+                    .getElementConfiguration(objectConfigurationFactory);
             mapConfiguration.getMapConfiguration().put(key, value);
         }
         return mapConfiguration;
@@ -165,6 +170,7 @@ public class MapTreeNodePresenter implements TreeNodePresenter
         keyValuePresenterPair.getValuePresenter().setElementConfiguration(valueConfiguration);
     }
 
+    @Override
     public void setElementConfiguration(ElementConfiguration elementConfiguration)
     {
         if (elementConfiguration instanceof MapConfiguration)
@@ -178,6 +184,7 @@ public class MapTreeNodePresenter implements TreeNodePresenter
         }
     }
 
+    @Override
     public Display getDisplay()
     {
         return mapRootDisplay;
