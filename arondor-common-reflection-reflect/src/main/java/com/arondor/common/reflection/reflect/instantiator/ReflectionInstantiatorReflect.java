@@ -38,6 +38,7 @@ import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.arondor.common.reflection.model.java.AccessibleField;
 import com.arondor.common.reflection.parser.java.JavaAccessibleClassParser;
 import com.arondor.common.reflection.reflect.runtime.SimpleInstantiationContext;
+import com.arondor.common.reflection.util.StrongReference;
 
 public class ReflectionInstantiatorReflect implements ReflectionInstantiator
 {
@@ -154,6 +155,22 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
             InvocationTargetException
     {
         String className = objectConfiguration.getClassName();
+        if (StrongReference.CLASSNAME.contentEquals(className))
+        {
+            if (objectConfiguration.getConstructorArguments().size() == 1
+                    && objectConfiguration.getConstructorArguments().get(0) != null
+                    && objectConfiguration.getConstructorArguments().get(0) instanceof ReferenceConfiguration)
+            {
+                ReferenceConfiguration referenceConfiguration = (ReferenceConfiguration) objectConfiguration
+                        .getConstructorArguments().get(0);
+                return instantiateElementConfiguration(referenceConfiguration, null, context);
+            }
+            else
+            {
+                throw new IllegalArgumentException(
+                        "Invalid StrongReference objectConfiguration !" + objectConfiguration);
+            }
+        }
         Class<?> clazz = resolveClass(className);
         return doInstantiateObject(objectConfiguration, context, clazz);
     }

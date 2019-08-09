@@ -213,8 +213,8 @@ public class TestReflectionInstantiatorReflect
             configurationA.setClassName(TestClassA.class.getName());
             configurationA.setFields(new HashMap<String, ElementConfiguration>());
 
-            ElementConfiguration fieldConf2 = objectConfigurationFactory.createPrimitiveConfiguration(Integer
-                    .toString(10000 + i));
+            ElementConfiguration fieldConf2 = objectConfigurationFactory
+                    .createPrimitiveConfiguration(Integer.toString(10000 + i));
             configurationA.getFields().put("property2", fieldConf2);
 
             fieldConfList.getListConfiguration().add(configurationA);
@@ -344,7 +344,42 @@ public class TestReflectionInstantiatorReflect
 
         assertEquals("Referenced value from TestClassA", classA.getProperty1());
         assertEquals(777802, classA.getProperty2());
+    }
 
+    @Test
+    public void testClassA_StrongReference_To_ClassA()
+    {
+        ObjectConfiguration configurationA = objectConfigurationFactory.createObjectConfiguration();
+        configurationA.setSingleton(true);
+        configurationA.setClassName(TestClassA.class.getName());
+        configurationA.setFields(new HashMap<String, ElementConfiguration>());
+
+        ElementConfiguration fieldConf1 = objectConfigurationFactory
+                .createPrimitiveConfiguration("Referenced value from TestClassA");
+        configurationA.getFields().put("property1", fieldConf1);
+
+        ElementConfiguration fieldConf2 = objectConfigurationFactory.createPrimitiveConfiguration("777802");
+        configurationA.getFields().put("property2", fieldConf2);
+
+        ObjectConfigurationMap configurationMap = objectConfigurationFactory.createObjectConfigurationMap();
+        String objectName = "myClassA";
+        configurationMap.put(objectName, configurationA);
+        instantationContext.addSharedObjectConfigurations(configurationMap);
+
+        ReferenceConfiguration referenceClassA = objectConfigurationFactory.createReferenceConfiguration();
+        referenceClassA.setReferenceName(objectName);
+
+        ObjectConfiguration objectReferenceClassA = objectConfigurationFactory
+                .createObjectConfigurationFromReference(referenceClassA);
+
+        Object objectA = reflectionInstantiator.instanciateObject(objectReferenceClassA, Object.class,
+                instantationContext);
+        assertNotNull(objectA);
+        assertTrue("Invalid class " + objectA.getClass().getName(), objectA instanceof TestClassA);
+        TestClassA classA = (TestClassA) objectA;
+
+        assertEquals("Referenced value from TestClassA", classA.getProperty1());
+        assertEquals(777802, classA.getProperty2());
     }
 
     @Test
