@@ -33,6 +33,7 @@ import com.arondor.common.reflection.model.config.ReferenceConfiguration;
 import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.arondor.common.reflection.model.java.AccessibleField;
 import com.arondor.common.reflection.util.PrimitiveTypeUtil;
+import com.arondor.common.reflection.util.StrongReference;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -85,11 +86,13 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
     {
         implementingClassPresenter.addValueChangeHandler(new ValueChangeHandler<ImplementingClass>()
         {
+            @Override
             public void onValueChange(ValueChangeEvent<ImplementingClass> event)
             {
                 if (event.getValue().isReference())
                 {
-                    classTreeNodePresenterMap.clear();
+                    clearFields();
+                    display.setActive(true);
                 }
                 else
                 {
@@ -100,10 +103,11 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
 
         display.addTreeNodeClearHandler(new TreeNodeClearEvent.Handler()
         {
+            @Override
             public void onTreeNodeClearEvent(TreeNodeClearEvent treeNodeClearEvent)
             {
                 implementingClassPresenter.setImplementingClass(ImplementingClass.NULL_CLASS);
-                classTreeNodePresenterMap.clear();
+                clearFields();
             }
         });
     }
@@ -112,15 +116,24 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
     {
         rpcService.getAccessibleClass(className, new AsyncCallback<AccessibleClass>()
         {
+            @Override
             public void onSuccess(AccessibleClass result)
             {
                 updateAccessibleClass(result, objectConfiguration);
             }
 
+            @Override
             public void onFailure(Throwable caught)
             {
+                clearFields();
             }
         });
+    }
+
+    private void clearFields()
+    {
+        classTreeNodePresenterMap.clear();
+        display.clear();
     }
 
     private void updateAccessibleClass(AccessibleClass accessibleClass, ObjectConfiguration objectConfiguration)
@@ -129,8 +142,7 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
                 + (accessibleClass != null ? accessibleClass.getName() : null) + ", objectConfiguration="
                 + objectConfiguration + ")");
 
-        classTreeNodePresenterMap.clear();
-        display.clear();
+        clearFields();
 
         if (accessibleClass != null)
         {
@@ -139,8 +151,8 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
 
             if (objectConfiguration != null)
             {
-                implementingClassPresenter.setImplementingClass(new ImplementingClass(false, objectConfiguration
-                        .getClassName()));
+                implementingClassPresenter
+                        .setImplementingClass(new ImplementingClass(false, objectConfiguration.getClassName()));
 
                 if (PrimitiveTypeUtil.isPrimitiveType(objectConfiguration.getClassName())
                         && objectConfiguration.getConstructorArguments().size() == 1)
@@ -181,13 +193,14 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
 
         for (AccessibleField accessibleField : sortedAccessibleFields)
         {
-            TreeNodePresenter childPresenter = TreeNodePresenterFactory.getInstance().createChildNodePresenter(
-                    rpcService, objectConfigurationMap, display, accessibleField);
+            TreeNodePresenter childPresenter = TreeNodePresenterFactory.getInstance()
+                    .createChildNodePresenter(rpcService, objectConfigurationMap, display, accessibleField);
             LOG.finest("At field=" + accessibleField.getName() + ", created childPresenter=" + childPresenter);
             classTreeNodePresenterMap.put(accessibleField.getName(), childPresenter);
         }
     }
 
+    @Override
     public String getFieldName()
     {
         return fieldName;
@@ -198,11 +211,13 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
         return implementingClassPresenter.getBaseClassName();
     }
 
+    @Override
     public ClassDisplay getDisplay()
     {
         return display;
     }
 
+    @Override
     public ElementConfiguration getElementConfiguration(ObjectConfigurationFactory objectConfigurationFactory)
     {
         if (implementingClassPresenter.getImplementingClass() == null
@@ -261,8 +276,8 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
     {
         for (Map.Entry<String, TreeNodePresenter> presentersEntry : classTreeNodePresenterMap.entrySet())
         {
-            ElementConfiguration childConfiguration = presentersEntry.getValue().getElementConfiguration(
-                    objectConfigurationFactory);
+            ElementConfiguration childConfiguration = presentersEntry.getValue()
+                    .getElementConfiguration(objectConfigurationFactory);
             if (childConfiguration != null)
             {
                 objectConfiguration.getFields().put(presentersEntry.getKey(), childConfiguration);
@@ -270,19 +285,40 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
         }
     }
 
+    @Override
     public void setElementConfiguration(ElementConfiguration elementConfiguration)
     {
         LOG.finest("setElementConfiguration :" + elementConfiguration);
         if (elementConfiguration instanceof ObjectConfiguration)
         {
             ObjectConfiguration objectConfiguration = (ObjectConfiguration) elementConfiguration;
-            updateAccessibleClass(objectConfiguration.getClassName(), objectConfiguration);
+            if (StrongReference.CLASSNAME.equals(objectConfiguration.getClassName()))
+            {
+                if (objectConfiguration.getConstructorArguments().size() == 1
+                        && objectConfiguration.getConstructorArguments().get(0) != null
+                        && objectConfiguration.getConstructorArguments().get(0) instanceof ReferenceConfiguration)
+                {
+                    ReferenceConfiguration referenceConfiguration = (ReferenceConfiguration) objectConfiguration
+                            .getConstructorArguments().get(0);
+                    setElementConfiguration(referenceConfiguration);
+                }
+                else
+                {
+                    throw new RuntimeException("StrongReference format not supported !" + elementConfiguration);
+                }
+            }
+            else
+            {
+                updateAccessibleClass(objectConfiguration.getClassName(), objectConfiguration);
+            }
         }
         else if (elementConfiguration instanceof ReferenceConfiguration)
         {
+            clearFields();
             ReferenceConfiguration referenceConfiguration = (ReferenceConfiguration) elementConfiguration;
-            implementingClassPresenter.setImplementingClass(new ImplementingClass(true, referenceConfiguration
-                    .getReferenceName()));
+            implementingClassPresenter
+                    .setImplementingClass(new ImplementingClass(true, referenceConfiguration.getReferenceName()));
+            display.setActive(true);
         }
     }
 

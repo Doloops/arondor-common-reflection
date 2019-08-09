@@ -25,6 +25,8 @@ public interface ObjectConfigurationFactory
 {
     ObjectConfiguration createObjectConfiguration();
 
+    ObjectConfiguration createObjectConfigurationFromReference(ReferenceConfiguration referenceConfiguration);
+
     PrimitiveConfiguration createPrimitiveConfiguration();
 
     PrimitiveConfiguration createPrimitiveConfiguration(String value);

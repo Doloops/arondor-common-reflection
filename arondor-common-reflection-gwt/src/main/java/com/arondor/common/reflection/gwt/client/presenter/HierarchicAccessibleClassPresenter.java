@@ -23,6 +23,7 @@ import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
+import com.arondor.common.reflection.model.config.ReferenceConfiguration;
 import com.google.gwt.user.client.ui.IsWidget;
 
 public class HierarchicAccessibleClassPresenter implements AccessibleClassPresenter
@@ -52,11 +53,12 @@ public class HierarchicAccessibleClassPresenter implements AccessibleClassPresen
 
     }
 
+    @Override
     public ObjectConfiguration getObjectConfiguration(ObjectConfigurationFactory objectConfigurationFactory)
     {
-        ElementConfiguration elementConfiguration = classTreePresenter.getRootNodePresenter().getElementConfiguration(
-                objectConfigurationFactory);
-        LOG.finest("got root elementConfiguration=" + elementConfiguration);
+        ElementConfiguration elementConfiguration = classTreePresenter.getRootNodePresenter()
+                .getElementConfiguration(objectConfigurationFactory);
+        LOG.finest("Got root elementConfiguration=" + elementConfiguration);
         if (elementConfiguration == null)
         {
             return null;
@@ -65,9 +67,15 @@ public class HierarchicAccessibleClassPresenter implements AccessibleClassPresen
         {
             return (ObjectConfiguration) elementConfiguration;
         }
+        if (elementConfiguration instanceof ReferenceConfiguration)
+        {
+            return objectConfigurationFactory
+                    .createObjectConfigurationFromReference((ReferenceConfiguration) elementConfiguration);
+        }
         throw new IllegalArgumentException("Not supported ! elementConfiguration=" + elementConfiguration);
     }
 
+    @Override
     public void setObjectConfiguration(ObjectConfiguration objectConfiguration)
     {
         classTreePresenter.getRootNodePresenter().setElementConfiguration(objectConfiguration);
@@ -78,6 +86,7 @@ public class HierarchicAccessibleClassPresenter implements AccessibleClassPresen
         return display;
     }
 
+    @Override
     public IsWidget getDisplayWidget()
     {
         return getDisplay();

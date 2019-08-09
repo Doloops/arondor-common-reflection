@@ -15,6 +15,9 @@
  */
 package com.arondor.common.reflection.bean.config;
 
+import java.util.ArrayList;
+
+import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ListConfiguration;
 import com.arondor.common.reflection.model.config.MapConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
@@ -22,25 +25,30 @@ import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
 import com.arondor.common.reflection.model.config.ReferenceConfiguration;
+import com.arondor.common.reflection.util.StrongReference;
 
 public class ObjectConfigurationFactoryBean implements ObjectConfigurationFactory
 {
 
+    @Override
     public ObjectConfiguration createObjectConfiguration()
     {
         return new ObjectConfigurationBean();
     }
 
+    @Override
     public ObjectConfigurationMap createObjectConfigurationMap()
     {
         return new ObjectConfigurationMapBean();
     }
 
+    @Override
     public PrimitiveConfiguration createPrimitiveConfiguration()
     {
         return new PrimitiveConfigurationBean();
     }
 
+    @Override
     public PrimitiveConfiguration createPrimitiveConfiguration(String value)
     {
         PrimitiveConfiguration primitiveConfiguration = createPrimitiveConfiguration();
@@ -48,18 +56,31 @@ public class ObjectConfigurationFactoryBean implements ObjectConfigurationFactor
         return primitiveConfiguration;
     }
 
+    @Override
     public ListConfiguration createListConfiguration()
     {
         return new ListConfigurationBean();
     }
 
+    @Override
     public MapConfiguration createMapConfiguration()
     {
         return new MapConfigurationBean();
     }
 
+    @Override
     public ReferenceConfiguration createReferenceConfiguration()
     {
         return new ReferenceConfigurationBean();
+    }
+
+    @Override
+    public ObjectConfiguration createObjectConfigurationFromReference(ReferenceConfiguration referenceConfiguration)
+    {
+        ObjectConfigurationBean objectConfigurationBean = new ObjectConfigurationBean();
+        objectConfigurationBean.setClassName(StrongReference.CLASSNAME);
+        objectConfigurationBean.setConstructorArguments(new ArrayList<ElementConfiguration>());
+        objectConfigurationBean.getConstructorArguments().add(referenceConfiguration);
+        return objectConfigurationBean;
     }
 }
