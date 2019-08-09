@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.arondor.common.reflection.bean.config.ObjectConfigurationFactoryBean;
+import com.arondor.common.reflection.bean.config.ObjectConfigurationMapBean;
 import com.arondor.common.reflection.gwt.client.api.ObjectConfigurationMapPresenter;
 import com.arondor.common.reflection.gwt.client.presenter.fields.KeyValuePresenterPair;
 import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePresenter;
@@ -52,6 +54,7 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
     {
         super(rpcService, null, fieldName, GENERIC_TYPES, mapDisplay);
         mapDisplay.setNodeName(fieldName);
+        super.setObjectConfigurationMap(new ObjectConfigurationMapBean());
     }
 
     /**
@@ -96,14 +99,22 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
     @Override
     public void setObjectConfigurationMap(ObjectConfigurationMap objectConfigurationMap)
     {
-        if (objectConfigurationMap == null)
+        if (objectConfigurationMap != null)
         {
-            return;
+            super.getObjectConfigurationMap().putAll(objectConfigurationMap);
+            for (Map.Entry<String, ObjectConfiguration> entry : objectConfigurationMap.entrySet())
+            {
+                addChild(new MyPrimitiveConfiguration(entry.getKey()), entry.getValue());
+            }
         }
-        super.setObjectConfigurationMap(objectConfigurationMap);
-        for (Map.Entry<String, ObjectConfiguration> entry : objectConfigurationMap.entrySet())
+    }
+
+    @Override
+    public void addExternalConfigurationMap(ObjectConfigurationMap objectConfigurationMap)
+    {
+        if (objectConfigurationMap != null)
         {
-            addChild(new MyPrimitiveConfiguration(entry.getKey()), entry.getValue());
+            super.getObjectConfigurationMap().putAll(objectConfigurationMap);
         }
     }
 
@@ -139,4 +150,13 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
         return ((ObjectConfigurationMapDisplay) getDisplay()).getDisplayWidget();
     }
 
+    @Override
+    protected KeyValuePresenterPair addChild()
+    {
+        /**
+         * Force refresh accessible beans for use as references
+         */
+        addExternalConfigurationMap(getObjectConfigurationMap(new ObjectConfigurationFactoryBean()));
+        return super.addChild();
+    }
 }

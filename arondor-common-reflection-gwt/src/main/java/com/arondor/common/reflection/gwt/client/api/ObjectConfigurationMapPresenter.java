@@ -26,4 +26,11 @@ public interface ObjectConfigurationMapPresenter
     ObjectConfigurationMap getObjectConfigurationMap(ObjectConfigurationFactory objectConfigurationFactory);
 
     IsWidget getDisplayWidget();
+
+    /**
+     * Add external beans as reference
+     *
+     * @param objectConfigurationMap
+     */
+    void addExternalConfigurationMap(ObjectConfigurationMap objectConfigurationMap);
 }
