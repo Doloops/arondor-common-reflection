@@ -28,15 +28,11 @@ public class GWTAccessibleClassCatalogParser
 
     private String getChildValue(Element element, String childName)
     {
-        NodeList childNodes = element.getElementsByTagName(childName);
-        for (int idx = 0; idx < childNodes.getLength(); idx++)
+        Element singleChild = getSingleChild(element, childName);
+        if (singleChild != null && singleChild instanceof Element && singleChild.getChildNodes().getLength() == 1)
         {
-            Node child = childNodes.item(idx);
-            if (child instanceof Element && child.getChildNodes().getLength() == 1)
-            {
-                String content = child.getFirstChild().toString();
-                return content;
-            }
+            String content = singleChild.getFirstChild().toString();
+            return content;
         }
         return "";
     }
@@ -93,11 +89,30 @@ public class GWTAccessibleClassCatalogParser
 
         AccessibleClassBean ac = new AccessibleClassBean();
         ac.setName(key);
-        ac.setAccessibleFields(new HashMap<String, AccessibleField>());
-
-        ac.setSuperclass(getChildValue(entry, "superclass"));
 
         Element classElement = getSingleChild(entry, "com.arondor.common.reflection.bean.java.AccessibleClassBean");
+
+        String description = getChildValue(classElement, "description");
+        if (description != null && !description.equals(""))
+        {
+            ac.setDescription(description);
+        }
+
+        String longDescription = getChildValue(classElement, "longDescription");
+        if (longDescription != null && !longDescription.equals(""))
+        {
+            ac.setLongDescription(longDescription);
+        }
+
+        String defaultBehavior = getChildValue(classElement, "defaultBehavior");
+        if (defaultBehavior != null && !defaultBehavior.equals(""))
+        {
+            ac.setDefaultBehavior(defaultBehavior);
+        }
+        ac.setAccessibleFields(new HashMap<String, AccessibleField>());
+
+        ac.setSuperclass(getChildValue(classElement, "superclass"));
+
         ac.setInterfaces(new ArrayList<String>());
         Element interfacesElement = getSingleChild(classElement, "interfaces");
         if (interfacesElement != null)
@@ -142,6 +157,16 @@ public class GWTAccessibleClassCatalogParser
         if (description != null && !description.equals(""))
         {
             fieldBean.setDescription(description);
+        }
+        String longDescription = getChildValue(fieldElement, "longDescription");
+        if (longDescription != null && !longDescription.equals(""))
+        {
+            fieldBean.setLongDescription(longDescription);
+        }
+        String defaultBehavior = getChildValue(fieldElement, "defaultBehavior");
+        if (defaultBehavior != null && !defaultBehavior.equals(""))
+        {
+            fieldBean.setDefaultBehavior(defaultBehavior);
         }
         fieldBean.setClassName(getChildValue(fieldElement, "className"));
         if ("true".equals(getChildValue(fieldElement, "readable")))
