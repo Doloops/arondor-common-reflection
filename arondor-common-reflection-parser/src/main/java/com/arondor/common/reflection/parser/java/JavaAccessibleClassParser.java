@@ -95,6 +95,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
      *            the field name
      * @return the getter method name, getField()
      */
+    @Override
     public String attributeToGetter(String name)
     {
         return "get" + name.substring(0, 1).toUpperCase() + name.substring(1);
@@ -107,6 +108,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
      *            the field name
      * @return the getter method name, getField()
      */
+    @Override
     public String booleanAttributeToGetter(String name)
     {
         return "is" + name.substring(0, 1).toUpperCase() + name.substring(1);
@@ -119,6 +121,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
      *            the field name
      * @return the setter method name, setField()
      */
+    @Override
     public String attributeToSetter(String name)
     {
         return "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
@@ -431,6 +434,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
 
     }
 
+    @Override
     public AccessibleClass parseAccessibleClass(Class<?> clazz)
     {
         if (DEBUG)
@@ -444,7 +448,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         }
         catch (NoClassDefFoundError e)
         {
-            LOG.warn("Could not get methods for clazz " + clazz.getName());
+            LOG.warn("Could not get methods for clazz " + clazz.getName(), e);
             return null;
         }
         AccessibleClassBean accessClass = createBaseAccessibleClass(clazz);
@@ -569,7 +573,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         Object o = null;
         try
         {
-            o = (Object) clazz.newInstance();
+            o = clazz.newInstance();
         }
         catch (InstantiationException e)
         {
@@ -734,6 +738,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         }
     }
 
+    @Override
     public boolean isPrimitiveType(String className)
     {
         return PrimitiveTypeUtil.isPrimitiveType(className);

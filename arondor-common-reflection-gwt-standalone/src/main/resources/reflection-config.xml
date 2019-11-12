@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
-<beans default-lazy-init="true" default-autowire="no"
-	default-dependency-check="none">
+<beans default-lazy-init="true" default-autowire="no">
 	<bean id="accessibleClassProvider"
 		class="com.arondor.common.reflection.parser.tools.MultipleAccessibleClassProvider">
 		<property name="providers">
@@ -17,7 +16,7 @@
 				</bean>
 				<bean
 					class="com.arondor.common.reflection.parser.tools.CacheAccessibleClassProvider">
-					<property name="cacheFile" value="reflection-cache.tmp"/>
+					<property name="cacheFile" value="reflection-cache.tmp" />
 					<property name="provider">
 						<bean
 							class="com.arondor.common.reflection.parser.java.DirectoryAccessibleClassProvider">
