@@ -21,12 +21,12 @@ import java.lang.annotation.RetentionPolicy;
 
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Description
+public @interface DefaultBehavior
 {
     /**
-     * The short description for with this element
+     * The long description for with this element
      * 
-     * @return the short description for with this element
+     * @return the long description for with this element
      */
     String value();
 }
