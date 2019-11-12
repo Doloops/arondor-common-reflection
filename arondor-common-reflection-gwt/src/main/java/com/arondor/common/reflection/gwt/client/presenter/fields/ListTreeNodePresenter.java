@@ -65,6 +65,7 @@ public class ListTreeNodePresenter implements TreeNodePresenter
     {
         listDisplay.addElementClickHandler().addClickHandler(new ClickHandler()
         {
+            @Override
             public void onClick(ClickEvent event)
             {
                 addChild();
@@ -79,11 +80,11 @@ public class ListTreeNodePresenter implements TreeNodePresenter
     {
         listDisplay.setActive(true);
         final TreeNodePresenter childPresenter = TreeNodePresenterFactory.getInstance().createChildNodePresenter(
-                rpcService, objectConfigurationMap, listDisplay, "Entry", genericType, "Entry", false, null, false,
-                null, null);
+                rpcService, objectConfigurationMap, listDisplay, "Entry", genericType, "Entry");
 
         childPresenter.getDisplay().addTreeNodeClearHandler(new TreeNodeClearEvent.Handler()
         {
+            @Override
             public void onTreeNodeClearEvent(TreeNodeClearEvent treeNodeClearEvent)
             {
                 removeChild(childPresenter);
@@ -99,6 +100,7 @@ public class ListTreeNodePresenter implements TreeNodePresenter
         childPresenters.remove(childPresenter);
     }
 
+    @Override
     public ElementConfiguration getElementConfiguration(ObjectConfigurationFactory objectConfigurationFactory)
     {
         if (!listDisplay.isActive())
@@ -115,6 +117,7 @@ public class ListTreeNodePresenter implements TreeNodePresenter
         return listConfiguration;
     }
 
+    @Override
     public void setElementConfiguration(ElementConfiguration elementConfiguration)
     {
         if (elementConfiguration instanceof ListConfiguration)
@@ -128,11 +131,13 @@ public class ListTreeNodePresenter implements TreeNodePresenter
         }
     }
 
+    @Override
     public String getFieldName()
     {
         return fieldName;
     }
 
+    @Override
     public Display getDisplay()
     {
         return listDisplay;

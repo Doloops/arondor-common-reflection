@@ -122,11 +122,10 @@ public class MapTreeNodePresenter implements TreeNodePresenter
         childNode.setNodeName("Entry");
 
         TreeNodePresenter keyPresenter = TreeNodePresenterFactory.getInstance().createChildNodePresenter(rpcService,
-                objectConfigurationMap, childNode, "Key", genericTypes.get(0), "Key", false, null, false, null, null);
+                objectConfigurationMap, childNode, "Key", genericTypes.get(0), "Key");
 
         TreeNodePresenter valuePresenter = TreeNodePresenterFactory.getInstance().createChildNodePresenter(rpcService,
-                objectConfigurationMap, childNode, "Value", genericTypes.get(1), "Value", false, null, false, null,
-                null);
+                objectConfigurationMap, childNode, "Value", genericTypes.get(1), "Value");
 
         final KeyValuePresenterPair keyValuePresenterPair = new KeyValuePresenterPair(keyPresenter, valuePresenter);
         keyValuePresenters.add(keyValuePresenterPair);

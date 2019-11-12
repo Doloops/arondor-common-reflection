@@ -49,20 +49,31 @@ public class TreeNodePresenterFactory
         String fieldName = accessibleField.getName();
         String fieldClassName = accessibleField.getClassName();
         String fieldDescription = accessibleField.getDescription();
+        String fieldLongDescription = accessibleField.getLongDescription();
+        String fieldDefaultBehavior = accessibleField.getDefaultBehavior();
         boolean mandatory = accessibleField.isMandatory();
         String defaultValue = accessibleField.getDefaultValue();
         boolean enumProperty = accessibleField.isEnumProperty();
         List<String> genericTypes = accessibleField.getGenericParameterClassList();
 
         return createChildNodePresenter(rpcService, objectConfigurationMap, display, fieldName, fieldClassName,
-                fieldDescription, mandatory, defaultValue, enumProperty, accessibleField.getDeclaredInClass(),
-                genericTypes);
+                fieldDescription, fieldLongDescription, fieldDefaultBehavior, mandatory, defaultValue, enumProperty,
+                accessibleField.getDeclaredInClass(), genericTypes);
     }
 
     public TreeNodePresenter createChildNodePresenter(GWTReflectionServiceAsync rpcService,
             ObjectConfigurationMap objectConfigurationMap, TreeNodePresenter.ChildCreatorDisplay display,
-            String fieldName, final String fieldClassName, String fieldDescription, boolean isMandatory,
-            String defaultValue, boolean isEnumProperty, final String classDeclaredIn, List<String> genericTypes)
+            String fieldName, final String fieldClassName, String fieldDescription)
+    {
+        return createChildNodePresenter(rpcService, objectConfigurationMap, display, fieldName, fieldClassName,
+                fieldDescription, null, null, false, null, false, null, null);
+    }
+
+    public TreeNodePresenter createChildNodePresenter(GWTReflectionServiceAsync rpcService,
+            ObjectConfigurationMap objectConfigurationMap, TreeNodePresenter.ChildCreatorDisplay display,
+            String fieldName, final String fieldClassName, String fieldDescription, String fieldLongDescription,
+            String defaultBehavior, boolean isMandatory, String defaultValue, boolean isEnumProperty,
+            final String classDeclaredIn, List<String> genericTypes)
     {
         TreeNodePresenter childPresenter = null;
         if (PrimitiveTypeUtil.isPrimitiveType(fieldClassName))
@@ -88,8 +99,8 @@ public class TreeNodePresenterFactory
         }
         else if (fieldClassName.equals("java.util.Map") && genericTypes != null && genericTypes.size() == 2)
         {
-            LOG.severe("Field " + fieldName + " is an object map of " + genericTypes.get(0) + ", "
-                    + genericTypes.get(1));
+            LOG.severe(
+                    "Field " + fieldName + " is an object map of " + genericTypes.get(0) + ", " + genericTypes.get(1));
             childPresenter = new MapTreeNodePresenter(rpcService, objectConfigurationMap, fieldName, genericTypes,
                     display.createMapChild());
         }
@@ -107,7 +118,8 @@ public class TreeNodePresenterFactory
                     display.createClassChild());
         }
 
-        setNodeNameAndDescription(fieldName, fieldClassName, fieldDescription, isMandatory, childPresenter);
+        setNodeNameAndDescription(fieldName, fieldClassName, fieldDescription, fieldLongDescription, defaultBehavior,
+                isMandatory, childPresenter);
         return childPresenter;
     }
 
@@ -115,12 +127,14 @@ public class TreeNodePresenterFactory
             TreeNodePresenter.ChildCreatorDisplay display, String fieldName, final String fieldClassName,
             final String classDeclaredIn)
     {
-        final EnumTreeNodePresenter childPresenter = new EnumTreeNodePresenter(fieldName, display.createEnumListChild());
+        final EnumTreeNodePresenter childPresenter = new EnumTreeNodePresenter(fieldName,
+                display.createEnumListChild());
 
         if (classDeclaredIn != null)
         {
             rpcService.getAccessibleClass(classDeclaredIn, new AsyncCallback<AccessibleClass>()
             {
+                @Override
                 public void onSuccess(AccessibleClass result)
                 {
                     LOG.finest("Retrieve enum class : " + result.getClassBaseName());
@@ -149,6 +163,7 @@ public class TreeNodePresenterFactory
                     }
                 }
 
+                @Override
                 public void onFailure(Throwable caught)
                 {
                 }
@@ -161,34 +176,33 @@ public class TreeNodePresenterFactory
     }
 
     private void setNodeNameAndDescription(String fieldName, String fieldClassName, String fieldDescription,
-            boolean isMandatory, TreeNodePresenter childPresenter)
+            String fieldLongDescription, String defaultBehavior, boolean isMandatory, TreeNodePresenter childPresenter)
     {
-        String nodeName;
-        String nodeDescription = "";
-        if (isMandatory)
-        {
-            nodeDescription = "* ";
-        }
+        String nodeName = fieldName;
+        String nodeDescription = null;
         if (fieldDescription != null)
         {
-            if (fieldDescription.length() >= MAX_DESCRIPTION_LENGTH)
+            if (fieldDescription.length() < MAX_DESCRIPTION_LENGTH)
             {
-                nodeName = nodeDescription + fieldDescription.substring(0, MAX_DESCRIPTION_LENGTH) + "...";
-                nodeDescription += fieldDescription;
+                nodeName = fieldDescription;
             }
             else
             {
-                nodeName = nodeDescription + fieldDescription;
-                nodeDescription += fieldDescription;
+                nodeName = fieldDescription.substring(0, MAX_DESCRIPTION_LENGTH) + "...";
+                nodeDescription = fieldDescription;
             }
         }
-        else
+        if (fieldLongDescription != null)
         {
-            nodeName = fieldName;
+            nodeDescription = fieldLongDescription;
         }
-        nodeDescription += " (" + fieldName + " : " + fieldClassName + ")";
-        childPresenter.getDisplay().setNodeDescription(nodeDescription);
-        childPresenter.getDisplay().setNodeName(nodeName);
+        String fieldPrefix = isMandatory ? "* " : "";
+
+        childPresenter.getDisplay().setNodeName(fieldPrefix + nodeName);
+        if (nodeDescription != null)
+        {
+            childPresenter.getDisplay().setNodeDescription(nodeDescription);
+        }
     }
 
     private boolean isStringListField(String fieldClassName, List<String> genericTypes)
