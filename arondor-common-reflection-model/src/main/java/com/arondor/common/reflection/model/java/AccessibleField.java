@@ -39,6 +39,18 @@ public interface AccessibleField extends Serializable
 
     /**
      * 
+     * @return the field long description
+     */
+    String getLongDescription();
+
+    /**
+     * 
+     * @return behavior for default (unset) value
+     */
+    String getDefaultBehavior();
+
+    /**
+     * 
      * @return the field Class name
      */
     String getClassName();

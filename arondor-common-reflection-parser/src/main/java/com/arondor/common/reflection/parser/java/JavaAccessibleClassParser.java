@@ -30,7 +30,9 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.arondor.common.management.mbean.annotation.DefaultBehavior;
 import com.arondor.common.management.mbean.annotation.Description;
+import com.arondor.common.management.mbean.annotation.LongDescription;
 import com.arondor.common.management.mbean.annotation.Mandatory;
 import com.arondor.common.reflection.api.parser.AccessibleClassParser;
 import com.arondor.common.reflection.bean.java.AccessibleClassBean;
@@ -395,12 +397,52 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         return null;
     }
 
+    private String getClassLongDescription(Class<?> clazz)
+    {
+        LongDescription descAnnotation = clazz.getAnnotation(LongDescription.class);
+        if (descAnnotation != null)
+        {
+            return descAnnotation.value();
+        }
+        return null;
+    }
+
+    private String getClassDefaultBehavior(Class<?> clazz)
+    {
+        DefaultBehavior defaultBehaviorAnnotation = clazz.getAnnotation(DefaultBehavior.class);
+        if (defaultBehaviorAnnotation != null)
+        {
+            return defaultBehaviorAnnotation.value();
+        }
+        return null;
+    }
+
     private String getFieldDescription(Field field)
     {
         Description descAnnotation = field.getAnnotation(Description.class);
         if (descAnnotation != null)
         {
             return descAnnotation.value();
+        }
+        return null;
+    }
+
+    private String getFieldLongDescription(Field field)
+    {
+        LongDescription descAnnotation = field.getAnnotation(LongDescription.class);
+        if (descAnnotation != null)
+        {
+            return descAnnotation.value();
+        }
+        return null;
+    }
+
+    private String getFieldDefaultBehavior(Field field)
+    {
+        DefaultBehavior defaultBehaviorAnnotation = field.getAnnotation(DefaultBehavior.class);
+        if (defaultBehaviorAnnotation != null)
+        {
+            return defaultBehaviorAnnotation.value();
         }
         return null;
     }
@@ -620,16 +662,19 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
              * We make an ugly cast because we do not want to expose setters in
              * the AccessibleField interface.
              */
-            ((AccessibleFieldBean) accessibleField).setClassName(normalizeClassName(accessibleField.getClassName()));
+            AccessibleFieldBean accessibleFieldBean = (AccessibleFieldBean) accessibleField;
+            accessibleFieldBean.setClassName(normalizeClassName(accessibleField.getClassName()));
 
             for (Class<?> superclass = clazz; superclass != null; superclass = superclass.getSuperclass())
             {
                 try
                 {
                     Field field = superclass.getDeclaredField(accessibleField.getName());
-                    ((AccessibleFieldBean) accessibleField).setDescription(getFieldDescription(field));
-                    ((AccessibleFieldBean) accessibleField).setMandatory(getFieldMandatory(field));
-                    ((AccessibleFieldBean) accessibleField).setEnumProperty(getAccessibleEnums(accessibleClass, field));
+                    accessibleFieldBean.setDescription(getFieldDescription(field));
+                    accessibleFieldBean.setLongDescription(getFieldLongDescription(field));
+                    accessibleFieldBean.setDefaultBehavior(getFieldDefaultBehavior(field));
+                    accessibleFieldBean.setMandatory(getFieldMandatory(field));
+                    accessibleFieldBean.setEnumProperty(getAccessibleEnums(accessibleClass, field));
 
                     break;
                 }
@@ -714,6 +759,8 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         accessClass.getAllInterfaces().add(java.lang.Object.class.getName());
         accessClass.setName(normalizeClassName(clazz.getName()));
         accessClass.setDescription(getClassDescription(clazz));
+        accessClass.setLongDescription(getClassLongDescription(clazz));
+        accessClass.setDefaultBehavior(getClassDefaultBehavior(clazz));
 
         if (clazz.getSuperclass() == null)
         {

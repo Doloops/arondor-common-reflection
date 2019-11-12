@@ -49,6 +49,10 @@ public class AccessibleFieldBean implements AccessibleField
      */
     private String description;
 
+    private String longDescription;
+
+    private String defaultBehavior;
+
     /**
      * Attribute class
      */
@@ -234,4 +238,25 @@ public class AccessibleFieldBean implements AccessibleField
         return enumProperty;
     }
 
+    @Override
+    public String getLongDescription()
+    {
+        return longDescription;
+    }
+
+    public void setLongDescription(String longDescription)
+    {
+        this.longDescription = longDescription;
+    }
+
+    @Override
+    public String getDefaultBehavior()
+    {
+        return defaultBehavior;
+    }
+
+    public void setDefaultBehavior(String defaultBehavior)
+    {
+        this.defaultBehavior = defaultBehavior;
+    }
 }

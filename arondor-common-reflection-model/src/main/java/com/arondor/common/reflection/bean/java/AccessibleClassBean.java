@@ -45,6 +45,7 @@ public class AccessibleClassBean implements AccessibleClass
         this.accessibleFields = accessibleFields;
     }
 
+    @Override
     public Map<String, AccessibleField> getAccessibleFields()
     {
         return accessibleFields;
@@ -57,6 +58,7 @@ public class AccessibleClassBean implements AccessibleClass
         this.name = name;
     }
 
+    @Override
     public String getName()
     {
         return name;
@@ -69,11 +71,39 @@ public class AccessibleClassBean implements AccessibleClass
         this.description = description;
     }
 
+    @Override
     public String getDescription()
     {
         return description;
     }
 
+    private String longDescription;
+
+    @Override
+    public String getLongDescription()
+    {
+        return longDescription;
+    }
+
+    public void setLongDescription(String longDescription)
+    {
+        this.longDescription = longDescription;
+    }
+
+    private String defaultBehavior;
+
+    @Override
+    public String getDefaultBehavior()
+    {
+        return defaultBehavior;
+    }
+
+    public void setDefaultBehavior(String defaultBehavior)
+    {
+        this.defaultBehavior = defaultBehavior;
+    }
+
+    @Override
     public String getClassBaseName()
     {
         int idx = name.lastIndexOf('.');
@@ -84,6 +114,7 @@ public class AccessibleClassBean implements AccessibleClass
         return name;
     }
 
+    @Override
     public String getPackageName()
     {
         int idx = name.lastIndexOf('.');
@@ -100,6 +131,7 @@ public class AccessibleClassBean implements AccessibleClass
 
     private String superclass;
 
+    @Override
     public List<String> getAllInterfaces()
     {
         return allInterfaces;
@@ -110,6 +142,7 @@ public class AccessibleClassBean implements AccessibleClass
         this.allInterfaces = allInterfaces;
     }
 
+    @Override
     public List<String> getInterfaces()
     {
         return interfaces;
@@ -120,6 +153,7 @@ public class AccessibleClassBean implements AccessibleClass
         this.interfaces = interfaces;
     }
 
+    @Override
     public String getSuperclass()
     {
         return superclass;
@@ -132,6 +166,7 @@ public class AccessibleClassBean implements AccessibleClass
 
     private List<AccessibleConstructor> constructors;
 
+    @Override
     public List<AccessibleConstructor> getConstructors()
     {
         return constructors;
@@ -144,6 +179,7 @@ public class AccessibleClassBean implements AccessibleClass
 
     private List<AccessibleMethod> methods;
 
+    @Override
     public List<AccessibleMethod> getAccessibleMethods()
     {
         return methods;
@@ -156,6 +192,7 @@ public class AccessibleClassBean implements AccessibleClass
 
     private boolean abstactClass = false;
 
+    @Override
     public boolean isAbstract()
     {
         return abstactClass;
@@ -166,6 +203,7 @@ public class AccessibleClassBean implements AccessibleClass
         this.abstactClass = abstractClass;
     }
 
+    @Override
     public Map<String, List<String>> getAccessibleEnums()
     {
         return accessibleEnums;
@@ -197,4 +235,5 @@ public class AccessibleClassBean implements AccessibleClass
         accessibleEnums.put(enumName, values);
 
     }
+
 }

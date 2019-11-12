@@ -32,33 +32,37 @@ public interface AccessibleClass extends Serializable
      * 
      * @return
      */
-    public String getName();
+    String getName();
 
     /**
      * The class description
      * 
      * @return
      */
-    public String getDescription();
+    String getDescription();
 
-    public String getSuperclass();
+    String getLongDescription();
 
-    public List<String> getInterfaces();
+    String getDefaultBehavior();
 
-    public List<String> getAllInterfaces();
+    String getSuperclass();
 
-    public List<AccessibleConstructor> getConstructors();
+    List<String> getInterfaces();
 
-    public List<AccessibleMethod> getAccessibleMethods();
+    List<String> getAllInterfaces();
 
-    public Map<String, AccessibleField> getAccessibleFields();
+    List<AccessibleConstructor> getConstructors();
 
-    public Map<String, List<String>> getAccessibleEnums();
+    List<AccessibleMethod> getAccessibleMethods();
 
-    public String getClassBaseName();
+    Map<String, AccessibleField> getAccessibleFields();
 
-    public String getPackageName();
+    Map<String, List<String>> getAccessibleEnums();
 
-    public boolean isAbstract();
+    String getClassBaseName();
+
+    String getPackageName();
+
+    boolean isAbstract();
 
 }
