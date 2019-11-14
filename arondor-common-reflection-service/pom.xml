@@ -26,7 +26,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>rmic-maven-plugin</artifactId>
-				<version>1.1</version>
+				<version>1.3</version>
 				<configuration>
 					<outputDirectory>target/classes</outputDirectory>
 				</configuration>
@@ -38,6 +38,13 @@
 						</goals>
 					</execution>
 				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.glassfish.corba</groupId>
+						<artifactId>rmic</artifactId>
+						<version>4.2.0</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 
 		</plugins>
