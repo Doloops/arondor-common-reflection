@@ -28,14 +28,14 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
 
     private ImplementingClass currentImplementingClass = ImplementingClass.NULL_CLASS;
 
-    private final Display display;
+    private final ImplementingClassDisplay display;
 
     private final GWTReflectionServiceAsync rpcService;
 
     private final List<ImplementingClass> implementingClasses = new ArrayList<ImplementingClass>();
 
     public DefaultImplementingClassPresenter(GWTReflectionServiceAsync rpcService,
-            ObjectConfigurationMap objectConfigurationMap, String baseClassName, Display display)
+            ObjectConfigurationMap objectConfigurationMap, String baseClassName, ImplementingClassDisplay display)
     {
         this.baseClassName = baseClassName;
         this.display = display;
@@ -69,10 +69,12 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
             {
                 rpcService.getAccessibleClass(referenceClassName, new AsyncCallback<AccessibleClass>()
                 {
+                    @Override
                     public void onFailure(Throwable caught)
                     {
                     }
 
+                    @Override
                     public void onSuccess(AccessibleClass result)
                     {
                         for (String interfaceName : result.getAllInterfaces())
@@ -88,10 +90,12 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
         }
     }
 
+    @Override
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<ImplementingClass> valueChangeHandler)
     {
         return this.display.addValueChangeHandler(new ValueChangeHandler<String>()
         {
+            @Override
             public void onValueChange(ValueChangeEvent<String> event)
             {
                 ImplementingClass implementingClass = ImplementingClass.parseImplementingClass(event.getValue());
@@ -104,6 +108,7 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
     {
         display.addValueChangeHandler(new ValueChangeHandler<String>()
         {
+            @Override
             public void onValueChange(ValueChangeEvent<String> event)
             {
                 currentImplementingClass = ImplementingClass.parseImplementingClass(event.getValue());
@@ -138,6 +143,7 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
             Scheduler.get().scheduleFixedDelay(new RepeatingCommand()
             {
 
+                @Override
                 public boolean execute()
                 {
                     doUpdateDisplay();
@@ -176,10 +182,12 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
     {
         rpcService.getAccessibleClass(baseClassName, new AsyncCallback<AccessibleClass>()
         {
+            @Override
             public void onFailure(Throwable caught)
             {
             }
 
+            @Override
             public void onSuccess(AccessibleClass result)
             {
                 if (isInstantiatable(result))
@@ -192,13 +200,14 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
 
     protected boolean isInstantiatable(AccessibleClass result)
     {
-        return result.getSuperclass() != null && !result.isAbstract();
+        return result != null && result.getSuperclass() != null && !result.isAbstract();
     }
 
     private void fetchImplementations()
     {
         rpcService.getImplementingAccessibleClasses(baseClassName, new AsyncCallback<Collection<AccessibleClass>>()
         {
+            @Override
             public void onSuccess(Collection<AccessibleClass> result)
             {
                 for (AccessibleClass clazz : result)
@@ -210,23 +219,27 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
                 }
             }
 
+            @Override
             public void onFailure(Throwable caught)
             {
             }
         });
     }
 
+    @Override
     public String getBaseClassName()
     {
         return baseClassName;
     }
 
+    @Override
     public void setImplementingClass(ImplementingClass implementingClass)
     {
         this.currentImplementingClass = implementingClass;
         display.selectImplementingClass(currentImplementingClass.toString());
     }
 
+    @Override
     public ImplementingClass getImplementingClass()
     {
         return currentImplementingClass;

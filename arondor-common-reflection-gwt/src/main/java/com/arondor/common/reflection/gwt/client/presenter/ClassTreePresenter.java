@@ -24,7 +24,7 @@ public class ClassTreePresenter
 {
     public interface Display extends IsWidget
     {
-        ClassTreeNodePresenter.ClassDisplay createRootView(String baseClassName);
+        ClassTreeNodePresenter.ClassDisplay getRootView();
     }
 
     private TreeNodePresenter rootNodePresenter;
@@ -36,8 +36,8 @@ public class ClassTreePresenter
     {
         this.display = view;
 
-        setRootNodePresenter(new ClassTreeNodePresenter(rpcService, objectConfigurationMap, baseClassName,
-                display.createRootView(baseClassName)));
+        setRootNodePresenter(
+                new ClassTreeNodePresenter(rpcService, objectConfigurationMap, baseClassName, display.getRootView()));
 
         if (getRootNodePresenter().getDisplay() instanceof HasVisibility)
         {

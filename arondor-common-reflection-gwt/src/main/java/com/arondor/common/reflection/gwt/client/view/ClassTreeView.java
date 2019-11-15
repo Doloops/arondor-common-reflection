@@ -65,7 +65,7 @@ public class ClassTreeView extends Composite
     }
 
     @Override
-    public ClassTreeNodePresenter.ClassDisplay createRootView(String baseClassName)
+    public ClassTreeNodePresenter.ClassDisplay getRootView()
     {
         return new ClassTreeNodeView(getTree());
     }

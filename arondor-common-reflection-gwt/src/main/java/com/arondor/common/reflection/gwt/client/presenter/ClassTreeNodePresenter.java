@@ -44,7 +44,7 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
 
     public interface ClassDisplay extends TreeNodePresenter.ChildCreatorDisplay
     {
-        ImplementingClassPresenter.Display getImplementingClassDisplay();
+        ImplementingClassPresenter.ImplementingClassDisplay getImplementingClassDisplay();
     }
 
     private final Map<String, TreeNodePresenter> classTreeNodePresenterMap = new HashMap<String, TreeNodePresenter>();

@@ -12,7 +12,7 @@ import com.arondor.common.reflection.bean.config.ObjectConfigurationFactoryBean;
 import com.arondor.common.reflection.catalog.SimpleAccessibleClassCatalog;
 import com.arondor.common.reflection.gwt.client.api.ObjectConfigurationMapPresenter;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter.ClassDisplay;
-import com.arondor.common.reflection.gwt.client.presenter.ImplementingClassPresenter.Display;
+import com.arondor.common.reflection.gwt.client.presenter.ImplementingClassPresenter.ImplementingClassDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.SimpleObjectConfigurationMapPresenter.ObjectConfigurationMapDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.ListTreeNodePresenter.ListRootDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePresenter.MapNodeDisplay;
@@ -77,7 +77,7 @@ public class TestObjectConfigurationMapPresenter
         Mockito.when(classDisplay.createStringListChild()).thenReturn(stringListDisplay);
         Mockito.when(mapNodeDisplay.createStringListChild()).thenReturn(stringListDisplay);
         Mockito.when(classDisplay.createPrimitiveChild(Matchers.anyString())).thenReturn(primitiveDisplay);
-        Display display = Mockito.mock(Display.class);
+        ImplementingClassDisplay display = Mockito.mock(ImplementingClassDisplay.class);
         Mockito.when(classDisplay.getImplementingClassDisplay()).thenReturn(display);
 
         ObjectConfigurationMapPresenter objectConfigurationMapPresenter = new SimpleObjectConfigurationMapPresenter(
