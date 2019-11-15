@@ -1,7 +1,6 @@
 package com.arondor.common.reflection.gwt.client.presenter;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
@@ -22,11 +21,10 @@ import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNo
 import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeNodePresenter.StringListDisplay;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
-import com.arondor.common.reflection.model.config.MapConfiguration;
+import com.arondor.common.reflection.model.config.ListConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
-import com.arondor.common.reflection.model.config.ReferenceConfiguration;
 import com.arondor.common.reflection.parser.java.JavaAccessibleClassParser;
 import com.arondor.common.reflection.parser.spring.XMLBeanDefinitionParser;
 import com.arondor.common.reflection.service.DefaultReflectionService;
@@ -37,10 +35,9 @@ public class TestObjectConfigurationMapPresenter
     private final ObjectConfigurationFactory objectConfigurationFactory = new ObjectConfigurationFactoryBean();
 
     @Test
-    @Ignore
     public void testSetObjectConfigurationMap()
     {
-        String fieldName = "Toto";
+        String fieldName = "SomeClass";
 
         DefaultReflectionService reflectionService = new DefaultReflectionService();
         reflectionService.setAccessibleClassCatalog(new SimpleAccessibleClassCatalog());
@@ -86,24 +83,24 @@ public class TestObjectConfigurationMapPresenter
         ObjectConfigurationMapPresenter objectConfigurationMapPresenter = new SimpleObjectConfigurationMapPresenter(
                 gwtReflectionService, fieldName, objectConfigurationMapDisplay);
 
-        final String context = "file:///home/caroline/ARender-Rendition-2.2.2-rc0/conf/arender-rendition.xml";
+        final String context = "testreflection-config.xml";// "file:///home/caroline/ARender-Rendition-2.2.2-rc0/conf/arender-rendition.xml";
         XMLBeanDefinitionParser parser = new XMLBeanDefinitionParser(context);
         ObjectConfigurationMap objectConfigurationMap = parser.parse();
 
-        ObjectConfiguration localDS = objectConfigurationMap.get("localDocumentService");
-        ElementConfiguration factories = localDS.getFields().get("factories");
-        Assert.assertNotNull(factories);
-        MapConfiguration factoriesMap = (MapConfiguration) factories;
-        ElementConfiguration factoryPdf = factoriesMap.getMapConfiguration().get(
-                objectConfigurationFactory.createPrimitiveConfiguration("application/pdf"));
-        Assert.assertTrue(factoryPdf instanceof ReferenceConfiguration);
+        ObjectConfiguration aCP = objectConfigurationMap.get("accessibleClassProvider");
+        Assert.assertNotNull(aCP);
+        ElementConfiguration providers = aCP.getFields().get("providers");
+        Assert.assertNotNull(providers);
+        ListConfiguration providersList = (ListConfiguration) providers;
+        ElementConfiguration cacheProvider = providersList.getListConfiguration().get(1);
+        Assert.assertTrue(cacheProvider instanceof ObjectConfiguration);
 
         objectConfigurationMapPresenter.setObjectConfigurationMap(objectConfigurationMap);
 
         ObjectConfigurationMap result = objectConfigurationMapPresenter
                 .getObjectConfigurationMap(objectConfigurationFactory);
         Assert.assertNotNull(result);
-        Assert.assertTrue(result.containsKey("localDocumentService"));
+        Assert.assertTrue(result.containsKey("accessibleClassProvider"));
         Assert.assertEquals(objectConfigurationMap.size(), result.size());
 
     }
