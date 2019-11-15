@@ -17,6 +17,8 @@ package com.arondor.common.reflection.gwt.client.view;
 
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreePresenter;
+import com.arondor.common.reflection.gwt.client.presenter.ClassTreePresenter.Display;
+import com.arondor.common.reflection.gwt.client.presenter.HierarchicAccessibleClassPresenter;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
@@ -25,7 +27,8 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ClassTreeView extends Composite implements ClassTreePresenter.Display
+public class ClassTreeView extends Composite
+        implements ClassTreePresenter.Display, HierarchicAccessibleClassPresenter.Display
 {
     private Tree tree = new Tree()
     {
@@ -73,4 +76,9 @@ public class ClassTreeView extends Composite implements ClassTreePresenter.Displ
         return this;
     }
 
+    @Override
+    public Display getClassTreeDisplay()
+    {
+        return this;
+    }
 }

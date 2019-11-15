@@ -20,8 +20,9 @@ import com.arondor.common.reflection.gwt.client.api.ObjectConfigurationMapPresen
 import com.arondor.common.reflection.gwt.client.presenter.HierarchicAccessibleClassPresenter;
 import com.arondor.common.reflection.gwt.client.presenter.SimpleObjectConfigurationMapPresenter;
 import com.arondor.common.reflection.gwt.client.presenter.SimpleObjectConfigurationMapPresenter.ObjectConfigurationMapDisplay;
+import com.arondor.common.reflection.gwt.client.presenter.ViewFactory;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
-import com.arondor.common.reflection.gwt.client.view.HierarchicAccessibleClassView;
+import com.arondor.common.reflection.gwt.client.view.DefaultViewFactory;
 import com.arondor.common.reflection.gwt.client.view.ObjectConfigurationMapView;
 import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 
@@ -41,11 +42,13 @@ public class AccessibleClassPresenterFactory
 
     }
 
+    private static final ViewFactory FACTORY = new DefaultViewFactory();
+
     public static AccessibleClassPresenter createAccessibleClassPresenter(GWTReflectionServiceAsync rpcService,
             ObjectConfigurationMap objectConfigurationMap, String baseClassName)
     {
         return new HierarchicAccessibleClassPresenter(rpcService, objectConfigurationMap, baseClassName,
-                new HierarchicAccessibleClassView());
+                FACTORY.createClassDisplay());
     }
 
     public static ObjectConfigurationMapPresenter createObjectConfigurationMapPresenter(

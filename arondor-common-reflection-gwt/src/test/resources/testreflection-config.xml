@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
-<beans default-lazy-init="true" default-autowire="no"
-	default-dependency-check="none">
+<beans default-lazy-init="true" default-autowire="no">
 	<bean id="accessibleClassProvider"
 		class="com.arondor.common.reflection.parser.tools.MultipleAccessibleClassProvider">
 		<property name="providers">
@@ -23,7 +22,7 @@
 							class="com.arondor.common.reflection.parser.java.DirectoryAccessibleClassProvider">
 							<property name="directories">
 								<list>
-									<value>/home/caroline/ARender-Rendition-2.2.2-rc0/lib</value>
+									<value>target/classes</value>
 								</list>
 							</property>
 							<property name="packagePrefixes">
