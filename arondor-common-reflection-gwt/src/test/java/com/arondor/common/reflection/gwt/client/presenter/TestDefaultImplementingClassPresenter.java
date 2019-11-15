@@ -77,7 +77,7 @@ public class TestDefaultImplementingClassPresenter
 
         ObjectConfigurationMap objectConfigurationMap = null;
         String baseClassName = "java.lang.Object";
-        ImplementingClassPresenter.Display display = Mockito.mock(ImplementingClassPresenter.Display.class);
+        ImplementingClassPresenter.ImplementingClassDisplay display = Mockito.mock(ImplementingClassPresenter.ImplementingClassDisplay.class);
         DefaultImplementingClassPresenter presenter = new DefaultImplementingClassPresenter(rpcService,
                 objectConfigurationMap, baseClassName, display);
 

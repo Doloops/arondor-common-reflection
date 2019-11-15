@@ -62,7 +62,7 @@ public class TestClassTreeNodePresenter
     private ClassTreeNodePresenter.ClassDisplay mockClassTreeNodePresenterDisplay()
     {
         ClassTreeNodePresenter.ClassDisplay nodeView = mock(ClassTreeNodePresenter.ClassDisplay.class);
-        ImplementingClassPresenter.Display implView = mock(ImplementingClassPresenter.Display.class);
+        ImplementingClassPresenter.ImplementingClassDisplay implView = mock(ImplementingClassPresenter.ImplementingClassDisplay.class);
         when(nodeView.getImplementingClassDisplay()).thenReturn(implView);
         doAnswer(new Answer<Void>()
         {

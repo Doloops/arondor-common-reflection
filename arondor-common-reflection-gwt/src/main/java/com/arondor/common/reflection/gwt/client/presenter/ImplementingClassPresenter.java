@@ -24,7 +24,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 public interface ImplementingClassPresenter
 {
 
-    public interface Display extends IsWidget
+    public interface ImplementingClassDisplay extends IsWidget
     {
         void setBaseClassName(String baseClassName);
 

@@ -21,7 +21,7 @@ import com.google.gwt.user.client.ui.UIObject;
 
 public class ClassTreeNodeView extends AbstractChildCreatorNodeView implements ClassTreeNodePresenter.ClassDisplay
 {
-    private final ImplementingClassPresenter.Display implementingClassDisplay = new ImplementingClassView();
+    private final ImplementingClassPresenter.ImplementingClassDisplay implementingClassDisplay = new ImplementingClassView();
 
     public ClassTreeNodeView(UIObject parentNode)
     {
@@ -30,7 +30,7 @@ public class ClassTreeNodeView extends AbstractChildCreatorNodeView implements C
         getContents().add(implementingClassDisplay.asWidget());
     }
 
-    public ImplementingClassPresenter.Display getImplementingClassDisplay()
+    public ImplementingClassPresenter.ImplementingClassDisplay getImplementingClassDisplay()
     {
         return implementingClassDisplay;
     }
