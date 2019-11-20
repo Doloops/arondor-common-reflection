@@ -18,6 +18,7 @@ package com.arondor.common.reflection.gwt.client.view;
 import java.util.Collection;
 import java.util.logging.Logger;
 
+import com.arondor.common.reflection.gwt.client.CssBundle;
 import com.arondor.common.reflection.gwt.client.presenter.ImplementingClassPresenter.ImplementingClassDisplay;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -37,7 +38,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
     public ImplementingClassView()
     {
         initWidget(implementingListInput);
-        implementingListInput.getElement().addClassName("implementingClassSelect");
+        implementingListInput.getElement().addClassName(CssBundle.INSTANCE.css().implementingClassView());
     }
 
     @Override

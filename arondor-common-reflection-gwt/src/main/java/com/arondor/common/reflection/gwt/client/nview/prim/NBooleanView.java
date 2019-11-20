@@ -1,5 +1,6 @@
 package com.arondor.common.reflection.gwt.client.nview.prim;
 
+import com.arondor.common.reflection.gwt.client.CssBundle;
 import com.arondor.common.reflection.gwt.client.nview.NNodeView;
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter.PrimitiveDisplay;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -12,7 +13,7 @@ public class NBooleanView extends NNodeView implements PrimitiveDisplay
 
     public NBooleanView()
     {
-        getElement().addClassName("primitiveView");
+        getElement().addClassName(CssBundle.INSTANCE.css().booleanField());
         add(valueBox);
     }
 

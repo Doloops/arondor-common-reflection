@@ -1,5 +1,6 @@
 package com.arondor.common.reflection.gwt.client.nview;
 
+import com.arondor.common.reflection.gwt.client.CssBundle;
 import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent.Handler;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -10,7 +11,12 @@ public class NNodeView extends FlowPanel implements TreeNodePresenter.Display
 
     protected NNodeView()
     {
+        getElement().addClassName(CssBundle.INSTANCE.css().nodeField());
         add(nodeNamePanel);
+
+        nodeNamePanel.getElement().addClassName(CssBundle.INSTANCE.css().nodeName());
+
+        // nodeNamePanel.setTitle("Coucou caché");
     }
 
     @Override

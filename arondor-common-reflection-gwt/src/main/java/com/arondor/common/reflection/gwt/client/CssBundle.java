@@ -13,6 +13,21 @@ public interface CssBundle extends ClientBundle
 
         @ClassName("rootTreeNode")
         String rootTreeNode();
+
+        @ClassName("implementingClassView")
+        String implementingClassView();
+
+        @ClassName("nodeField")
+        String nodeField();
+
+        @ClassName("booleanField")
+        String booleanField();
+
+        @ClassName("stringField")
+        String stringField();
+
+        @ClassName("nodeName")
+        String nodeName();
     }
 
     static final CssBundle INSTANCE = GWT.create(CssBundle.class);
