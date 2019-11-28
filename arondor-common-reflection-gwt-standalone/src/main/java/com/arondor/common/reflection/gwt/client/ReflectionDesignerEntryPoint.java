@@ -15,30 +15,21 @@
  */
 package com.arondor.common.reflection.gwt.client;
 
-import java.util.Collection;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.arondor.common.reflection.api.catalog.AccessibleClassCatalog;
 import com.arondor.common.reflection.bean.config.ObjectConfigurationFactoryBean;
 import com.arondor.common.reflection.bean.config.ObjectConfigurationMapBean;
 import com.arondor.common.reflection.gwt.client.api.AccessibleClassPresenter;
 import com.arondor.common.reflection.gwt.client.presenter.ReflectionDesignerPresenter;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
+import com.arondor.common.reflection.gwt.client.service.RestDirectReflectionServiceAsync;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
-import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.arondor.common.reflection.xstream.GWTObjectConfigurationParser;
 import com.arondor.common.reflection.xstream.GWTObjectConfigurationSerializer;
-import com.arondor.common.reflection.xstream.catalog.GWTAccessibleClassCatalogParser;
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -57,66 +48,24 @@ public class ReflectionDesignerEntryPoint implements EntryPoint
     {
         INSTANCE = this;
 
-        RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, "allclasses.xml");
-        requestBuilder.setCallback(new RequestCallback()
-        {
-
-            @Override
-            public void onResponseReceived(Request request, Response response)
-            {
-                String xml = response.getText();
-                GWTAccessibleClassCatalogParser parser = new GWTAccessibleClassCatalogParser();
-                final AccessibleClassCatalog catalog = parser.parse(xml);
-
-                GWTReflectionServiceAsync simpleReflectionService = new GWTReflectionServiceAsync()
+        RestDirectReflectionServiceAsync.fetchReflection("allclasses.xml",
+                new AsyncCallback<RestDirectReflectionServiceAsync>()
                 {
+
                     @Override
-                    public void getImplementingAccessibleClasses(final String name,
-                            final AsyncCallback<Collection<AccessibleClass>> callback)
+                    public void onFailure(Throwable caught)
                     {
-                        Scheduler.get().scheduleDeferred(new ScheduledCommand()
-                        {
-                            @Override
-                            public void execute()
-                            {
-                                callback.onSuccess(catalog.getImplementingAccessibleClasses(name));
-                            }
-                        });
+                        LOG.log(Level.SEVERE, "Could not get refelction !", caught);
+                        Window.alert("Could not get reflection : " + caught.getMessage());
                     }
 
                     @Override
-                    public void getAccessibleClass(final String className,
-                            final AsyncCallback<AccessibleClass> callback)
+                    public void onSuccess(RestDirectReflectionServiceAsync reflectionService)
                     {
-                        Scheduler.get().scheduleDeferred(new ScheduledCommand()
-                        {
-                            @Override
-                            public void execute()
-                            {
-                                callback.onSuccess(catalog.getAccessibleClass(className));
-                            }
-                        });
+                        continueLoading(reflectionService);
                     }
-                };
+                });
 
-                continueLoading(simpleReflectionService);
-            }
-
-            @Override
-            public void onError(Request request, Throwable exception)
-            {
-                Window.alert("Could not get resources !");
-            }
-        });
-
-        try
-        {
-            requestBuilder.send();
-        }
-        catch (RequestException e)
-        {
-            LOG.warning("Could not send !" + e.getMessage());
-        }
     }
 
     private GWTObjectConfigurationSerializer serializer = new GWTObjectConfigurationSerializer();

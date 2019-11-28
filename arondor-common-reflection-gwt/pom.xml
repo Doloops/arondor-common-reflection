@@ -21,6 +21,11 @@
 			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
+			<groupId>com.arondor.common.reflection</groupId>
+			<artifactId>arondor-common-reflection-xstream</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>		
+		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-user</artifactId>
 			<version>${gwt.version}</version>
