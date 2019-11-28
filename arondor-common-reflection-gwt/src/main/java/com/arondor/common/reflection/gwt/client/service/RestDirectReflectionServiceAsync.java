@@ -1,6 +1,7 @@
 package com.arondor.common.reflection.gwt.client.service;
 
 import java.util.Collection;
+import java.util.logging.Logger;
 
 import com.arondor.common.reflection.api.catalog.AccessibleClassCatalog;
 import com.arondor.common.reflection.model.java.AccessibleClass;
@@ -22,6 +23,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public class RestDirectReflectionServiceAsync implements GWTReflectionServiceAsync
 {
+    private static final Logger LOG = Logger.getLogger(RestDirectReflectionServiceAsync.class.getName());
+
     private final AccessibleClassCatalog catalog;
 
     public RestDirectReflectionServiceAsync(AccessibleClassCatalog catalog)
@@ -87,9 +90,9 @@ public class RestDirectReflectionServiceAsync implements GWTReflectionServiceAsy
         }
         catch (RequestException e)
         {
-            throw new IllegalArgumentException(
-                    "Could not query reflection information from " + url + ", exception : " + e.getMessage(), e);
+            callback.onFailure(new IllegalArgumentException("Could not get reflection information from " + url, e));
         }
+
     }
 
 }
