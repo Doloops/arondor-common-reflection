@@ -62,12 +62,13 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
     public ClassTreeNodePresenter(GWTReflectionServiceAsync rpcService, ObjectConfigurationMap objectConfigurationMap,
             String baseClassName, ClassDisplay view)
     {
-        this(rpcService, objectConfigurationMap, null, baseClassName, view);
+        this(rpcService, objectConfigurationMap, null, baseClassName, true, view);
         display.setNodeName(baseClassName);
     }
 
     protected ClassTreeNodePresenter(GWTReflectionServiceAsync rpcService,
-            ObjectConfigurationMap objectConfigurationMap, String fieldName, String baseClassName, ClassDisplay view)
+            ObjectConfigurationMap objectConfigurationMap, String fieldName, String baseClassName, boolean isMandatory,
+            ClassDisplay view)
     {
         this.fieldName = fieldName;
         this.rpcService = rpcService;
@@ -77,7 +78,7 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
         LOG.finest("Create new TreeNodePresenter for fieldName=" + fieldName + ", baseClassName=" + baseClassName);
 
         implementingClassPresenter = new DefaultImplementingClassPresenter(rpcService, objectConfigurationMap,
-                baseClassName, display.getImplementingClassDisplay());
+                baseClassName, isMandatory, display.getImplementingClassDisplay());
         bind();
     }
 

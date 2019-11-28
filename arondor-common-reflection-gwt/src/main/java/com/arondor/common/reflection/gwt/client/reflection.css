@@ -1,13 +1,6 @@
-
 .classNode .nodeField {
 	padding: 0px 30px;
 } 
-
-/* --- expandable --- */
-
-.classNode .classNode .nodeName::after {
-}
-/* ------------------ */
 
 .rootTreeNode {
 	background:#F1F1F1; 
@@ -15,15 +8,10 @@
 	overflow:auto;
 	width:390px;
 	color:#495057;
-	font-size:11pt;}
-C
-/* select menus content */
-.implementingClassView { 
-/* 	color:#495057; */
-/* 	font-size:inherit; */
+	font-size:11pt;
 }
 
-/* (select menus title ??) */
+/* (select menus title) */
 .implementingClassView .nodeName{}
 
 /* check-box group */
@@ -74,8 +62,36 @@ div {
 	font-weight:bold;
 	color:red;
 }
+
+.bg-green {
+	background:green;
+}
+
+.bg-blue {
+	background:blue;
+}
+
+a {
+}
+
+.mandatoryChildren {
+}
+
+.advancedSettingsBtn{
+	margin-top:20px!important;
+}
+
 	
+.optionalChildren{
+	margin:0px 0px 5px 10px;
+	padding-bottom: 15px ;
+}
+
 .nodeField {}
+
+.hideAdvancedSettings{
+	display:none;
+}
 
 .nodeField .nodeName {
 	margin-bottom: 0px; 

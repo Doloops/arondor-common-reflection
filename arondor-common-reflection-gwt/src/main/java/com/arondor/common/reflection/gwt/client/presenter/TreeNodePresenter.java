@@ -56,9 +56,9 @@ public interface TreeNodePresenter
 
     public interface ChildCreatorDisplay extends Display
     {
-        ClassDisplay createClassChild();
+        ClassDisplay createClassChild(boolean isMandatory);
 
-        PrimitiveTreeNodePresenter.PrimitiveDisplay createPrimitiveChild(String fieldClassName);
+        PrimitiveTreeNodePresenter.PrimitiveDisplay createPrimitiveChild(String fieldClassName, boolean isMandatory);
 
         EnumTreeNodePresenter.EnumDisplay createEnumListChild();
 

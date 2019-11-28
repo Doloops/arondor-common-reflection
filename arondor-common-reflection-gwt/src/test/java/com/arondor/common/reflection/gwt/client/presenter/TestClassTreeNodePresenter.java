@@ -62,27 +62,31 @@ public class TestClassTreeNodePresenter
     private ClassTreeNodePresenter.ClassDisplay mockClassTreeNodePresenterDisplay()
     {
         ClassTreeNodePresenter.ClassDisplay nodeView = mock(ClassTreeNodePresenter.ClassDisplay.class);
-        ImplementingClassPresenter.ImplementingClassDisplay implView = mock(ImplementingClassPresenter.ImplementingClassDisplay.class);
+        ImplementingClassPresenter.ImplementingClassDisplay implView = mock(
+                ImplementingClassPresenter.ImplementingClassDisplay.class);
         when(nodeView.getImplementingClassDisplay()).thenReturn(implView);
         doAnswer(new Answer<Void>()
         {
+            @Override
             public Void answer(InvocationOnMock invocation) throws Throwable
             {
                 System.err.println("selectImplementingClass(" + invocation.getArguments()[0] + ")");
                 return null;
             }
         }).when(implView).selectImplementingClass(anyString());
-        when(nodeView.createPrimitiveChild(anyString())).thenAnswer(
-                new Answer<PrimitiveTreeNodePresenter.PrimitiveDisplay>()
+        when(nodeView.createPrimitiveChild(anyString(), false))
+                .thenAnswer(new Answer<PrimitiveTreeNodePresenter.PrimitiveDisplay>()
                 {
+                    @Override
                     public PrimitiveTreeNodePresenter.PrimitiveDisplay answer(InvocationOnMock invocation)
                             throws Throwable
                     {
                         return mock(PrimitiveTreeNodePresenter.PrimitiveDisplay.class);
                     }
                 });
-        when(nodeView.createClassChild()).thenAnswer(new Answer<ClassTreeNodePresenter.ClassDisplay>()
+        when(nodeView.createClassChild(false)).thenAnswer(new Answer<ClassTreeNodePresenter.ClassDisplay>()
         {
+            @Override
             public ClassDisplay answer(InvocationOnMock invocation) throws Throwable
             {
                 return mockClassTreeNodePresenterDisplay();
@@ -97,9 +101,10 @@ public class TestClassTreeNodePresenter
         ClassTreeNodePresenter.ClassDisplay nodeView = mockClassTreeNodePresenterDisplay();
 
         final List<ValueChangeHandler<String>> changeHandlers = new ArrayList<ValueChangeHandler<String>>();
-        when(nodeView.getImplementingClassDisplay().addValueChangeHandler(any(ValueChangeHandler.class))).then(
-                new Answer<HandlerRegistration>()
+        when(nodeView.getImplementingClassDisplay().addValueChangeHandler(any(ValueChangeHandler.class)))
+                .then(new Answer<HandlerRegistration>()
                 {
+                    @Override
                     public HandlerRegistration answer(InvocationOnMock invocation) throws Throwable
                     {
                         changeHandlers.add((ValueChangeHandler<String>) invocation.getArguments()[0]);

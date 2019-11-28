@@ -11,15 +11,59 @@ import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePres
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter.PrimitiveDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeNodePresenter.StringListDisplay;
 import com.arondor.common.reflection.gwt.client.view.ImplementingClassView;
+import com.google.gwt.user.client.ui.FlowPanel;
 
 public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.ClassDisplay
 {
     private final ImplementingClassDisplay implementingClassView = new ImplementingClassView();
 
+    private final FlowPanel mandatoryChildren = new FlowPanel();
+
+    private final FlowPanel optionalChildren = new FlowPanel();
+
+    private final FlowPanel advancedSettings = new FlowPanel();
+
     public NClassNodeView()
     {
         getElement().addClassName(CssBundle.INSTANCE.css().classNode());
+
+        mandatoryChildren.getElement().addClassName(CssBundle.INSTANCE.css().classMandatoryChildren());
+        optionalChildren.getElement().addClassName(CssBundle.INSTANCE.css().classOptionalChildren());
+        advancedSettings.getElement().addClassName(CssBundle.INSTANCE.css().advancedSettingsBtn());
+
+        String rnd = String.valueOf(Math.random()).substring(2);
+        advancedSettings.getElement().setInnerHTML(
+                "<a data-toggle=\"collapse\" href=\"#advancedSettings" + rnd + "\"> > Advanced settings</a>");
+        // advancedSettings.getElement().addClassName("d-flex
+        // justify-content-center");
+        optionalChildren.getElement().setId("advancedSettings" + rnd);
+        optionalChildren.getElement().addClassName("collapse");
+
+        bind();
+    }
+
+    private void bind()
+    {
         add(implementingClassView);
+        add(mandatoryChildren);
+        add(advancedSettings);
+        add(optionalChildren);
+
+        advancedSettings.getElement().addClassName(CssBundle.INSTANCE.css().hideAdvancedSettings());
+
+    }
+
+    private void addChildView(boolean isMandatory, NNodeView childView)
+    {
+        if (isMandatory)
+        {
+            mandatoryChildren.add(childView);
+        }
+        else
+        {
+            advancedSettings.getElement().removeClassName(CssBundle.INSTANCE.css().hideAdvancedSettings());
+            optionalChildren.add(childView);
+        }
     }
 
     @Override
@@ -29,15 +73,15 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     }
 
     @Override
-    public ClassTreeNodePresenter.ClassDisplay createClassChild()
+    public ClassTreeNodePresenter.ClassDisplay createClassChild(boolean isMandatory)
     {
         NClassNodeView childView = new NClassNodeView();
-        add(childView);
+        addChildView(isMandatory, childView);
         return childView;
     }
 
     @Override
-    public PrimitiveDisplay createPrimitiveChild(String fieldClassName)
+    public PrimitiveDisplay createPrimitiveChild(String fieldClassName, boolean isMandatory)
     {
         NNodeView view;
         if (fieldClassName.equals("boolean"))
@@ -48,7 +92,8 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         {
             view = new NStringView();
         }
-        add(view);
+
+        addChildView(isMandatory, view);
         return (PrimitiveDisplay) view;
     }
 
@@ -84,7 +129,10 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     public void clear()
     {
         super.clear();
-        add(implementingClassView);
+        mandatoryChildren.clear();
+        optionalChildren.clear();
+        optionalChildren.getElement().removeClassName("show");
+        bind();
     }
 
 }

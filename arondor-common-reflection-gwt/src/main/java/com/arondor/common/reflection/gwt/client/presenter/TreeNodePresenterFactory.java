@@ -79,7 +79,8 @@ public class TreeNodePresenterFactory
         if (PrimitiveTypeUtil.isPrimitiveType(fieldClassName))
         {
             LOG.finest("Field " + fieldName + " is primitive type");
-            childPresenter = new PrimitiveTreeNodePresenter(fieldName, display.createPrimitiveChild(fieldClassName));
+            childPresenter = new PrimitiveTreeNodePresenter(fieldName,
+                    display.createPrimitiveChild(fieldClassName, isMandatory));
             if (defaultValue != null && !defaultValue.equals(""))
             {
                 ((PrimitiveTreeNodePresenter) childPresenter).setDefaultValue(defaultValue);
@@ -115,7 +116,7 @@ public class TreeNodePresenterFactory
         {
             LOG.finest("Field " + fieldName + " is an object " + fieldClassName);
             childPresenter = new ClassTreeNodePresenter(rpcService, objectConfigurationMap, fieldName, fieldClassName,
-                    display.createClassChild());
+                    isMandatory, display.createClassChild(isMandatory));
         }
 
         setNodeNameAndDescription(fieldName, fieldClassName, fieldDescription, fieldLongDescription, defaultBehavior,

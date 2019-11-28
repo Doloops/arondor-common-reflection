@@ -1985,5 +1985,5 @@
       </com.arondor.common.reflection.bean.java.AccessibleClassBean>
     </entry>
   </accessibleClassMap>
-  <allowSuperclassesInImplementingClases>false</allowSuperclassesInImplementingClases>
+  <allowSuperclassesInImplementingClases>true</allowSuperclassesInImplementingClases>
 </com.arondor.common.reflection.catalog.SimpleAccessibleClassCatalog>

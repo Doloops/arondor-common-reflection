@@ -29,8 +29,8 @@ import com.arondor.common.reflection.gwt.client.view.fields.PrimitiveStringView;
 import com.arondor.common.reflection.gwt.client.view.fields.StringListView;
 import com.google.gwt.user.client.ui.UIObject;
 
-public abstract class AbstractChildCreatorNodeView extends AbstractTreeNodeView implements
-        TreeNodePresenter.ChildCreatorDisplay
+public abstract class AbstractChildCreatorNodeView extends AbstractTreeNodeView
+        implements TreeNodePresenter.ChildCreatorDisplay
 {
 
     protected AbstractChildCreatorNodeView(UIObject parentNode)
@@ -38,12 +38,14 @@ public abstract class AbstractChildCreatorNodeView extends AbstractTreeNodeView 
         super(parentNode);
     }
 
-    public ClassDisplay createClassChild()
+    @Override
+    public ClassDisplay createClassChild(boolean isMandatory)
     {
         return new ClassTreeNodeView(getTreeItem());
     }
 
-    public PrimitiveDisplay createPrimitiveChild(String fieldClassName)
+    @Override
+    public PrimitiveDisplay createPrimitiveChild(String fieldClassName, boolean isMandatory)
     {
         if (fieldClassName.equals("boolean") || fieldClassName.equals("java.lang.Boolean"))
         {
@@ -57,21 +59,25 @@ public abstract class AbstractChildCreatorNodeView extends AbstractTreeNodeView 
         return primitiveStringView;
     }
 
+    @Override
     public EnumDisplay createEnumListChild()
     {
         return new EnumListView(getTreeItem());
     }
 
+    @Override
     public MapRootDisplay createMapChild()
     {
         return new MapRootView(getTreeItem());
     }
 
+    @Override
     public ListRootDisplay createListChild()
     {
         return new ListRootView(getTreeItem());
     }
 
+    @Override
     public StringListDisplay createStringListChild()
     {
         return new StringListView(getTreeItem());

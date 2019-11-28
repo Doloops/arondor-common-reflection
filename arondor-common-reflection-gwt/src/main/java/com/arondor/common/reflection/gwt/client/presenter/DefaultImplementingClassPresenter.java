@@ -32,12 +32,16 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
 
     private final GWTReflectionServiceAsync rpcService;
 
+    private final boolean isMandatory;
+
     private final List<ImplementingClass> implementingClasses = new ArrayList<ImplementingClass>();
 
     public DefaultImplementingClassPresenter(GWTReflectionServiceAsync rpcService,
-            ObjectConfigurationMap objectConfigurationMap, String baseClassName, ImplementingClassDisplay display)
+            ObjectConfigurationMap objectConfigurationMap, String baseClassName, boolean isMandatory,
+            ImplementingClassDisplay display)
     {
         this.baseClassName = baseClassName;
+        this.isMandatory = isMandatory;
         this.display = display;
         this.rpcService = rpcService;
         this.display.setBaseClassName(baseClassName);
@@ -90,10 +94,13 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
         }
     }
 
+    private final List<ValueChangeHandler<ImplementingClass>> valueChangeHandlerRegistrations = new ArrayList<ValueChangeHandler<ImplementingClass>>();
+
     @Override
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<ImplementingClass> valueChangeHandler)
     {
-        return this.display.addValueChangeHandler(new ValueChangeHandler<String>()
+        valueChangeHandlerRegistrations.add(valueChangeHandler);
+        final HandlerRegistration registration = this.display.addValueChangeHandler(new ValueChangeHandler<String>()
         {
             @Override
             public void onValueChange(ValueChangeEvent<String> event)
@@ -102,6 +109,17 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
                 valueChangeHandler.onValueChange(new MyValueChangeEvent<ImplementingClass>(implementingClass));
             }
         });
+
+        return new HandlerRegistration()
+        {
+            @Override
+            public void removeHandler()
+            {
+                registration.removeHandler();
+                valueChangeHandlerRegistrations.remove(valueChangeHandler);
+            }
+        };
+
     }
 
     private void bind()
@@ -215,6 +233,23 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
                     if (isInstantiatable(clazz))
                     {
                         addImplementingClass(new ImplementingClass(false, clazz.getName()));
+                    }
+                }
+                if (result.size() == 1 && isMandatory && currentImplementingClass == ImplementingClass.NULL_CLASS)
+                {
+                    /**
+                     * There is only one result.
+                     */
+                    // convert AccessibleClass#1 into ImplementingClass
+                    ImplementingClass implementingClass = new ImplementingClass(false,
+                            result.iterator().next().getName());
+                    setImplementingClass(implementingClass);
+
+                    ValueChangeEvent<ImplementingClass> event = new MyValueChangeEvent<ImplementingClass>(
+                            implementingClass);
+                    for (ValueChangeHandler<ImplementingClass> handler : valueChangeHandlerRegistrations)
+                    {
+                        handler.onValueChange(event);
                     }
                 }
             }

@@ -58,15 +58,15 @@ public class TestObjectConfigurationMapPresenter
         Mockito.when(objectConfigurationMapDisplay.createChildNode()).thenReturn(mapNodeDisplay);
 
         PrimitiveDisplay primitiveDisplay = Mockito.mock(PrimitiveDisplay.class);
-        Mockito.when(mapNodeDisplay.createPrimitiveChild(Matchers.anyString())).thenReturn(primitiveDisplay);
+        Mockito.when(mapNodeDisplay.createPrimitiveChild(Matchers.anyString(), false)).thenReturn(primitiveDisplay);
         ClassDisplay classDisplay = Mockito.mock(ClassDisplay.class);
-        Mockito.when(mapNodeDisplay.createClassChild()).thenReturn(classDisplay);
-        Mockito.when(classDisplay.createClassChild()).thenReturn(classDisplay);
+        Mockito.when(mapNodeDisplay.createClassChild(false)).thenReturn(classDisplay);
+        Mockito.when(classDisplay.createClassChild(false)).thenReturn(classDisplay);
         ListRootDisplay listDisplay = Mockito.mock(ListRootDisplay.class);
         Mockito.when(classDisplay.createListChild()).thenReturn(listDisplay);
         Mockito.when(listDisplay.addElementClickHandler()).thenReturn(hasClickHandlers);
-        Mockito.when(listDisplay.createClassChild()).thenReturn(classDisplay);
-        Mockito.when(listDisplay.createPrimitiveChild(Matchers.anyString())).thenReturn(primitiveDisplay);
+        Mockito.when(listDisplay.createClassChild(false)).thenReturn(classDisplay);
+        Mockito.when(listDisplay.createPrimitiveChild(Matchers.anyString(), false)).thenReturn(primitiveDisplay);
         StringListDisplay stringListDisplay = Mockito.mock(StringListDisplay.class);
         Mockito.when(listDisplay.createStringListChild()).thenReturn(stringListDisplay);
         MapRootDisplay mapRootDisplay = objectConfigurationMapDisplay;
@@ -76,7 +76,7 @@ public class TestObjectConfigurationMapPresenter
         Mockito.when(mapRootDisplay.addElementClickHandler()).thenReturn(hasClickHandlers);
         Mockito.when(classDisplay.createStringListChild()).thenReturn(stringListDisplay);
         Mockito.when(mapNodeDisplay.createStringListChild()).thenReturn(stringListDisplay);
-        Mockito.when(classDisplay.createPrimitiveChild(Matchers.anyString())).thenReturn(primitiveDisplay);
+        Mockito.when(classDisplay.createPrimitiveChild(Matchers.anyString(), false)).thenReturn(primitiveDisplay);
         ImplementingClassDisplay display = Mockito.mock(ImplementingClassDisplay.class);
         Mockito.when(classDisplay.getImplementingClassDisplay()).thenReturn(display);
 

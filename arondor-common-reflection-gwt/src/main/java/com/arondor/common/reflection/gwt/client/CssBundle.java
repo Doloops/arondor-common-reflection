@@ -28,6 +28,24 @@ public interface CssBundle extends ClientBundle
 
         @ClassName("nodeName")
         String nodeName();
+
+        @ClassName("mandatoryChildren")
+        String classMandatoryChildren();
+
+        @ClassName("optionalChildren")
+        String classOptionalChildren();
+
+        @ClassName("hideAdvancedSettings")
+        String hideAdvancedSettings();
+
+        @ClassName("bg-green")
+        String bgGreen();
+
+        @ClassName("bg-blue")
+        String bgBlue();
+
+        @ClassName("advancedSettingsBtn")
+        String advancedSettingsBtn();
     }
 
     static final CssBundle INSTANCE = GWT.create(CssBundle.class);

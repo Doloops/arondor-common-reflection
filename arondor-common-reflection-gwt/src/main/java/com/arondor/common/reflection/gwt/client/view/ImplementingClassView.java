@@ -92,6 +92,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
                 {
                     String value = implementingListInput.getValue(implementingListInput.getSelectedIndex());
                     selectedClass = value;
+                    LOG.finest("Selected class : " + selectedClass);
                     valueChangeHandler.onValueChange(new MyValueChangeEvent<String>(value));
                 }
             }
