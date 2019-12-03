@@ -35,10 +35,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         String rnd = String.valueOf(Math.random()).substring(2);
         advancedSettings.getElement().setInnerHTML(
                 "<a data-toggle=\"collapse\" href=\"#advancedSettings" + rnd + "\"> > Advanced settings</a>");
-        // advancedSettings.getElement().addClassName("d-flex
-        // justify-content-center");
         optionalChildren.getElement().setId("advancedSettings" + rnd);
-        // optionalChildren.getElement().addClassName("collapse");
 
         bind();
     }
@@ -97,6 +94,20 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         {
             view = new NStringView();
         }
+        // TODO long
+        // TODO java.util.Map
+        // TODO java.util.List
+        // TODO java.lang.Class
+        // TODO java.io.InputStream
+        // TODO java.math.BigInteger
+
+        // TODO com.arondor.fast2p8.model.manager.Manager
+        // TODO com.arondor.fast2p8.alfresco.PropertyHelper
+        // TODO com.arondor.fast2p8.alfresco.AlfrescoConnection
+        // TODO com.arondor.fast2p8.model.namingscheme.NamingScheme
+        // TODO com.arondor.fast2p8.alfresco.AlfrescoCMISConnectionProvider
+        // TODO com.arondor.fast2p8.model.namingscheme.PunnetPatternResolver
+        // TODO org.apache.chemistry.opencmis.client.api.Session
         else
         {
             view = new NStringView();

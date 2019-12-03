@@ -4,28 +4,38 @@ import com.arondor.common.reflection.gwt.client.CssBundle;
 import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent.Handler;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FocusPanel;
 
 public class NNodeView extends FlowPanel implements TreeNodePresenter.Display
 {
     private final FlowPanel nodeNamePanel = new FlowPanel();
 
-    private final FlowPanel resetDefault = new FlowPanel();
+    public FlowPanel getNodeNamePanel()
+    {
+        return nodeNamePanel;
+    }
 
-    private final FlowPanel resetFieldBtn = new FlowPanel();
+    // private final FlowPanel resetDefault = new FlowPanel();
+
+    // private final FlowPanel resetFieldBtn = new FlowPanel();
+    private final FocusPanel resetFieldBtn = new FocusPanel();
 
     protected NNodeView()
     {
         getElement().addClassName(CssBundle.INSTANCE.css().nodeField());
-        // resetFieldBtn.getElement().addClassName("input-group-append");
         resetFieldBtn.getElement().addClassName(CssBundle.INSTANCE.css().resetFieldBtn());
-        // resetFieldBtn.getElement().setAttribute("align", "right");
         resetFieldBtn.getElement().addClassName(CssBundle.INSTANCE.css().hidden());
-        // resetFieldBtn.getElement().addClassName("float-right");
-        resetFieldBtn.getElement().setInnerHTML("<i class=\"fa fa-trash\">w</i>");
+        resetFieldBtn.getElement().setInnerHTML("<i class=\"fa fa-trash\"></i>");
 
         addChildren();
 
         nodeNamePanel.getElement().addClassName(CssBundle.INSTANCE.css().nodeName());
+    }
+
+    // protected FlowPanel getResetFieldBtn()
+    protected FocusPanel getResetFieldBtn()
+    {
+        return resetFieldBtn;
     }
 
     @Override

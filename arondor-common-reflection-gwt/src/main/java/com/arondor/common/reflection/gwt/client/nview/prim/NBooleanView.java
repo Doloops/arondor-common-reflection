@@ -4,6 +4,8 @@ import com.arondor.common.reflection.gwt.client.CssBundle;
 import com.arondor.common.reflection.gwt.client.nview.NNodeView;
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter.PrimitiveDisplay;
 import com.arondor.common.reflection.gwt.client.view.MyValueChangeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -15,11 +17,32 @@ public class NBooleanView extends NNodeView implements PrimitiveDisplay
 
     private boolean defaultValue = false;
 
+    private String rnd = "";
+
     public NBooleanView()
     {
         getElement().addClassName(CssBundle.INSTANCE.css().booleanField());
+        rnd = String.valueOf(Math.random()).substring(2);
+
+        getResetFieldBtn().addClickHandler(new ClickHandler()
+        {
+
+            @Override
+            public void onClick(ClickEvent event)
+            {
+                setDefaultValue(String.valueOf(defaultValue));
+            }
+        });
+
+        valueBox.getElement().getElementsByTagName("input").getItem(0).setId(rnd);
 
         add(valueBox);
+    }
+
+    @Override
+    public void setNodeDescription(String description)
+    {
+        getNodeNamePanel().getElement().setInnerHTML("<label for=\"" + rnd + "\">" + description + "</label>");
     }
 
     @Override
@@ -61,7 +84,6 @@ public class NBooleanView extends NNodeView implements PrimitiveDisplay
     @Override
     public void setPlaceholder(String value)
     {
-        // TODO Auto-generated method stub
-
+        // required for string fields
     }
 }
