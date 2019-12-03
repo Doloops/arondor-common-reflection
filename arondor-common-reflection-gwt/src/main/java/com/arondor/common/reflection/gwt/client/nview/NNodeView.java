@@ -9,14 +9,23 @@ public class NNodeView extends FlowPanel implements TreeNodePresenter.Display
 {
     private final FlowPanel nodeNamePanel = new FlowPanel();
 
+    private final FlowPanel resetDefault = new FlowPanel();
+
+    private final FlowPanel resetFieldBtn = new FlowPanel();
+
     protected NNodeView()
     {
         getElement().addClassName(CssBundle.INSTANCE.css().nodeField());
-        add(nodeNamePanel);
+        // resetFieldBtn.getElement().addClassName("input-group-append");
+        resetFieldBtn.getElement().addClassName(CssBundle.INSTANCE.css().resetFieldBtn());
+        // resetFieldBtn.getElement().setAttribute("align", "right");
+        resetFieldBtn.getElement().addClassName(CssBundle.INSTANCE.css().hidden());
+        // resetFieldBtn.getElement().addClassName("float-right");
+        resetFieldBtn.getElement().setInnerHTML("<i class=\"fa fa-trash\">w</i>");
+
+        addChildren();
 
         nodeNamePanel.getElement().addClassName(CssBundle.INSTANCE.css().nodeName());
-
-        // nodeNamePanel.setTitle("Coucou caché");
     }
 
     @Override
@@ -28,18 +37,35 @@ public class NNodeView extends FlowPanel implements TreeNodePresenter.Display
     @Override
     public void setNodeDescription(String description)
     {
+        nodeNamePanel.getElement().setInnerHTML(description);
     }
+
+    @Override
+    public void setNodeLongDescription(String longDescription)
+    {
+        nodeNamePanel.setTitle(longDescription);
+    }
+
+    private boolean active;
 
     @Override
     public void setActive(boolean active)
     {
+        this.active = active;
+        if (active)
+        {
+            resetFieldBtn.getElement().removeClassName(CssBundle.INSTANCE.css().hidden());
+        }
+        else
+        {
+            resetFieldBtn.getElement().addClassName(CssBundle.INSTANCE.css().hidden());
+        }
     }
 
     @Override
     public boolean isActive()
     {
-        // TODO Auto-generated method stub
-        return false;
+        return active;
     }
 
     @Override
@@ -49,11 +75,17 @@ public class NNodeView extends FlowPanel implements TreeNodePresenter.Display
 
     }
 
+    private void addChildren()
+    {
+        add(nodeNamePanel);
+        add(resetFieldBtn);
+    }
+
     @Override
     public void clear()
     {
         super.clear();
-        add(nodeNamePanel);
+        addChildren();
     }
 
 }

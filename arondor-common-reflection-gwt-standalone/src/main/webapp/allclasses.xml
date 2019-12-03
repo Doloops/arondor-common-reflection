@@ -323,7 +323,8 @@
             <string>extractContent</string>
             <com.arondor.common.reflection.bean.java.AccessibleFieldBean>
               <name>extractContent</name>
-              <description>Extract document content (default value : true)</description>
+              <description>Extract document content</description>
+              <defaultValue>true</defaultValue>
               <className>boolean</className>
               <readable>true</readable>
               <writable>true</writable>
@@ -338,7 +339,8 @@
             <string>alfrescoConnectionProvider</string>
             <com.arondor.common.reflection.bean.java.AccessibleFieldBean>
               <name>alfrescoConnectionProvider</name>
-              <description>The Alfresco connection provider class [CMIS version must be 1.1]</description>
+              <description>Alfresco connection provider</description>
+              <longDescription>CMIS version 1.1 misbehaves with Alfresco custom aspects</longDescription>
               <className>com.arondor.fast2p8.alfresco.AlfrescoCMISConnectionProvider</className>
               <readable>true</readable>
               <writable>true</writable>
@@ -647,7 +649,7 @@
             <string>password</string>
             <com.arondor.common.reflection.bean.java.AccessibleFieldBean>
               <name>password</name>
-              <description>password</description>
+              <description>Password</description>
               <className>java.lang.String</className>
               <readable>true</readable>
               <writable>true</writable>
@@ -662,7 +664,8 @@
             <string>alfUrl</string>
             <com.arondor.common.reflection.bean.java.AccessibleFieldBean>
               <name>alfUrl</name>
-              <description>Alfresco URL (http://host:port)</description>
+              <description>Alfresco URL</description>
+              <placeholder>http://host:port</placeholder>
               <className>java.lang.String</className>
               <readable>true</readable>
               <writable>true</writable>
@@ -677,7 +680,7 @@
             <string>login</string>
             <com.arondor.common.reflection.bean.java.AccessibleFieldBean>
               <name>login</name>
-              <description>login</description>
+              <description>Login</description>
               <className>java.lang.String</className>
               <readable>true</readable>
               <writable>true</writable>
@@ -987,7 +990,7 @@
             <com.arondor.common.reflection.bean.java.AccessibleFieldBean>
               <name>numThreads</name>
               <description>Number of Threads</description>
-              <className>java.lang.String</className>
+              <className>int</className>
               <readable>true</readable>
               <writable>true</writable>
               <mandatory>false</mandatory>
@@ -1167,21 +1170,23 @@
       <string>com.arondor.fast2p8.alfresco.AlfrescoInjectorSettings</string>
       <com.arondor.common.reflection.bean.java.AccessibleClassBean>
         <accessibleFields>
-          <entry>
-            <string>propertyNameAlfrescoId</string>
-            <com.arondor.common.reflection.bean.java.AccessibleFieldBean>
-              <name>propertyNameAlfrescoId</name>
-              <description>Property containing the created Alfresco Id, default is alfDocumentId</description>
-              <className>java.lang.String</className>
-              <readable>true</readable>
-              <writable>true</writable>
-              <mandatory>false</mandatory>
-              <enumProperty>false</enumProperty>
-              <is>false</is>
-              <genericParameterClassList/>
-              <declaredInClass>com.arondor.fast2p8.alfresco.AlfrescoInjectorSettings</declaredInClass>
-            </com.arondor.common.reflection.bean.java.AccessibleFieldBean>
-          </entry>
+<!--           <entry> -->
+<!--             <string>propertyNameAlfrescoId</string> -->
+<!--             <com.arondor.common.reflection.bean.java.AccessibleFieldBean> -->
+<!--               <name>propertyNameAlfrescoId</name> -->
+<!--               <description>Reference of Alfresco Id</description> -->
+<!--               <longDescription>The current property name of the created Alfresco Id</longDescription> -->
+<!--               <className>java.lang.String</className> -->
+<!--               <defaultValue>alfDocumentId</defaultValue> -->
+<!--               <readable>true</readable> -->
+<!--               <writable>true</writable> -->
+<!--               <mandatory>false</mandatory> -->
+<!--               <enumProperty>false</enumProperty> -->
+<!--               <is>false</is> -->
+<!--               <genericParameterClassList/> -->
+<!--               <declaredInClass>com.arondor.fast2p8.alfresco.AlfrescoInjectorSettings</declaredInClass> -->
+<!--             </com.arondor.common.reflection.bean.java.AccessibleFieldBean> -->
+<!--           </entry> -->
           <entry>
             <string>propertyHelper</string>
             <com.arondor.common.reflection.bean.java.AccessibleFieldBean>
@@ -1374,21 +1379,22 @@
               <declaredInClass>com.arondor.fast2p8.task.common.PerThreadXTask</declaredInClass>
             </com.arondor.common.reflection.bean.java.AccessibleFieldBean>
           </entry>
-          <entry>
-            <string>forceDocumentUpdate</string>
-            <com.arondor.common.reflection.bean.java.AccessibleFieldBean>
-              <name>forceDocumentUpdate</name>
-              <description>Force document Update action : throw an error if document does not exist</description>
-              <className>boolean</className>
-              <readable>true</readable>
-              <writable>true</writable>
-              <mandatory>false</mandatory>
-              <enumProperty>false</enumProperty>
-              <is>true</is>
-              <genericParameterClassList/>
-              <declaredInClass>com.arondor.fast2p8.alfresco.AlfrescoInjectorSettings</declaredInClass>
-            </com.arondor.common.reflection.bean.java.AccessibleFieldBean>
-          </entry>
+<!--           <entry> -->
+<!--             <string>forceDocumentUpdate</string> -->
+<!--             <com.arondor.common.reflection.bean.java.AccessibleFieldBean> -->
+<!--               <name>forceDocumentUpdate</name> -->
+<!--               <description>Force document update</description> -->
+<!--               <longDescription>Throws an error if the document does not exist</longDescription> -->
+<!--               <className>boolean</className> -->
+<!--               <readable>true</readable> -->
+<!--               <writable>true</writable> -->
+<!--               <mandatory>false</mandatory> -->
+<!--               <enumProperty>false</enumProperty> -->
+<!--               <is>true</is> -->
+<!--               <genericParameterClassList/> -->
+<!--               <declaredInClass>com.arondor.fast2p8.alfresco.AlfrescoInjectorSettings</declaredInClass> -->
+<!--             </com.arondor.common.reflection.bean.java.AccessibleFieldBean> -->
+<!--           </entry> -->
         </accessibleFields>
         <name>com.arondor.fast2p8.alfresco.AlfrescoInjectorSettings</name>
         <allInterfaces>
@@ -1439,8 +1445,10 @@
             <string>propertyNameAlfrescoId</string>
             <com.arondor.common.reflection.bean.java.AccessibleFieldBean>
               <name>propertyNameAlfrescoId</name>
-              <description>Property containing the created Alfresco Id, default is alfDocumentId</description>
+              <description>Reference of Alfresco Id</description>
+              <longDescription>The current property name of the created Alfresco Id</longDescription>
               <className>java.lang.String</className>
+              <defaultValue>alfDocumentId</defaultValue>
               <readable>true</readable>
               <writable>true</writable>
               <mandatory>false</mandatory>
@@ -1541,7 +1549,8 @@
             <string>propertiesRegex</string>
             <com.arondor.common.reflection.bean.java.AccessibleFieldBean>
               <name>propertiesRegex</name>
-              <description>Regex pattern to filter which document properties to inject</description>
+              <description>Regex pattern for document properties</description>
+              <longDescription>All matching properties will be injected</longDescription>
               <className>java.lang.String</className>
               <readable>true</readable>
               <writable>true</writable>
@@ -1618,6 +1627,7 @@
               <description>Create folders when they do not exist</description>
               <longDescription>This overwrites each folder canCreate property</longDescription>
               <defaultBehavior>Creates folders</defaultBehavior>
+              <defaultValue>true</defaultValue>
               <className>boolean</className>
               <readable>true</readable>
               <writable>true</writable>
@@ -1674,8 +1684,10 @@
             <string>forceDocumentUpdate</string>
             <com.arondor.common.reflection.bean.java.AccessibleFieldBean>
               <name>forceDocumentUpdate</name>
-              <description>Force document Update action : throw an error if document does not exist</description>
+              <description>Force document update</description>
+              <longDescription>Throws an error if the document does not exist</longDescription>
               <className>boolean</className>
+              <defaultValue>false</defaultValue>
               <readable>true</readable>
               <writable>true</writable>
               <mandatory>false</mandatory>

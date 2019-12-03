@@ -39,11 +39,13 @@ public class StringListView extends AbstractTreeNodeView implements StringListDi
         textArea.setWidth("400px");
     }
 
+    @Override
     public void clear()
     {
         textArea.setValue("");
     }
 
+    @Override
     public void setValue(List<String> values)
     {
         StringBuilder stringBuilder = new StringBuilder();
@@ -56,10 +58,12 @@ public class StringListView extends AbstractTreeNodeView implements StringListDi
         setActive(true);
     }
 
+    @Override
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<List<String>> valueChangeHandler)
     {
         return textArea.addValueChangeHandler(new ValueChangeHandler<String>()
         {
+            @Override
             public void onValueChange(ValueChangeEvent<String> event)
             {
                 setActive(true);
@@ -74,6 +78,7 @@ public class StringListView extends AbstractTreeNodeView implements StringListDi
         });
     }
 
+    @Override
     public void setDefaultValue(List<String> values)
     {
         StringBuilder stringBuilder = new StringBuilder();
@@ -85,5 +90,11 @@ public class StringListView extends AbstractTreeNodeView implements StringListDi
         textArea.setValue(stringBuilder.toString());
     }
 
+    @Override
+    public void setPlaceholder(List<String> value)
+    {
+        // TODO Auto-generated method stub
+
+    }
 
 }

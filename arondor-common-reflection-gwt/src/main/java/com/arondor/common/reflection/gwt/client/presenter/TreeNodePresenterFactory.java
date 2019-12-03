@@ -44,46 +44,44 @@ public class TreeNodePresenterFactory
 
     public TreeNodePresenter createChildNodePresenter(GWTReflectionServiceAsync rpcService,
             ObjectConfigurationMap objectConfigurationMap, TreeNodePresenter.ChildCreatorDisplay display,
+            String fieldName, final String fieldClassName, String fieldDescription)
+    {
+        // return createChildNodePresenter(rpcService, objectConfigurationMap,
+        // display, fieldName, fieldClassName,
+        // fieldDescription, null, null, false, null, false, null, null);
+        return null;
+    }
+
+    public TreeNodePresenter createChildNodePresenter(GWTReflectionServiceAsync rpcService,
+            ObjectConfigurationMap objectConfigurationMap, TreeNodePresenter.ChildCreatorDisplay display,
             AccessibleField accessibleField)
     {
         String fieldName = accessibleField.getName();
         String fieldClassName = accessibleField.getClassName();
         String fieldDescription = accessibleField.getDescription();
         String fieldLongDescription = accessibleField.getLongDescription();
-        String fieldDefaultBehavior = accessibleField.getDefaultBehavior();
-        boolean mandatory = accessibleField.isMandatory();
+        String defaultBehavior = accessibleField.getDefaultBehavior();
+        boolean isMandatory = accessibleField.isMandatory();
         String defaultValue = accessibleField.getDefaultValue();
-        boolean enumProperty = accessibleField.isEnumProperty();
+        String placeholder = accessibleField.getPlaceholder();
+        String classDeclaredIn = accessibleField.getDeclaredInClass();
+        boolean isEnumProperty = accessibleField.isEnumProperty();
         List<String> genericTypes = accessibleField.getGenericParameterClassList();
 
-        return createChildNodePresenter(rpcService, objectConfigurationMap, display, fieldName, fieldClassName,
-                fieldDescription, fieldLongDescription, fieldDefaultBehavior, mandatory, defaultValue, enumProperty,
-                accessibleField.getDeclaredInClass(), genericTypes);
-    }
-
-    public TreeNodePresenter createChildNodePresenter(GWTReflectionServiceAsync rpcService,
-            ObjectConfigurationMap objectConfigurationMap, TreeNodePresenter.ChildCreatorDisplay display,
-            String fieldName, final String fieldClassName, String fieldDescription)
-    {
-        return createChildNodePresenter(rpcService, objectConfigurationMap, display, fieldName, fieldClassName,
-                fieldDescription, null, null, false, null, false, null, null);
-    }
-
-    public TreeNodePresenter createChildNodePresenter(GWTReflectionServiceAsync rpcService,
-            ObjectConfigurationMap objectConfigurationMap, TreeNodePresenter.ChildCreatorDisplay display,
-            String fieldName, final String fieldClassName, String fieldDescription, String fieldLongDescription,
-            String defaultBehavior, boolean isMandatory, String defaultValue, boolean isEnumProperty,
-            final String classDeclaredIn, List<String> genericTypes)
-    {
         TreeNodePresenter childPresenter = null;
         if (PrimitiveTypeUtil.isPrimitiveType(fieldClassName))
         {
-            LOG.finest("Field " + fieldName + " is primitive type");
+            LOG.finest("Field " + fieldName + " is primitive type, class=" + fieldClassName + ", defaultValue="
+                    + defaultValue);
             childPresenter = new PrimitiveTreeNodePresenter(fieldName,
                     display.createPrimitiveChild(fieldClassName, isMandatory));
             if (defaultValue != null && !defaultValue.equals(""))
             {
                 ((PrimitiveTreeNodePresenter) childPresenter).setDefaultValue(defaultValue);
+            }
+            if (placeholder != null && !placeholder.equals(""))
+            {
+                ((PrimitiveTreeNodePresenter) childPresenter).setPlaceholder(placeholder);
             }
             PrimitiveConfiguration primitiveConfiguration = new PrimitiveConfigurationBean();
             childPresenter.setElementConfiguration(primitiveConfiguration);
@@ -119,8 +117,7 @@ public class TreeNodePresenterFactory
                     isMandatory, display.createClassChild(isMandatory));
         }
 
-        setNodeNameAndDescription(fieldName, fieldClassName, fieldDescription, fieldLongDescription, defaultBehavior,
-                isMandatory, childPresenter);
+        setNodeNameAndDescription(fieldName, accessibleField, childPresenter);
         return childPresenter;
     }
 
@@ -176,33 +173,17 @@ public class TreeNodePresenterFactory
         return childPresenter;
     }
 
-    private void setNodeNameAndDescription(String fieldName, String fieldClassName, String fieldDescription,
-            String fieldLongDescription, String defaultBehavior, boolean isMandatory, TreeNodePresenter childPresenter)
+    private void setNodeNameAndDescription(String fieldName, AccessibleField accessibleField,
+            TreeNodePresenter childPresenter)
     {
-        String nodeName = fieldName;
-        String nodeDescription = null;
-        if (fieldDescription != null)
+        childPresenter.getDisplay().setNodeName(fieldName);
+        if (accessibleField.getDescription() != null)
         {
-            if (fieldDescription.length() < MAX_DESCRIPTION_LENGTH)
-            {
-                nodeName = fieldDescription;
-            }
-            else
-            {
-                nodeName = fieldDescription.substring(0, MAX_DESCRIPTION_LENGTH) + "...";
-                nodeDescription = fieldDescription;
-            }
+            childPresenter.getDisplay().setNodeDescription(accessibleField.getDescription());
         }
-        if (fieldLongDescription != null)
+        if (accessibleField.getLongDescription() != null)
         {
-            nodeDescription = fieldLongDescription;
-        }
-        String fieldPrefix = isMandatory ? "* " : "";
-
-        childPresenter.getDisplay().setNodeName(fieldPrefix + nodeName);
-        if (nodeDescription != null)
-        {
-            childPresenter.getDisplay().setNodeDescription(nodeDescription);
+            childPresenter.getDisplay().setNodeLongDescription(accessibleField.getLongDescription());
         }
     }
 

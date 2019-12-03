@@ -193,10 +193,13 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
 
         for (AccessibleField accessibleField : sortedAccessibleFields)
         {
-            TreeNodePresenter childPresenter = TreeNodePresenterFactory.getInstance()
-                    .createChildNodePresenter(rpcService, objectConfigurationMap, display, accessibleField);
-            LOG.finest("At field=" + accessibleField.getName() + ", created childPresenter=" + childPresenter);
-            classTreeNodePresenterMap.put(accessibleField.getName(), childPresenter);
+            if (accessibleField.getWritable())
+            {
+                TreeNodePresenter childPresenter = TreeNodePresenterFactory.getInstance()
+                        .createChildNodePresenter(rpcService, objectConfigurationMap, display, accessibleField);
+                LOG.finest("At field=" + accessibleField.getName() + ", created childPresenter=" + childPresenter);
+                classTreeNodePresenterMap.put(accessibleField.getName(), childPresenter);
+            }
         }
     }
 

@@ -35,21 +35,25 @@ public class PrimitiveBooleanView extends AbstractTreeNodeView implements Primit
         getContents().add(checkBox);
     }
 
+    @Override
     public void clear()
     {
         checkBox.setValue(null);
     }
 
+    @Override
     public void setValue(String value)
     {
         checkBox.setValue(Boolean.parseBoolean(value));
         setActive(true);
     }
 
+    @Override
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<String> valueChangeHandler)
     {
         return checkBox.addValueChangeHandler(new ValueChangeHandler<Boolean>()
         {
+            @Override
             public void onValueChange(ValueChangeEvent<Boolean> event)
             {
                 setActive(true);
@@ -58,9 +62,17 @@ public class PrimitiveBooleanView extends AbstractTreeNodeView implements Primit
         });
     }
 
+    @Override
     public void setDefaultValue(String value)
     {
         checkBox.setValue(Boolean.parseBoolean(value));
+    }
+
+    @Override
+    public void setPlaceholder(String value)
+    {
+        // TODO Auto-generated method stub
+
     }
 
 }

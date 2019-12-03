@@ -92,6 +92,13 @@ public interface AccessibleField extends Serializable
     String getDefaultValue();
 
     /**
+     * Get placeholder of field (for primitive : String, Integer,Float)
+     * 
+     * @return placeholder value
+     */
+    String getPlaceholder();
+
+    /**
      * Is the field bind to enum type
      * 
      * @return

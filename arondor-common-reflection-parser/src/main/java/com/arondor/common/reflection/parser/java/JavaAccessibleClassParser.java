@@ -672,6 +672,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
                     Field field = superclass.getDeclaredField(accessibleField.getName());
                     accessibleFieldBean.setDescription(getFieldDescription(field));
                     accessibleFieldBean.setLongDescription(getFieldLongDescription(field));
+                    // accessibleFieldBean.getPlaceholder(getFieldLongDescription(field));
                     accessibleFieldBean.setDefaultBehavior(getFieldDefaultBehavior(field));
                     accessibleFieldBean.setMandatory(getFieldMandatory(field));
                     accessibleFieldBean.setEnumProperty(getAccessibleEnums(accessibleClass, field));

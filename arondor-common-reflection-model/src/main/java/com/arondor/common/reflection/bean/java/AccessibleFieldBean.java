@@ -89,6 +89,8 @@ public class AccessibleFieldBean implements AccessibleField
      */
     private boolean is = false;
 
+    private String placeholder;
+
     /**
      * Attribute description constructor
      * 
@@ -258,5 +260,16 @@ public class AccessibleFieldBean implements AccessibleField
     public void setDefaultBehavior(String defaultBehavior)
     {
         this.defaultBehavior = defaultBehavior;
+    }
+
+    @Override
+    public String getPlaceholder()
+    {
+        return placeholder;
+    }
+
+    public void setPlaceholder(String placeholder)
+    {
+        this.placeholder = placeholder;
     }
 }

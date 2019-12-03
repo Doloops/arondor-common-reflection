@@ -93,6 +93,7 @@ public abstract class AbstractTreeNodeView extends TreeItem implements TreeNodeP
     {
         clearButton.addClickHandler(new ClickHandler()
         {
+            @Override
             public void onClick(ClickEvent event)
             {
                 clearValue();
@@ -123,6 +124,7 @@ public abstract class AbstractTreeNodeView extends TreeItem implements TreeNodeP
         }
     }
 
+    @Override
     public void setNodeName(String name)
     {
         nodeLabel.setText(name);
@@ -149,6 +151,7 @@ public abstract class AbstractTreeNodeView extends TreeItem implements TreeNodeP
     {
         Scheduler.get().scheduleFixedPeriod(new RepeatingCommand()
         {
+            @Override
             public boolean execute()
             {
                 int nodeLabelWidth = nodeLabel.getElement().getClientWidth();
@@ -165,13 +168,20 @@ public abstract class AbstractTreeNodeView extends TreeItem implements TreeNodeP
         return contents;
     }
 
+    @Override
     public void setNodeDescription(String description)
     {
         nodeLabel.setTitle(description);
     }
 
+    @Override
+    public void setNodeLongDescription(String longDescription)
+    {
+    }
+
     private boolean active;
 
+    @Override
     public void setActive(boolean active)
     {
         this.active = active;
@@ -182,6 +192,7 @@ public abstract class AbstractTreeNodeView extends TreeItem implements TreeNodeP
         }
     }
 
+    @Override
     public boolean isActive()
     {
         return active;
@@ -206,6 +217,7 @@ public abstract class AbstractTreeNodeView extends TreeItem implements TreeNodeP
 
     private final EventBus eventBus = new SimpleEventBus();
 
+    @Override
     public void addTreeNodeClearHandler(Handler handler)
     {
         eventBus.addHandler(TreeNodeClearEvent.TYPE, handler);

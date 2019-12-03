@@ -2,6 +2,7 @@ package com.arondor.common.reflection.gwt.client.nview;
 
 import com.arondor.common.reflection.gwt.client.CssBundle;
 import com.arondor.common.reflection.gwt.client.nview.prim.NBooleanView;
+import com.arondor.common.reflection.gwt.client.nview.prim.NIntView;
 import com.arondor.common.reflection.gwt.client.nview.prim.NStringView;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.ImplementingClassPresenter.ImplementingClassDisplay;
@@ -37,7 +38,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         // advancedSettings.getElement().addClassName("d-flex
         // justify-content-center");
         optionalChildren.getElement().setId("advancedSettings" + rnd);
-        optionalChildren.getElement().addClassName("collapse");
+        // optionalChildren.getElement().addClassName("collapse");
 
         bind();
     }
@@ -87,6 +88,14 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         if (fieldClassName.equals("boolean"))
         {
             view = new NBooleanView();
+        }
+        else if (fieldClassName.equals("int"))
+        {
+            view = new NIntView();
+        }
+        else if (fieldClassName.equals("java.lang.String"))
+        {
+            view = new NStringView();
         }
         else
         {

@@ -46,6 +46,13 @@ public interface CssBundle extends ClientBundle
 
         @ClassName("advancedSettingsBtn")
         String advancedSettingsBtn();
+
+        @ClassName("hidden")
+        String hidden();
+
+        @ClassName("resetFieldBtn")
+        String resetFieldBtn();
+
     }
 
     static final CssBundle INSTANCE = GWT.create(CssBundle.class);

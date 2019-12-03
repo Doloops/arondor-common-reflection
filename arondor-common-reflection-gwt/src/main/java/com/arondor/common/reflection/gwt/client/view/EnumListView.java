@@ -41,6 +41,7 @@ public class EnumListView extends AbstractTreeNodeView implements EnumDisplay
         getContents().add(enumListInput.asWidget());
     }
 
+    @Override
     public void initEnumList(List<String> enumList)
     {
         LOG.finest("Selected enum values : " + enumList);
@@ -74,10 +75,12 @@ public class EnumListView extends AbstractTreeNodeView implements EnumDisplay
 
     }
 
+    @Override
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<String> valueChangeHandler)
     {
         return enumListInput.addChangeHandler(new ChangeHandler()
         {
+            @Override
             public void onChange(ChangeEvent event)
             {
                 if (enumListInput.getSelectedIndex() != -1)
@@ -90,6 +93,7 @@ public class EnumListView extends AbstractTreeNodeView implements EnumDisplay
         });
     }
 
+    @Override
     public void setValue(String value)
     {
         doSelect(value);
@@ -103,15 +107,24 @@ public class EnumListView extends AbstractTreeNodeView implements EnumDisplay
         }
     }
 
+    @Override
     public void setDefaultValue(String defaultValue)
     {
         doSelect(defaultValue);
     }
 
+    @Override
     public void clear()
     {
         int idx = enumListInput.getSelectedIndex();
         LOG.finest("Item " + idx + " is selected, deselect it");
         enumListInput.setItemSelected(idx, false);
+    }
+
+    @Override
+    public void setPlaceholder(String value)
+    {
+        // TODO Auto-generated method stub
+
     }
 }

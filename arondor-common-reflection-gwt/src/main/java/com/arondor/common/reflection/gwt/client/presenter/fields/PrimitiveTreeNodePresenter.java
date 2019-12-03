@@ -16,6 +16,7 @@
 package com.arondor.common.reflection.gwt.client.presenter.fields;
 
 import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent;
+import com.arondor.common.reflection.gwt.client.nview.prim.NStringView;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
@@ -30,6 +31,8 @@ public class PrimitiveTreeNodePresenter implements TreeNodePresenter
     private String fieldValue;
 
     private String defaultValue;
+
+    private String placeholder;
 
     public interface PrimitiveDisplay extends ValueDisplay<String>
     {
@@ -48,6 +51,7 @@ public class PrimitiveTreeNodePresenter implements TreeNodePresenter
     {
         primitiveDisplay.addValueChangeHandler(new ValueChangeHandler<String>()
         {
+            @Override
             public void onValueChange(ValueChangeEvent<String> event)
             {
                 fieldValue = event.getValue();
@@ -55,6 +59,7 @@ public class PrimitiveTreeNodePresenter implements TreeNodePresenter
         });
         primitiveDisplay.addTreeNodeClearHandler(new TreeNodeClearEvent.Handler()
         {
+            @Override
             public void onTreeNodeClearEvent(TreeNodeClearEvent treeNodeClearEvent)
             {
                 fieldValue = null;
@@ -64,11 +69,13 @@ public class PrimitiveTreeNodePresenter implements TreeNodePresenter
 
     }
 
+    @Override
     public String getFieldName()
     {
         return fieldName;
     }
 
+    @Override
     public ElementConfiguration getElementConfiguration(ObjectConfigurationFactory objectConfigurationFactory)
     {
         if (fieldValue != null && !fieldValue.isEmpty())
@@ -78,6 +85,7 @@ public class PrimitiveTreeNodePresenter implements TreeNodePresenter
         return null;
     }
 
+    @Override
     public void setElementConfiguration(ElementConfiguration elementConfiguration)
     {
         if (elementConfiguration instanceof PrimitiveConfiguration)
@@ -87,6 +95,10 @@ public class PrimitiveTreeNodePresenter implements TreeNodePresenter
             if (defaultValue != null)
             {
                 primitiveDisplay.setDefaultValue(defaultValue);
+            }
+            if (placeholder != null && primitiveDisplay instanceof NStringView)
+            {
+                primitiveDisplay.setPlaceholder(placeholder);
             }
             if (fieldValue != null)
             {
@@ -105,6 +117,17 @@ public class PrimitiveTreeNodePresenter implements TreeNodePresenter
         this.defaultValue = defaultValue;
     }
 
+    public String getPlaceholder()
+    {
+        return placeholder;
+    }
+
+    public void setPlaceholder(String placeholder)
+    {
+        this.placeholder = placeholder;
+    }
+
+    @Override
     public Display getDisplay()
     {
         return primitiveDisplay;

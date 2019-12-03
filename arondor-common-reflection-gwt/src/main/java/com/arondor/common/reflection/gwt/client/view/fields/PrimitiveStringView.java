@@ -34,11 +34,13 @@ public class PrimitiveStringView extends AbstractTreeNodeView implements Primiti
         getContents().add(textBox.asWidget());
     }
 
+    @Override
     public void clear()
     {
         textBox.setValue("");
     }
 
+    @Override
     public void setValue(String value)
     {
         textBox.setValue(value);
@@ -50,10 +52,12 @@ public class PrimitiveStringView extends AbstractTreeNodeView implements Primiti
         textBox.setWidth(width + "px");
     }
 
+    @Override
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<String> valueChangeHandler)
     {
         return textBox.addValueChangeHandler(new ValueChangeHandler<String>()
         {
+            @Override
             public void onValueChange(ValueChangeEvent<String> event)
             {
                 setActive(true);
@@ -62,10 +66,17 @@ public class PrimitiveStringView extends AbstractTreeNodeView implements Primiti
         });
     }
 
+    @Override
     public void setDefaultValue(String value)
     {
-        textBox.setValue(value);        
+        textBox.setValue(value);
     }
 
+    @Override
+    public void setPlaceholder(String value)
+    {
+        // TODO Auto-generated method stub
+
+    }
 
 }

@@ -163,10 +163,20 @@ public class GWTAccessibleClassCatalogParser
         {
             fieldBean.setLongDescription(longDescription);
         }
+        String placeholder = getChildValue(fieldElement, "placeholder");
+        if (placeholder != null && !placeholder.equals(""))
+        {
+            fieldBean.setPlaceholder(placeholder);
+        }
         String defaultBehavior = getChildValue(fieldElement, "defaultBehavior");
         if (defaultBehavior != null && !defaultBehavior.equals(""))
         {
             fieldBean.setDefaultBehavior(defaultBehavior);
+        }
+        String defaultValue = getChildValue(fieldElement, "defaultValue");
+        if (defaultValue != null && !defaultValue.equals(""))
+        {
+            fieldBean.setDefaultValue(defaultValue);
         }
         fieldBean.setClassName(getChildValue(fieldElement, "className"));
         if ("true".equals(getChildValue(fieldElement, "readable")))
