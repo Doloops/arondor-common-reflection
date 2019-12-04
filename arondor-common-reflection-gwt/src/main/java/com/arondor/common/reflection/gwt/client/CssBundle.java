@@ -38,12 +38,6 @@ public interface CssBundle extends ClientBundle
         @ClassName("hideAdvancedSettings")
         String hideAdvancedSettings();
 
-        @ClassName("bg-green")
-        String bgGreen();
-
-        @ClassName("bg-blue")
-        String bgBlue();
-
         @ClassName("advancedSettingsBtn")
         String advancedSettingsBtn();
 
@@ -52,7 +46,6 @@ public interface CssBundle extends ClientBundle
 
         @ClassName("resetFieldBtn")
         String resetFieldBtn();
-
     }
 
     static final CssBundle INSTANCE = GWT.create(CssBundle.class);

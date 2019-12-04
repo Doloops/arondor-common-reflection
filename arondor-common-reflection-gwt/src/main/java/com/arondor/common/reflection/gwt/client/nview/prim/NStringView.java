@@ -28,8 +28,7 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
 
         getResetFieldBtn().getElement().addClassName("input-group-append");
         getResetFieldBtn().getElement().addClassName(CssBundle.INSTANCE.css().resetFieldBtn());
-        getResetFieldBtn().getElement()
-                .setInnerHTML("<span class=\"input-group-text\"><i class=\"fa fa-trash\"></i></span>");
+        getResetFieldBtn().getElement().setInnerHTML("<span class=\"input-group-text\"><i></i></span>");
 
         getResetFieldBtn().addClickHandler(new ClickHandler()
         {
@@ -42,8 +41,8 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
         });
 
         textBox.getElement().addClassName("form-control");
-
         inputGroupPanel.getElement().addClassName("input-group");
+        inputGroupPanel.getElement().setAttribute("style", "height:26px;margin:0px");
         inputGroupPanel.add(textBox);
         inputGroupPanel.add(getResetFieldBtn());
 

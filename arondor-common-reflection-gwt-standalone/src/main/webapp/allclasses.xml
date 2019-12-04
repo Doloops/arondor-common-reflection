@@ -767,6 +767,7 @@
             <string>password</string>
             <com.arondor.common.reflection.bean.java.AccessibleFieldBean>
               <name>password</name>
+              <description>Password</description>
               <className>java.lang.String</className>
               <readable>true</readable>
               <writable>true</writable>

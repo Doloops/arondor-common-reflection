@@ -25,7 +25,7 @@ public class NNodeView extends FlowPanel implements TreeNodePresenter.Display
         getElement().addClassName(CssBundle.INSTANCE.css().nodeField());
         resetFieldBtn.getElement().addClassName(CssBundle.INSTANCE.css().resetFieldBtn());
         resetFieldBtn.getElement().addClassName(CssBundle.INSTANCE.css().hidden());
-        resetFieldBtn.getElement().setInnerHTML("<i class=\"fa fa-trash\"></i>");
+        resetFieldBtn.getElement().setInnerHTML("<span><i></i></span>");
 
         addChildren();
 
@@ -82,7 +82,6 @@ public class NNodeView extends FlowPanel implements TreeNodePresenter.Display
     public void addTreeNodeClearHandler(Handler handler)
     {
         // TODO Auto-generated method stub
-
     }
 
     private void addChildren()

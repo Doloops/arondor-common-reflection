@@ -2,7 +2,11 @@
 	padding: 0px 30px;
 } 
 
+body {
+}
+
 .rootTreeNode {
+	padding-bottom:15px;
 	background:#F1F1F1; 
 	height:100%;
 	overflow:auto;
@@ -59,14 +63,16 @@ div {
 	background:#e9ecef;
 	border-radius: 3px;
 	border : 1px solid #ced4da;
-	padding:6px 12px;
+	padding:2px 12px;
+	height:21.5px;
 }
 
 .nodeName div input {
-	border-radius:3px;
+/* 	border-radius:3px; */
 }
 
 .stringField input, .implementingClassView{
+	top:0px;
 	height: 26px;
 	width: 200px;
 	padding: 3px 8px;
@@ -76,12 +82,8 @@ div {
 	font-size:inherit;
 }
 
-.bg-green {
-	background:green;
-}
-
-.bg-blue {
-	background:blue;
+.classNode .classNode .optionalChildren .stringField{
+	padding-right:0px;
 }
 
 .hidden {
@@ -97,6 +99,7 @@ div {
 
 .resetFieldBtn { /*trash icon*/
 	height: 26px;
+	margin-bottom:5px;
 	margin-top:0px;
 /* 	float:right; */
 }
@@ -119,7 +122,6 @@ div {
 	
 .optionalChildren{
 	margin:0px 0px 5px 10px;
-	padding-bottom: 15px ;
 }
 
 .nodeField {}
@@ -130,4 +132,9 @@ div {
 
 .nodeField .nodeName {
 	margin-bottom: 0px; 
+}
+
+span i { /* TRASH-ICON */
+    content: url('icons/icon_trash.svg');
+    width: 13px;
 }
