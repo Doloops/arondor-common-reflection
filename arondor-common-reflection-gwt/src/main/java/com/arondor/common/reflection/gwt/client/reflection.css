@@ -21,17 +21,20 @@ body {
 /* check-box group */
 .booleanField {}
 
+.classNode .classNode .optionalChildren .booleanField {
+	padding-right:0px;
+}
+
+.classNode .classNode .optionalChildren .booleanField .resetFieldBtn {
+	position:relative;
+	right:0px;
+	padding:2px 12px;
+}
+
 div {
 	margin-bottom: 5px;
 	margin-top: 5px;
 }
-
-/* check boxes title */
-.booleanField .nodeName {
-}
-
-/* input group */
-.stringField {}
 
 /* change checkbox group order */
 .booleanField {
@@ -53,7 +56,6 @@ div {
 .booleanField span {
 	order: 1;
 	margin-top:1px;
-/* 	height:26px; */
 }
 
 .booleanField .resetFieldBtn {
@@ -65,10 +67,6 @@ div {
 	border : 1px solid #ced4da;
 	padding:2px 12px;
 	height:21.5px;
-}
-
-.nodeName div input {
-/* 	border-radius:3px; */
 }
 
 .stringField input, .implementingClassView{
@@ -90,18 +88,10 @@ div {
 	display:none;	
 }
 
-/* span i { */
-/* 	color:#383838; */
-/* } */
-/* span i:active { */
-/* 	color:#808080; */
-/* } */
-
 .resetFieldBtn { /*trash icon*/
 	height: 26px;
 	margin-bottom:5px;
 	margin-top:0px;
-/* 	float:right; */
 }
 
 .mandatoryChildren {
@@ -109,16 +99,10 @@ div {
 
 .advancedSettingsBtn{
 	margin-top:20px!important;
+	font-size:9pt;
+	font-weight:bold;
+	color:#1d7ae2;
 }
-
-.advancedSettingsBtn a{
-	color: red;	
-}
-
-.advancedSettingsBtn a:visited{
-	color: purple;	
-}
-
 	
 .optionalChildren{
 	margin:0px 0px 5px 10px;
