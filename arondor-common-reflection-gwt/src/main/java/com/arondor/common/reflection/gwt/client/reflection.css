@@ -108,6 +108,12 @@ div {
 	margin:0px 0px 5px 10px;
 }
 
+.implementingClassView {
+	color: red;
+	position:relative;
+	width:100%;
+}
+
 .nodeField {}
 
 .hideAdvancedSettings{
