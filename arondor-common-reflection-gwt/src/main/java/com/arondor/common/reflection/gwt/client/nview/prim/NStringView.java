@@ -47,6 +47,36 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
         inputGroupPanel.add(getResetFieldBtn());
 
         add(inputGroupPanel);
+
+        bind();
+    }
+
+    private void bind()
+    {
+        textBox.addKeyUpHandler(new KeyUpHandler()
+        {
+            @Override
+            public void onKeyUp(KeyUpEvent event)
+            {
+                checkActive();
+            }
+        });
+
+        textBox.addChangeHandler(new ChangeHandler()
+        {
+
+            @Override
+            public void onChange(ChangeEvent event)
+            {
+                checkActive();
+            }
+        });
+    }
+
+    private void checkActive()
+    {
+        String input = textBox.getValue();
+        setActive(!input.equals(defaultValue));
     }
 
     protected TextBox getTextBox()
@@ -75,33 +105,9 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
     }
 
     @Override
-    public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<String> valueChangeHandler)
+    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> valueChangeHandler)
     {
-
-        if (true)
-        {
-            return textBox.addKeyUpHandler(new KeyUpHandler()
-            {
-                @Override
-                public void onKeyUp(KeyUpEvent event)
-                {
-                    String input = textBox.getValue();
-                    setActive(!input.equals(defaultValue));
-                }
-            });
-        }
-        else
-        {
-            return textBox.addChangeHandler(new ChangeHandler()
-            {
-
-                @Override
-                public void onChange(ChangeEvent event)
-                {
-                    String input = textBox.getValue();
-                    setActive(!input.equals(defaultValue));
-                }
-            });
-        }
+        // TODO Auto-generated method stub
+        return null;
     }
 }
