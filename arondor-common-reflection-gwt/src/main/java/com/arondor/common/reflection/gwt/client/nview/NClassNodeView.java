@@ -12,11 +12,15 @@ import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePres
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter.PrimitiveDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeNodePresenter.StringListDisplay;
 import com.arondor.common.reflection.gwt.client.view.ImplementingClassView;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.ClassDisplay
 {
     private final ImplementingClassDisplay implementingClassView = new ImplementingClassView();
+
+    private final FlowPanel selectGroup = new FlowPanel();
 
     private final FlowPanel mandatoryChildren = new FlowPanel();
 
@@ -27,6 +31,24 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     public NClassNodeView()
     {
         getElement().addClassName(CssBundle.INSTANCE.css().classNode());
+
+        selectGroup.getElement().addClassName("input-group");
+
+        implementingClassView.asWidget().getElement().addClassName("form-control");
+
+        getResetFieldBtn().getElement().addClassName("input-group-append");
+        getResetFieldBtn().getElement().addClassName(CssBundle.INSTANCE.css().resetFieldBtn());
+        getResetFieldBtn().getElement().setInnerHTML("<span class=\"input-group-text\"><i></i></span>");
+
+        getResetFieldBtn().addClickHandler(new ClickHandler()
+        {
+
+            @Override
+            public void onClick(ClickEvent event)
+            {
+                // setDefaultValue(defaultValue);
+            }
+        });
 
         mandatoryChildren.getElement().addClassName(CssBundle.INSTANCE.css().classMandatoryChildren());
         optionalChildren.getElement().addClassName(CssBundle.INSTANCE.css().classOptionalChildren());
@@ -47,7 +69,10 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
 
     private void bind()
     {
-        add(implementingClassView);
+        selectGroup.add(implementingClassView);
+        selectGroup.add(getResetFieldBtn());
+
+        add(selectGroup);
         add(mandatoryChildren);
         add(advancedSettings);
         add(optionalChildren);
