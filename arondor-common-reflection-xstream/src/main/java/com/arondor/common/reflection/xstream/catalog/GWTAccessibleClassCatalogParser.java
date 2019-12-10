@@ -85,7 +85,6 @@ public class GWTAccessibleClassCatalogParser
     private void parseClassEntry(SimpleAccessibleClassCatalog catalog, Element entry)
     {
         String key = getChildValue(entry, "string");
-        LOG.finest("At key : " + key);
 
         AccessibleClassBean ac = new AccessibleClassBean();
         ac.setName(key);

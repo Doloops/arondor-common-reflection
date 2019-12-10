@@ -24,6 +24,7 @@ import com.arondor.common.reflection.api.parser.AccessibleClassParser;
 import com.arondor.common.reflection.api.parser.AccessibleClassProvider;
 import com.arondor.common.reflection.api.service.ReflectionService;
 import com.arondor.common.reflection.model.java.AccessibleClass;
+import com.arondor.common.reflection.xstream.catalog.AccessibleClassCatalagParser;
 
 public class DefaultReflectionService implements ReflectionService
 {
@@ -37,6 +38,11 @@ public class DefaultReflectionService implements ReflectionService
     public void setAccessibleClassCatalog(AccessibleClassCatalog accessibleClassCatalog)
     {
         this.accessibleClassCatalog = accessibleClassCatalog;
+    }
+
+    public void setCatalogFile(String resource)
+    {
+        setAccessibleClassCatalog(AccessibleClassCatalagParser.parseFromResource(resource));
     }
 
     private AccessibleClassParser accessibleClassParser;

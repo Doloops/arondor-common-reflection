@@ -1,6 +1,7 @@
 package com.arondor.common.reflection.gwt.client.service;
 
 import java.util.Collection;
+import java.util.logging.Logger;
 
 import com.arondor.common.reflection.api.catalog.AccessibleClassCatalog;
 import com.arondor.common.reflection.model.java.AccessibleClass;
@@ -22,6 +23,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public class RestDirectReflectionServiceAsync implements GWTReflectionServiceAsync
 {
+    private static final Logger LOG = Logger.getLogger(RestDirectReflectionServiceAsync.class.getName());
+
     private final AccessibleClassCatalog catalog;
 
     public RestDirectReflectionServiceAsync(AccessibleClassCatalog catalog)
@@ -61,13 +64,16 @@ public class RestDirectReflectionServiceAsync implements GWTReflectionServiceAsy
         RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, url);
         requestBuilder.setCallback(new RequestCallback()
         {
-
             @Override
             public void onResponseReceived(Request request, Response response)
             {
                 String xml = response.getText();
+                LOG.info("Recieved " + xml.length() + " bytes for " + url);
+
                 GWTAccessibleClassCatalogParser parser = new GWTAccessibleClassCatalogParser();
+                LOG.info("Parsing ...");
                 final AccessibleClassCatalog catalog = parser.parse(xml);
+                LOG.info("Parsing ... DONE.");
 
                 RestDirectReflectionServiceAsync serviceAsync = new RestDirectReflectionServiceAsync(catalog);
                 callback.onSuccess(serviceAsync);
