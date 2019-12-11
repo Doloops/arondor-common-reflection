@@ -35,6 +35,7 @@ public class NBooleanView extends NNodeView implements PrimitiveDisplay
         });
 
         valueBox.getElement().getElementsByTagName("input").getItem(0).setId(rnd);
+        valueBox.getElement().getElementsByTagName("label").getItem(0).setAttribute("for", rnd);
 
         add(valueBox);
     }

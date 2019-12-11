@@ -64,7 +64,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         /*
          * disabled for development convenience, DO NOT DELETE LINE !
          */
-        // optionalChildren.getElement().addClassName("collapse");
+        optionalChildren.getElement().addClassName("collapse");
 
         bind();
     }
