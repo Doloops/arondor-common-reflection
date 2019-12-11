@@ -3,6 +3,7 @@ package com.arondor.common.reflection.gwt.client.nview;
 import com.arondor.common.reflection.gwt.client.CssBundle;
 import com.arondor.common.reflection.gwt.client.nview.prim.NBooleanView;
 import com.arondor.common.reflection.gwt.client.nview.prim.NIntView;
+import com.arondor.common.reflection.gwt.client.nview.prim.NStringListView;
 import com.arondor.common.reflection.gwt.client.nview.prim.NStringView;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.ImplementingClassPresenter.ImplementingClassDisplay;
@@ -163,8 +164,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     @Override
     public StringListDisplay createStringListChild()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return new NStringListView();
     }
 
     @Override
