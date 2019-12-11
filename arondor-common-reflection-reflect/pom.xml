@@ -7,6 +7,7 @@
 		<artifactId>arondor-common-reflection</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
+	<groupId>com.arondor.common.reflection</groupId>
 	<artifactId>arondor-common-reflection-reflect</artifactId>
 	<dependencies>
 		<dependency>
@@ -26,5 +27,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<groupId>com.arondor.common.reflection</groupId>
 </project>

@@ -15,6 +15,10 @@ body {
 	font-size:11pt;
 }
 
+.rootTreeNode div {
+	line-height: normal;
+}
+
 /* (select menus title) */
 .implementingClassView .nodeName{}
 
