@@ -107,7 +107,6 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
     @Override
     public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> valueChangeHandler)
     {
-        // TODO Auto-generated method stub
-        return null;
+        return textBox.addValueChangeHandler(valueChangeHandler);
     }
 }
