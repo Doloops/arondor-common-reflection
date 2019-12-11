@@ -109,7 +109,7 @@ div {
 }
 
 .implementingClassView {
-	color: red;
+	color: inherit;
 	position:relative;
 	width:100%;
 }

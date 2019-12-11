@@ -47,7 +47,10 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
         this.display.setBaseClassName(baseClassName);
         bind();
 
-        addImplementingClass(ImplementingClass.NULL_CLASS);
+        if (!isMandatory)
+        {
+            addImplementingClass(ImplementingClass.NULL_CLASS);
+        }
 
         fetchBaseClass();
         fetchImplementations();

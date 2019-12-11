@@ -46,7 +46,9 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
             @Override
             public void onClick(ClickEvent event)
             {
-                // setDefaultValue(defaultValue);
+                implementingClassView.selectImplementingClass("null");
+                setActive(false);
+                clear();
             }
         });
 
@@ -104,6 +106,10 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     public ClassTreeNodePresenter.ClassDisplay createClassChild(boolean isMandatory)
     {
         NClassNodeView childView = new NClassNodeView();
+        if (isMandatory)
+        {
+            childView.disableReset();
+        }
         addChildView(isMandatory, childView);
         return childView;
     }

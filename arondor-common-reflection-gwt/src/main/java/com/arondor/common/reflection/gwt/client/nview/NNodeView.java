@@ -15,6 +15,8 @@ public class NNodeView extends FlowPanel implements TreeNodePresenter.Display
 
     private final FocusPanel resetFieldBtn = new FocusPanel();
 
+    private boolean resetEnabled = true;
+
     public FlowPanel getNodeNamePanel()
     {
         return nodeNamePanel;
@@ -83,6 +85,13 @@ public class NNodeView extends FlowPanel implements TreeNodePresenter.Display
     @Override
     public void addTreeNodeClearHandler(Handler handler)
     {
+    }
+
+    protected void disableReset()
+    {
+        resetEnabled = false;
+        getResetFieldBtn().setVisible(false);
+
     }
 
     private void addChildren()
