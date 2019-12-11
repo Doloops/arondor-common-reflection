@@ -84,9 +84,9 @@ public interface TreeNodePresenter
 
         PrimitiveTreeNodePresenter.PrimitiveDisplay createPrimitiveChild(String fieldClassName, boolean isMandatory);
 
-        EnumTreeNodePresenter.EnumDisplay createEnumListChild();
+        EnumTreeNodePresenter.EnumDisplay createEnumListChild(boolean isMandatory);
 
-        StringListTreeNodePresenter.StringListDisplay createStringListChild();
+        StringListTreeNodePresenter.StringListDisplay createStringListChild(boolean isMandatory);
 
         MapTreeNodePresenter.MapRootDisplay createMapChild();
 

@@ -60,7 +60,7 @@ public abstract class AbstractChildCreatorNodeView extends AbstractTreeNodeView
     }
 
     @Override
-    public EnumDisplay createEnumListChild()
+    public EnumDisplay createEnumListChild(boolean isMandatory)
     {
         return new EnumListView(getTreeItem());
     }
@@ -78,7 +78,7 @@ public abstract class AbstractChildCreatorNodeView extends AbstractTreeNodeView
     }
 
     @Override
-    public StringListDisplay createStringListChild()
+    public StringListDisplay createStringListChild(boolean isMandatory)
     {
         return new StringListView(getTreeItem());
     }

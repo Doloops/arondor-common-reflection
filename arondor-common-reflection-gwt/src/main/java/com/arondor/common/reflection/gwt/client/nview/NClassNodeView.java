@@ -155,16 +155,18 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     }
 
     @Override
-    public EnumDisplay createEnumListChild()
+    public EnumDisplay createEnumListChild(boolean isMandatory)
     {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public StringListDisplay createStringListChild()
+    public StringListDisplay createStringListChild(boolean isMandatory)
     {
-        return new NStringListView();
+        NStringListView view = new NStringListView();
+        addChildView(isMandatory, view);
+        return view;
     }
 
     @Override

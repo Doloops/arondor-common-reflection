@@ -94,7 +94,7 @@ public class TreeNodePresenterFactory
         else if (isStringListField(fieldClassName, genericTypes))
         {
             LOG.finest("Field " + fieldName + " is a string list");
-            childPresenter = new StringListTreeNodePresenter(fieldName, display.createStringListChild());
+            childPresenter = new StringListTreeNodePresenter(fieldName, display.createStringListChild(isMandatory));
         }
         else if (fieldClassName.equals("java.util.Map") && genericTypes != null && genericTypes.size() == 2)
         {
@@ -126,7 +126,7 @@ public class TreeNodePresenterFactory
             final String classDeclaredIn)
     {
         final EnumTreeNodePresenter childPresenter = new EnumTreeNodePresenter(fieldName,
-                display.createEnumListChild());
+                display.createEnumListChild(false));
 
         if (classDeclaredIn != null)
         {
