@@ -17,12 +17,12 @@ public class NBooleanView extends NNodeView implements PrimitiveDisplay
 
     private boolean defaultValue = false;
 
-    private String rnd = "";
+    private String rndId = "";
 
     public NBooleanView()
     {
         getElement().addClassName(CssBundle.INSTANCE.css().booleanField());
-        rnd = String.valueOf(Math.random()).substring(2);
+        rndId = String.valueOf(Math.random()).substring(2);
 
         getResetFieldBtn().addClickHandler(new ClickHandler()
         {
@@ -34,8 +34,10 @@ public class NBooleanView extends NNodeView implements PrimitiveDisplay
             }
         });
 
-        valueBox.getElement().getElementsByTagName("input").getItem(0).setId(rnd);
-        valueBox.getElement().getElementsByTagName("label").getItem(0).setAttribute("for", rnd);
+        valueBox.getElement().getElementsByTagName("input").getItem(0).setId(rndId);
+
+        // checkbox square
+        valueBox.getElement().getElementsByTagName("label").getItem(0).setAttribute("for", rndId);
 
         add(valueBox);
     }
@@ -43,7 +45,13 @@ public class NBooleanView extends NNodeView implements PrimitiveDisplay
     @Override
     public void setNodeDescription(String description)
     {
-        getNodeNamePanel().getElement().setInnerHTML("<label for=\"" + rnd + "\">" + description + "</label>");
+        getNodeNamePanel().getElement().setInnerHTML("<label for=\"" + rndId + "\">" + description + "</label>");
+    }
+
+    @Override
+    public void setNodeName(String name)
+    {
+        getNodeNamePanel().getElement().setInnerHTML("<label for=\"" + rndId + "\">" + name + "</label>");
     }
 
     @Override

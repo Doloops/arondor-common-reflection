@@ -43,7 +43,7 @@ public class NNodeView extends FlowPanel implements TreeNodePresenter.Display
     @Override
     public void setNodeName(String name)
     {
-        nodeNamePanel.getElement().setInnerHTML(name);
+        nodeNamePanel.getElement().setInnerHTML("<label>" + name + "</label>");
         if (name.toLowerCase().contains("password")) // .contains vs .equals ?
         {
             ((Element) getElement().getLastChild().getFirstChild()).setAttribute("type", "password");

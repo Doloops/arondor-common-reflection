@@ -55,12 +55,12 @@ div {
 }
 .booleanField .nodeName {
 	order:2;
-	margin:auto 7px;
+	padding-right:30px;
 }
-.booleanField .nodeName label {
+
+.nodeName label {
 	font-size: inherit;
 	color:inherit;
-	margin:auto 7px;
 }
 
 
