@@ -238,14 +238,17 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
                         addImplementingClass(new ImplementingClass(false, clazz.getName()));
                     }
                 }
+                LOG.info("fetchImplementations() : Base class " + baseClassName + ", results=" + result.size()
+                        + ", current=" + currentImplementingClass);
                 if (result.size() == 1 && isMandatory && currentImplementingClass == ImplementingClass.NULL_CLASS)
                 {
                     /**
                      * There is only one result.
                      */
-                    // convert AccessibleClass#1 into ImplementingClass
-                    ImplementingClass implementingClass = new ImplementingClass(false,
-                            result.iterator().next().getName());
+                    AccessibleClass firstClass = result.iterator().next();
+                    LOG.info("Selecting default class :" + firstClass.getName() + " as implementation of "
+                            + baseClassName);
+                    ImplementingClass implementingClass = new ImplementingClass(false, firstClass.getName());
                     setImplementingClass(implementingClass);
 
                     ValueChangeEvent<ImplementingClass> event = new MyValueChangeEvent<ImplementingClass>(
