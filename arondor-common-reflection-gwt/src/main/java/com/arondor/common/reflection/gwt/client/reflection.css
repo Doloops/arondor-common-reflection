@@ -78,17 +78,17 @@ div {
 	order:3;
 	position:absolute;
 	right:30px;
-	background:#e9ecef;
-	border-radius: 3px;
-	border : 1px solid #ced4da;
+/* 	background:#e9ecef; */
+/* 	border-radius: 3px; */
+/* 	border : 1px solid #ced4da; */
 	padding:2px 12px;
 /* 	height:21.5px; */
 }
 
 .stringField input, .implementingClassView{
 	top:0px;
-	height: 26px;
-	width: 200px;
+/* 	height: 26px!important; */
+/* 	width: 200px; */
 	padding: 3px 8px;
 	border-radius:4px;
 	border: 1px solid #CED4DA;
@@ -105,8 +105,10 @@ div {
 }
 
 .resetFieldBtn { /*trash icon*/
-	height: 26px;
-	margin-bottom:5px;
+/* 	height: 26px; */
+	height:auto;
+/* 	margin-bottom:5px; */
+	margin-bottom:0px;
     position:relative;
 	margin-top:0px;
 }
@@ -115,6 +117,7 @@ span i { /* TRASH-ICON */
     content: url('icons/icon_trash.svg');
 /*     width: 90%!important; */
     width:1rem!important;
+    padding-trop:2px;
 }
 .mandatoryChildren {
 }
@@ -142,7 +145,14 @@ span i { /* TRASH-ICON */
 	width:100%;
 }
 
-.nodeField {}
+.stringField div input {
+	height:auto;
+	background:#FFFFFF;
+}
+
+.nodeField {
+	margin:10px 0px;
+}
 
 .hideAdvancedSettings{
 	display:none;
