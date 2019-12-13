@@ -41,7 +41,7 @@
 	padding:2px 12px;
 }
 
-div {
+.rootTreeNode div {
 	margin-bottom: 5px;
 	margin-top: 5px;
 }
