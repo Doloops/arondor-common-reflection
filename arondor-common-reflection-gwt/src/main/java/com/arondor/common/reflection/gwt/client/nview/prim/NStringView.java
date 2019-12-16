@@ -9,6 +9,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.dom.client.MouseWheelEvent;
+import com.google.gwt.event.dom.client.MouseWheelHandler;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -42,7 +44,7 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
 
         textBox.getElement().addClassName("form-control");
         inputGroupPanel.getElement().addClassName("input-group");
-        inputGroupPanel.getElement().setAttribute("style", "height:26px;margin:0px");
+        inputGroupPanel.getElement().setAttribute("style", "margin:0px");
         inputGroupPanel.add(textBox);
         inputGroupPanel.add(getResetFieldBtn());
 
@@ -70,6 +72,17 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
             {
                 checkActive();
             }
+        });
+
+        textBox.addMouseWheelHandler(new MouseWheelHandler()
+        {
+
+            @Override
+            public void onMouseWheel(MouseWheelEvent event)
+            {
+                checkActive();
+            }
+
         });
     }
 
