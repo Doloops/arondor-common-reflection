@@ -16,6 +16,8 @@
 
 .rootTreeNode div {
 	line-height: normal;
+/* 	margin-bottom: 5px; */
+	margin-top: 5px;
 }
 
 .nodeName{
@@ -36,10 +38,6 @@
 	padding:2px 12px;
 }
 
-.rootTreeNode div {
-	margin-bottom: 5px;
-	margin-top: 5px;
-}
 
 /* change checkbox group order */
 .booleanField {
@@ -71,7 +69,7 @@
 
 .booleanField .resetFieldBtn {
 	order:3;
-	position:absolute;
+	position:absolute!important;
 	right:30px;
 	padding:2px 12px;
 }
@@ -82,6 +80,11 @@
 	border-radius:4px;
 	border: 1px solid #CED4DA;
 	color:inherit;
+}
+
+.stringField div textarea {
+	min-height:29px;
+	padding:3px 8px;
 }
 
 .classNode .classNode .optionalChildren .stringField{
