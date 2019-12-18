@@ -1,6 +1,7 @@
 package com.arondor.common.reflection.gwt.client.nview.prim;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.arondor.common.reflection.gwt.client.CssBundle;
@@ -25,7 +26,7 @@ public class NStringListView extends NNodeView implements StringListDisplay
 
     private FlowPanel inputGroupPanel = new FlowPanel();
 
-    private List<String> defaultValue = new ArrayList<String>();
+    private List<String> defaultValue = Arrays.asList("");
 
     public NStringListView()
     {
@@ -37,7 +38,6 @@ public class NStringListView extends NNodeView implements StringListDisplay
 
         getResetFieldBtn().addClickHandler(new ClickHandler()
         {
-
             @Override
             public void onClick(ClickEvent event)
             {
@@ -88,8 +88,8 @@ public class NStringListView extends NNodeView implements StringListDisplay
 
     private void checkActive()
     {
-        String input = textArea.getValue();
-        setActive(!input.equals(defaultValue.toString()));
+        List<String> input = Arrays.asList(textArea.getValue().trim().split("\n"));
+        setActive(!input.equals(defaultValue));
     }
 
     @Override
