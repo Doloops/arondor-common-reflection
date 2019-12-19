@@ -46,6 +46,9 @@ public interface CssBundle extends ClientBundle
 
         @ClassName("resetFieldBtn")
         String resetFieldBtn();
+
+        @ClassName("resetBtn")
+        String resetBtn();
     }
 
     static final CssBundle INSTANCE = GWT.create(CssBundle.class);

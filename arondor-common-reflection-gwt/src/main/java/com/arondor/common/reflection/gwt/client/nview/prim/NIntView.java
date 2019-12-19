@@ -4,6 +4,6 @@ public class NIntView extends NStringView
 {
     public NIntView()
     {
-        getTextBox().getElement().setAttribute("type", "number");
+        getTextBox().getElement().getElementsByTagName("input").getItem(0).setAttribute("type", "number");
     }
 }

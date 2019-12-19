@@ -45,13 +45,15 @@ public class NBooleanView extends NNodeView implements PrimitiveDisplay
     @Override
     public void setNodeDescription(String description)
     {
-        getNodeNamePanel().getElement().setInnerHTML("<label for=\"" + rndId + "\">" + description + "</label>");
+        // getNodeNamePanel().getElement().setInnerHTML("<label for=\"" + rndId
+        // + "\">" + description + "</label>");
     }
 
     @Override
     public void setNodeName(String name)
     {
-        getNodeNamePanel().getElement().setInnerHTML("<label for=\"" + rndId + "\">" + name + "</label>");
+        // getNodeNamePanel().getElement().setInnerHTML("<label for=\"" + rndId
+        // + "\">" + name + "</label>");
     }
 
     @Override

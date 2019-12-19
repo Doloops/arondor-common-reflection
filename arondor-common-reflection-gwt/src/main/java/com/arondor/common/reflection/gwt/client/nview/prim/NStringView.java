@@ -3,6 +3,7 @@ package com.arondor.common.reflection.gwt.client.nview.prim;
 import com.arondor.common.reflection.gwt.client.CssBundle;
 import com.arondor.common.reflection.gwt.client.nview.NNodeView;
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter.PrimitiveDisplay;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -14,11 +15,12 @@ import com.google.gwt.event.dom.client.MouseWheelHandler;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.TextBox;
+
+import gwt.material.design.client.ui.MaterialTextBox;
 
 public class NStringView extends NNodeView implements PrimitiveDisplay
 {
-    protected final TextBox textBox = new TextBox();
+    protected final MaterialTextBox textBox = new MaterialTextBox();
 
     private FlowPanel inputGroupPanel = new FlowPanel();
 
@@ -28,29 +30,48 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
     {
         getElement().addClassName(CssBundle.INSTANCE.css().stringField());
 
-        getResetFieldBtn().getElement().addClassName("input-group-append");
-        getResetFieldBtn().getElement().addClassName(CssBundle.INSTANCE.css().resetFieldBtn());
-        getResetFieldBtn().getElement().setInnerHTML("<span class=\"input-group-text\"><i></i></span>");
+        textBox.getElement().addClassName("outlined");
+        textBox.getElement().setAttribute("style", "width:100%;display:flex;");
 
-        getResetFieldBtn().addClickHandler(new ClickHandler()
-        {
+        textBox.getElement().getElementsByTagName("input").getItem(0).setAttribute("style", "padding-right:12px");
 
-            @Override
-            public void onClick(ClickEvent event)
-            {
-                setDefaultValue(defaultValue);
-            }
-        });
+        getResetFieldBtn().getElement().setInnerHTML("<i></i>");
+        getResetFieldBtn().getElement().addClassName(CssBundle.INSTANCE.css().resetBtn());
+        getResetFieldBtn().getElement().addClassName(CssBundle.INSTANCE.css().hidden());
 
-        textBox.getElement().addClassName("form-control");
         inputGroupPanel.getElement().addClassName("input-group");
         inputGroupPanel.getElement().setAttribute("style", "margin:0px");
+
+        attachElements();
+
+        bind();
+    }
+
+    private void attachElements()
+    {
+        textBox.add(getResetFieldBtn());
+
         inputGroupPanel.add(textBox);
         inputGroupPanel.add(getResetFieldBtn());
 
         add(inputGroupPanel);
+    }
 
-        bind();
+    @Override
+    public void setNodeName(String name)
+    {
+        setInputLabel(name);
+    }
+
+    @Override
+    public void setNodeDescription(String desc)
+    {
+        setInputLabel(desc);
+    }
+
+    private void setInputLabel(String label)
+    {
+        textBox.getElement().getElementsByTagName("label").getItem(0).setInnerHTML(label);
     }
 
     private void bind()
@@ -84,15 +105,33 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
             }
 
         });
+
+        getResetFieldBtn().addClickHandler(new ClickHandler()
+        {
+
+            @Override
+            public void onClick(ClickEvent event)
+            {
+                setDefaultValue(defaultValue);
+                Element input = textBox.getElement().getElementsByTagName("input").getItem(0);
+                input.focus();
+                input.setAttribute("style", "padding-right:12px");
+            }
+        });
     }
 
     private void checkActive()
     {
         String input = textBox.getValue();
-        setActive(!input.equals(defaultValue));
+        boolean active = !input.equals(defaultValue);
+        if (active)
+        {
+            textBox.getElement().getElementsByTagName("input").getItem(0).setAttribute("style", "padding-right:30px");
+        }
+        setActive(active);
     }
 
-    protected TextBox getTextBox()
+    protected MaterialTextBox getTextBox()
     {
         return textBox;
     }
@@ -101,6 +140,7 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
     public void setValue(String value)
     {
         textBox.setValue(value);
+        checkActive();
     }
 
     @Override
