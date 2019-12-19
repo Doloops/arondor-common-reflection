@@ -8,56 +8,41 @@ import com.google.gwt.user.client.ui.FocusPanel;
 
 public class NNodeView extends FlowPanel implements TreeNodePresenter.Display
 {
-    // private final FlowPanel nodeNamePanel = new FlowPanel();
-
     private boolean active;
 
-    private final FocusPanel resetFieldBtn = new FocusPanel();
+    private final FocusPanel resetBtn = new FocusPanel();
 
     private boolean resetEnabled = true;
-
-    // public FlowPanel getNodeNamePanel()
-    // {
-    // return nodeNamePanel;
-    // }
 
     protected NNodeView()
     {
         getElement().addClassName(CssBundle.INSTANCE.css().nodeField());
 
-        // resetFieldBtn.getElement().addClassName(CssBundle.INSTANCE.css().resetFieldBtn());
-        // resetFieldBtn.getElement().addClassName(CssBundle.INSTANCE.css().hidden());
-        // resetFieldBtn.getElement().setInnerHTML("<span><i></i></span>");
-
-        addChildren();
-
-        // nodeNamePanel.getElement().addClassName(CssBundle.INSTANCE.css().nodeName());
+        resetBtn.getElement().setInnerHTML("<i></i>");
+        resetBtn.getElement().addClassName(CssBundle.INSTANCE.css().resetBtn());
+        resetBtn.getElement().addClassName(CssBundle.INSTANCE.css().hidden());
     }
 
     protected FocusPanel getResetFieldBtn()
     {
-        return resetFieldBtn;
+        return resetBtn;
     }
 
     @Override
     public void setNodeName(String name)
     {
-        // nodeNamePanel.getElement().setInnerHTML("<label>" + name +
-        // "</label>");
-        // if (name.toLowerCase().contains("password")) // .contains vs .equals
-        // ?
-        // {
-        // ((Element)
-        // getElement().getLastChild().getFirstChild()).setAttribute("type",
-        // "password");
-        // }
+        setProperLabel(name);
     }
 
     @Override
     public void setNodeDescription(String description)
     {
-        // nodeNamePanel.getElement().setInnerHTML("<label>" + description +
-        // "</label>");
+        setProperLabel(description);
+    }
+
+    @Override
+    public void setProperLabel(String label)
+    {
     }
 
     @Override
@@ -77,11 +62,11 @@ public class NNodeView extends FlowPanel implements TreeNodePresenter.Display
         this.active = active;
         if (active)
         {
-            resetFieldBtn.getElement().removeClassName(CssBundle.INSTANCE.css().hidden());
+            resetBtn.getElement().removeClassName(CssBundle.INSTANCE.css().hidden());
         }
         else
         {
-            resetFieldBtn.getElement().addClassName(CssBundle.INSTANCE.css().hidden());
+            resetBtn.getElement().addClassName(CssBundle.INSTANCE.css().hidden());
         }
     }
 
@@ -103,17 +88,10 @@ public class NNodeView extends FlowPanel implements TreeNodePresenter.Display
 
     }
 
-    private void addChildren()
-    {
-        // add(nodeNamePanel);
-        // add(resetFieldBtn);
-    }
-
     @Override
     public void clear()
     {
         super.clear();
-        // addChildren();
     }
 
 }

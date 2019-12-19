@@ -43,16 +43,19 @@ public class MapRootView extends AbstractTreeNodeView implements MapTreeNodePres
         setHasRemoveButton(true);
     }
 
+    @Override
     public void clear()
     {
         removeItems();
     }
 
+    @Override
     public HasClickHandlers addElementClickHandler()
     {
         return addElement;
     }
 
+    @Override
     public MapNodeDisplay createChildNode()
     {
         setActive(true);
@@ -63,5 +66,12 @@ public class MapRootView extends AbstractTreeNodeView implements MapTreeNodePres
          */
         mapNodeDisplay.setVisible(true);
         return mapNodeDisplay;
+    }
+
+    @Override
+    public void setProperLabel(String label)
+    {
+        // TODO Auto-generated method stub
+
     }
 }

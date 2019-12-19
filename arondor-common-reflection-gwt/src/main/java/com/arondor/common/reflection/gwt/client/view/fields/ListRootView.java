@@ -45,21 +45,31 @@ public class ListRootView extends AbstractChildCreatorNodeView implements ListRo
         setHasRemoveButton(true);
     }
 
+    @Override
     public void clear()
     {
         removeItems();
     }
 
+    @Override
     public HasClickHandlers addElementClickHandler()
     {
         return addElement;
     }
 
+    @Override
     public void removeChild(Display childDisplay)
     {
         if (childDisplay instanceof TreeItem)
         {
             removeItem((TreeItem) childDisplay);
         }
+    }
+
+    @Override
+    public void setProperLabel(String label)
+    {
+        // TODO Auto-generated method stub
+
     }
 }

@@ -75,4 +75,11 @@ public class PrimitiveBooleanView extends AbstractTreeNodeView implements Primit
 
     }
 
+    @Override
+    public void setProperLabel(String label)
+    {
+        // TODO Auto-generated method stub
+
+    }
+
 }

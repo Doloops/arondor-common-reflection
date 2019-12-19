@@ -29,9 +29,17 @@ public class MapNodeView extends AbstractChildCreatorNodeView implements MapTree
         setActive(true);
     }
 
+    @Override
     public void clear()
     {
         getParentItem().removeItem(this);
+    }
+
+    @Override
+    public void setProperLabel(String label)
+    {
+        // TODO Auto-generated method stub
+
     }
 
 }

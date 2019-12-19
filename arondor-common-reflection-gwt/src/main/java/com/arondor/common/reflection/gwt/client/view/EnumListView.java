@@ -127,4 +127,11 @@ public class EnumListView extends AbstractTreeNodeView implements EnumDisplay
         // TODO Auto-generated method stub
 
     }
+
+    @Override
+    public void setProperLabel(String label)
+    {
+        // TODO Auto-generated method stub
+
+    }
 }

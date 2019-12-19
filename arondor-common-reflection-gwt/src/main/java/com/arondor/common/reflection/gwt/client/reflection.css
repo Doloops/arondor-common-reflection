@@ -1,6 +1,5 @@
 .classNode .nodeField {
 	padding: 0px 30px;
-	    
 } 
 
 
@@ -108,6 +107,10 @@
 	width:1rem!important;
 	padding-top:13px;
 	margin-right:5px;
+}
+
+.booleanField div .resetBtn i {
+	padding-top:2px!important;
 }
 
 .mandatoryChildren {

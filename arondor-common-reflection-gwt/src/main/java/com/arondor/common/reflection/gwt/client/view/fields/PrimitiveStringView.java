@@ -79,4 +79,11 @@ public class PrimitiveStringView extends AbstractTreeNodeView implements Primiti
 
     }
 
+    @Override
+    public void setProperLabel(String label)
+    {
+        // TODO Auto-generated method stub
+
+    }
+
 }

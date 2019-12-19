@@ -30,13 +30,22 @@ public class ClassTreeNodeView extends AbstractChildCreatorNodeView implements C
         getContents().add(implementingClassDisplay.asWidget());
     }
 
+    @Override
     public ImplementingClassPresenter.ImplementingClassDisplay getImplementingClassDisplay()
     {
         return implementingClassDisplay;
     }
 
+    @Override
     public void clear()
     {
         removeItems();
+    }
+
+    @Override
+    public void setProperLabel(String label)
+    {
+        // TODO Auto-generated method stub
+
     }
 }

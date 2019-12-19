@@ -9,64 +9,82 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.FlowPanel;
+
+import gwt.material.design.client.ui.MaterialCheckBox;
 
 public class NBooleanView extends NNodeView implements PrimitiveDisplay
 {
-    private final CheckBox valueBox = new CheckBox("");
+    private final MaterialCheckBox checkBox = new MaterialCheckBox();
 
-    private boolean defaultValue = false;
+    private FlowPanel groupPanel = new FlowPanel();
 
-    private String rndId = "";
+    private boolean defaultValue = true;
 
     public NBooleanView()
     {
         getElement().addClassName(CssBundle.INSTANCE.css().booleanField());
-        rndId = String.valueOf(Math.random()).substring(2);
 
+        groupPanel.getElement().addClassName("input-group");
+        groupPanel.getElement().setAttribute("style", "margin:0px");
+
+        attachElements();
+
+        bind();
+    }
+
+    private void attachElements()
+    {
+        setDefaultValue(String.valueOf(defaultValue));
+
+        groupPanel.add(getResetFieldBtn());
+        groupPanel.add(checkBox);
+
+        add(groupPanel);
+    }
+
+    private void bind()
+    {
         getResetFieldBtn().addClickHandler(new ClickHandler()
         {
-
             @Override
             public void onClick(ClickEvent event)
             {
                 setDefaultValue(String.valueOf(defaultValue));
             }
         });
-
-        valueBox.getElement().getElementsByTagName("input").getItem(0).setId(rndId);
-
-        // checkbox square
-        valueBox.getElement().getElementsByTagName("label").getItem(0).setAttribute("for", rndId);
-
-        add(valueBox);
     }
 
     @Override
-    public void setNodeDescription(String description)
+    public void setProperLabel(String label)
     {
-        // getNodeNamePanel().getElement().setInnerHTML("<label for=\"" + rndId
-        // + "\">" + description + "</label>");
-    }
-
-    @Override
-    public void setNodeName(String name)
-    {
-        // getNodeNamePanel().getElement().setInnerHTML("<label for=\"" + rndId
-        // + "\">" + name + "</label>");
+        checkBox.getElement().getElementsByTagName("label").getItem(0).setInnerHTML(label);
     }
 
     @Override
     public void setValue(String value)
     {
         boolean booleanValue = Boolean.parseBoolean(value);
-        setActive(booleanValue != defaultValue);
+        toggleActive(booleanValue != defaultValue);
         doSetValue(booleanValue);
     }
 
     private void doSetValue(boolean value)
     {
-        valueBox.setValue(value);
+        checkBox.setValue(value);
+    }
+
+    private void toggleActive(boolean active)
+    {
+        setActive(active);
+        if (active)
+        {
+            checkBox.setStyle("padding-right:30px");
+        }
+        else
+        {
+            checkBox.setStyle("padding-right:12px");
+        }
     }
 
     @Override
@@ -74,19 +92,19 @@ public class NBooleanView extends NNodeView implements PrimitiveDisplay
     {
         defaultValue = Boolean.parseBoolean(value);
         doSetValue(defaultValue);
-        setActive(false);
+        toggleActive(false);
     }
 
     @Override
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<String> valueChangeHandler)
     {
-        return valueBox.addValueChangeHandler(new ValueChangeHandler<Boolean>()
+        return checkBox.addValueChangeHandler(new ValueChangeHandler<Boolean>()
         {
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> event)
             {
                 Boolean newValue = event.getValue();
-                setActive(defaultValue != newValue.booleanValue());
+                toggleActive(defaultValue != newValue.booleanValue());
                 valueChangeHandler.onValueChange(new MyValueChangeEvent<String>(newValue.toString()));
             }
         });

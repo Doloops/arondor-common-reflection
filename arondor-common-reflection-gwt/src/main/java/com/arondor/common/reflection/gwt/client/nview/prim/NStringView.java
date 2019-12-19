@@ -35,10 +35,6 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
 
         textBox.getElement().getElementsByTagName("input").getItem(0).setAttribute("style", "padding-right:12px");
 
-        getResetFieldBtn().getElement().setInnerHTML("<i></i>");
-        getResetFieldBtn().getElement().addClassName(CssBundle.INSTANCE.css().resetBtn());
-        getResetFieldBtn().getElement().addClassName(CssBundle.INSTANCE.css().hidden());
-
         inputGroupPanel.getElement().addClassName("input-group");
         inputGroupPanel.getElement().setAttribute("style", "margin:0px");
 
@@ -49,8 +45,6 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
 
     private void attachElements()
     {
-        textBox.add(getResetFieldBtn());
-
         inputGroupPanel.add(textBox);
         inputGroupPanel.add(getResetFieldBtn());
 
@@ -58,18 +52,7 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
     }
 
     @Override
-    public void setNodeName(String name)
-    {
-        setInputLabel(name);
-    }
-
-    @Override
-    public void setNodeDescription(String desc)
-    {
-        setInputLabel(desc);
-    }
-
-    private void setInputLabel(String label)
+    public void setProperLabel(String label)
     {
         textBox.getElement().getElementsByTagName("label").getItem(0).setInnerHTML(label);
     }

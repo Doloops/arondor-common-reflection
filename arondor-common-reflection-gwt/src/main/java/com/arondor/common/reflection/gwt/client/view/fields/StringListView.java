@@ -97,4 +97,11 @@ public class StringListView extends AbstractTreeNodeView implements StringListDi
 
     }
 
+    @Override
+    public void setProperLabel(String label)
+    {
+        // TODO Auto-generated method stub
+
+    }
+
 }
