@@ -82,8 +82,9 @@
 }
 
 .stringField div textarea {
-	min-height:32px;
-	padding:3px 8px;
+	line-height:inherit;
+	padding:10px 12px;
+	margin-bottom:5px;
 }
 
 .classNode .classNode .optionalChildren .stringField{
