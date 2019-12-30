@@ -111,7 +111,7 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
             @Override
             public void onBlur(BlurEvent event)
             {
-                if (textBox.getValue() == null)
+                if (textBox.getValue() == null || textBox.getValue().trim() == "")
                 {
                     textBox.getValueBoxBase().getElement().removeAttribute("placeholder");
                     textBox.getLabel().getElement().removeClassName("active");
