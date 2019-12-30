@@ -56,7 +56,6 @@
 		    <artifactId>commons-lang3</artifactId>
 		    <version>3.9</version>
 		</dependency>
-		<!-- TEST https://mvnrepository.com/artifact/com.github.gwtmaterialdesign/gwt-material -->
 		<dependency>
 		    <groupId>com.github.gwtmaterialdesign</groupId>
 		    <artifactId>gwt-material</artifactId>
@@ -66,7 +65,7 @@
 		<dependency>
 			<groupId>com.github.gwtmaterialdesign</groupId>
 			<artifactId>gwt-material-themes</artifactId>
-			<version>2.1.1</version>
+			<version>2.2</version>
 		</dependency>
 
 		
