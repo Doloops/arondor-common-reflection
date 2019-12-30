@@ -3,11 +3,14 @@ package com.arondor.common.reflection.gwt.client.nview.prim;
 import com.arondor.common.reflection.gwt.client.CssBundle;
 import com.arondor.common.reflection.gwt.client.nview.NNodeView;
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter.PrimitiveDisplay;
-import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.dom.client.MouseWheelEvent;
@@ -26,6 +29,8 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
 
     private String defaultValue = "";
 
+    private String defaultPlaceholder = "";
+
     public NStringView()
     {
         getElement().addClassName(CssBundle.INSTANCE.css().stringField());
@@ -40,7 +45,7 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
 
         attachElements();
 
-        bind();
+        attachHandlers();
     }
 
     private void attachElements()
@@ -54,10 +59,10 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
     @Override
     public void setProperLabel(String label)
     {
-        textBox.getElement().getElementsByTagName("label").getItem(0).setInnerHTML(label);
+        textBox.setLabel(label);
     }
 
-    private void bind()
+    private void attachHandlers()
     {
         textBox.addKeyUpHandler(new KeyUpHandler()
         {
@@ -89,6 +94,31 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
 
         });
 
+        textBox.addFocusHandler(new FocusHandler()
+        {
+
+            @Override
+            public void onFocus(FocusEvent event)
+            {
+                textBox.setPlaceholder(defaultPlaceholder);
+
+            }
+        });
+
+        textBox.addBlurHandler(new BlurHandler()
+        {
+
+            @Override
+            public void onBlur(BlurEvent event)
+            {
+                if (textBox.getValue() == null)
+                {
+                    textBox.getValueBoxBase().getElement().removeAttribute("placeholder");
+                    textBox.getLabel().getElement().removeClassName("active");
+                }
+            }
+        });
+
         getResetFieldBtn().addClickHandler(new ClickHandler()
         {
 
@@ -96,9 +126,8 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
             public void onClick(ClickEvent event)
             {
                 setDefaultValue(defaultValue);
-                Element input = textBox.getElement().getElementsByTagName("input").getItem(0);
-                input.focus();
-                input.setAttribute("style", "padding-right:12px");
+                textBox.setFocus(true);
+                checkActive();
             }
         });
     }
@@ -107,11 +136,15 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
     {
         String input = textBox.getValue();
         boolean active = !input.equals(defaultValue);
-        if (active)
-        {
-            textBox.getElement().getElementsByTagName("input").getItem(0).setAttribute("style", "padding-right:30px");
-        }
+
+        setInputStyle(active ? "padding-right:30px" : "padding-right:12px");
+
         setActive(active);
+    }
+
+    private void setInputStyle(String style)
+    {
+        textBox.getElement().getElementsByTagName("input").getItem(0).setAttribute("style", style);
     }
 
     protected MaterialTextBox getTextBox()
@@ -137,7 +170,7 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
     @Override
     public void setPlaceholder(String placeholder)
     {
-        textBox.getElement().setAttribute("placeholder", placeholder);
+        this.defaultPlaceholder = placeholder;
     }
 
     @Override
