@@ -19,7 +19,7 @@ public class NBooleanView extends NNodeView implements PrimitiveDisplay
 
     private FlowPanel groupPanel = new FlowPanel();
 
-    private boolean defaultValue = true;
+    private boolean defaultValue = false;
 
     public NBooleanView()
     {
