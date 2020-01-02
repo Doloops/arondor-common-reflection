@@ -19,6 +19,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
 
+import gwt.material.design.client.constants.TextAlign;
 import gwt.material.design.client.ui.MaterialTextBox;
 
 public class NStringView extends NNodeView implements PrimitiveDisplay
@@ -27,18 +28,18 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
 
     private FlowPanel inputGroupPanel = new FlowPanel();
 
-    private String defaultValue = "";
-
-    private String defaultPlaceholder = "";
+    private String defaultValue, defaultPlaceholder, helperText = "";
 
     public NStringView()
     {
         getElement().addClassName(CssBundle.INSTANCE.css().stringField());
 
-        textBox.getElement().addClassName("outlined");
-        textBox.getElement().setAttribute("style", "width:100%;display:flex;");
+        textBox.setClass("outlined");
+        textBox.setStyle("width:100%;");
 
-        textBox.getElement().getElementsByTagName("input").getItem(0).setAttribute("style", "padding-right:12px");
+        textBox.getElement().getElementsByTagName("input").getItem(0).setAttribute("style", "padding-right:12px;");
+
+        textBox.setTextAlign(TextAlign.LEFT);
 
         inputGroupPanel.getElement().addClassName("input-group");
         inputGroupPanel.getElement().setAttribute("style", "margin:0px");
@@ -102,6 +103,9 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
             {
                 textBox.setPlaceholder(defaultPlaceholder);
 
+                textBox.setHelperText(helperText);
+                textBox.getElement().getElementsByTagName("span").getItem(0)
+                        .addClassName(CssBundle.INSTANCE.css().helperText());
             }
         });
 
@@ -116,6 +120,7 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
                     textBox.getValueBoxBase().getElement().removeAttribute("placeholder");
                     textBox.getLabel().getElement().removeClassName("active");
                 }
+                textBox.clearHelperText();
             }
         });
 
@@ -171,6 +176,12 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
     public void setPlaceholder(String placeholder)
     {
         this.defaultPlaceholder = placeholder;
+    }
+
+    @Override
+    public void setNodeLongDescription(String longDescription)
+    {
+        helperText = longDescription;
     }
 
     @Override
