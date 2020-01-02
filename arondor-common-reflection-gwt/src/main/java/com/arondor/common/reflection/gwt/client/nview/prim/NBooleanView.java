@@ -11,11 +11,13 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
 
-import gwt.material.design.client.ui.MaterialCheckBox;
+import gwt.material.design.client.ui.MaterialSwitch;
 
 public class NBooleanView extends NNodeView implements PrimitiveDisplay
 {
-    private final MaterialCheckBox checkBox = new MaterialCheckBox();
+    // private final MaterialCheckBox checkBox = new MaterialCheckBox();
+
+    private final MaterialSwitch checkBox = new MaterialSwitch();
 
     private FlowPanel groupPanel = new FlowPanel();
 
@@ -24,6 +26,10 @@ public class NBooleanView extends NNodeView implements PrimitiveDisplay
     public NBooleanView()
     {
         getElement().addClassName(CssBundle.INSTANCE.css().booleanField());
+
+        checkBox.getSpan().setStyle("zoom:0.8;");
+        checkBox.getSpan().setMarginLeft(6);
+        checkBox.getLabel().setStyle("align-items:center");
 
         groupPanel.getElement().addClassName("input-group");
         groupPanel.getElement().setAttribute("style", "margin:0px");
@@ -58,7 +64,7 @@ public class NBooleanView extends NNodeView implements PrimitiveDisplay
     @Override
     public void setProperLabel(String label)
     {
-        checkBox.getElement().getElementsByTagName("label").getItem(0).setInnerHTML(label);
+        checkBox.setOnLabel(label);
     }
 
     @Override

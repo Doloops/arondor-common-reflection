@@ -1,7 +1,12 @@
 .classNode .nodeField {
 	padding: 0px 30px;
+/* 	margin-top:5px; */
+	margin-bottom:15px;
 } 
 
+::placeholder {
+	font-style:italic;
+}
 
 .rootTreeNode {
 	padding-bottom:15px;
@@ -25,7 +30,9 @@
 }
 
 /* check-box group */
-.booleanField {}
+.booleanField {
+	margin-top:10px;
+}
 
 .classNode .classNode .optionalChildren .booleanField {
 	padding-right:0px;
@@ -57,12 +64,18 @@
 
 
 /* check-box strictly-speaking */
-.booleanField span {
+.booleanField label {
 	order: 1;
 	display:flex;
 	align-items:bottom;
 }
-.booleanField span label{
+
+.booleanField span {
+	font-size:1rem;
+	margin-top:0px!important;
+}
+
+.booleanField label{
 	margin-bottom:0px;
 }
 
@@ -70,7 +83,14 @@
 	order:3;
 	position:absolute!important;
 	right:30px;
-	padding:2px 12px;
+}
+
+.booleanField div .resetBtn i {
+	padding-top:0px!important;
+}
+
+.stringField {
+	margin-bottom:0px!important;
 }
 
 .stringField input, .implementingClassView{
@@ -110,15 +130,12 @@
 	margin-right:5px;
 }
 
-.booleanField div .resetBtn i {
-	padding-top:2px!important;
-}
-
 .mandatoryChildren {
 }
 
 .advancedSettingsBtn{
 	margin-top:20px!important;
+	margin-bottom:10px;
 	font-size:9pt;
 	font-weight:bold;
 	color:#1d7ae2;
@@ -150,4 +167,10 @@
 
 .nodeField .nodeName {
 	margin-bottom: 0px; 
+}
+
+.helperText {
+	position:relative;
+	top:-10px;
+	font-size:0.7rem;
 }
