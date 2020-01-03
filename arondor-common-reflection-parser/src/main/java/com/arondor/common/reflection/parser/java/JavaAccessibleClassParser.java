@@ -31,6 +31,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.arondor.common.management.mbean.annotation.DefaultBehavior;
+import com.arondor.common.management.mbean.annotation.DefaultValue;
 import com.arondor.common.management.mbean.annotation.Description;
 import com.arondor.common.management.mbean.annotation.LongDescription;
 import com.arondor.common.management.mbean.annotation.Mandatory;
@@ -437,6 +438,16 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         return null;
     }
 
+    private String getFieldDefaultValue(Field field)
+    {
+        DefaultValue defaultValueAnnotation = field.getAnnotation(DefaultValue.class);
+        if (defaultValueAnnotation != null)
+        {
+            return defaultValueAnnotation.value();
+        }
+        return null;
+    }
+
     private String getFieldDefaultBehavior(Field field)
     {
         DefaultBehavior defaultBehaviorAnnotation = field.getAnnotation(DefaultBehavior.class);
@@ -672,7 +683,8 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
                     Field field = superclass.getDeclaredField(accessibleField.getName());
                     accessibleFieldBean.setDescription(getFieldDescription(field));
                     accessibleFieldBean.setLongDescription(getFieldLongDescription(field));
-                    // accessibleFieldBean.getPlaceholder(getFieldLongDescription(field));
+                    // accessibleFieldBean.getPlaceholder(getFieldLongDescription(field));###
+                    accessibleFieldBean.setDefaultValue(getFieldDefaultValue(field));
                     accessibleFieldBean.setDefaultBehavior(getFieldDefaultBehavior(field));
                     accessibleFieldBean.setMandatory(getFieldMandatory(field));
                     accessibleFieldBean.setEnumProperty(getAccessibleEnums(accessibleClass, field));

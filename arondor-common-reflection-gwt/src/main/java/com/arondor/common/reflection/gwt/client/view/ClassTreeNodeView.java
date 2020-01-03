@@ -48,4 +48,11 @@ public class ClassTreeNodeView extends AbstractChildCreatorNodeView implements C
         // TODO Auto-generated method stub
 
     }
+
+    // @Override
+    // public void setDefaultValue(String defaultValue)
+    // {
+    // // TODO Auto-generated method stub
+    //
+    // }
 }
