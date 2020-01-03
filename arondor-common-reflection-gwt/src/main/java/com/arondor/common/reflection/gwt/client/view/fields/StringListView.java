@@ -78,17 +78,17 @@ public class StringListView extends AbstractTreeNodeView implements StringListDi
         });
     }
 
-    @Override
-    public void setDefaultValue(List<String> values)
-    {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (String value : values)
-        {
-            stringBuilder.append(value);
-            stringBuilder.append('\n');
-        }
-        textArea.setValue(stringBuilder.toString());
-    }
+    // @Override
+    // public void setDefaultValue(List<String> values)
+    // {
+    // StringBuilder stringBuilder = new StringBuilder();
+    // for (String value : values)
+    // {
+    // stringBuilder.append(value);
+    // stringBuilder.append('\n');
+    // }
+    // textArea.setValue(stringBuilder.toString());
+    // }
 
     @Override
     public void setPlaceholder(List<String> value)
@@ -104,4 +104,10 @@ public class StringListView extends AbstractTreeNodeView implements StringListDi
 
     }
 
+    @Override
+    public void setDefaultValue(List<String> value)
+    {
+        // TODO Auto-generated method stub
+
+    }
 }

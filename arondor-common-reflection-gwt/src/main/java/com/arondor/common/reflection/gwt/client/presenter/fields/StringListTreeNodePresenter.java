@@ -18,6 +18,7 @@ package com.arondor.common.reflection.gwt.client.presenter.fields;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ListConfiguration;
@@ -29,6 +30,12 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 public class StringListTreeNodePresenter implements TreeNodePresenter
 {
     private final String fieldName;
+
+    private List<String> fieldValue;
+
+    private List<String> defaultValue;
+
+    private List<String> placeholder;
 
     public interface StringListDisplay extends ValueDisplay<List<String>>
     {
@@ -49,19 +56,50 @@ public class StringListTreeNodePresenter implements TreeNodePresenter
     {
         primitiveDisplay.addValueChangeHandler(new ValueChangeHandler<List<String>>()
         {
+            @Override
             public void onValueChange(ValueChangeEvent<List<String>> event)
             {
                 values = event.getValue();
             }
         });
-
+        primitiveDisplay.addTreeNodeClearHandler(new TreeNodeClearEvent.Handler()
+        {
+            @Override
+            public void onTreeNodeClearEvent(TreeNodeClearEvent treeNodeClearEvent)
+            {
+                fieldValue = null;
+                primitiveDisplay.setDefaultValue(defaultValue);
+            }
+        });
     }
 
+    @Override
     public String getFieldName()
     {
         return fieldName;
     }
 
+    public List<String> getDefaultValue()
+    {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(List<String> defaultValue)
+    {
+        this.defaultValue = defaultValue;
+    }
+
+    public List<String> getPlaceholder()
+    {
+        return placeholder;
+    }
+
+    public void setPlaceholder(List<String> placeholder)
+    {
+        this.placeholder = placeholder;
+    }
+
+    @Override
     public ElementConfiguration getElementConfiguration(ObjectConfigurationFactory objectConfigurationFactory)
     {
         if (values != null)
@@ -70,14 +108,15 @@ public class StringListTreeNodePresenter implements TreeNodePresenter
             listConfiguration.setListConfiguration(new ArrayList<ElementConfiguration>());
             for (String value : values)
             {
-                listConfiguration.getListConfiguration().add(
-                        objectConfigurationFactory.createPrimitiveConfiguration(value));
+                listConfiguration.getListConfiguration()
+                        .add(objectConfigurationFactory.createPrimitiveConfiguration(value));
             }
             return listConfiguration;
         }
         return null;
     }
 
+    @Override
     public void setElementConfiguration(ElementConfiguration elementConfiguration)
     {
         if (elementConfiguration instanceof ListConfiguration)
@@ -92,11 +131,24 @@ public class StringListTreeNodePresenter implements TreeNodePresenter
                     stringList.add(primitiveConfiguration.getValue());
                 }
             }
+            if (defaultValue != null)
+            {
+                primitiveDisplay.setDefaultValue(defaultValue);
+            }
+            if (placeholder != null)
+            {
+                primitiveDisplay.setPlaceholder(placeholder);
+            }
+            if (fieldValue != null)
+            {
+                primitiveDisplay.setValue(fieldValue);
+            }
             primitiveDisplay.setValue(stringList);
             this.values = stringList;
         }
     }
 
+    @Override
     public Display getDisplay()
     {
         return primitiveDisplay;

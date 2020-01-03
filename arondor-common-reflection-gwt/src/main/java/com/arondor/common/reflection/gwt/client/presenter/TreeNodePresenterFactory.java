@@ -16,6 +16,7 @@
 package com.arondor.common.reflection.gwt.client.presenter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -94,7 +95,18 @@ public class TreeNodePresenterFactory
         else if (isStringListField(fieldClassName, genericTypes))
         {
             LOG.finest("Field " + fieldName + " is a string list");
+            LOG.finest("### default value : " + defaultValue);
             childPresenter = new StringListTreeNodePresenter(fieldName, display.createStringListChild(isMandatory));
+            if (defaultValue != null && !defaultValue.equals(""))
+            {
+                ((StringListTreeNodePresenter) childPresenter)
+                        .setDefaultValue(Arrays.asList(defaultValue.trim().split("\n")));
+            }
+            if (placeholder != null && !placeholder.equals(""))
+            {
+                ((StringListTreeNodePresenter) childPresenter)
+                        .setPlaceholder(Arrays.asList(placeholder.trim().split("\n")));
+            }
         }
         else if (fieldClassName.equals("java.util.Map") && genericTypes != null && genericTypes.size() == 2)
         {
