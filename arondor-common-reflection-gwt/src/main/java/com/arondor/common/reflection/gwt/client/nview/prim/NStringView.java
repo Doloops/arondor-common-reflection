@@ -38,10 +38,9 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
 
         textBox.setClass("outlined");
         textBox.setStyle("width:100%;");
+        textBox.setTextAlign(TextAlign.LEFT);
 
         textBox.getElement().getElementsByTagName("input").getItem(0).setAttribute("style", "padding-right:12px;");
-
-        textBox.setTextAlign(TextAlign.LEFT);
 
         inputGroupPanel.getElement().addClassName("input-group");
         inputGroupPanel.getElement().setAttribute("style", "margin:0px");
@@ -105,7 +104,7 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
             {
                 textBox.setPlaceholder(defaultPlaceholder);
 
-                textBox.setHelperText(getHelperText());
+                textBox.setHelperText(getHelperTextContent());
                 textBox.getElement().getElementsByTagName("span").getItem(0)
                         .addClassName(CssBundle.INSTANCE.css().helperText());
             }

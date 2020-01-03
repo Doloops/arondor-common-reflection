@@ -91,7 +91,7 @@ public class NStringListView extends NNodeView implements StringListDisplay
             public void onFocus(FocusEvent event)
             {
                 textArea.setPlaceholder(String.join("\n", defaultPlaceholder));
-                textArea.setHelperText(getHelperText());
+                textArea.setHelperText(getHelperTextContent());
             }
         });
 

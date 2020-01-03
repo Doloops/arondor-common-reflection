@@ -6,11 +6,14 @@ import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNo
 import com.arondor.common.reflection.gwt.client.view.MyValueChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
 
+import gwt.material.design.client.constants.TextAlign;
 import gwt.material.design.client.ui.MaterialSwitch;
 
 public class NBooleanView extends NNodeView implements PrimitiveDisplay
@@ -29,6 +32,7 @@ public class NBooleanView extends NNodeView implements PrimitiveDisplay
 
         checkBox.getSpan().setStyle("zoom:0.8;");
         checkBox.getSpan().setMarginLeft(6);
+        checkBox.setTextAlign(TextAlign.LEFT);
         checkBox.getLabel().setStyle("align-items:center");
 
         groupPanel.getElement().addClassName("input-group");
@@ -36,7 +40,7 @@ public class NBooleanView extends NNodeView implements PrimitiveDisplay
 
         attachElements();
 
-        bind();
+        attachHandlers();
     }
 
     private void attachElements()
@@ -49,7 +53,7 @@ public class NBooleanView extends NNodeView implements PrimitiveDisplay
         add(groupPanel);
     }
 
-    private void bind()
+    private void attachHandlers()
     {
         getResetFieldBtn().addClickHandler(new ClickHandler()
         {
@@ -57,6 +61,19 @@ public class NBooleanView extends NNodeView implements PrimitiveDisplay
             public void onClick(ClickEvent event)
             {
                 setDefaultValue(String.valueOf(defaultValue));
+            }
+        });
+
+        checkBox.addMouseOverHandler(new MouseOverHandler()
+        {
+            @Override
+            public void onMouseOver(MouseOverEvent event)
+            {
+                if (!getHelperTextContent().isEmpty())
+                {
+                    checkBox.setTooltip(getHelperTextContent());
+                    checkBox.getTooltipElement().show();
+                }
             }
         });
     }
