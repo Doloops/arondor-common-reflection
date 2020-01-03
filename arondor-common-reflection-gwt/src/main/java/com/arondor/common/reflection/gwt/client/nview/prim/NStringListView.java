@@ -23,6 +23,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
 
+import gwt.material.design.client.constants.TextAlign;
 import gwt.material.design.client.ui.MaterialTextArea;
 
 public class NStringListView extends NNodeView implements StringListDisplay
@@ -40,7 +41,8 @@ public class NStringListView extends NNodeView implements StringListDisplay
         getElement().addClassName(CssBundle.INSTANCE.css().stringField());
 
         textArea.setClass("outlined");
-        textArea.setStyle("width:100%;display:flex;height:fit-content");
+        textArea.setStyle("width:100%;height:fit-content");
+        textArea.setTextAlign(TextAlign.LEFT);
 
         inputGroupPanel.getElement().addClassName("input-group");
         inputGroupPanel.getElement().setAttribute("style", "margin:0px");
@@ -89,7 +91,7 @@ public class NStringListView extends NNodeView implements StringListDisplay
             public void onFocus(FocusEvent event)
             {
                 textArea.setPlaceholder(String.join("\n", defaultPlaceholder));
-
+                textArea.setHelperText(getHelperText());
             }
         });
 
@@ -99,11 +101,15 @@ public class NStringListView extends NNodeView implements StringListDisplay
             @Override
             public void onBlur(BlurEvent event)
             {
-                if (textArea.getValue() == null || textArea.getValue().trim() == "")
+                boolean contentIsEmpty = textArea.getValue().isEmpty();
+                boolean contentIsUnchanged = textArea.getValue().equals(String.join("\n", defaultValue));
+
+                if (contentIsEmpty && contentIsUnchanged)
                 {
                     textArea.getValueBoxBase().getElement().removeAttribute("placeholder");
                     textArea.getLabel().getElement().removeClassName("active");
                 }
+                textArea.clearHelperText();
             }
         });
 
@@ -138,7 +144,7 @@ public class NStringListView extends NNodeView implements StringListDisplay
     public void setDefaultValue(List<String> value)
     {
         this.defaultValue = value;
-        setValue(value);
+        setValue(this.defaultValue);
         setActive(false);
     }
 
@@ -179,4 +185,5 @@ public class NStringListView extends NNodeView implements StringListDisplay
         super.clear();
         attachElements();
     }
+
 }
