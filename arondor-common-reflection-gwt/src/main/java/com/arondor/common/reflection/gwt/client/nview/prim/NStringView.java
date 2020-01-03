@@ -28,7 +28,9 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
 
     private FlowPanel inputGroupPanel = new FlowPanel();
 
-    private String defaultValue, defaultPlaceholder, helperText = "";
+    private String defaultValue = "";
+
+    private String defaultPlaceholder = "";
 
     public NStringView()
     {
@@ -103,7 +105,7 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
             {
                 textBox.setPlaceholder(defaultPlaceholder);
 
-                textBox.setHelperText(helperText);
+                textBox.setHelperText(getHelperText());
                 textBox.getElement().getElementsByTagName("span").getItem(0)
                         .addClassName(CssBundle.INSTANCE.css().helperText());
             }
@@ -115,7 +117,10 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
             @Override
             public void onBlur(BlurEvent event)
             {
-                if (textBox.getValue() == null || textBox.getValue().trim() == "")
+                boolean contentIsEmpty = textBox.getValue().isEmpty();
+                boolean contentIsUnchanged = textBox.getValue().equals(defaultValue);
+
+                if (contentIsEmpty && contentIsUnchanged)
                 {
                     textBox.getValueBoxBase().getElement().removeAttribute("placeholder");
                     textBox.getLabel().getElement().removeClassName("active");
@@ -176,12 +181,6 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
     public void setPlaceholder(String placeholder)
     {
         this.defaultPlaceholder = placeholder;
-    }
-
-    @Override
-    public void setNodeLongDescription(String longDescription)
-    {
-        helperText = longDescription;
     }
 
     @Override
