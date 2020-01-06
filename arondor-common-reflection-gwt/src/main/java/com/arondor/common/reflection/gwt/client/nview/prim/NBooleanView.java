@@ -6,8 +6,6 @@ import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNo
 import com.arondor.common.reflection.gwt.client.view.MyValueChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -61,19 +59,6 @@ public class NBooleanView extends NNodeView implements PrimitiveDisplay
             public void onClick(ClickEvent event)
             {
                 setDefaultValue(String.valueOf(defaultValue));
-            }
-        });
-
-        checkBox.addMouseOverHandler(new MouseOverHandler()
-        {
-            @Override
-            public void onMouseOver(MouseOverEvent event)
-            {
-                if (!getHelperTextContent().isEmpty())
-                {
-                    checkBox.setTooltip(getHelperTextContent());
-                    checkBox.getTooltipElement().show();
-                }
             }
         });
     }
@@ -131,6 +116,12 @@ public class NBooleanView extends NNodeView implements PrimitiveDisplay
                 valueChangeHandler.onValueChange(new MyValueChangeEvent<String>(newValue.toString()));
             }
         });
+    }
+
+    @Override
+    public void setNodeLongDescription(String longDescription)
+    {
+        checkBox.setTooltip(longDescription);
     }
 
     @Override
