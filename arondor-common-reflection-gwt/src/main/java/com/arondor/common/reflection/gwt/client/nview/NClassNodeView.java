@@ -6,6 +6,7 @@ import com.arondor.common.reflection.gwt.client.nview.prim.NIntView;
 import com.arondor.common.reflection.gwt.client.nview.prim.NStringListView;
 import com.arondor.common.reflection.gwt.client.nview.prim.NStringView;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter;
+import com.arondor.common.reflection.gwt.client.presenter.ImplementingClass;
 import com.arondor.common.reflection.gwt.client.presenter.ImplementingClassPresenter.ImplementingClassDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.EnumTreeNodePresenter.EnumDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.ListTreeNodePresenter.ListRootDisplay;
@@ -35,11 +36,11 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
 
         selectGroup.getElement().addClassName("input-group");
 
-        implementingClassView.asWidget().getElement().addClassName("form-control");
+        // implementingClassView.asWidget().getElement().addClassName("form-control");
 
         getResetFieldBtn().getElement().addClassName("input-group-append");
-        getResetFieldBtn().getElement().addClassName(CssBundle.INSTANCE.css().resetFieldBtn());
-        getResetFieldBtn().getElement().setInnerHTML("<span class=\"input-group-text\"><i></i></span>");
+        getResetFieldBtn().getElement().addClassName(CssBundle.INSTANCE.css().resetBtn());
+        getResetFieldBtn().getElement().setInnerHTML("<i></i>");
 
         getResetFieldBtn().addClickHandler(new ClickHandler()
         {
@@ -47,7 +48,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
             @Override
             public void onClick(ClickEvent event)
             {
-                implementingClassView.selectImplementingClass("null");
+                implementingClassView.selectImplementingClass(ImplementingClass.NULL_CLASS);
                 setActive(false);
                 clear();
             }
@@ -59,13 +60,12 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
 
         String rnd = String.valueOf(Math.random()).substring(2);
         advancedSettings.getElement().setInnerHTML(
-                "<a data-toggle=\"collapse\" href=\"#advancedSettings" + rnd + "\">> Advanced settings</a>");
+                "<a data-toggle=\"collapse\"  href=\"#advancedSettings" + rnd + "\">> Advanced settings</a>");
         optionalChildren.getElement().setId("advancedSettings" + rnd);
 
-        /*
-         * disabled for development convenience, DO NOT DELETE LINE !
-         */
         optionalChildren.getElement().addClassName("collapse");
+
+        // implementingClassView.setProperLabel("blabla");
 
         bind();
     }

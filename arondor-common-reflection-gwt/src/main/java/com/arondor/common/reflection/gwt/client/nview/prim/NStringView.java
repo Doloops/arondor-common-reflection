@@ -40,8 +40,6 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
         textBox.setStyle("width:100%;");
         textBox.setTextAlign(TextAlign.LEFT);
 
-        textBox.getElement().getElementsByTagName("input").getItem(0).setAttribute("style", "padding-right:12px;");
-
         inputGroupPanel.getElement().addClassName("input-group");
         inputGroupPanel.getElement().setAttribute("style", "margin:0px");
 
@@ -146,14 +144,7 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
         String input = textBox.getValue();
         boolean active = !input.equals(defaultValue);
 
-        setInputStyle(active ? "padding-right:30px" : "padding-right:12px");
-
         setActive(active);
-    }
-
-    private void setInputStyle(String style)
-    {
-        textBox.getElement().getElementsByTagName("input").getItem(0).setAttribute("style", style);
     }
 
     protected MaterialTextBox getTextBox()

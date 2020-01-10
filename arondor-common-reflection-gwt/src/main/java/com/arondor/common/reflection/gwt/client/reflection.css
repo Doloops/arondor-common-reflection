@@ -86,7 +86,7 @@
 }
 
 .booleanField div .resetBtn i {
-	padding-top:0px!important;
+	top:5px;
 }
 
 .stringField {
@@ -123,19 +123,50 @@
 
 .resetBtn i {
 	position:absolute!important;
-	right:5px;
-	content: url('icons/icon_trash.svg');
+	right:-9px;
+	content: url('icons/delete.png');
 	width:1rem!important;
-	padding-top:13px;
 	margin-right:5px;
+	top:0px;
+	border-radius:50%;
 }
+
+.resetBtn i:hover{
+/* 	  box-shadow: 0 0 10px 2px rgba(207,49,49,0.2); */
+	transform: rotate(90deg);
+	transition-duration: .5s;
+}
+
+/* ---------- halo ------------- 
+
+.halo {
+  background-color: rgba(150,64,64,0.2);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  top:-18%;
+  right:-4.5%;
+  opacity: 0;
+  visibility: hidden;
+  -webkit-transform: scale(0);
+  -webkit-transition-duration: .5s;
+}
+
+.resetBtn:hover .halo {
+  opacity: 1;
+  visibility: visible;
+  -webkit-transform: scale(1);
+  transform: scale(1);
+}
+ ----------------------- */
 
 .mandatoryChildren {
 }
 
 .advancedSettingsBtn{
 	margin-top:20px!important;
-	margin-bottom:10px;
+	margin-bottom:30px;
 	font-size:9pt;
 	font-weight:bold;
 	color:#1d7ae2;
@@ -145,10 +176,12 @@
 	height:20px;
 	color:#0066cc;
 	font-weight:bold;
+	text-align:center;
+	padding-left:40px;
 }
 	
 .optionalChildren{
-	margin:0px 0px 5px 10px;
+	margin:0px 0px 30px 10px;
 }
 
 .implementingClassView {
@@ -174,3 +207,41 @@
 	top:-10px;
 	font-size:0.7rem;
 }
+
+.dropdownItems input  {
+/* 	height:fit-content; */
+/* 	color:red; */
+/* 	margin-top:-3px!important; */
+}
+
+.dropdownItems ul li span {
+	color:inherit;
+/* 	padding:5px 16px; */
+/* 	margin-bottom:0px!important; */
+}
+.dropdownItems ul li {
+/* 	height:fit-content!important; */
+/* 	line-height:0.5rem!important; */
+/* 	background-color:pink; */
+/* 	height:20px!important; */
+/* 	padding-bottom:0px!important; */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

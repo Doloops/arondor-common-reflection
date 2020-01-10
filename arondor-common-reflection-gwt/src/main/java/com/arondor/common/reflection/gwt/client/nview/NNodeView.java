@@ -20,7 +20,8 @@ public class NNodeView extends FlowPanel implements TreeNodePresenter.Display
     {
         getElement().addClassName(CssBundle.INSTANCE.css().nodeField());
 
-        resetBtn.getElement().setInnerHTML("<i></i>");
+        resetBtn.getElement().setInnerHTML("<i></i><span></span>");
+        // resetBtn.getElement().getElementsByTagName("span").getItem(0).addClassName(CssBundle.INSTANCE.css().halo());
         resetBtn.getElement().addClassName(CssBundle.INSTANCE.css().resetBtn());
         resetBtn.getElement().addClassName(CssBundle.INSTANCE.css().hidden());
     }
@@ -50,6 +51,7 @@ public class NNodeView extends FlowPanel implements TreeNodePresenter.Display
     @Override
     public void setProperLabel(String label)
     {
+        // TODO trigger ClassTreeNodeView.setProperLabel(String)
     }
 
     @Override
@@ -65,6 +67,7 @@ public class NNodeView extends FlowPanel implements TreeNodePresenter.Display
         if (active)
         {
             resetBtn.getElement().removeClassName(CssBundle.INSTANCE.css().hidden());
+
         }
         else
         {
