@@ -115,12 +115,6 @@
 	display:none;	
 }
 
-.resetFieldBtn {
-/*     content: url('icons/icon_trash.svg'); */
-/*     width:1rem!important; */
-/*     padding-top:2px; */
-}
-
 .resetBtn i {
 	position:absolute!important;
 	right:-9px;
@@ -136,30 +130,6 @@
 	transform: rotate(90deg);
 	transition-duration: .5s;
 }
-
-/* ---------- halo ------------- 
-
-.halo {
-  background-color: rgba(150,64,64,0.2);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  position: absolute;
-  top:-18%;
-  right:-4.5%;
-  opacity: 0;
-  visibility: hidden;
-  -webkit-transform: scale(0);
-  -webkit-transition-duration: .5s;
-}
-
-.resetBtn:hover .halo {
-  opacity: 1;
-  visibility: visible;
-  -webkit-transform: scale(1);
-  transform: scale(1);
-}
- ----------------------- */
 
 .mandatoryChildren {
 }

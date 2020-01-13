@@ -44,9 +44,6 @@ public interface CssBundle extends ClientBundle
         @ClassName("hidden")
         String hidden();
 
-        @ClassName("resetFieldBtn")
-        String resetFieldBtn();
-
         @ClassName("resetBtn")
         String resetBtn();
 
@@ -55,9 +52,6 @@ public interface CssBundle extends ClientBundle
 
         @ClassName("dropdownItems")
         String dropdownItems();
-
-        // @ClassName("halo")
-        // String halo();
     }
 
     static final CssBundle INSTANCE = GWT.create(CssBundle.class);
