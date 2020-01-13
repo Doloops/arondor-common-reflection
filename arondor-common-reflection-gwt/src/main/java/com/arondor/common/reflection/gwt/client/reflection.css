@@ -116,15 +116,15 @@
 }
 
 .resetFieldBtn {
-    content: url('icons/icon_trash.svg');
-    width:1rem!important;
-    padding-top:2px;
+/*     content: url('icons/icon_trash.svg'); */
+/*     width:1rem!important; */
+/*     padding-top:2px; */
 }
 
 .resetBtn i {
 	position:absolute!important;
 	right:-9px;
-	content: url('icons/delete.png');
+	content: url('icons/icon_reset.svg');
 	width:1rem!important;
 	margin-right:5px;
 	top:0px;
@@ -132,7 +132,7 @@
 }
 
 .resetBtn i:hover{
-/* 	  box-shadow: 0 0 10px 2px rgba(207,49,49,0.2); */
+	box-shadow: 0 0 0 10px rgba(207,49,49,0.2);
 	transform: rotate(90deg);
 	transition-duration: .5s;
 }
