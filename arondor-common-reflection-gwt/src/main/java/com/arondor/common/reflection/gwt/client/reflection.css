@@ -38,13 +38,6 @@
 	padding-right:0px;
 }
 
-.classNode .classNode .optionalChildren .booleanField .resetFieldBtn {
-	position:relative;
-	right:0px;
-	padding:2px 12px;
-}
-
-
 /* change checkbox group order */
 .booleanField {
 	display: flex;
@@ -77,12 +70,6 @@
 
 .booleanField label{
 	margin-bottom:0px;
-}
-
-.booleanField .resetFieldBtn {
-	order:3;
-	position:absolute!important;
-	right:30px;
 }
 
 .booleanField div .resetBtn i {
