@@ -73,7 +73,7 @@ public class TestClassTreeNodePresenter
                 System.err.println("selectImplementingClass(" + invocation.getArguments()[0] + ")");
                 return null;
             }
-        }).when(implView).selectImplementingClass(anyString());
+        }).when(implView).selectImplementingClass(ImplementingClass.NULL_CLASS);
         when(nodeView.createPrimitiveChild(anyString(), false))
                 .thenAnswer(new Answer<PrimitiveTreeNodePresenter.PrimitiveDisplay>()
                 {
@@ -128,7 +128,8 @@ public class TestClassTreeNodePresenter
          * We shall not call selectImplementingClass because it's the widget
          * that selected the class
          */
-        verify(nodeView.getImplementingClassDisplay(), atLeastOnce()).selectImplementingClass(anyString());
+        verify(nodeView.getImplementingClassDisplay(), atLeastOnce())
+                .selectImplementingClass(ImplementingClass.NULL_CLASS);
         assertEquals(TestClass.class.getName(), nodePresenter.getImplementingClass().getName());
     }
 
@@ -150,7 +151,8 @@ public class TestClassTreeNodePresenter
 
         nodePresenter.setElementConfiguration(objectConfiguration);
 
-        verify(nodeView.getImplementingClassDisplay(), atLeastOnce()).selectImplementingClass(anyString());
+        verify(nodeView.getImplementingClassDisplay(), atLeastOnce())
+                .selectImplementingClass(ImplementingClass.NULL_CLASS);
         assertEquals(TestClass.class.getName(), nodePresenter.getImplementingClass().getName());
 
         ElementConfiguration elementConfiguration = nodePresenter.getElementConfiguration(factory);

@@ -23,16 +23,17 @@ import com.google.gwt.user.client.ui.IsWidget;
 
 public interface ImplementingClassPresenter
 {
-
     public interface ImplementingClassDisplay extends IsWidget
     {
         void setBaseClassName(String baseClassName);
 
-        void setImplementingClasses(Collection<String> implementingClasses);
+        void setImplementingClasses(Collection<ImplementingClass> implementingClasses);
 
-        void selectImplementingClass(String implementingClassName);
+        void selectImplementingClass(ImplementingClass implementingClass);
 
-        HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> valueChangeHandler);
+        HandlerRegistration addValueChangeHandler(ValueChangeHandler<ImplementingClass> valueChangeHandler);
+
+        void setProperLabel(String label);
     }
 
     HandlerRegistration addValueChangeHandler(ValueChangeHandler<ImplementingClass> valueChangeHandler);

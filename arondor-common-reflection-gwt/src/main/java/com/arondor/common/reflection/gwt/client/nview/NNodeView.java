@@ -67,7 +67,6 @@ public class NNodeView extends FlowPanel implements TreeNodePresenter.Display
         if (active)
         {
             resetBtn.getElement().removeClassName(CssBundle.INSTANCE.css().hidden());
-
         }
         else
         {

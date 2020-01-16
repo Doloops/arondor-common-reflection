@@ -103,15 +103,15 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<ImplementingClass> valueChangeHandler)
     {
         valueChangeHandlerRegistrations.add(valueChangeHandler);
-        final HandlerRegistration registration = this.display.addValueChangeHandler(new ValueChangeHandler<String>()
-        {
-            @Override
-            public void onValueChange(ValueChangeEvent<String> event)
-            {
-                ImplementingClass implementingClass = ImplementingClass.parseImplementingClass(event.getValue());
-                valueChangeHandler.onValueChange(new MyValueChangeEvent<ImplementingClass>(implementingClass));
-            }
-        });
+        final HandlerRegistration registration = this.display
+                .addValueChangeHandler(new ValueChangeHandler<ImplementingClass>()
+                {
+                    @Override
+                    public void onValueChange(ValueChangeEvent<ImplementingClass> event)
+                    {
+                        valueChangeHandler.onValueChange(event);
+                    }
+                });
 
         return new HandlerRegistration()
         {
@@ -127,12 +127,12 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
 
     private void bind()
     {
-        display.addValueChangeHandler(new ValueChangeHandler<String>()
+        display.addValueChangeHandler(new ValueChangeHandler<ImplementingClass>()
         {
             @Override
-            public void onValueChange(ValueChangeEvent<String> event)
+            public void onValueChange(ValueChangeEvent<ImplementingClass> event)
             {
-                currentImplementingClass = ImplementingClass.parseImplementingClass(event.getValue());
+                currentImplementingClass = event.getValue();
                 LOG.finest("Changed implementClassName=" + currentImplementingClass);
             }
         });
@@ -182,18 +182,13 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
     {
         Collections.sort(implementingClasses);
 
-        List<String> names = new ArrayList<String>();
-        for (ImplementingClass implementingClass : implementingClasses)
-        {
-            names.add(implementingClass.toString());
-        }
-        display.setImplementingClasses(names);
+        display.setImplementingClasses(implementingClasses);
 
         LOG.finest("currentImplementingClass=" + currentImplementingClass);
 
         if (implementingClasses.contains(currentImplementingClass))
         {
-            display.selectImplementingClass(currentImplementingClass.toString());
+            display.selectImplementingClass(currentImplementingClass);
         }
 
         updateDisplayScheduled = false;
@@ -277,7 +272,7 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
     public void setImplementingClass(ImplementingClass implementingClass)
     {
         this.currentImplementingClass = implementingClass;
-        display.selectImplementingClass(currentImplementingClass.toString());
+        display.selectImplementingClass(currentImplementingClass);
     }
 
     @Override

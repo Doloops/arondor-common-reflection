@@ -19,36 +19,44 @@ import java.util.Collection;
 import java.util.logging.Logger;
 
 import com.arondor.common.reflection.gwt.client.CssBundle;
+import com.arondor.common.reflection.gwt.client.presenter.ImplementingClass;
 import com.arondor.common.reflection.gwt.client.presenter.ImplementingClassPresenter.ImplementingClassDisplay;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.ListBox;
+
+import gwt.material.design.client.ui.MaterialListValueBox;
 
 public class ImplementingClassView extends Composite implements ImplementingClassDisplay
 {
     private static final Logger LOG = Logger.getLogger(ImplementingClassView.class.getName());
 
-    private ListBox implementingListInput = new ListBox();
+    // private ListBox implementingListInput = new ListBox();
 
-    private String selectedClass = null;
+    private MaterialListValueBox<ImplementingClass> implementingListInput = new MaterialListValueBox<ImplementingClass>();
+
+    private ImplementingClass selectedClass = ImplementingClass.NULL_CLASS;
 
     public ImplementingClassView()
     {
         initWidget(implementingListInput);
-        implementingListInput.getElement().addClassName(CssBundle.INSTANCE.css().implementingClassView());
+
+        implementingListInput.setClass("outlined");
+        implementingListInput.getLabel().setStyle("top:0px");
+        implementingListInput.setStyle("width:100%;margin-top:0px;");
+        implementingListInput.getListBox().getElement().addClassName(CssBundle.INSTANCE.css().dropdownItems());
+        // implementingListInput.getElement().addClassName(CssBundle.INSTANCE.css().implementingClassView());
     }
 
     @Override
-    public void setImplementingClasses(Collection<String> implementingClasses)
+    public void setImplementingClasses(Collection<ImplementingClass> implementingClasses)
     {
         LOG.finest("Selected classes : " + implementingClasses);
         implementingListInput.clear();
-        for (String implementingClass : implementingClasses)
+        for (ImplementingClass implementingClass : implementingClasses)
         {
-            implementingListInput.addItem(implementingClass);
+            implementingListInput.addItem(implementingClass, implementingClass.toString());
             if (selectedClass != null && selectedClass.equals(implementingClass))
             {
                 implementingListInput.setSelectedIndex(implementingListInput.getItemCount() - 1);
@@ -56,45 +64,39 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         }
     }
 
-    private void doSelect(String className)
+    private void doSelect(ImplementingClass clazz)
     {
-        selectedClass = className;
-        if (className == null)
+        selectedClass = clazz;
+        if (clazz == ImplementingClass.NULL_CLASS)
         {
-            className = "null";
+            implementingListInput.setSelectedIndex(-1);
         }
-
-        LOG.finest("Selecting class : " + className + " from a choice of " + implementingListInput.getItemCount()
-                + " items");
-        for (int idx = 0; idx < implementingListInput.getItemCount(); idx++)
+        LOG.finest(
+                "Selecting class : " + clazz + " from a choice of " + implementingListInput.getItemCount() + " items");
+        int index = implementingListInput.getIndex(clazz);
+        if (index == -1)
         {
-            if (implementingListInput.getItemText(idx).equals(className))
-            {
-                implementingListInput.setSelectedIndex(idx);
-                return;
-            }
+            implementingListInput.addItem(clazz, clazz.toString());
+            implementingListInput.setSelectedIndex(implementingListInput.getItemCount() - 1);
         }
-
-        implementingListInput.addItem(className);
-        implementingListInput.setSelectedIndex(implementingListInput.getItemCount() - 1);
+        else
+        {
+            implementingListInput.setSelectedIndex(index);
+        }
         // LOG.warning("Could not select class : " + className);
     }
 
     @Override
-    public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<String> valueChangeHandler)
+    public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<ImplementingClass> valueChangeHandler)
     {
-        return implementingListInput.addChangeHandler(new ChangeHandler()
+        return implementingListInput.addValueChangeHandler(new ValueChangeHandler<ImplementingClass>()
         {
             @Override
-            public void onChange(ChangeEvent event)
+            public void onValueChange(ValueChangeEvent<ImplementingClass> event)
             {
-                if (implementingListInput.getSelectedIndex() != -1)
-                {
-                    String value = implementingListInput.getValue(implementingListInput.getSelectedIndex());
-                    selectedClass = value;
-                    LOG.finest("Selected class : " + selectedClass);
-                    valueChangeHandler.onValueChange(new MyValueChangeEvent<String>(value));
-                }
+                selectedClass = event.getValue();
+                LOG.finest("&& Selected class : " + selectedClass);
+                valueChangeHandler.onValueChange(event);
             }
         });
     }
@@ -102,12 +104,19 @@ public class ImplementingClassView extends Composite implements ImplementingClas
     @Override
     public void setBaseClassName(String baseClassName)
     {
-        doSelect(baseClassName);
+        // doSelect(baseClassName);
     }
 
     @Override
-    public void selectImplementingClass(String implementingClassName)
+    public void selectImplementingClass(ImplementingClass implementingClassName)
     {
         doSelect(implementingClassName);
+    }
+
+    @Override
+    public void setProperLabel(String label)
+    {
+        LOG.info("&& setting label :" + label);
+        implementingListInput.setPlaceholder(label);
     }
 }
