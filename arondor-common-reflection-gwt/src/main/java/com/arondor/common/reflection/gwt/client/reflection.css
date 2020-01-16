@@ -80,13 +80,13 @@
 	margin-bottom:0px!important;
 }
 
-.stringField input, .implementingClassView{
-	top:0px;
-	padding: 3px 8px;
-	border-radius:4px;
-	border: 1px solid #CED4DA;
-	color:inherit;
-}
+/* .stringField input, .implementingClassView{ */
+/* 	top:0px; */
+/* 	padding: 3px 8px; */
+/* 	border-radius:4px; */
+/* 	border: 1px solid #CED4DA; */
+/* 	color:inherit; */
+/* } */
 
 .stringField div textarea {
 	line-height:inherit;
@@ -105,7 +105,7 @@
 .resetBtn i {
 	position:absolute!important;
 	right:-9px;
-	content: url('icons/icon_reset.svg');
+	content:url('icons/icon_reset_gray.svg');
 	width:1rem!important;
 	margin-right:5px;
 	top:0px;
@@ -113,6 +113,7 @@
 }
 
 .resetBtn i:hover{
+	content:url('icons/icon_reset_red.svg');
 	box-shadow: 0 0 0 10px rgba(207,49,49,0.2);
 	transform: rotate(90deg);
 	transition-duration: .5s;
@@ -141,12 +142,6 @@
 	margin:0px 0px 30px 10px;
 }
 
-.implementingClassView {
-	color: inherit;
-	position:relative;
-	width:100%;
-}
-
 .nodeField {
 	margin:10px 0px;
 }
@@ -165,14 +160,16 @@
 	font-size:0.7rem;
 }
 
-.dropdownItems input  {
+.dropdownItems ul li  {
 /* 	height:fit-content; */
-/* 	color:red; */
+	color:red;
+/* 	height:10px; */
 /* 	margin-top:-3px!important; */
 }
 
 .dropdownItems ul li span {
 	color:inherit;
+/* 	padding:0px!important; */
 /* 	padding:5px 16px; */
 /* 	margin-bottom:0px!important; */
 }
@@ -183,22 +180,3 @@
 /* 	height:20px!important; */
 /* 	padding-bottom:0px!important; */
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

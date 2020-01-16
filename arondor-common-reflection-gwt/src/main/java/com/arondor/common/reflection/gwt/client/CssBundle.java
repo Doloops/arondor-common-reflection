@@ -14,8 +14,8 @@ public interface CssBundle extends ClientBundle
         @ClassName("rootTreeNode")
         String rootTreeNode();
 
-        @ClassName("implementingClassView")
-        String implementingClassView();
+        // @ClassName("implementingClassView")
+        // String implementingClassView();
 
         @ClassName("nodeField")
         String nodeField();
