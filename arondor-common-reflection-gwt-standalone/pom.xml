@@ -28,6 +28,12 @@
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-gwt</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.eclipse.jetty</groupId>
+					<artifactId>apache-jsp</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
@@ -74,7 +80,8 @@
 			<version>1.0.0-SNAPSHOT</version>
 			<scope>provided</scope>
 			<classifier>sources</classifier>
-		</dependency>		
+		</dependency>
+		
 	</dependencies>
 
 	<build>

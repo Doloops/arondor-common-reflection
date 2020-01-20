@@ -61,11 +61,16 @@
 		    <artifactId>gwt-material</artifactId>
 		    <version>2.2</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>com.github.gwtmaterialdesign</groupId>
 			<artifactId>gwt-material-themes</artifactId>
 			<version>2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-dev</artifactId>
+			<version>${gwt.version}</version>
+			<scope>test</scope>
 		</dependency>
 
 		
