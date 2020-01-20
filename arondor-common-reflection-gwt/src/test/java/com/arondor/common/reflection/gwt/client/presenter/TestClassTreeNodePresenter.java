@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -74,7 +75,7 @@ public class TestClassTreeNodePresenter
                 return null;
             }
         }).when(implView).selectImplementingClass(ImplementingClass.NULL_CLASS);
-        when(nodeView.createPrimitiveChild(anyString(), false))
+        when(nodeView.createPrimitiveChild(anyString(), Matchers.eq(false)))
                 .thenAnswer(new Answer<PrimitiveTreeNodePresenter.PrimitiveDisplay>()
                 {
                     @Override
@@ -100,14 +101,14 @@ public class TestClassTreeNodePresenter
     {
         ClassTreeNodePresenter.ClassDisplay nodeView = mockClassTreeNodePresenterDisplay();
 
-        final List<ValueChangeHandler<String>> changeHandlers = new ArrayList<ValueChangeHandler<String>>();
+        final List<ValueChangeHandler<ImplementingClass>> changeHandlers = new ArrayList<ValueChangeHandler<ImplementingClass>>();
         when(nodeView.getImplementingClassDisplay().addValueChangeHandler(any(ValueChangeHandler.class)))
                 .then(new Answer<HandlerRegistration>()
                 {
                     @Override
                     public HandlerRegistration answer(InvocationOnMock invocation) throws Throwable
                     {
-                        changeHandlers.add((ValueChangeHandler<String>) invocation.getArguments()[0]);
+                        changeHandlers.add((ValueChangeHandler<ImplementingClass>) invocation.getArguments()[0]);
                         return mock(HandlerRegistration.class);
                     }
                 });
@@ -118,9 +119,9 @@ public class TestClassTreeNodePresenter
         assertNull(nodePresenter.getImplementingClass().getName());
         verify(nodeView.getImplementingClassDisplay()).setBaseClassName(TestInterface.class.getName());
 
-        ValueChangeEvent<String> valueChangeEvent = mock(ValueChangeEvent.class);
-        when(valueChangeEvent.getValue()).thenReturn(TestClass.class.getName());
-        for (ValueChangeHandler<String> changeHandler : changeHandlers)
+        ValueChangeEvent<ImplementingClass> valueChangeEvent = mock(ValueChangeEvent.class);
+        when(valueChangeEvent.getValue()).thenReturn(new ImplementingClass(false, TestClass.class.getName()));
+        for (ValueChangeHandler<ImplementingClass> changeHandler : changeHandlers)
         {
             changeHandler.onValueChange(valueChangeEvent);
         }
