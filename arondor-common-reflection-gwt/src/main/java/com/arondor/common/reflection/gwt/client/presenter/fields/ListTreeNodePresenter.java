@@ -18,6 +18,7 @@ package com.arondor.common.reflection.gwt.client.presenter.fields;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.arondor.common.reflection.bean.java.AccessibleFieldBean;
 import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenterFactory;
@@ -79,8 +80,13 @@ public class ListTreeNodePresenter implements TreeNodePresenter
     protected TreeNodePresenter addChild()
     {
         listDisplay.setActive(true);
-        final TreeNodePresenter childPresenter = TreeNodePresenterFactory.getInstance().createChildNodePresenter(
-                rpcService, objectConfigurationMap, listDisplay, "Entry", genericType, "Entry");
+        AccessibleFieldBean entryBean = new AccessibleFieldBean();
+        entryBean.setClassName(genericType);
+        entryBean.setName("Entry");
+        entryBean.setDescription("Entry");
+
+        final TreeNodePresenter childPresenter = TreeNodePresenterFactory.getInstance()
+                .createChildNodePresenter(rpcService, objectConfigurationMap, listDisplay, entryBean);
 
         childPresenter.getDisplay().addTreeNodeClearHandler(new TreeNodeClearEvent.Handler()
         {

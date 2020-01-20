@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.arondor.common.reflection.bean.java.AccessibleFieldBean;
 import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenterFactory;
@@ -121,11 +122,19 @@ public class MapTreeNodePresenter implements TreeNodePresenter
         MapNodeDisplay childNode = mapRootDisplay.createChildNode();
         childNode.setNodeName("Entry");
 
+        AccessibleFieldBean keyBean = new AccessibleFieldBean();
+        keyBean.setClassName(genericTypes.get(0));
+        keyBean.setName("Key");
+        keyBean.setDescription("Key");
         TreeNodePresenter keyPresenter = TreeNodePresenterFactory.getInstance().createChildNodePresenter(rpcService,
-                objectConfigurationMap, childNode, "Key", genericTypes.get(0), "Key");
+                objectConfigurationMap, childNode, keyBean);
 
+        AccessibleFieldBean valueBean = new AccessibleFieldBean();
+        valueBean.setClassName(genericTypes.get(1));
+        valueBean.setName("Key");
+        valueBean.setDescription("Key");
         TreeNodePresenter valuePresenter = TreeNodePresenterFactory.getInstance().createChildNodePresenter(rpcService,
-                objectConfigurationMap, childNode, "Value", genericTypes.get(1), "Value");
+                objectConfigurationMap, childNode, valueBean);
 
         final KeyValuePresenterPair keyValuePresenterPair = new KeyValuePresenterPair(keyPresenter, valuePresenter);
         keyValuePresenters.add(keyValuePresenterPair);

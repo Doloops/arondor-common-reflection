@@ -9,6 +9,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -129,8 +130,7 @@ public class TestClassTreeNodePresenter
          * We shall not call selectImplementingClass because it's the widget
          * that selected the class
          */
-        verify(nodeView.getImplementingClassDisplay(), atLeastOnce())
-                .selectImplementingClass(ImplementingClass.NULL_CLASS);
+        verify(nodeView.getImplementingClassDisplay(), never()).selectImplementingClass(ImplementingClass.NULL_CLASS);
         assertEquals(TestClass.class.getName(), nodePresenter.getImplementingClass().getName());
     }
 
@@ -153,7 +153,7 @@ public class TestClassTreeNodePresenter
         nodePresenter.setElementConfiguration(objectConfiguration);
 
         verify(nodeView.getImplementingClassDisplay(), atLeastOnce())
-                .selectImplementingClass(ImplementingClass.NULL_CLASS);
+                .selectImplementingClass(new ImplementingClass(false, TestClass.class.getName()));
         assertEquals(TestClass.class.getName(), nodePresenter.getImplementingClass().getName());
 
         ElementConfiguration elementConfiguration = nodePresenter.getElementConfiguration(factory);

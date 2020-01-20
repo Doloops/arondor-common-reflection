@@ -41,27 +41,12 @@ public class TreeNodePresenterFactory
 {
     private final static Logger LOG = Logger.getLogger(TreeNodePresenterFactory.class.getName());
 
-    private static final int MAX_DESCRIPTION_LENGTH = 60;
-
-    public TreeNodePresenter createChildNodePresenter(GWTReflectionServiceAsync rpcService,
-            ObjectConfigurationMap objectConfigurationMap, TreeNodePresenter.ChildCreatorDisplay display,
-            String fieldName, final String fieldClassName, String fieldDescription)
-    {
-        // return createChildNodePresenter(rpcService, objectConfigurationMap,
-        // display, fieldName, fieldClassName,
-        // fieldDescription, null, null, false, null, false, null, null);
-        return null;
-    }
-
     public TreeNodePresenter createChildNodePresenter(GWTReflectionServiceAsync rpcService,
             ObjectConfigurationMap objectConfigurationMap, TreeNodePresenter.ChildCreatorDisplay display,
             AccessibleField accessibleField)
     {
         String fieldName = accessibleField.getName();
         String fieldClassName = accessibleField.getClassName();
-        String fieldDescription = accessibleField.getDescription();
-        String fieldLongDescription = accessibleField.getLongDescription();
-        String defaultBehavior = accessibleField.getDefaultBehavior();
         boolean isMandatory = accessibleField.isMandatory();
         String defaultValue = accessibleField.getDefaultValue();
         String placeholder = accessibleField.getPlaceholder();
