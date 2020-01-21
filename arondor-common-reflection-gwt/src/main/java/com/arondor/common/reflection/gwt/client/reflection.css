@@ -88,6 +88,10 @@
 /* 	color:inherit; */
 /* } */
 
+.stringField div .resetBtn i {
+	top: 1px!important;
+}
+
 .stringField div textarea {
 	line-height:inherit;
 	padding:10px 12px;
@@ -108,7 +112,7 @@
 	content:url('icons/icon_reset_gray.svg');
 	width:1rem!important;
 	margin-right:5px;
-	top:0px;
+	top:-4px;
 	border-radius:50%;
 }
 
@@ -160,23 +164,11 @@
 	font-size:0.7rem;
 }
 
-.dropdownItems ul li  {
-/* 	height:fit-content; */
-	color:red;
-/* 	height:10px; */
-/* 	margin-top:-3px!important; */
+.comboBox label {
+/* 	color:red; */
+	top:13px!important;
 }
 
-.dropdownItems ul li span {
-	color:inherit;
-/* 	padding:0px!important; */
-/* 	padding:5px 16px; */
-/* 	margin-bottom:0px!important; */
-}
-.dropdownItems ul li {
-/* 	height:fit-content!important; */
-/* 	line-height:0.5rem!important; */
-/* 	background-color:pink; */
-/* 	height:20px!important; */
-/* 	padding-bottom:0px!important; */
+.classNode .comboBox .resetBtn i {
+	top:-4px;
 }

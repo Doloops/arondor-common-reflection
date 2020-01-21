@@ -1,9 +1,9 @@
 package com.arondor.common.reflection.gwt.client.nview.prim;
 
 import com.arondor.common.reflection.gwt.client.CssBundle;
+import com.arondor.common.reflection.gwt.client.event.MyValueChangeEvent;
 import com.arondor.common.reflection.gwt.client.nview.NNodeView;
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter.PrimitiveDisplay;
-import com.arondor.common.reflection.gwt.client.view.MyValueChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -64,7 +64,7 @@ public class NBooleanView extends NNodeView implements PrimitiveDisplay
     }
 
     @Override
-    public void setProperLabel(String label)
+    public void setNodeDescription(String label)
     {
         checkBox.setOnLabel(label);
     }
@@ -129,4 +129,5 @@ public class NBooleanView extends NNodeView implements PrimitiveDisplay
     {
         // required for string fields
     }
+
 }

@@ -2,6 +2,7 @@
 <module rename-to='ArondorReflectionGWT'>
 	<inherits name='com.arondor.common.reflection.ArondorReflectionModel' />
 	<inherits name="gwt.material.design.GwtMaterialDesign"/>
+	<inherits name="gwt.material.design.addins.GwtMaterialAddins"/>
 	
 	<!-- Specify the paths for translatable code -->
 	<source path='client' />

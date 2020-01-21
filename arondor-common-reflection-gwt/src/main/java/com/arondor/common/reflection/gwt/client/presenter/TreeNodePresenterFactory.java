@@ -98,14 +98,14 @@ public class TreeNodePresenterFactory
             LOG.severe(
                     "Field " + fieldName + " is an object map of " + genericTypes.get(0) + ", " + genericTypes.get(1));
             childPresenter = new MapTreeNodePresenter(rpcService, objectConfigurationMap, fieldName, genericTypes,
-                    display.createMapChild());
+                    display.createMapChild(isMandatory));
         }
         else if (fieldClassName.equals("java.util.List") && genericTypes != null && genericTypes.size() == 1)
         {
             LOG.finest("Field " + fieldName + " is an " + genericTypes.get(0) + " list");
             String genericType = genericTypes.get(0);
             childPresenter = new ListTreeNodePresenter(rpcService, objectConfigurationMap, fieldName, genericType,
-                    display.createListChild());
+                    display.createListChild(isMandatory));
         }
         else
         {
@@ -177,6 +177,10 @@ public class TreeNodePresenterFactory
         if (accessibleField.getDescription() != null)
         {
             childPresenter.getDisplay().setNodeDescription(accessibleField.getDescription());
+        }
+        else
+        {
+            childPresenter.getDisplay().setNodeDescription(fieldName);
         }
         if (accessibleField.getLongDescription() != null)
         {

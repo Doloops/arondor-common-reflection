@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import com.arondor.common.reflection.gwt.client.event.MyValueChangeEvent;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
-import com.arondor.common.reflection.gwt.client.view.MyValueChangeEvent;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.arondor.common.reflection.model.java.AccessibleClass;
@@ -47,10 +47,10 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
         this.display.setBaseClassName(baseClassName);
         bind();
 
-        if (!isMandatory)
-        {
-            addImplementingClass(ImplementingClass.NULL_CLASS);
-        }
+        // if (!isMandatory)
+        // {
+        // addImplementingClass(ImplementingClass.NULL_CLASS);
+        // }
 
         fetchBaseClass();
         fetchImplementations();

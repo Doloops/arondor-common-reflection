@@ -6,7 +6,7 @@ import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 
-public class NNodeView extends FlowPanel implements TreeNodePresenter.Display
+public abstract class NNodeView extends FlowPanel implements TreeNodePresenter.Display
 {
     private boolean active;
 
@@ -39,19 +39,6 @@ public class NNodeView extends FlowPanel implements TreeNodePresenter.Display
     @Override
     public void setNodeName(String name)
     {
-        setProperLabel(name);
-    }
-
-    @Override
-    public void setNodeDescription(String description)
-    {
-        setProperLabel(description);
-    }
-
-    @Override
-    public void setProperLabel(String label)
-    {
-        // TODO trigger ClassTreeNodeView.setProperLabel(String)
     }
 
     @Override

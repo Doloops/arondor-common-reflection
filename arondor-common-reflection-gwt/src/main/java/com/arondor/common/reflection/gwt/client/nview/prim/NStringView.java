@@ -57,7 +57,7 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
     }
 
     @Override
-    public void setProperLabel(String label)
+    public void setNodeDescription(String label)
     {
         textBox.setLabel(label);
     }

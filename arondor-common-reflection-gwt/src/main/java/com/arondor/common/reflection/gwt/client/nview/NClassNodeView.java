@@ -6,7 +6,6 @@ import com.arondor.common.reflection.gwt.client.nview.prim.NIntView;
 import com.arondor.common.reflection.gwt.client.nview.prim.NStringListView;
 import com.arondor.common.reflection.gwt.client.nview.prim.NStringView;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter;
-import com.arondor.common.reflection.gwt.client.presenter.ImplementingClass;
 import com.arondor.common.reflection.gwt.client.presenter.ImplementingClassPresenter.ImplementingClassDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.EnumTreeNodePresenter.EnumDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.ListTreeNodePresenter.ListRootDisplay;
@@ -48,7 +47,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
             @Override
             public void onClick(ClickEvent event)
             {
-                implementingClassView.selectImplementingClass(ImplementingClass.NULL_CLASS);
+                implementingClassView.resetComboBox();
                 setActive(false);
                 clear();
             }
@@ -170,14 +169,15 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     }
 
     @Override
-    public MapRootDisplay createMapChild()
+    public MapRootDisplay createMapChild(boolean isMandatory)
     {
-        // TODO Auto-generated method stub
-        return null;
+        NMapNodeView mapView = new NMapNodeView();
+        addChildView(isMandatory, mapView);
+        return mapView;
     }
 
     @Override
-    public ListRootDisplay createListChild()
+    public ListRootDisplay createListChild(boolean isMandatory)
     {
         // TODO Auto-generated method stub
         return null;
@@ -191,6 +191,12 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         optionalChildren.clear();
         optionalChildren.getElement().removeClassName("show");
         bind();
+    }
+
+    @Override
+    public void setNodeDescription(String description)
+    {
+        implementingClassView.setNodeDescription(description);
     }
 
 }

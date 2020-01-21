@@ -50,8 +50,8 @@ public interface CssBundle extends ClientBundle
         @ClassName("helperText")
         String helperText();
 
-        @ClassName("dropdownItems")
-        String dropdownItems();
+        @ClassName("comboBox")
+        String comboBox();
     }
 
     static final CssBundle INSTANCE = GWT.create(CssBundle.class);

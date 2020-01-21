@@ -33,7 +33,9 @@ public interface ImplementingClassPresenter
 
         HandlerRegistration addValueChangeHandler(ValueChangeHandler<ImplementingClass> valueChangeHandler);
 
-        void setProperLabel(String label);
+        void setNodeDescription(String label);
+
+        void resetComboBox();
     }
 
     HandlerRegistration addValueChangeHandler(ValueChangeHandler<ImplementingClass> valueChangeHandler);
@@ -43,4 +45,5 @@ public interface ImplementingClassPresenter
     String getBaseClassName();
 
     ImplementingClass getImplementingClass();
+
 }

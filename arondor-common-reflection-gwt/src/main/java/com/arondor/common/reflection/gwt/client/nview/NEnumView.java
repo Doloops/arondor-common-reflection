@@ -44,4 +44,11 @@ public class NEnumView extends NNodeView implements EnumDisplay
 
     }
 
+    @Override
+    public void setNodeDescription(String description)
+    {
+        // TODO Auto-generated method stub
+
+    }
+
 }

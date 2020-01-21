@@ -64,8 +64,6 @@ public interface TreeNodePresenter
         void clear();
 
         void addTreeNodeClearHandler(TreeNodeClearEvent.Handler handler);
-
-        void setProperLabel(String label);
     }
 
     public interface ValueDisplay<T> extends Display
@@ -90,9 +88,9 @@ public interface TreeNodePresenter
 
         StringListTreeNodePresenter.StringListDisplay createStringListChild(boolean isMandatory);
 
-        MapTreeNodePresenter.MapRootDisplay createMapChild();
+        MapTreeNodePresenter.MapRootDisplay createMapChild(boolean isMandatory);
 
-        ListTreeNodePresenter.ListRootDisplay createListChild();
+        ListTreeNodePresenter.ListRootDisplay createListChild(boolean isMandatory);
     }
 
     String getFieldName();
