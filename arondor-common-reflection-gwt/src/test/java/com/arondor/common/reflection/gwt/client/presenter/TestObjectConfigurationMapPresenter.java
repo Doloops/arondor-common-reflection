@@ -64,7 +64,7 @@ public class TestObjectConfigurationMapPresenter
         Mockito.when(mapNodeDisplay.createClassChild(false)).thenReturn(classDisplay);
         Mockito.when(classDisplay.createClassChild(false)).thenReturn(classDisplay);
         ListRootDisplay listDisplay = Mockito.mock(ListRootDisplay.class);
-        Mockito.when(classDisplay.createListChild()).thenReturn(listDisplay);
+        Mockito.when(classDisplay.createListChild(Matchers.anyBoolean())).thenReturn(listDisplay);
         Mockito.when(listDisplay.addElementClickHandler()).thenReturn(hasClickHandlers);
         Mockito.when(listDisplay.createClassChild(false)).thenReturn(classDisplay);
         Mockito.when(listDisplay.createPrimitiveChild(Matchers.anyString(), Matchers.eq(false)))
@@ -72,9 +72,9 @@ public class TestObjectConfigurationMapPresenter
         StringListDisplay stringListDisplay = Mockito.mock(StringListDisplay.class);
         Mockito.when(listDisplay.createStringListChild(Matchers.anyBoolean())).thenReturn(stringListDisplay);
         MapRootDisplay mapRootDisplay = objectConfigurationMapDisplay;
-        Mockito.when(listDisplay.createMapChild()).thenReturn(mapRootDisplay);
-        Mockito.when(classDisplay.createMapChild()).thenReturn(mapRootDisplay);
-        Mockito.when(mapNodeDisplay.createMapChild()).thenReturn(mapRootDisplay);
+        Mockito.when(listDisplay.createMapChild(Matchers.anyBoolean())).thenReturn(mapRootDisplay);
+        Mockito.when(classDisplay.createMapChild(Matchers.anyBoolean())).thenReturn(mapRootDisplay);
+        Mockito.when(mapNodeDisplay.createMapChild(Matchers.anyBoolean())).thenReturn(mapRootDisplay);
         Mockito.when(mapRootDisplay.addElementClickHandler()).thenReturn(hasClickHandlers);
         Mockito.when(classDisplay.createStringListChild(Matchers.anyBoolean())).thenReturn(stringListDisplay);
         Mockito.when(mapNodeDisplay.createStringListChild(Matchers.anyBoolean())).thenReturn(stringListDisplay);
