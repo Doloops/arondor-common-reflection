@@ -23,7 +23,6 @@ import gwt.material.design.client.ui.MaterialTextBox;
 public class NMapNodeView extends NNodeView implements MapRootDisplay
 {
     CellTable<Map<String, String>> table = new CellTable<Map<String, String>>();
-    // MaterialDataTable<String> table = new MaterialDataTable<String>();
 
     FlowPanel pair = new FlowPanel();
 
@@ -34,12 +33,6 @@ public class NMapNodeView extends NNodeView implements MapRootDisplay
     MaterialLabel label = new MaterialLabel();
 
     private final FocusPanel newPairBtn = new FocusPanel();
-
-    // protected final MaterialTextBox keyBox = new MaterialTextBox();
-
-    // protected final MaterialTextBox valueBox = new MaterialTextBox();
-
-    // private FlowPanel row = new FlowPanel();
 
     private int counter = 0;
 
@@ -54,27 +47,9 @@ public class NMapNodeView extends NNodeView implements MapRootDisplay
 
         newPairBtn.getElement().setInnerHTML("<i></i>");
         newPairBtn.getElement().addClassName(CssBundle.INSTANCE.css().newPairBtn());
-        // newPairBtn.getElement().addClassName("col-1");
 
         mappingTable.getElement().addClassName(CssBundle.INSTANCE.css().mappingTable());
         mappingTable.getElement().addClassName("container");
-
-        // row.getElement().addClassName("row");
-        // row.getElement().setAttribute("style",
-        // "margin-left:0px;margin-right:0px;");
-
-        // pair.getElement().addClassName(CssBundle.INSTANCE.css().mappingTablePair());
-        // pair.getElement().setId("pair_" + counter);
-
-        // keyBox.setStyle("background:green");
-        // keyBox.setClass("outlined col-5");
-        // keyBox.getElement().addClassName(CssBundle.INSTANCE.css().mappingCell());
-        // keyBox.setLabel("K" + counter);
-
-        // valueBox.setStyle("background:red");
-        // valueBox.setClass("outlined col-5");
-        // valueBox.getElement().addClassName(CssBundle.INSTANCE.css().mappingCell());
-        // valueBox.setLabel("V" + counter);
 
         attachElements();
 
@@ -83,18 +58,7 @@ public class NMapNodeView extends NNodeView implements MapRootDisplay
 
     private void attachElements()
     {
-        // pair.add(keyBox);
-        // pair.add(valueBox);
-        // row.add(keyBox);
-        // row.add(valueBox);
-        // row.add(newPairBtn);
-
-        // mappingTable.add(pair);
-        // mappingTable.add(newPairBtn);
         mappingTable.add(newPair());
-        // mappingTable.add(row);
-
-        // valueBox.add(getResetFieldBtn());
 
         header.add(label);
         header.add(newPairBtn);
@@ -105,35 +69,6 @@ public class NMapNodeView extends NNodeView implements MapRootDisplay
 
     private void attachHandlers()
     {
-        // valueBox.addKeyUpHandler(new KeyUpHandler()
-        // {
-        // @Override
-        // public void onKeyUp(KeyUpEvent event)
-        // {
-        // checkActive();
-        // }
-        // });
-        //
-        // keyBox.addKeyUpHandler(new KeyUpHandler()
-        // {
-        // @Override
-        // public void onKeyUp(KeyUpEvent event)
-        // {
-        // checkActive();
-        // }
-        // });
-        //
-        // getResetFieldBtn().addClickHandler(new ClickHandler()
-        // {
-        //
-        // @Override
-        // public void onClick(ClickEvent event)
-        // {
-        // keyBox.clear();
-        // valueBox.clear();
-        // checkActive();
-        // }
-        // });
 
         newPairBtn.addClickHandler(new ClickHandler()
         {
@@ -159,7 +94,6 @@ public class NMapNodeView extends NNodeView implements MapRootDisplay
             resetBtn.getElement().addClassName(CssBundle.INSTANCE.css().hidden());
         }
 
-        // setActive(active);
     }
 
     private FlowPanel newPair()
@@ -224,9 +158,6 @@ public class NMapNodeView extends NNodeView implements MapRootDisplay
         pairN.add(keyBoxN);
         pairN.add(valueBoxN);
         pairN.add(deleteRowBtnN);
-        // pairN.add(newPairBtn);
-
-        // mappingTable.add(pairN);
 
         counter++;
         return pairN;
