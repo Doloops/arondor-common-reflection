@@ -52,6 +52,24 @@ public interface CssBundle extends ClientBundle
 
         @ClassName("comboBox")
         String comboBox();
+
+        @ClassName("mappingTable")
+        String mappingTable();
+
+        @ClassName("mappingCell")
+        String mappingCell();
+
+        @ClassName("newPairBtn")
+        String newPairBtn();
+
+        @ClassName("mappingTablePair")
+        String mappingTablePair();
+
+        @ClassName("mappingField")
+        String mappingField();
+
+        @ClassName("deleteRowBtn")
+        String deleteRowBtn();
     }
 
     static final CssBundle INSTANCE = GWT.create(CssBundle.class);
