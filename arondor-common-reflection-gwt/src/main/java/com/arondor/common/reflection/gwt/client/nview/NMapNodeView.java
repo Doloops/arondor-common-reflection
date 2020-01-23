@@ -175,7 +175,7 @@ public class NMapNodeView extends NNodeView implements MapRootDisplay
     private FocusPanel newResetBtn(int id)
     {
         FocusPanel resetBtn = new FocusPanel();
-        resetBtn.getElement().setInnerHTML("<i></i><span></span>");
+        resetBtn.getElement().setInnerHTML("<i></i>");
         resetBtn.getElement().addClassName(CssBundle.INSTANCE.css().resetBtn());
         resetBtn.getElement().addClassName(CssBundle.INSTANCE.css().hidden());
         resetBtn.getElement().setId("reset_btn_" + id);
