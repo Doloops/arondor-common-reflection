@@ -40,10 +40,10 @@ public class NMapNodeView extends NNodeView implements MapRootDisplay
     {
         getElement().addClassName(CssBundle.INSTANCE.css().mappingField());
 
-        header.getElement().setAttribute("style", "display:flex");
+        header.getElement().setAttribute("style", "display:flex;position:relative;");
 
         label.setStyle(
-                "color:#9E9E9E;font-size:14px;font-family: Arial Unicode MS, Arial, sans-serif;padding-right:10px;");
+                "color:#9E9E9E;font-size:14px;font-family: Arial Unicode MS, Arial, sans-serif;padding-right:30px;");
 
         newPairBtn.getElement().setInnerHTML("<i></i>");
         newPairBtn.getElement().addClassName(CssBundle.INSTANCE.css().newPairBtn());

@@ -207,6 +207,9 @@
 	content:url('icons/icon_addLine_gray.svg');
 	width:16px;
 	border-radius:50%;
+	position: absolute;
+    top: -4px;
+    right: 0px;
 }
 
 .newPairBtn:hover i {
@@ -216,9 +219,9 @@
 
 .newPairBtn {
 	padding-top:7px;
-	position: relative;
+	position: absolute;
 	width:fit-content;
-    right: 6px;
+    right: 7px;
 }
 
 .mappingTablePair {
