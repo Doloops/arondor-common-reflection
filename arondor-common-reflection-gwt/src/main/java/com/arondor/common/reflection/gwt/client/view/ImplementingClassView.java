@@ -87,7 +87,8 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         // implementingListInput.addItem("", ImplementingClass.NULL_CLASS);
         for (ImplementingClass implementingClass : implementingClasses)
         {
-            implementingListInput.addItem(implementingClass.toString(), implementingClass);
+            implementingListInput.addItem(implementingClass.getBaseName(), implementingClass)
+                    .setTitle(implementingClass.getFullName());
         }
         if (selectedClass == ImplementingClass.NULL_CLASS)
         {
@@ -104,10 +105,10 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         }
         LOG.finest("Selecting class : " + clazz + " from a choice of " + implementingListInput.getValues().size()
                 + " items");
-        int index = implementingListInput.getIndexByString(clazz.getName());
+        int index = implementingListInput.getIndexByString(clazz.getBaseName());
         if (index == -1)
         {
-            implementingListInput.addItem(clazz.toString(), clazz);
+            implementingListInput.addItem(clazz.getBaseName(), clazz);
             implementingListInput.setSelectedIndex(implementingListInput.getValues().size() - 1);
         }
         else

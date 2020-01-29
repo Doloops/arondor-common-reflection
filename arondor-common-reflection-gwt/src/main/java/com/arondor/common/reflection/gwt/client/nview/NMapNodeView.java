@@ -82,20 +82,6 @@ public class NMapNodeView extends NNodeView implements MapRootDisplay
         });
     }
 
-    private void checkActive(boolean active, FocusPanel resetBtn)
-    {
-
-        if (active)
-        {
-            resetBtn.getElement().removeClassName(CssBundle.INSTANCE.css().hidden());
-        }
-        else
-        {
-            resetBtn.getElement().addClassName(CssBundle.INSTANCE.css().hidden());
-        }
-
-    }
-
     private FlowPanel newPair()
     {
         FlowPanel pairN = new FlowPanel();

@@ -66,7 +66,7 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
         {
             final String referenceName = entry.getKey();
             final String referenceClassName = entry.getValue().getClassName();
-            final ImplementingClass implementingClass = new ImplementingClass(true, referenceName);
+            final ImplementingClass implementingClass = new ImplementingClass(true, null);
 
             if (referenceClassName.equals(baseClassName))
             {
@@ -208,7 +208,7 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
             {
                 if (isInstantiatable(result))
                 {
-                    addImplementingClass(new ImplementingClass(false, result.getName()));
+                    addImplementingClass(new ImplementingClass(false, result));
                 }
             }
         });
@@ -230,7 +230,7 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
                 {
                     if (isInstantiatable(clazz))
                     {
-                        addImplementingClass(new ImplementingClass(false, clazz.getName()));
+                        addImplementingClass(new ImplementingClass(false, clazz));
                     }
                 }
                 LOG.info("fetchImplementations() : Base class " + baseClassName + ", results=" + result.size()
@@ -243,7 +243,7 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
                     AccessibleClass firstClass = result.iterator().next();
                     LOG.info("Selecting default class :" + firstClass.getName() + " as implementation of "
                             + baseClassName);
-                    ImplementingClass implementingClass = new ImplementingClass(false, firstClass.getName());
+                    ImplementingClass implementingClass = new ImplementingClass(false, firstClass);
                     setImplementingClass(implementingClass);
 
                     ValueChangeEvent<ImplementingClass> event = new MyValueChangeEvent<ImplementingClass>(

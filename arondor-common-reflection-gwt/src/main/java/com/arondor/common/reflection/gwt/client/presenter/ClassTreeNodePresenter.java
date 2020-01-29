@@ -96,7 +96,7 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
                 }
                 else
                 {
-                    updateAccessibleClass(event.getValue().getName(), null);
+                    updateAccessibleClass(event.getValue().getFullName(), null);
                 }
             }
         });
@@ -151,8 +151,7 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
 
             if (objectConfiguration != null)
             {
-                implementingClassPresenter
-                        .setImplementingClass(new ImplementingClass(false, objectConfiguration.getClassName()));
+                implementingClassPresenter.setImplementingClass(new ImplementingClass(false, accessibleClass));
 
                 if (PrimitiveTypeUtil.isPrimitiveType(objectConfiguration.getClassName())
                         && objectConfiguration.getConstructorArguments().size() == 1)
@@ -224,13 +223,13 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
     public ElementConfiguration getElementConfiguration(ObjectConfigurationFactory objectConfigurationFactory)
     {
         if (implementingClassPresenter.getImplementingClass() == null
-                || implementingClassPresenter.getImplementingClass().getName() == null)
+                || implementingClassPresenter.getImplementingClass().getFullName() == null)
         {
             return null;
         }
-        if (PrimitiveTypeUtil.isPrimitiveType(implementingClassPresenter.getImplementingClass().getName()))
+        if (PrimitiveTypeUtil.isPrimitiveType(implementingClassPresenter.getImplementingClass().getFullName()))
         {
-            String implementingClass = implementingClassPresenter.getImplementingClass().getName();
+            String implementingClass = implementingClassPresenter.getImplementingClass().getFullName();
             if (implementingClass.equals("java.lang.String"))
             {
                 /**
@@ -254,7 +253,7 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
         else if (implementingClassPresenter.getImplementingClass().isReference())
         {
             ReferenceConfiguration referenceConfiguration = objectConfigurationFactory.createReferenceConfiguration();
-            referenceConfiguration.setReferenceName(implementingClassPresenter.getImplementingClass().getName());
+            referenceConfiguration.setReferenceName(implementingClassPresenter.getImplementingClass().getFullName());
             return referenceConfiguration;
         }
         else
@@ -268,7 +267,7 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
     {
         ObjectConfiguration objectConfiguration = objectConfigurationFactory.createObjectConfiguration();
         objectConfiguration.setFields(new LinkedHashMap<String, ElementConfiguration>());
-        objectConfiguration.setClassName(implementingClassPresenter.getImplementingClass().getName());
+        objectConfiguration.setClassName(implementingClassPresenter.getImplementingClass().getFullName());
 
         updateChildObjectConfigurations(objectConfigurationFactory, objectConfiguration);
         return objectConfiguration;
@@ -319,8 +318,7 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
         {
             clearFields();
             ReferenceConfiguration referenceConfiguration = (ReferenceConfiguration) elementConfiguration;
-            implementingClassPresenter
-                    .setImplementingClass(new ImplementingClass(true, referenceConfiguration.getReferenceName()));
+            implementingClassPresenter.setImplementingClass(new ImplementingClass(true, null));
             display.setActive(true);
         }
     }
