@@ -74,6 +74,11 @@ public class AccessibleFieldBean implements AccessibleField
     private boolean mandatory;
 
     /**
+     * Is this attribute a password field
+     */
+    private boolean password;
+
+    /**
      * Attribute default value
      */
     private String defaultValue;
@@ -216,6 +221,17 @@ public class AccessibleFieldBean implements AccessibleField
     public void setMandatory(boolean mandatory)
     {
         this.mandatory = mandatory;
+    }
+
+    @Override
+    public boolean isPassword()
+    {
+        return password;
+    }
+
+    public void setPassword(boolean password)
+    {
+        this.password = password;
     }
 
     @Override

@@ -79,4 +79,11 @@ public class ObjectConfigurationMapView implements ObjectConfigurationMapDisplay
         return null;
     }
 
+    @Override
+    public void setAsPassword()
+    {
+        // TODO Auto-generated method stub
+
+    }
+
 }

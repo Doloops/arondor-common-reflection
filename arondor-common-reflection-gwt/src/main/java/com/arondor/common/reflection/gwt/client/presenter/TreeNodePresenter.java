@@ -64,6 +64,8 @@ public interface TreeNodePresenter
         void clear();
 
         void addTreeNodeClearHandler(TreeNodeClearEvent.Handler handler);
+
+        void setAsPassword();
     }
 
     public interface ValueDisplay<T> extends Display

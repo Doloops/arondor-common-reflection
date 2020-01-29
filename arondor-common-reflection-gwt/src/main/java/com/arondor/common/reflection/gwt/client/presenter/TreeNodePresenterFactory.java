@@ -186,6 +186,10 @@ public class TreeNodePresenterFactory
         {
             childPresenter.getDisplay().setNodeLongDescription(accessibleField.getLongDescription());
         }
+        if (accessibleField.isPassword())
+        {
+            childPresenter.getDisplay().setAsPassword();
+        }
     }
 
     private boolean isStringListField(String fieldClassName, List<String> genericTypes)

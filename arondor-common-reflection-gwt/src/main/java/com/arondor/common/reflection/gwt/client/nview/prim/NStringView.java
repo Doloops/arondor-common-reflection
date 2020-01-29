@@ -1,8 +1,11 @@
 package com.arondor.common.reflection.gwt.client.nview.prim;
 
+import java.util.logging.Logger;
+
 import com.arondor.common.reflection.gwt.client.CssBundle;
 import com.arondor.common.reflection.gwt.client.nview.NNodeView;
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter.PrimitiveDisplay;
+import com.arondor.common.reflection.gwt.client.view.ImplementingClassView;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -19,11 +22,14 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
 
+import gwt.material.design.client.constants.InputType;
 import gwt.material.design.client.constants.TextAlign;
 import gwt.material.design.client.ui.MaterialTextBox;
 
 public class NStringView extends NNodeView implements PrimitiveDisplay
 {
+    private static final Logger LOG = Logger.getLogger(ImplementingClassView.class.getName());
+
     protected final MaterialTextBox textBox = new MaterialTextBox();
 
     private FlowPanel inputGroupPanel = new FlowPanel();
@@ -60,6 +66,12 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
     public void setNodeDescription(String label)
     {
         textBox.setLabel(label);
+    }
+
+    @Override
+    public void setAsPassword()
+    {
+        textBox.setType(InputType.PASSWORD);
     }
 
     private void attachHandlers()

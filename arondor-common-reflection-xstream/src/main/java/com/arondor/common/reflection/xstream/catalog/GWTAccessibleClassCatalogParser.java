@@ -187,6 +187,7 @@ public class GWTAccessibleClassCatalogParser
             fieldBean.setWritable();
         }
         fieldBean.setMandatory("true".equals(getChildValue(fieldElement, "mandatory")));
+        fieldBean.setPassword("true".equals(getChildValue(fieldElement, "password")));
         fieldBean.setEnumProperty("true".equals(getChildValue(fieldElement, "enumProperty")));
         fieldBean.setDeclaredInClass(getChildValue(fieldElement, "declaredInClass"));
         fieldBean.setIs("true".equals(getChildValue(fieldElement, "is")));
