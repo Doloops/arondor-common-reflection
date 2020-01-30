@@ -23,6 +23,8 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
 
     private final FlowPanel selectGroup = new FlowPanel();
 
+    private final FlowPanel optionsArea = new FlowPanel();
+
     private final FlowPanel mandatoryChildren = new FlowPanel();
 
     private final FlowPanel optionalChildren = new FlowPanel();
@@ -74,10 +76,12 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         selectGroup.add(implementingClassView);
         selectGroup.add(getResetFieldBtn());
 
+        optionsArea.add(advancedSettings);
+        optionsArea.add(optionalChildren);
+
         add(selectGroup);
         add(mandatoryChildren);
-        add(advancedSettings);
-        add(optionalChildren);
+        add(optionsArea);
 
         advancedSettings.getElement().addClassName(CssBundle.INSTANCE.css().hideAdvancedSettings());
 
