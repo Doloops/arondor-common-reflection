@@ -53,8 +53,6 @@ public class MapTreeNodePresenter implements TreeNodePresenter
 
         PrimitiveDisplay getKeyDisplay();
 
-        // TODO : polymorphism for {PrimitiveDisplay, ImplementingClassDisplay}
-        // ??
         Display getValueDisplay();
 
         Widget asWidget();

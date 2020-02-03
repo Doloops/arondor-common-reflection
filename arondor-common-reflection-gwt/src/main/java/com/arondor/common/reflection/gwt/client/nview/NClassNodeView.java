@@ -71,6 +71,11 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         bind();
     }
 
+    protected FlowPanel getSelectGroup()
+    {
+        return selectGroup;
+    }
+
     protected void bind()
     {
         selectGroup.add(implementingClassView);
@@ -85,6 +90,11 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
 
         advancedSettings.getElement().addClassName(CssBundle.INSTANCE.css().hideAdvancedSettings());
 
+    }
+
+    protected FlowPanel getOptionsArea()
+    {
+        return optionsArea;
     }
 
     private void addChildView(boolean isMandatory, NNodeView childView)

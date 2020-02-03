@@ -1,12 +1,13 @@
 package com.arondor.common.reflection.gwt.client.nview;
 
+import com.arondor.common.reflection.gwt.client.CssBundle;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter.Display;
 import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePresenter.MapPairDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter.PrimitiveDisplay;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.ui.FocusPanel;
 
 import gwt.material.design.client.ui.MaterialTextBox;
 
@@ -14,9 +15,27 @@ public class NClassNodeViewWithKey extends NClassNodeView implements MapPairDisp
 {
     private final MaterialTextBox keyTextBox = new MaterialTextBox();
 
+    private final FocusPanel deleteRowBtn = newDeleteRowBtn();
+
     public NClassNodeViewWithKey(String keyClass, String valueClass)
     {
+        keyTextBox.setClass("outlined col-5 pl-0");
+        keyTextBox.getElement().getElementsByTagName("input").getItem(0).addClassName("mb-0");
+        getOptionsArea().getElement().setAttribute("style", "width:100%;padding-left:10px;");
 
+        getElement().addClassName("pl-0 m-0");
+
+        getSelectGroup().getElement().addClassName("col-6 pr-0 pl-0 mb-0");
+
+        deleteRowBtn.addClickHandler(new ClickHandler()
+        {
+            @Override
+            public void onClick(ClickEvent event)
+            {
+                getElement().removeFromParent();
+            }
+        });
+        add(deleteRowBtn);
     }
 
     @Override
@@ -26,28 +45,42 @@ public class NClassNodeViewWithKey extends NClassNodeView implements MapPairDisp
         {
             add(keyTextBox);
         }
+        if (deleteRowBtn != null)
+        {
+            // add on value change
+            add(deleteRowBtn);
+        }
         super.bind();
     }
 
     @Override
     public HasClickHandlers removePairClickHandler()
     {
-        return new HasClickHandlers()
-        {
+        // return new HasClickHandlers()
+        // {
+        //
+        // @Override
+        // public void fireEvent(GwtEvent<?> event)
+        // {
+        // // TODO Auto-generated method stub
+        // }
+        //
+        // @Override
+        // public HandlerRegistration addClickHandler(ClickHandler handler)
+        // {
+        // // TODO Auto-generated method stub
+        // return null;
+        // }
+        // };
+        return deleteRowBtn;
+    }
 
-            @Override
-            public void fireEvent(GwtEvent<?> event)
-            {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public HandlerRegistration addClickHandler(ClickHandler handler)
-            {
-                // TODO Auto-generated method stub
-                return null;
-            }
-        };
+    private FocusPanel newDeleteRowBtn()
+    {
+        FocusPanel deleteRowBtn = new FocusPanel();
+        deleteRowBtn.getElement().setInnerHTML("<i></i>");
+        deleteRowBtn.getElement().addClassName(CssBundle.INSTANCE.css().deleteRowBtn());
+        return deleteRowBtn;
     }
 
     @Override

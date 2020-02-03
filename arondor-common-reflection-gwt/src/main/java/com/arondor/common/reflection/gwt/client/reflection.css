@@ -103,8 +103,22 @@
 	padding-right:0px;
 }
 
+.mappingField {
+	padding-right:0px!important;
+}
+
 .hidden {
 	display:none;	
+}
+
+.mappingTable .classNode {
+	display:flex;
+	flex-wrap:wrap;
+	position:relative;
+}
+
+.mappingTable .advancedSettingsBtn {
+	margin-top:0px!important;
 }
 
 .resetBtn i {
@@ -178,6 +192,10 @@
 	top:-4px;
 }
 
+.optionalChildren .classNode {
+	padding-right:0px;
+}
+
 .mappingTable {
 	display:flex;
 	width:100%;
@@ -194,6 +212,7 @@
 .mappingCell input {
 	margin-bottom:0px!important;
 }
+
 .mappingCell label {
 	left:0px!important;	
 }
@@ -213,6 +232,7 @@
 .mappingCell .advancedSettingsBtn {
 	margin-top:0px!important;
 }
+
 .mappingCell .advancedSettingsBtn a {
 	font-size:8pt;
 }
@@ -220,6 +240,8 @@
 .mappingTablePair {
 	display:flex;	
 	margin-top: 0px!important;
+	position:relative;
+	margin-bottom:10px;
 }
 
 .newPairBtn i {
@@ -245,6 +267,11 @@
 
 .deleteRowBtn {
 	top:5px;
+	margin-top:0px!important;
+	position: absolute;
+    right: 15px;
+    height: 40px;
+    width: fit-content;
 }
 
 .deleteRowBtn i {

@@ -44,7 +44,7 @@ public class NMapPairViewString implements MapPairDisplay
 
     public NMapPairViewString(String keyClass, String valueClass)
     {
-        valueBox.setClass("outlined col-5");// col-5
+        valueBox.setClass("outlined col-5");
         valueBox.getElement().addClassName(CssBundle.INSTANCE.css().mappingCell());
 
         FocusPanel resetBtnN = newResetBtn();
@@ -63,22 +63,22 @@ public class NMapPairViewString implements MapPairDisplay
             @Override
             public void onClick(ClickEvent event)
             {
-                // valueBox.clear();
+                valueBox.clear();
                 keyBox.clear();
                 resetBtnN.getElement().addClassName(CssBundle.INSTANCE.css().hidden());
             }
         });
 
-        // valueBox.addKeyUpHandler(new KeyUpHandler()
-        // {
-        // @Override
-        // public void onKeyUp(KeyUpEvent event)
-        // {
-        // resetBtnN.getElement().removeClassName(CssBundle.INSTANCE.css().hidden());
-        // }
-        // });
-
         keyBox.addKeyUpHandler(new KeyUpHandler()
+        {
+            @Override
+            public void onKeyUp(KeyUpEvent event)
+            {
+                resetBtnN.getElement().removeClassName(CssBundle.INSTANCE.css().hidden());
+            }
+        });
+
+        valueBox.addKeyUpHandler(new KeyUpHandler()
         {
             @Override
             public void onKeyUp(KeyUpEvent event)

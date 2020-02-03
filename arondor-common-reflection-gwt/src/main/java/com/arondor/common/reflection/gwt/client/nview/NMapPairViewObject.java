@@ -23,8 +23,6 @@ public class NMapPairViewObject implements MapPairDisplay
 
     private final NClassNodeView valueView = new NClassNodeView();
 
-    // private final MaterialDialog popup = new MaterialDialog();
-
     private final FocusPanel deleteRowBtn = newDeleteRowBtn();
 
     private FocusPanel newDeleteRowBtn()
