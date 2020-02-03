@@ -33,6 +33,7 @@ import com.arondor.common.reflection.gwt.client.testclasses.TestInterface;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
+import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.arondor.common.reflection.parser.java.JavaAccessibleClassParser;
 import com.arondor.common.reflection.parser.java.JavaClassPathAccessibleClassProvider;
 import com.arondor.common.reflection.service.DefaultReflectionService;
@@ -97,6 +98,14 @@ public class TestClassTreeNodePresenter
         return nodeView;
     }
 
+    private AccessibleClass createAccessibleClass(Class<?> clazz)
+    {
+        /**
+         * TODO IMPLEMENT THIS
+         */
+        throw new RuntimeException("NOT IMPLEMENTED !");
+    }
+
     @Test
     public void testChangeBaseClassName()
     {
@@ -117,11 +126,12 @@ public class TestClassTreeNodePresenter
         ClassTreeNodePresenter nodePresenter = new ClassTreeNodePresenter(rpcService, null,
                 TestInterface.class.getName(), nodeView);
         assertEquals(TestInterface.class.getName(), nodePresenter.getBaseClassName());
-        assertNull(nodePresenter.getImplementingClass().getName());
+        assertNull(nodePresenter.getImplementingClass().getFullName());
         verify(nodeView.getImplementingClassDisplay()).setBaseClassName(TestInterface.class.getName());
 
         ValueChangeEvent<ImplementingClass> valueChangeEvent = mock(ValueChangeEvent.class);
-        when(valueChangeEvent.getValue()).thenReturn(new ImplementingClass(false, TestClass.class.getName()));
+        when(valueChangeEvent.getValue())
+                .thenReturn(new ImplementingClass(false, createAccessibleClass(TestClass.class)));
         for (ValueChangeHandler<ImplementingClass> changeHandler : changeHandlers)
         {
             changeHandler.onValueChange(valueChangeEvent);
@@ -131,7 +141,7 @@ public class TestClassTreeNodePresenter
          * that selected the class
          */
         verify(nodeView.getImplementingClassDisplay(), never()).selectImplementingClass(ImplementingClass.NULL_CLASS);
-        assertEquals(TestClass.class.getName(), nodePresenter.getImplementingClass().getName());
+        assertEquals(TestClass.class.getName(), nodePresenter.getImplementingClass().getFullName());
     }
 
     @Test
@@ -143,7 +153,7 @@ public class TestClassTreeNodePresenter
                 TestInterface.class.getName(), nodeView);
         assertEquals(TestInterface.class.getName(), nodePresenter.getBaseClassName());
         assertNotNull(nodePresenter.getImplementingClass());
-        assertNull(nodePresenter.getImplementingClass().getName());
+        assertNull(nodePresenter.getImplementingClass().getFullName());
         verify(nodeView.getImplementingClassDisplay()).setBaseClassName(TestInterface.class.getName());
 
         ObjectConfiguration objectConfiguration = factory.createObjectConfiguration();
@@ -153,8 +163,8 @@ public class TestClassTreeNodePresenter
         nodePresenter.setElementConfiguration(objectConfiguration);
 
         verify(nodeView.getImplementingClassDisplay(), atLeastOnce())
-                .selectImplementingClass(new ImplementingClass(false, TestClass.class.getName()));
-        assertEquals(TestClass.class.getName(), nodePresenter.getImplementingClass().getName());
+                .selectImplementingClass(new ImplementingClass(false, createAccessibleClass(TestClass.class)));
+        assertEquals(TestClass.class.getName(), nodePresenter.getImplementingClass().getFullName());
 
         ElementConfiguration elementConfiguration = nodePresenter.getElementConfiguration(factory);
         assertNotNull(elementConfiguration);

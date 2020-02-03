@@ -71,7 +71,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         bind();
     }
 
-    private void bind()
+    protected void bind()
     {
         selectGroup.add(implementingClassView);
         selectGroup.add(getResetFieldBtn());

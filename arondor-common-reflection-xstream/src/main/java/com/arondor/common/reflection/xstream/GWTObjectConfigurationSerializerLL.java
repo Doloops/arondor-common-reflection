@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ListConfiguration;
+import com.arondor.common.reflection.model.config.MapConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
 import com.google.gwt.xml.client.Document;
@@ -25,6 +26,11 @@ public class GWTObjectConfigurationSerializerLL
 
     protected Element doSerialize(Document document, ElementConfiguration ec, String name)
     {
+        if (ec == null)
+        {
+            LOG.severe("Null element configuration here ! name=" + name);
+            throw new IllegalArgumentException("Null value ! name=" + name);
+        }
         String tagName = name, className = null;
         if (ec instanceof ObjectConfiguration)
         {
@@ -83,6 +89,17 @@ public class GWTObjectConfigurationSerializerLL
             {
                 Element childElement = doSerialize(document, childEc, null);
                 child.appendChild(childElement);
+            }
+        }
+        else if (ec instanceof MapConfiguration)
+        {
+            MapConfiguration mc = (MapConfiguration) ec;
+            Element mapElement = document.createElement("map");
+            child.appendChild(mapElement);
+            for (Map.Entry<ElementConfiguration, ElementConfiguration> entry : mc.getMapConfiguration().entrySet())
+            {
+                mapElement.appendChild(doSerialize(document, entry.getKey(), "key"));
+                mapElement.appendChild(doSerialize(document, entry.getValue(), "value"));
             }
         }
         else

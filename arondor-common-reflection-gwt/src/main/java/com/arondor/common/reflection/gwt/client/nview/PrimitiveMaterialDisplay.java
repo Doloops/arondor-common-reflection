@@ -1,19 +1,44 @@
-package com.arondor.common.reflection.gwt.client.view;
+package com.arondor.common.reflection.gwt.client.nview;
 
 import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent.Handler;
-import com.arondor.common.reflection.gwt.client.presenter.SimpleObjectConfigurationMapPresenter.ObjectConfigurationMapDisplay;
-import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePresenter.MapPairDisplay;
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.user.client.ui.IsWidget;
+import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter.PrimitiveDisplay;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 
-public class ObjectConfigurationMapView implements ObjectConfigurationMapDisplay
+import gwt.material.design.client.ui.MaterialTextBox;
+
+public class PrimitiveMaterialDisplay implements PrimitiveDisplay
 {
+    private final MaterialTextBox textBox;
+
+    public PrimitiveMaterialDisplay(MaterialTextBox textBox)
+    {
+        this.textBox = textBox;
+    }
 
     @Override
-    public HasClickHandlers addElementClickHandler()
+    public void setValue(String value)
+    {
+        textBox.setValue(value);
+    }
+
+    @Override
+    public void setDefaultValue(String value)
     {
         // TODO Auto-generated method stub
-        return null;
+
+    }
+
+    @Override
+    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> valueChangeHandler)
+    {
+        return textBox.addValueChangeHandler(valueChangeHandler);
+    }
+
+    @Override
+    public void setPlaceholder(String value)
+    {
+        textBox.setPlaceholder(value);
     }
 
     @Override
@@ -66,24 +91,10 @@ public class ObjectConfigurationMapView implements ObjectConfigurationMapDisplay
     }
 
     @Override
-    public IsWidget getDisplayWidget()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public void setIsPassword()
     {
         // TODO Auto-generated method stub
 
-    }
-
-    @Override
-    public MapPairDisplay createPair(String keyClass, String valueClass)
-    {
-        // TODO Auto-generated method stub
-        return null;
     }
 
 }

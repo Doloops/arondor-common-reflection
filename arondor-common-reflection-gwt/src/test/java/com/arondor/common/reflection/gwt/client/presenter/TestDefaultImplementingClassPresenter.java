@@ -89,6 +89,17 @@ public class TestDefaultImplementingClassPresenter
         Assert.assertEquals("Invalid result : " + result, 2, result.size());
         ImplementingClass firstResult = result.get(0);
         Assert.assertEquals(ImplementingClass.NULL_CLASS, firstResult);
-        Assert.assertEquals(new ImplementingClass(false, "com.arondor.testing.SomeConcreteClass"), result.get(1));
+        Assert.assertEquals(
+                new ImplementingClass(false, createAccessibleClass("com.arondor.testing.SomeConcreteClass")),
+                result.get(1));
     }
+
+    private AccessibleClass createAccessibleClass(String className)
+    {
+        /**
+         * TODO IMPLEMENT THIS
+         */
+        throw new RuntimeException("NOT IMPLEMENTED !");
+    }
+
 }

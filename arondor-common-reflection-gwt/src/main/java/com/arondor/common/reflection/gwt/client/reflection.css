@@ -184,7 +184,7 @@
 	box-shadow: none;
 	border: none;
 	padding:0px;
-}
+});
 
 .mappingTablePair div {
 	padding-left:0px;
@@ -204,6 +204,24 @@
 	padding-left:0px!important;
 	padding-right:0px!important;
 }
+
+.mappingCell div {
+	margin-top:0px;
+	
+}
+
+.mappingCell .advancedSettingsBtn {
+	margin-top:0px!important;
+}
+.mappingCell .advancedSettingsBtn a {
+	font-size:8pt;
+}
+
+.mappingTablePair {
+	display:flex;	
+	margin-top: 0px!important;
+}
+
 .newPairBtn i {
 	content:url('icons/icon_addLine_gray.svg');
 	width:16px;
@@ -223,10 +241,6 @@
 	position: absolute;
 	width:fit-content;
     right: 7px;
-}
-
-.mappingTablePair {
-	display:flex;	
 }
 
 .deleteRowBtn {

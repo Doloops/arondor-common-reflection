@@ -51,8 +51,6 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
 
     private final ClassDisplay display;
 
-    private final String fieldName;
-
     private final ImplementingClassPresenter implementingClassPresenter;
 
     private final GWTReflectionServiceAsync rpcService;
@@ -62,20 +60,18 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
     public ClassTreeNodePresenter(GWTReflectionServiceAsync rpcService, ObjectConfigurationMap objectConfigurationMap,
             String baseClassName, ClassDisplay view)
     {
-        this(rpcService, objectConfigurationMap, null, baseClassName, true, view);
+        this(rpcService, objectConfigurationMap, baseClassName, true, view);
         display.setNodeName(baseClassName);
     }
 
     protected ClassTreeNodePresenter(GWTReflectionServiceAsync rpcService,
-            ObjectConfigurationMap objectConfigurationMap, String fieldName, String baseClassName, boolean isMandatory,
-            ClassDisplay view)
+            ObjectConfigurationMap objectConfigurationMap, String baseClassName, boolean isMandatory, ClassDisplay view)
     {
-        this.fieldName = fieldName;
         this.rpcService = rpcService;
         this.display = view;
         this.objectConfigurationMap = objectConfigurationMap;
 
-        LOG.finest("Create new TreeNodePresenter for fieldName=" + fieldName + ", baseClassName=" + baseClassName);
+        LOG.finest("Create new TreeNodePresenter for baseClassName=" + baseClassName);
 
         implementingClassPresenter = new DefaultImplementingClassPresenter(rpcService, objectConfigurationMap,
                 baseClassName, isMandatory, display.getImplementingClassDisplay());
@@ -138,9 +134,8 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
 
     private void updateAccessibleClass(AccessibleClass accessibleClass, ObjectConfiguration objectConfiguration)
     {
-        LOG.finest("field=" + fieldName + ", updateAccessibleClass(class="
-                + (accessibleClass != null ? accessibleClass.getName() : null) + ", objectConfiguration="
-                + objectConfiguration + ")");
+        LOG.finest("* updateAccessibleClass(class=" + (accessibleClass != null ? accessibleClass.getName() : null)
+                + ", objectConfiguration=" + objectConfiguration + ")");
 
         clearFields();
 
@@ -200,12 +195,6 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
                 classTreeNodePresenterMap.put(accessibleField.getName(), childPresenter);
             }
         }
-    }
-
-    @Override
-    public String getFieldName()
-    {
-        return fieldName;
     }
 
     public String getBaseClassName()

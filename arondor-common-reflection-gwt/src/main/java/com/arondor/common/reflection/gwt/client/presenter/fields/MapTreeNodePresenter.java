@@ -19,11 +19,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
-import com.arondor.common.reflection.bean.java.AccessibleFieldBean;
 import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent;
+import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter;
+import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter.ClassDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter;
-import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenterFactory;
+import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter.PrimitiveDisplay;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.MapConfiguration;
@@ -32,24 +34,33 @@ import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.Widget;
 
 public class MapTreeNodePresenter implements TreeNodePresenter
 {
+    private static final Logger LOG = Logger.getLogger(MapTreeNodePresenter.class.getName());
+
     public interface MapRootDisplay extends Display
     {
         HasClickHandlers addElementClickHandler();
 
-        MapNodeDisplay createChildNode();
+        MapPairDisplay createPair(String keyClass, String valueClass);
     }
 
-    public interface MapNodeDisplay extends ChildCreatorDisplay
+    public interface MapPairDisplay
     {
+        HasClickHandlers removePairClickHandler();
 
+        PrimitiveDisplay getKeyDisplay();
+
+        // TODO : polymorphism for {PrimitiveDisplay, ImplementingClassDisplay}
+        // ??
+        Display getValueDisplay();
+
+        Widget asWidget();
     }
 
     private final MapRootDisplay mapRootDisplay;
-
-    private final String fieldName;
 
     /**
      * First generic type for keys, Second generic type for values
@@ -70,18 +81,11 @@ public class MapTreeNodePresenter implements TreeNodePresenter
         this.objectConfigurationMap = objectConfigurationMap;
     }
 
-    @Override
-    public String getFieldName()
-    {
-        return fieldName;
-    }
-
     public MapTreeNodePresenter(GWTReflectionServiceAsync rpcService, ObjectConfigurationMap objectConfigurationMap,
-            String fieldName, List<String> genericTypes, MapRootDisplay mapDisplay)
+            List<String> genericTypes, MapRootDisplay mapDisplay)
     {
         this.rpcService = rpcService;
         this.objectConfigurationMap = objectConfigurationMap;
-        this.fieldName = fieldName;
         this.mapRootDisplay = mapDisplay;
         this.genericTypes = genericTypes;
 
@@ -119,35 +123,39 @@ public class MapTreeNodePresenter implements TreeNodePresenter
     protected KeyValuePresenterPair addChild()
     {
         mapRootDisplay.setActive(true);
-        MapNodeDisplay childNode = mapRootDisplay.createChildNode();
-        childNode.setNodeName("Entry");
+        String keyClass = genericTypes.get(0);
+        String valueClass = genericTypes.get(1);
+        MapPairDisplay pairView = mapRootDisplay.createPair(keyClass, valueClass);
 
-        AccessibleFieldBean keyBean = new AccessibleFieldBean();
-        keyBean.setClassName(genericTypes.get(0));
-        keyBean.setName("Key");
-        keyBean.setDescription("Key");
-        TreeNodePresenter keyPresenter = TreeNodePresenterFactory.getInstance().createChildNodePresenter(rpcService,
-                objectConfigurationMap, childNode, keyBean);
-
-        AccessibleFieldBean valueBean = new AccessibleFieldBean();
-        valueBean.setClassName(genericTypes.get(1));
-        valueBean.setName("Key");
-        valueBean.setDescription("Key");
-        TreeNodePresenter valuePresenter = TreeNodePresenterFactory.getInstance().createChildNodePresenter(rpcService,
-                objectConfigurationMap, childNode, valueBean);
+        TreeNodePresenter keyPresenter = new PrimitiveTreeNodePresenter(pairView.getKeyDisplay());
+        TreeNodePresenter valuePresenter = createValuePresenter(pairView.getValueDisplay(), valueClass);
 
         final KeyValuePresenterPair keyValuePresenterPair = new KeyValuePresenterPair(keyPresenter, valuePresenter);
         keyValuePresenters.add(keyValuePresenterPair);
 
-        childNode.addTreeNodeClearHandler(new TreeNodeClearEvent.Handler()
+        pairView.removePairClickHandler().addClickHandler(new ClickHandler()
         {
             @Override
-            public void onTreeNodeClearEvent(TreeNodeClearEvent treeNodeClearEvent)
+            public void onClick(ClickEvent event)
             {
                 keyValuePresenters.remove(keyValuePresenterPair);
             }
         });
         return keyValuePresenterPair;
+    }
+
+    private TreeNodePresenter createValuePresenter(Display valueDisplay, String valueClass)
+    {
+        if (valueDisplay instanceof PrimitiveDisplay)
+        {
+            return new PrimitiveTreeNodePresenter((PrimitiveDisplay) valueDisplay);
+        }
+        if (valueDisplay instanceof ClassDisplay)
+        {
+            return new ClassTreeNodePresenter(rpcService, objectConfigurationMap, valueClass,
+                    (ClassDisplay) valueDisplay);
+        }
+        throw new RuntimeException("Could not instantiate presenter for view : " + valueDisplay.getClass().getName());
     }
 
     @Override
@@ -166,7 +174,14 @@ public class MapTreeNodePresenter implements TreeNodePresenter
                     .getElementConfiguration(objectConfigurationFactory);
             ElementConfiguration value = keyValuePresenterPair.getValuePresenter()
                     .getElementConfiguration(objectConfigurationFactory);
-            mapConfiguration.getMapConfiguration().put(key, value);
+            if (key != null && value != null)
+            {
+                mapConfiguration.getMapConfiguration().put(key, value);
+            }
+            else
+            {
+                LOG.severe("Invalid key/value pair ! key=" + key + ", value=" + value);
+            }
         }
         return mapConfiguration;
     }

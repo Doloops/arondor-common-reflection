@@ -37,8 +37,8 @@ public class ImplementingClass implements Comparable<ImplementingClass>
     {
         this.reference = reference;
         this.clazz = clazz;
-        this.fullName = (clazz != null ? clazz.getName() : "");
-        this.baseName = (clazz != null ? clazz.getClassBaseName() : "");
+        this.fullName = (clazz != null ? clazz.getName() : null);
+        this.baseName = (clazz != null ? clazz.getClassBaseName() : null);
     }
 
     public boolean isReference()
