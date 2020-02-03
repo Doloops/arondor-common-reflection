@@ -21,7 +21,6 @@ public abstract class NNodeView extends FlowPanel implements TreeNodePresenter.D
         getElement().addClassName(CssBundle.INSTANCE.css().nodeField());
 
         resetBtn.getElement().setInnerHTML("<i></i><span></span>");
-        // resetBtn.getElement().getElementsByTagName("span").getItem(0).addClassName(CssBundle.INSTANCE.css().halo());
         resetBtn.getElement().addClassName(CssBundle.INSTANCE.css().resetBtn());
         resetBtn.getElement().addClassName(CssBundle.INSTANCE.css().hidden());
     }
@@ -42,7 +41,7 @@ public abstract class NNodeView extends FlowPanel implements TreeNodePresenter.D
     }
 
     @Override
-    public void setAsPassword()
+    public void setIsPassword()
     {
     }
 

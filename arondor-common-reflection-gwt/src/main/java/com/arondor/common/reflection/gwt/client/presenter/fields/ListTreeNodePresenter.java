@@ -46,16 +46,13 @@ public class ListTreeNodePresenter implements TreeNodePresenter
 
     private final ListRootDisplay listDisplay;
 
-    private final String fieldName;
-
     private final String genericType;
 
     public ListTreeNodePresenter(GWTReflectionServiceAsync rpcService, ObjectConfigurationMap objectConfigurationMap,
-            String fieldName, String genericType, ListRootDisplay listDisplay)
+            String genericType, ListRootDisplay listDisplay)
     {
         this.rpcService = rpcService;
         this.objectConfigurationMap = objectConfigurationMap;
-        this.fieldName = fieldName;
         this.listDisplay = listDisplay;
         this.genericType = genericType;
 
@@ -135,12 +132,6 @@ public class ListTreeNodePresenter implements TreeNodePresenter
                 childPresenter.setElementConfiguration(childConfiguration);
             }
         }
-    }
-
-    @Override
-    public String getFieldName()
-    {
-        return fieldName;
     }
 
     @Override

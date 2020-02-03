@@ -59,8 +59,7 @@ public class TreeNodePresenterFactory
         {
             LOG.finest("Field " + fieldName + " is primitive type, class=" + fieldClassName + ", defaultValue="
                     + defaultValue);
-            childPresenter = new PrimitiveTreeNodePresenter(fieldName,
-                    display.createPrimitiveChild(fieldClassName, isMandatory));
+            childPresenter = new PrimitiveTreeNodePresenter(display.createPrimitiveChild(fieldClassName, isMandatory));
             if (defaultValue != null && !defaultValue.equals(""))
             {
                 ((PrimitiveTreeNodePresenter) childPresenter).setDefaultValue(defaultValue);
@@ -97,21 +96,21 @@ public class TreeNodePresenterFactory
         {
             LOG.severe(
                     "Field " + fieldName + " is an object map of " + genericTypes.get(0) + ", " + genericTypes.get(1));
-            childPresenter = new MapTreeNodePresenter(rpcService, objectConfigurationMap, fieldName, genericTypes,
+            childPresenter = new MapTreeNodePresenter(rpcService, objectConfigurationMap, genericTypes,
                     display.createMapChild(isMandatory));
         }
         else if (fieldClassName.equals("java.util.List") && genericTypes != null && genericTypes.size() == 1)
         {
             LOG.finest("Field " + fieldName + " is an " + genericTypes.get(0) + " list");
             String genericType = genericTypes.get(0);
-            childPresenter = new ListTreeNodePresenter(rpcService, objectConfigurationMap, fieldName, genericType,
+            childPresenter = new ListTreeNodePresenter(rpcService, objectConfigurationMap, genericType,
                     display.createListChild(isMandatory));
         }
         else
         {
             LOG.finest("Field " + fieldName + " is an object " + fieldClassName);
-            childPresenter = new ClassTreeNodePresenter(rpcService, objectConfigurationMap, fieldName, fieldClassName,
-                    isMandatory, display.createClassChild(isMandatory));
+            childPresenter = new ClassTreeNodePresenter(rpcService, objectConfigurationMap, fieldClassName, isMandatory,
+                    display.createClassChild(isMandatory));
         }
 
         setNodeNameAndDescription(fieldName, accessibleField, childPresenter);
@@ -188,7 +187,7 @@ public class TreeNodePresenterFactory
         }
         if (accessibleField.isPassword())
         {
-            childPresenter.getDisplay().setAsPassword();
+            childPresenter.getDisplay().setIsPassword();
         }
     }
 

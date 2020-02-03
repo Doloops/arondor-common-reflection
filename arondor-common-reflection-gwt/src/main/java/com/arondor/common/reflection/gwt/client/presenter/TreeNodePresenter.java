@@ -65,7 +65,7 @@ public interface TreeNodePresenter
 
         void addTreeNodeClearHandler(TreeNodeClearEvent.Handler handler);
 
-        void setAsPassword();
+        void setIsPassword();
     }
 
     public interface ValueDisplay<T> extends Display
@@ -94,8 +94,6 @@ public interface TreeNodePresenter
 
         ListTreeNodePresenter.ListRootDisplay createListChild(boolean isMandatory);
     }
-
-    String getFieldName();
 
     ElementConfiguration getElementConfiguration(ObjectConfigurationFactory objectConfigurationFactory);
 

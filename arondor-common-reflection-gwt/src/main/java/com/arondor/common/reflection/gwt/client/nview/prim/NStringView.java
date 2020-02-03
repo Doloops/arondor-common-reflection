@@ -69,7 +69,7 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
     }
 
     @Override
-    public void setAsPassword()
+    public void setIsPassword()
     {
         textBox.setType(InputType.PASSWORD);
     }

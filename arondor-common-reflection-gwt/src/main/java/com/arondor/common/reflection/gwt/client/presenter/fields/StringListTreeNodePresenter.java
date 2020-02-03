@@ -29,8 +29,6 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
 public class StringListTreeNodePresenter implements TreeNodePresenter
 {
-    private final String fieldName;
-
     private List<String> fieldValue;
 
     private List<String> defaultValue;
@@ -47,7 +45,6 @@ public class StringListTreeNodePresenter implements TreeNodePresenter
 
     public StringListTreeNodePresenter(String fieldName, StringListDisplay primitiveDisplay)
     {
-        this.fieldName = fieldName;
         this.primitiveDisplay = primitiveDisplay;
         bind();
     }
@@ -71,12 +68,6 @@ public class StringListTreeNodePresenter implements TreeNodePresenter
                 primitiveDisplay.setDefaultValue(defaultValue);
             }
         });
-    }
-
-    @Override
-    public String getFieldName()
-    {
-        return fieldName;
     }
 
     public List<String> getDefaultValue()
