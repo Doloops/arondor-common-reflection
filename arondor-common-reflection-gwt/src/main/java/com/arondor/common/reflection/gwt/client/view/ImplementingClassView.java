@@ -105,7 +105,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         }
         LOG.finest("Selecting class : " + clazz + " from a choice of " + implementingListInput.getValues().size()
                 + " items");
-        int index = implementingListInput.getIndexByString(clazz.getBaseName());
+        int index = implementingListInput.getIndexByString(clazz.getFullName());
         if (index == -1)
         {
             implementingListInput.addItem(clazz.getBaseName(), clazz);
@@ -114,6 +114,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         else
         {
             implementingListInput.setSelectedIndex(index);
+            implementingListInput.getLabel().getElement().addClassName("select2label");
         }
         // LOG.warning("Could not select class : " + className);
     }

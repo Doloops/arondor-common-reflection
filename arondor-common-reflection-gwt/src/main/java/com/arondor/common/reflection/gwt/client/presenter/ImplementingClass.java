@@ -46,11 +46,23 @@ public class ImplementingClass implements Comparable<ImplementingClass>
         return reference;
     }
 
+    /**
+     * Used to retrieve the concatenated package and name of the implementing
+     * class
+     * 
+     * @return the full name (package details + className) of the implementing
+     *         class
+     */
     public String getFullName()
     {
         return fullName;
     }
 
+    /**
+     * Used to retrieve only the name of the implementing class
+     * 
+     * @return the name (class name) of the implementing class
+     */
     public String getBaseName()
     {
         return baseName;
