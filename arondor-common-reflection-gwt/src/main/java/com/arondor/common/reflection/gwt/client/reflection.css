@@ -1,5 +1,5 @@
 .classNode .nodeField {
-	padding: 0px 30px;
+	padding: 0px 0px 0px 30px;
 /* 	margin-top:5px; */
 	margin-bottom:15px;
 } 
@@ -9,7 +9,7 @@
 }
 
 .rootTreeNode {
-	padding-bottom:15px;
+	padding:15px;
 	height:100%;
 	overflow:auto;
 	width:100%;
@@ -192,9 +192,9 @@
 	top:-4px;
 }
 
-.optionalChildren .nodeField /*.classNode*/ {
-	padding-right:0px;
-}
+/* .optionalChildren .nodeField .classNode { */
+/* 	padding-right:0px; */
+/* } */
 
 .mappingTable {
 	display:flex;
