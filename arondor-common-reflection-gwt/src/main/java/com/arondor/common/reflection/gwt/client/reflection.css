@@ -2,6 +2,7 @@
 	padding: 0px 0px 0px 30px;
 /* 	margin-top:5px; */
 	margin-bottom:15px;
+	text-align:left;
 } 
 
 ::placeholder {
@@ -20,13 +21,12 @@
 
 .rootTreeNode div {
 	line-height: normal;
-/* 	margin-bottom: 5px; */
 	margin-top: 5px;
 }
 
 .nodeName{
 	text-align:left;
-	font-size: 1rem;
+	font-size: inherit;
 }
 
 /* check-box group */
@@ -78,14 +78,6 @@
 .stringField {
 	margin-bottom:0px!important;
 }
-
-/* .stringField input, .implementingClassView{ */
-/* 	top:0px; */
-/* 	padding: 3px 8px; */
-/* 	border-radius:4px; */
-/* 	border: 1px solid #CED4DA; */
-/* 	color:inherit; */
-/* } */
 
 .stringField div .resetBtn i {
 	top: 1px!important;
@@ -144,15 +136,15 @@
 .advancedSettingsBtn{
 	margin-top:10px!important;
 	margin-bottom:3px;
-	font-size:9pt;
-	font-weight:bold;
+	font-size:9pt!important;
 	color:#1d7ae2;
 }
 
 .advancedSettingsBtn a {
 	height:20px;
 	color:#0066cc;
-	font-weight:bold;
+	font-weight:500; /*semi-bold*/
+	font-size:13px;
 	text-align:center;
 	padding-left:10px;
 }
@@ -191,10 +183,6 @@
 .classNode .comboBox .resetBtn i {
 	top:-4px;
 }
-
-/* .optionalChildren .nodeField .classNode { */
-/* 	padding-right:0px; */
-/* } */
 
 .mappingTable {
 	display:flex;
@@ -246,7 +234,7 @@
 
 .newPairBtn i {
 	content:url('icons/icon_addLine_gray.svg');
-	width:16px;
+	width:16px!important;
 	border-radius:50%;
 	position: absolute;
     top: -4px;
@@ -255,7 +243,7 @@
 
 .newPairBtn:hover i {
 	content:url('icons/icon_addLine_green.svg');
-	transform:scale(1.3);
+	transform:scale(1.2);
 }
 
 .newPairBtn {
@@ -280,9 +268,9 @@
 	padding-top:7px;
 	padding:0px!important;
 	position: relative;
-	width:10px;
-    right: 0px;
-    top: 19px;
+	width:10px!important;
+    right: -2px;
+    top: 10px;
 }
 
 .deleteRowBtn:hover i {

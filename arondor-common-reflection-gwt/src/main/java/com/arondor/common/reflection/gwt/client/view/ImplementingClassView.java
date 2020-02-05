@@ -33,6 +33,7 @@ import com.google.gwt.user.client.ui.Composite;
 import gwt.material.design.addins.client.combobox.MaterialComboBox;
 import gwt.material.design.addins.client.combobox.events.SelectItemEvent;
 import gwt.material.design.addins.client.combobox.events.SelectItemEvent.SelectComboHandler;
+import gwt.material.design.client.constants.TextAlign;
 
 public class ImplementingClassView extends Composite implements ImplementingClassDisplay
 {
@@ -47,6 +48,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         initWidget(implementingListInput);
 
         implementingListInput.setClass("outlined");
+        implementingListInput.setTextAlign(TextAlign.LEFT);
         implementingListInput.setStyle("width:100%;margin-top:0px;margin-bottom:0px;");
         implementingListInput.getElement().addClassName(CssBundle.INSTANCE.css().comboBox());
 
