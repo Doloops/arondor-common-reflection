@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import com.arondor.common.reflection.bean.config.ListConfigurationBean;
+import com.arondor.common.reflection.bean.config.MapConfigurationBean;
 import com.arondor.common.reflection.bean.config.ObjectConfigurationBean;
 import com.arondor.common.reflection.bean.config.PrimitiveConfigurationBean;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ListConfiguration;
+import com.arondor.common.reflection.model.config.MapConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
 import com.google.gwt.xml.client.Element;
@@ -116,6 +118,10 @@ public class GWTXStream2ObjectDefinitionConverterLL
 
     private ElementConfiguration parseElement(Element element, String guessedClass)
     {
+        if (guessedClass == null && element.getAttribute("class") != null)
+        {
+            guessedClass = element.getAttribute("class");
+        }
         debug("* parseElement() element=" + element.getNodeName() + ", guessedClass=" + guessedClass);
         if (element.getChildNodes().getLength() == 1 && element.getFirstChild().getNodeType() == Node.TEXT_NODE)
         {
@@ -130,7 +136,14 @@ public class GWTXStream2ObjectDefinitionConverterLL
             debug("* parseElement() this is an explicit object : '" + guessedClass + "'");
             return parseObject(element, guessedClass);
         }
-
+        if (element.getChildNodes().getLength() == 1 && element.getFirstChild() instanceof Element
+                && element.getFirstChild().getNodeName().equals("map"))
+        {
+            MapConfiguration mapConfiguration = parseMap((Element) element.getFirstChild());
+            debug("* parseElement(" + element.getNodeName() + ") : map with "
+                    + mapConfiguration.getMapConfiguration().size() + " items.");
+            return mapConfiguration;
+        }
         List<Element> elements = elementsList(element.getChildNodes());
         if (elements.size() > 1 || (elements.size() == 1 && isPrimitive(elements.get(0))) || isList(guessedClass))
         {
@@ -169,6 +182,20 @@ public class GWTXStream2ObjectDefinitionConverterLL
         ListConfiguration lc = new ListConfigurationBean();
         lc.setListConfiguration(lec);
         return lc;
+    }
+
+    private MapConfiguration parseMap(Element element)
+    {
+        MapConfiguration mc = new MapConfigurationBean();
+        mc.setMapConfiguration(new HashMap<ElementConfiguration, ElementConfiguration>());
+        List<Element> elements = elementsList(element.getChildNodes());
+        for (int idx = 0; idx < elements.size(); idx += 2)
+        {
+            ElementConfiguration key = parseElement(elements.get(idx), null);
+            ElementConfiguration value = parseElement(elements.get(idx + 1), null);
+            mc.getMapConfiguration().put(key, value);
+        }
+        return mc;
     }
 
 }

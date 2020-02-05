@@ -56,22 +56,6 @@ public class NClassNodeViewWithKey extends NClassNodeView implements MapPairDisp
     @Override
     public HasClickHandlers removePairClickHandler()
     {
-        // return new HasClickHandlers()
-        // {
-        //
-        // @Override
-        // public void fireEvent(GwtEvent<?> event)
-        // {
-        // // TODO Auto-generated method stub
-        // }
-        //
-        // @Override
-        // public HandlerRegistration addClickHandler(ClickHandler handler)
-        // {
-        // // TODO Auto-generated method stub
-        // return null;
-        // }
-        // };
         return deleteRowBtn;
     }
 

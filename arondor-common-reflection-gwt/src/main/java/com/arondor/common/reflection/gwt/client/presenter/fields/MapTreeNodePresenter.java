@@ -201,7 +201,12 @@ public class MapTreeNodePresenter implements TreeNodePresenter
                     .entrySet())
             {
                 addChild(entry.getKey(), entry.getValue());
+                LOG.finest("setting elementConfiguration as Map<" + entry.getKey() + ", " + entry.getValue() + ">");
             }
+        }
+        else
+        {
+            throw new IllegalArgumentException("Invalid class : " + elementConfiguration.getClass().getName());
         }
     }
 

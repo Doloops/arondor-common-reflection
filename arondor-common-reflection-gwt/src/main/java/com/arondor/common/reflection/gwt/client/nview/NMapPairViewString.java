@@ -25,23 +25,6 @@ public class NMapPairViewString implements MapPairDisplay
 
     private final FocusPanel deleteRowBtn = newDeleteRowBtn();
 
-    private FocusPanel newDeleteRowBtn()
-    {
-        FocusPanel deleteRowBtn = new FocusPanel();
-        deleteRowBtn.getElement().setInnerHTML("<i></i>");
-        deleteRowBtn.getElement().addClassName(CssBundle.INSTANCE.css().deleteRowBtn());
-        return deleteRowBtn;
-    }
-
-    private FocusPanel newResetBtn()
-    {
-        FocusPanel resetBtn = new FocusPanel();
-        resetBtn.getElement().setInnerHTML("<i></i>");
-        resetBtn.getElement().addClassName(CssBundle.INSTANCE.css().resetBtn());
-        resetBtn.getElement().addClassName(CssBundle.INSTANCE.css().hidden());
-        return resetBtn;
-    }
-
     public NMapPairViewString(String keyClass, String valueClass)
     {
         valueBox.setClass("outlined col-5");
@@ -98,6 +81,23 @@ public class NMapPairViewString implements MapPairDisplay
         pairPanel.add(valueBox);
         pairPanel.add(deleteRowBtn);
 
+    }
+
+    private FocusPanel newDeleteRowBtn()
+    {
+        FocusPanel deleteRowBtn = new FocusPanel();
+        deleteRowBtn.getElement().setInnerHTML("<i></i>");
+        deleteRowBtn.getElement().addClassName(CssBundle.INSTANCE.css().deleteRowBtn());
+        return deleteRowBtn;
+    }
+
+    private FocusPanel newResetBtn()
+    {
+        FocusPanel resetBtn = new FocusPanel();
+        resetBtn.getElement().setInnerHTML("<i></i>");
+        resetBtn.getElement().addClassName(CssBundle.INSTANCE.css().resetBtn());
+        resetBtn.getElement().addClassName(CssBundle.INSTANCE.css().hidden());
+        return resetBtn;
     }
 
     @Override

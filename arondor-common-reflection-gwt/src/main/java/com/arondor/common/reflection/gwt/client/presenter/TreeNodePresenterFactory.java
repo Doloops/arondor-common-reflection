@@ -79,7 +79,6 @@ public class TreeNodePresenterFactory
         else if (isStringListField(fieldClassName, genericTypes))
         {
             LOG.finest("Field " + fieldName + " is a string list");
-            LOG.finest("### default value : " + defaultValue);
             childPresenter = new StringListTreeNodePresenter(fieldName, display.createStringListChild(isMandatory));
             if (defaultValue != null && !defaultValue.equals(""))
             {
@@ -94,7 +93,7 @@ public class TreeNodePresenterFactory
         }
         else if (fieldClassName.equals("java.util.Map") && genericTypes != null && genericTypes.size() == 2)
         {
-            LOG.severe(
+            LOG.finest(
                     "Field " + fieldName + " is an object map of " + genericTypes.get(0) + ", " + genericTypes.get(1));
             childPresenter = new MapTreeNodePresenter(rpcService, objectConfigurationMap, genericTypes,
                     display.createMapChild(isMandatory));
