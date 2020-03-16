@@ -69,11 +69,11 @@ public class PrimitiveTreeNodePresenter implements TreeNodePresenter
     @Override
     public ElementConfiguration getElementConfiguration(ObjectConfigurationFactory objectConfigurationFactory)
     {
-        if (fieldValue != null && !fieldValue.isEmpty())
-        {
-            return objectConfigurationFactory.createPrimitiveConfiguration(fieldValue);
-        }
-        return null;
+        // if (fieldValue != null && !fieldValue.isEmpty())
+        // {
+        return objectConfigurationFactory.createPrimitiveConfiguration(fieldValue);
+        // }
+        // return null;
     }
 
     @Override
