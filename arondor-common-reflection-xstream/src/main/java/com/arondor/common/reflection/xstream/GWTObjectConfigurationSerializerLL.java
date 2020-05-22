@@ -71,10 +71,13 @@ public class GWTObjectConfigurationSerializerLL
         if (ec instanceof ObjectConfiguration)
         {
             ObjectConfiguration oc = (ObjectConfiguration) ec;
-            for (Map.Entry<String, ElementConfiguration> entry : oc.getFields().entrySet())
+            if (oc.getFields() != null)
             {
-                Element grandChild = doSerialize(document, entry.getValue(), entry.getKey());
-                child.appendChild(grandChild);
+                for (Map.Entry<String, ElementConfiguration> entry : oc.getFields().entrySet())
+                {
+                    Element grandChild = doSerialize(document, entry.getValue(), entry.getKey());
+                    child.appendChild(grandChild);
+                }
             }
         }
         else if (ec instanceof PrimitiveConfiguration)
