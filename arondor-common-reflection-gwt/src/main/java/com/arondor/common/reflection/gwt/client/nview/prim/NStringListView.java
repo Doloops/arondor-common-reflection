@@ -145,6 +145,7 @@ public class NStringListView extends NNodeView implements StringListDisplay
     {
         this.defaultValue = value;
         setValue(this.defaultValue);
+        ValueChangeEvent.fire(textArea.getValueBoxBase(), String.join("\n", this.defaultValue));
         setActive(false);
     }
 
