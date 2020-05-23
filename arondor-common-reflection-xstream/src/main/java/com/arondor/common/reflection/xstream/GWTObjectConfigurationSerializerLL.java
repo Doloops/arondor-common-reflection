@@ -83,7 +83,14 @@ public class GWTObjectConfigurationSerializerLL
         else if (ec instanceof PrimitiveConfiguration)
         {
             PrimitiveConfiguration pc = (PrimitiveConfiguration) ec;
-            child.appendChild(document.createTextNode(pc.getValue()));
+            if (pc.getValue() != null)
+            {
+                child.appendChild(document.createTextNode(pc.getValue()));
+            }
+            else
+            {
+                child.appendChild(document.createTextNode("#null"));
+            }
         }
         else if (ec instanceof ListConfiguration)
         {

@@ -95,7 +95,7 @@ public class GWTXStream2ObjectDefinitionConverterLL
                 break;
             }
             default:
-                debug("Not handled : typpe " + childNode.getNodeType());
+                debug("Not handled : type " + childNode.getNodeType());
             }
         }
 
@@ -118,7 +118,7 @@ public class GWTXStream2ObjectDefinitionConverterLL
 
     private ElementConfiguration parseElement(Element element, String guessedClass)
     {
-        if (guessedClass == null && element.getAttribute("class") != null)
+        if (guessedClass == null && element.hasAttribute("class"))
         {
             guessedClass = element.getAttribute("class");
         }
@@ -126,6 +126,10 @@ public class GWTXStream2ObjectDefinitionConverterLL
         if (element.getChildNodes().getLength() == 1 && element.getFirstChild().getNodeType() == Node.TEXT_NODE)
         {
             String nodeValue = element.getFirstChild().getNodeValue();
+            if (nodeValue != null && nodeValue.equals("#null"))
+            {
+                return null;
+            }
             debug("Primitive type : " + element.getNodeName() + "=" + nodeValue);
             PrimitiveConfiguration pc = new PrimitiveConfigurationBean();
             pc.setValue(nodeValue);
