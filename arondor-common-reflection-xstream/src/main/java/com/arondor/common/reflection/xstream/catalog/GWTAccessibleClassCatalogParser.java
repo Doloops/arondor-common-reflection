@@ -85,7 +85,6 @@ public class GWTAccessibleClassCatalogParser
     private void parseClassEntry(SimpleAccessibleClassCatalog catalog, Element entry)
     {
         String key = getChildValue(entry, "string");
-        LOG.finest("At key : " + key);
 
         AccessibleClassBean ac = new AccessibleClassBean();
         ac.setName(key);
@@ -163,10 +162,20 @@ public class GWTAccessibleClassCatalogParser
         {
             fieldBean.setLongDescription(longDescription);
         }
+        String placeholder = getChildValue(fieldElement, "placeholder");
+        if (placeholder != null && !placeholder.equals(""))
+        {
+            fieldBean.setPlaceholder(placeholder);
+        }
         String defaultBehavior = getChildValue(fieldElement, "defaultBehavior");
         if (defaultBehavior != null && !defaultBehavior.equals(""))
         {
             fieldBean.setDefaultBehavior(defaultBehavior);
+        }
+        String defaultValue = getChildValue(fieldElement, "defaultValue");
+        if (defaultValue != null && !defaultValue.equals(""))
+        {
+            fieldBean.setDefaultValue(defaultValue);
         }
         fieldBean.setClassName(getChildValue(fieldElement, "className"));
         if ("true".equals(getChildValue(fieldElement, "readable")))
@@ -178,6 +187,7 @@ public class GWTAccessibleClassCatalogParser
             fieldBean.setWritable();
         }
         fieldBean.setMandatory("true".equals(getChildValue(fieldElement, "mandatory")));
+        fieldBean.setPassword("true".equals(getChildValue(fieldElement, "password")));
         fieldBean.setEnumProperty("true".equals(getChildValue(fieldElement, "enumProperty")));
         fieldBean.setDeclaredInClass(getChildValue(fieldElement, "declaredInClass"));
         fieldBean.setIs("true".equals(getChildValue(fieldElement, "is")));

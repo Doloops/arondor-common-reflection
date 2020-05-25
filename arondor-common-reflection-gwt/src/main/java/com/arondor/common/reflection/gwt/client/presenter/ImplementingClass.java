@@ -15,11 +15,17 @@
  */
 package com.arondor.common.reflection.gwt.client.presenter;
 
+import com.arondor.common.reflection.model.java.AccessibleClass;
+
 public class ImplementingClass implements Comparable<ImplementingClass>
 {
     private final boolean reference;
 
-    private final String name;
+    private final String fullName;
+
+    private final String baseName;
+
+    private final AccessibleClass clazz;
 
     public static final ImplementingClass NULL_CLASS = new ImplementingClass(false, null);
 
@@ -27,10 +33,12 @@ public class ImplementingClass implements Comparable<ImplementingClass>
 
     public static final String REFERENCE_PREFIX = "Reference : ";
 
-    public ImplementingClass(boolean reference, String name)
+    public ImplementingClass(boolean reference, AccessibleClass clazz)
     {
         this.reference = reference;
-        this.name = name;
+        this.clazz = clazz;
+        this.fullName = (clazz != null ? clazz.getName() : null);
+        this.baseName = (clazz != null ? clazz.getClassBaseName() : null);
     }
 
     public boolean isReference()
@@ -38,16 +46,34 @@ public class ImplementingClass implements Comparable<ImplementingClass>
         return reference;
     }
 
-    public String getName()
+    /**
+     * Used to retrieve the concatenated package and name of the implementing
+     * class
+     * 
+     * @return the full name (package details + className) of the implementing
+     *         class
+     */
+    public String getFullName()
     {
-        return name;
+        return fullName;
     }
 
+    /**
+     * Used to retrieve only the name of the implementing class
+     * 
+     * @return the name (class name) of the implementing class
+     */
+    public String getBaseName()
+    {
+        return baseName;
+    }
+
+    @Override
     public int compareTo(ImplementingClass o)
     {
         if (reference && o.reference)
         {
-            return name.compareTo(o.name);
+            return fullName.compareTo(o.fullName);
         }
         if (reference)
         {
@@ -57,21 +83,22 @@ public class ImplementingClass implements Comparable<ImplementingClass>
         {
             return -1;
         }
-        if (name == null && o.name == null)
+        if (fullName == null && o.fullName == null)
         {
             return 0;
         }
-        if (name == null)
+        if (fullName == null)
         {
             return -1;
         }
-        if (o.name == null)
+        if (o.fullName == null)
         {
             return 1;
         }
-        return name.compareTo(o.name);
+        return fullName.compareTo(o.fullName);
     }
 
+    @Override
     public boolean equals(Object o)
     {
         if (o instanceof ImplementingClass)
@@ -81,18 +108,20 @@ public class ImplementingClass implements Comparable<ImplementingClass>
         return super.equals(o);
     }
 
+    @Override
     public int hashCode()
     {
-        return (reference ? 23 : 17) + ((name != null) ? name.hashCode() : 0);
+        return (reference ? 23 : 17) + ((fullName != null) ? fullName.hashCode() : 0);
     }
 
+    @Override
     public String toString()
     {
         if (reference)
         {
-            return REFERENCE_PREFIX + name;
+            return REFERENCE_PREFIX + fullName;
         }
-        return name;
+        return fullName;
     }
 
     public static ImplementingClass parseImplementingClass(String value)
@@ -104,8 +133,8 @@ public class ImplementingClass implements Comparable<ImplementingClass>
         else if (value.startsWith(REFERENCE_PREFIX))
         {
             value = value.substring(ImplementingClass.REFERENCE_PREFIX.length());
-            return new ImplementingClass(true, value);
+            return new ImplementingClass(true, null);
         }
-        return new ImplementingClass(false, value);
+        return new ImplementingClass(false, null);
     }
 }

@@ -4,48 +4,82 @@ import com.arondor.common.reflection.gwt.client.CssBundle;
 import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent.Handler;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FocusPanel;
 
-public class NNodeView extends FlowPanel implements TreeNodePresenter.Display
+public abstract class NNodeView extends FlowPanel implements TreeNodePresenter.Display
 {
-    private final FlowPanel nodeNamePanel = new FlowPanel();
+    private boolean active;
+
+    private final FocusPanel resetBtn = new FocusPanel();
+
+    private boolean resetEnabled = true;
+
+    private String helperTextContent = "";
 
     protected NNodeView()
     {
         getElement().addClassName(CssBundle.INSTANCE.css().nodeField());
-        add(nodeNamePanel);
 
-        nodeNamePanel.getElement().addClassName(CssBundle.INSTANCE.css().nodeName());
+        resetBtn.getElement().setInnerHTML("<i></i><span></span>");
+        resetBtn.getElement().addClassName(CssBundle.INSTANCE.css().resetBtn());
+        resetBtn.getElement().addClassName(CssBundle.INSTANCE.css().hidden());
+    }
 
-        // nodeNamePanel.setTitle("Coucou caché");
+    protected FocusPanel getResetFieldBtn()
+    {
+        return resetBtn;
+    }
+
+    protected String getHelperTextContent()
+    {
+        return helperTextContent;
     }
 
     @Override
     public void setNodeName(String name)
     {
-        nodeNamePanel.getElement().setInnerHTML(name);
     }
 
     @Override
-    public void setNodeDescription(String description)
+    public void setIsPassword()
     {
+    }
+
+    @Override
+    public void setNodeLongDescription(String longDescription)
+    {
+        this.helperTextContent = longDescription;
     }
 
     @Override
     public void setActive(boolean active)
     {
+        this.active = active;
+        if (active)
+        {
+            resetBtn.getElement().removeClassName(CssBundle.INSTANCE.css().hidden());
+        }
+        else
+        {
+            resetBtn.getElement().addClassName(CssBundle.INSTANCE.css().hidden());
+        }
     }
 
     @Override
     public boolean isActive()
     {
-        // TODO Auto-generated method stub
-        return false;
+        return active;
     }
 
     @Override
     public void addTreeNodeClearHandler(Handler handler)
     {
-        // TODO Auto-generated method stub
+    }
+
+    protected void disableReset()
+    {
+        resetEnabled = false;
+        getResetFieldBtn().setVisible(false);
 
     }
 
@@ -53,7 +87,6 @@ public class NNodeView extends FlowPanel implements TreeNodePresenter.Display
     public void clear()
     {
         super.clear();
-        add(nodeNamePanel);
     }
 
 }

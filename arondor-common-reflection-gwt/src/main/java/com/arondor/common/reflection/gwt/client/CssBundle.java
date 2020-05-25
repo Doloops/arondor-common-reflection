@@ -14,8 +14,8 @@ public interface CssBundle extends ClientBundle
         @ClassName("rootTreeNode")
         String rootTreeNode();
 
-        @ClassName("implementingClassView")
-        String implementingClassView();
+        // @ClassName("implementingClassView")
+        // String implementingClassView();
 
         @ClassName("nodeField")
         String nodeField();
@@ -38,14 +38,38 @@ public interface CssBundle extends ClientBundle
         @ClassName("hideAdvancedSettings")
         String hideAdvancedSettings();
 
-        @ClassName("bg-green")
-        String bgGreen();
-
-        @ClassName("bg-blue")
-        String bgBlue();
-
         @ClassName("advancedSettingsBtn")
         String advancedSettingsBtn();
+
+        @ClassName("hidden")
+        String hidden();
+
+        @ClassName("resetBtn")
+        String resetBtn();
+
+        @ClassName("helperText")
+        String helperText();
+
+        @ClassName("comboBox")
+        String comboBox();
+
+        @ClassName("mappingTable")
+        String mappingTable();
+
+        @ClassName("mappingCell")
+        String mappingCell();
+
+        @ClassName("newPairBtn")
+        String newPairBtn();
+
+        @ClassName("mappingTablePair")
+        String mappingTablePair();
+
+        @ClassName("mappingField")
+        String mappingField();
+
+        @ClassName("deleteRowBtn")
+        String deleteRowBtn();
     }
 
     static final CssBundle INSTANCE = GWT.create(CssBundle.class);

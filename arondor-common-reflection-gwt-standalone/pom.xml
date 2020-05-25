@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.arondor.common</groupId>
@@ -10,43 +12,49 @@
 	<artifactId>arondor-common-reflection-gwt-standalone</artifactId>
 	<name>Standalone package for GWT-based Reflection Designer</name>
 	<packaging>war</packaging>
-	
+
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/org.objectweb.asm/asm -->
 		<dependency>
-		    <groupId>org.ow2.asm</groupId>
-		    <artifactId>asm</artifactId>
-		    <version>5.0.3</version>
+			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm</artifactId>
+			<version>5.0.3</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.ow2.asm</groupId>
-		    <artifactId>asm-commons</artifactId>
-		    <version>5.0.3</version>
+			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm-commons</artifactId>
+			<version>5.0.3</version>
 		</dependency>
-			
+
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-gwt</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.eclipse.jetty</groupId>
+					<artifactId>apache-jsp</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-xstream</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
-		</dependency>				
+		</dependency>
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-service</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
-				
+
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-user</artifactId>
 			<version>${gwt.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-api</artifactId>
@@ -60,21 +68,42 @@
 			<version>1.0.0-SNAPSHOT</version>
 			<scope>provided</scope>
 			<classifier>sources</classifier>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-gwt</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 			<scope>provided</scope>
 			<classifier>sources</classifier>
-		</dependency>				
+		</dependency>
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-xstream</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 			<scope>provided</scope>
 			<classifier>sources</classifier>
-		</dependency>		
+		</dependency>
+		<dependency>
+			<groupId>com.github.gwtmaterialdesign</groupId>
+			<artifactId>gwt-material</artifactId>
+			<version>${gwt.material.design.version}</version>
+			<classifier>sources</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.gwtmaterialdesign</groupId>
+			<artifactId>gwt-material-themes</artifactId>
+			<version>${gwt.material.design.version}</version>
+			<classifier>sources</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.gwtmaterialdesign</groupId>
+			<artifactId>gwt-material-addins</artifactId>
+			<version>${gwt.material.design.version}</version>
+			<classifier>sources</classifier>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -119,5 +148,5 @@
 				</configuration>
 			</plugin>
 		</plugins>
-	</build>	
+	</build>
 </project>

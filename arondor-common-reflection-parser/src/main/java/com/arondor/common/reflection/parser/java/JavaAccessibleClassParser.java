@@ -31,9 +31,11 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.arondor.common.management.mbean.annotation.DefaultBehavior;
+import com.arondor.common.management.mbean.annotation.DefaultValue;
 import com.arondor.common.management.mbean.annotation.Description;
 import com.arondor.common.management.mbean.annotation.LongDescription;
 import com.arondor.common.management.mbean.annotation.Mandatory;
+import com.arondor.common.management.mbean.annotation.Password;
 import com.arondor.common.reflection.api.parser.AccessibleClassParser;
 import com.arondor.common.reflection.bean.java.AccessibleClassBean;
 import com.arondor.common.reflection.bean.java.AccessibleConstructorBean;
@@ -437,6 +439,16 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         return null;
     }
 
+    private String getFieldDefaultValue(Field field)
+    {
+        DefaultValue defaultValueAnnotation = field.getAnnotation(DefaultValue.class);
+        if (defaultValueAnnotation != null)
+        {
+            return defaultValueAnnotation.value();
+        }
+        return null;
+    }
+
     private String getFieldDefaultBehavior(Field field)
     {
         DefaultBehavior defaultBehaviorAnnotation = field.getAnnotation(DefaultBehavior.class);
@@ -453,6 +465,16 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         if (mandatoryAnnotation != null)
         {
             return mandatoryAnnotation.isMandatory();
+        }
+        return false;
+    }
+
+    private boolean getFieldPassword(Field field)
+    {
+        Password passwordAnnotation = field.getAnnotation(Password.class);
+        if (passwordAnnotation != null)
+        {
+            return passwordAnnotation.isPassword();
         }
         return false;
     }
@@ -672,8 +694,10 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
                     Field field = superclass.getDeclaredField(accessibleField.getName());
                     accessibleFieldBean.setDescription(getFieldDescription(field));
                     accessibleFieldBean.setLongDescription(getFieldLongDescription(field));
+                    accessibleFieldBean.setDefaultValue(getFieldDefaultValue(field));
                     accessibleFieldBean.setDefaultBehavior(getFieldDefaultBehavior(field));
                     accessibleFieldBean.setMandatory(getFieldMandatory(field));
+                    accessibleFieldBean.setPassword(getFieldPassword(field));
                     accessibleFieldBean.setEnumProperty(getAccessibleEnums(accessibleClass, field));
 
                     break;

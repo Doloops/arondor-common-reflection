@@ -31,9 +31,31 @@ public interface TreeNodePresenter
 {
     public interface Display
     {
+        /**
+         * Sets the node name
+         * 
+         * @param name
+         *            the technical, Java field name for this node
+         */
         void setNodeName(String name);
 
+        /**
+         * Sets the node description, shall not be <code>null</code>
+         * 
+         * @param description
+         *            a human-readable shot name, shall not exceed 5 words (40
+         *            letters)
+         */
         void setNodeDescription(String description);
+
+        /**
+         * Sets the long description, shall not be <code>null</code>
+         * 
+         * @param longDescription
+         *            a human-readable, multi-lined, HTML- or Markdown- based,
+         *            long description.
+         */
+        void setNodeLongDescription(String longDescription);
 
         void setActive(boolean active);
 
@@ -42,6 +64,8 @@ public interface TreeNodePresenter
         void clear();
 
         void addTreeNodeClearHandler(TreeNodeClearEvent.Handler handler);
+
+        void setIsPassword();
     }
 
     public interface ValueDisplay<T> extends Display
@@ -52,6 +76,8 @@ public interface TreeNodePresenter
 
         HandlerRegistration addValueChangeHandler(ValueChangeHandler<T> valueChangeHandler);
 
+        void setPlaceholder(T value);
+
     }
 
     public interface ChildCreatorDisplay extends Display
@@ -60,16 +86,14 @@ public interface TreeNodePresenter
 
         PrimitiveTreeNodePresenter.PrimitiveDisplay createPrimitiveChild(String fieldClassName, boolean isMandatory);
 
-        EnumTreeNodePresenter.EnumDisplay createEnumListChild();
+        EnumTreeNodePresenter.EnumDisplay createEnumListChild(boolean isMandatory);
 
-        StringListTreeNodePresenter.StringListDisplay createStringListChild();
+        StringListTreeNodePresenter.StringListDisplay createStringListChild(boolean isMandatory);
 
-        MapTreeNodePresenter.MapRootDisplay createMapChild();
+        MapTreeNodePresenter.MapRootDisplay createMapChild(boolean isMandatory);
 
-        ListTreeNodePresenter.ListRootDisplay createListChild();
+        ListTreeNodePresenter.ListRootDisplay createListChild(boolean isMandatory);
     }
-
-    String getFieldName();
 
     ElementConfiguration getElementConfiguration(ObjectConfigurationFactory objectConfigurationFactory);
 

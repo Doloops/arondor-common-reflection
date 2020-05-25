@@ -5,27 +5,15 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.logging.Logger;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
 
-public class JavaTestPrimitive
+public class JavaTestPrimitive extends AbstractTestParserSerializer
 {
     private static final Logger LOG = Logger.getLogger(JavaTestPrimitive.class.getName());
-
-    private ObjectConfigurationReader parser;
-
-    private ObjectConfigurationSerializer serializer;
-
-    @Before
-    public void init()
-    {
-        parser = new GWTObjectConfigurationParserJava();
-        serializer = new GWTObjectConfigurationSerializerJava();
-    }
 
     @Test
     public void testPrimitive0_Parse0()

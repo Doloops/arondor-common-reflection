@@ -13,25 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.arondor.common.reflection.gwt.client.view.fields;
+package com.arondor.common.reflection.gwt.client.event;
 
-import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePresenter;
-import com.arondor.common.reflection.gwt.client.view.AbstractChildCreatorNodeView;
-import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 
-public class MapNodeView extends AbstractChildCreatorNodeView implements MapTreeNodePresenter.MapNodeDisplay
+public class MyValueChangeEvent<T> extends ValueChangeEvent<T>
 {
-
-    protected MapNodeView(UIObject parentNode)
+    public MyValueChangeEvent(T value)
     {
-        super(parentNode);
-        setHasRemoveButton(true);
-        setActive(true);
+        super(value);
     }
-
-    public void clear()
-    {
-        getParentItem().removeItem(this);
-    }
-
 }

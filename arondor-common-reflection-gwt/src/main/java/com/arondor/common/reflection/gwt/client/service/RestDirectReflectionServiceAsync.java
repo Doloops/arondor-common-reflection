@@ -64,13 +64,16 @@ public class RestDirectReflectionServiceAsync implements GWTReflectionServiceAsy
         RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, url);
         requestBuilder.setCallback(new RequestCallback()
         {
-
             @Override
             public void onResponseReceived(Request request, Response response)
             {
                 String xml = response.getText();
+                LOG.info("Recieved " + xml.length() + " bytes for " + url);
+
                 GWTAccessibleClassCatalogParser parser = new GWTAccessibleClassCatalogParser();
+                LOG.info("Parsing ...");
                 final AccessibleClassCatalog catalog = parser.parse(xml);
+                LOG.info("Parsing ... DONE.");
 
                 RestDirectReflectionServiceAsync serviceAsync = new RestDirectReflectionServiceAsync(catalog);
                 callback.onSuccess(serviceAsync);

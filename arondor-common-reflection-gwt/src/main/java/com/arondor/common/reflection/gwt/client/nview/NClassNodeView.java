@@ -2,6 +2,8 @@ package com.arondor.common.reflection.gwt.client.nview;
 
 import com.arondor.common.reflection.gwt.client.CssBundle;
 import com.arondor.common.reflection.gwt.client.nview.prim.NBooleanView;
+import com.arondor.common.reflection.gwt.client.nview.prim.NIntView;
+import com.arondor.common.reflection.gwt.client.nview.prim.NStringListView;
 import com.arondor.common.reflection.gwt.client.nview.prim.NStringView;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.ImplementingClassPresenter.ImplementingClassDisplay;
@@ -11,11 +13,17 @@ import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePres
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter.PrimitiveDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeNodePresenter.StringListDisplay;
 import com.arondor.common.reflection.gwt.client.view.ImplementingClassView;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.ClassDisplay
 {
     private final ImplementingClassDisplay implementingClassView = new ImplementingClassView();
+
+    private final FlowPanel selectGroup = new FlowPanel();
+
+    private final FlowPanel optionsArea = new FlowPanel();
 
     private final FlowPanel mandatoryChildren = new FlowPanel();
 
@@ -27,30 +35,66 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     {
         getElement().addClassName(CssBundle.INSTANCE.css().classNode());
 
+        selectGroup.getElement().addClassName("input-group");
+
+        // implementingClassView.asWidget().getElement().addClassName("form-control");
+
+        getResetFieldBtn().getElement().addClassName("input-group-append");
+        getResetFieldBtn().getElement().addClassName(CssBundle.INSTANCE.css().resetBtn());
+        getResetFieldBtn().getElement().setInnerHTML("<i></i>");
+
+        getResetFieldBtn().addClickHandler(new ClickHandler()
+        {
+
+            @Override
+            public void onClick(ClickEvent event)
+            {
+                implementingClassView.resetComboBox();
+                setActive(false);
+                clear();
+            }
+        });
+
         mandatoryChildren.getElement().addClassName(CssBundle.INSTANCE.css().classMandatoryChildren());
         optionalChildren.getElement().addClassName(CssBundle.INSTANCE.css().classOptionalChildren());
         advancedSettings.getElement().addClassName(CssBundle.INSTANCE.css().advancedSettingsBtn());
 
         String rnd = String.valueOf(Math.random()).substring(2);
         advancedSettings.getElement().setInnerHTML(
-                "<a data-toggle=\"collapse\" href=\"#advancedSettings" + rnd + "\"> > Advanced settings</a>");
-        // advancedSettings.getElement().addClassName("d-flex
-        // justify-content-center");
+                "<a data-toggle=\"collapse\"  href=\"#advancedSettings" + rnd + "\">> Advanced settings</a>");
         optionalChildren.getElement().setId("advancedSettings" + rnd);
+
         optionalChildren.getElement().addClassName("collapse");
+
+        // implementingClassView.setProperLabel("blabla");
 
         bind();
     }
 
-    private void bind()
+    protected FlowPanel getSelectGroup()
     {
-        add(implementingClassView);
+        return selectGroup;
+    }
+
+    protected void bind()
+    {
+        selectGroup.add(implementingClassView);
+        selectGroup.add(getResetFieldBtn());
+
+        optionsArea.add(advancedSettings);
+        optionsArea.add(optionalChildren);
+
+        add(selectGroup);
         add(mandatoryChildren);
-        add(advancedSettings);
-        add(optionalChildren);
+        add(optionsArea);
 
         advancedSettings.getElement().addClassName(CssBundle.INSTANCE.css().hideAdvancedSettings());
 
+    }
+
+    protected FlowPanel getOptionsArea()
+    {
+        return optionsArea;
     }
 
     private void addChildView(boolean isMandatory, NNodeView childView)
@@ -76,6 +120,10 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     public ClassTreeNodePresenter.ClassDisplay createClassChild(boolean isMandatory)
     {
         NClassNodeView childView = new NClassNodeView();
+        if (isMandatory)
+        {
+            childView.disableReset();
+        }
         addChildView(isMandatory, childView);
         return childView;
     }
@@ -88,6 +136,28 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         {
             view = new NBooleanView();
         }
+        else if (fieldClassName.equals("int"))
+        {
+            view = new NIntView();
+        }
+        else if (fieldClassName.equals("java.lang.String"))
+        {
+            view = new NStringView();
+        }
+        // TODO long
+        // TODO java.util.Map
+        // TODO java.util.List
+        // TODO java.lang.Class
+        // TODO java.io.InputStream
+        // TODO java.math.BigInteger
+
+        // TODO com.arondor.fast2p8.model.manager.Manager
+        // TODO com.arondor.fast2p8.alfresco.PropertyHelper
+        // TODO com.arondor.fast2p8.alfresco.AlfrescoConnection
+        // TODO com.arondor.fast2p8.model.namingscheme.NamingScheme
+        // TODO com.arondor.fast2p8.alfresco.AlfrescoCMISConnectionProvider
+        // TODO com.arondor.fast2p8.model.namingscheme.PunnetPatternResolver
+        // TODO org.apache.chemistry.opencmis.client.api.Session
         else
         {
             view = new NStringView();
@@ -98,28 +168,30 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     }
 
     @Override
-    public EnumDisplay createEnumListChild()
+    public EnumDisplay createEnumListChild(boolean isMandatory)
     {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public StringListDisplay createStringListChild()
+    public StringListDisplay createStringListChild(boolean isMandatory)
     {
-        // TODO Auto-generated method stub
-        return null;
+        NStringListView view = new NStringListView();
+        addChildView(isMandatory, view);
+        return view;
     }
 
     @Override
-    public MapRootDisplay createMapChild()
+    public MapRootDisplay createMapChild(boolean isMandatory)
     {
-        // TODO Auto-generated method stub
-        return null;
+        NMapNodeView mapView = new NMapNodeView();
+        addChildView(isMandatory, mapView);
+        return mapView;
     }
 
     @Override
-    public ListRootDisplay createListChild()
+    public ListRootDisplay createListChild(boolean isMandatory)
     {
         // TODO Auto-generated method stub
         return null;
@@ -133,6 +205,12 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         optionalChildren.clear();
         optionalChildren.getElement().removeClassName("show");
         bind();
+    }
+
+    @Override
+    public void setNodeDescription(String description)
+    {
+        implementingClassView.setNodeDescription(description);
     }
 
 }

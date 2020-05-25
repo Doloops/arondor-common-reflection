@@ -19,82 +19,119 @@ import java.util.Collection;
 import java.util.logging.Logger;
 
 import com.arondor.common.reflection.gwt.client.CssBundle;
+import com.arondor.common.reflection.gwt.client.event.MyValueChangeEvent;
+import com.arondor.common.reflection.gwt.client.presenter.ImplementingClass;
 import com.arondor.common.reflection.gwt.client.presenter.ImplementingClassPresenter.ImplementingClassDisplay;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.ListBox;
+
+import gwt.material.design.addins.client.combobox.MaterialComboBox;
+import gwt.material.design.addins.client.combobox.events.SelectItemEvent;
+import gwt.material.design.addins.client.combobox.events.SelectItemEvent.SelectComboHandler;
+import gwt.material.design.client.constants.TextAlign;
 
 public class ImplementingClassView extends Composite implements ImplementingClassDisplay
 {
     private static final Logger LOG = Logger.getLogger(ImplementingClassView.class.getName());
 
-    private ListBox implementingListInput = new ListBox();
+    private MaterialComboBox<ImplementingClass> implementingListInput = new MaterialComboBox<ImplementingClass>();
 
-    private String selectedClass = null;
+    private ImplementingClass selectedClass = ImplementingClass.NULL_CLASS;
 
     public ImplementingClassView()
     {
         initWidget(implementingListInput);
-        implementingListInput.getElement().addClassName(CssBundle.INSTANCE.css().implementingClassView());
+
+        implementingListInput.setClass("outlined");
+        implementingListInput.setTextAlign(TextAlign.LEFT);
+        implementingListInput.setStyle("width:100%;margin-top:0px;margin-bottom:0px;");
+        implementingListInput.getElement().addClassName(CssBundle.INSTANCE.css().comboBox());
+
+        implementingListInput.getLabel().addClickHandler(new ClickHandler()
+        {
+            @Override
+            public void onClick(ClickEvent event)
+            {
+                implementingListInput.open();
+            }
+        });
     }
 
     @Override
-    public void setImplementingClasses(Collection<String> implementingClasses)
+    public void resetComboBox()
     {
+        implementingListInput.unselect();
+        selectedClass = ImplementingClass.NULL_CLASS;
+
+        // to prevent the onLoad() MaterialCombobox call
+        Scheduler.get().scheduleDeferred(new ScheduledCommand()
+        {
+            @Override
+            public void execute()
+            {
+                implementingListInput.getLabel().getElement().removeClassName("select2label");
+            }
+        });
+
+    }
+
+    @Override
+    public void setImplementingClasses(Collection<ImplementingClass> implementingClasses)
+    {
+        implementingListInput.getLabel().getElement().removeClassName("select2label");
         LOG.finest("Selected classes : " + implementingClasses);
         implementingListInput.clear();
-        for (String implementingClass : implementingClasses)
+        // implementingListInput.addItem("", ImplementingClass.NULL_CLASS);
+        for (ImplementingClass implementingClass : implementingClasses)
         {
-            implementingListInput.addItem(implementingClass);
-            if (selectedClass != null && selectedClass.equals(implementingClass))
-            {
-                implementingListInput.setSelectedIndex(implementingListInput.getItemCount() - 1);
-            }
+            implementingListInput.addItem(implementingClass.getBaseName(), implementingClass)
+                    .setTitle(implementingClass.getFullName());
+        }
+        if (selectedClass == ImplementingClass.NULL_CLASS)
+        {
+            implementingListInput.unselect();
         }
     }
 
-    private void doSelect(String className)
+    private void doSelect(ImplementingClass clazz)
     {
-        selectedClass = className;
-        if (className == null)
+        selectedClass = clazz;
+        if (clazz == ImplementingClass.NULL_CLASS)
         {
-            className = "null";
+            implementingListInput.unselect();
         }
-
-        LOG.finest("Selecting class : " + className + " from a choice of " + implementingListInput.getItemCount()
+        LOG.finest("Selecting class : " + clazz + " from a choice of " + implementingListInput.getValues().size()
                 + " items");
-        for (int idx = 0; idx < implementingListInput.getItemCount(); idx++)
+        int index = implementingListInput.getIndexByString(clazz.getFullName());
+        if (index == -1)
         {
-            if (implementingListInput.getItemText(idx).equals(className))
-            {
-                implementingListInput.setSelectedIndex(idx);
-                return;
-            }
+            implementingListInput.addItem(clazz.getBaseName(), clazz);
+            implementingListInput.setSelectedIndex(implementingListInput.getValues().size() - 1);
         }
-
-        implementingListInput.addItem(className);
-        implementingListInput.setSelectedIndex(implementingListInput.getItemCount() - 1);
+        else
+        {
+            implementingListInput.setSelectedIndex(index);
+            implementingListInput.getLabel().getElement().addClassName("select2label");
+        }
         // LOG.warning("Could not select class : " + className);
     }
 
     @Override
-    public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<String> valueChangeHandler)
+    public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<ImplementingClass> valueChangeHandler)
     {
-        return implementingListInput.addChangeHandler(new ChangeHandler()
+        return implementingListInput.addSelectionHandler(new SelectComboHandler<ImplementingClass>()
         {
             @Override
-            public void onChange(ChangeEvent event)
+            public void onSelectItem(SelectItemEvent<ImplementingClass> event)
             {
-                if (implementingListInput.getSelectedIndex() != -1)
-                {
-                    String value = implementingListInput.getValue(implementingListInput.getSelectedIndex());
-                    selectedClass = value;
-                    LOG.finest("Selected class : " + selectedClass);
-                    valueChangeHandler.onValueChange(new MyValueChangeEvent<String>(value));
-                }
+                selectedClass = event.getSelectedValues().get(0);
+                LOG.finest("Selected " + selectedClass);
+                valueChangeHandler.onValueChange(new MyValueChangeEvent<ImplementingClass>(selectedClass));
             }
         });
     }
@@ -102,12 +139,18 @@ public class ImplementingClassView extends Composite implements ImplementingClas
     @Override
     public void setBaseClassName(String baseClassName)
     {
-        doSelect(baseClassName);
+        // doSelect(baseClassName);
     }
 
     @Override
-    public void selectImplementingClass(String implementingClassName)
+    public void selectImplementingClass(ImplementingClass implementingClassName)
     {
         doSelect(implementingClassName);
+    }
+
+    @Override
+    public void setNodeDescription(String label)
+    {
+        implementingListInput.setLabel(label);
     }
 }

@@ -1,93 +1,166 @@
 .classNode .nodeField {
-	padding: 0px 30px;
+	padding: 0px 0px 0px 30px;
+/* 	margin-top:5px; */
+	margin-bottom:15px;
+	text-align:left!important;
 } 
 
-.rootTreeNode {
-	background:#F1F1F1; 
-	height:100%;
-	overflow:auto;
-	width:390px;
-	color:#495057;
-	font-size:11pt;
+::placeholder {
+	font-style:italic;
 }
 
-/* (select menus title) */
-.implementingClassView .nodeName{}
+.rootTreeNode {
+	padding:15px;
+	height:100%;
+	overflow:auto;
+	width:100%;
+	color:#495057;
+	margin-top:0px;
+	margin-bottom:0px;
+}
 
-/* check-box group */
-.booleanField {}
-
-div {
-	margin-bottom: 5px;
+.rootTreeNode div {
+	line-height: normal;
 	margin-top: 5px;
 }
 
-/* check boxes title */
-.booleanField .nodeName {
+.nodeName{
+	text-align:left!important;
+	font-size: inherit;
 }
 
-/* input group */
-.stringField {}
+/* check-box group */
+.booleanField {
+	margin-top:10px;
+}
+
+.classNode .classNode .optionalChildren .booleanField {
+	padding-right:0px;
+}
 
 /* change checkbox group order */
 .booleanField {
 	display: flex;
     flex-direction: row;
 	align-items:center;
+	position:relative;
 }
-.booleanField div {
+.booleanField .nodeName {
 	order:2;
-	margin-left:7px;
+	padding-right:30px;
+}
+
+.nodeName label {
+	font-size: inherit;
+	color:inherit;
 }
 
 /* check-box strictly-speaking */
-.booleanField span {
+.booleanField label {
 	order: 1;
-	margin-top:1px;
+	display:flex;
+	align-items:bottom;
 }
 
-.stringField input, .implementingClassView{
-	height: 26px;
-	width: 200px;
-	padding: 3px 8px;
-	border-radius:4px;
-	border: 1px solid #CED4DA;
-	color:inherit;
-	font-size:inherit;
+.booleanField span {
+	font-size:1rem;
+	margin-top:0px!important;
 }
 
-.stringField::after {
-	content:'x';
-	margin-left:5px;
-	font-weight:bold;
-	color:red;
+.booleanField label{
+	margin-bottom:0px;
 }
 
-.bg-green {
-	background:green;
+.booleanField div .resetBtn i {
+	top:5px;
 }
 
-.bg-blue {
-	background:blue;
+.stringField {
+	margin-bottom:0px!important;
 }
 
-a {
+.stringField div .resetBtn i {
+	top: 1px!important;
+}
+
+.stringField div textarea {
+	line-height:inherit;
+	padding:10px 12px;
+	margin-bottom:5px;
+}
+
+.classNode .classNode .optionalChildren .stringField, 
+.classNode .classNode .optionalChildren .classNode,
+.classNode .classNode .optionalChildren .mappingField {
+	padding-right:0px;
+}
+
+.mappingField {
+	padding-right:0px!important;
+}
+
+.hidden {
+	display:none;	
+}
+
+.mappingTable .classNode {
+	display:flex;
+	flex-wrap:wrap;
+	position:relative;
+}
+
+.mappingTable .advancedSettingsBtn {
+	margin-top:0px!important;
+}
+
+.resetBtn i {
+	position:absolute!important;
+	right:-9px;
+	content:url('icons/icon_reset_gray.svg');
+	width:1rem!important;
+	margin-right:5px;
+	top:-4px;
+	border-radius:50%;
+}
+
+.resetBtn i:hover{
+	content:url('icons/icon_reset_red.svg');
+	box-shadow: 0 0 0 10px rgba(207,49,49,0.2);
+	transform: rotate(90deg);
+	transition-duration: .5s;
 }
 
 .mandatoryChildren {
 }
 
 .advancedSettingsBtn{
-	margin-top:20px!important;
+	margin-top:10px!important;
+	margin-bottom:3px;
+	font-size:9pt!important;
+	color:#1d7ae2;
 }
 
+.advancedSettingsBtn a {
+	height:20px;
+	color:#0066cc;
+	font-weight:500; /*semi-bold*/
+	font-size:13px;
+	text-align:center;
+	padding-left:10px;
+}
+
+.advancedSettingsBtn a:hover {
+	text-decoration: underline!important;
+}
 	
 .optionalChildren{
-	margin:0px 0px 5px 10px;
-	padding-bottom: 15px ;
+	margin:0px 0px 30px 10px;
+	border-left: 5px solid aliceblue;
 }
 
-.nodeField {}
+.nodeField {
+	margin:10px 0px;
+}
 
 .hideAdvancedSettings{
 	display:none;
@@ -96,3 +169,114 @@ a {
 .nodeField .nodeName {
 	margin-bottom: 0px; 
 }
+
+.helperText {
+	position:relative;
+	top:-10px;
+	font-size:0.7rem;
+}
+
+.comboBox label {
+	top:13px!important;
+}
+
+.classNode .comboBox .resetBtn i {
+	top:-4px;
+}
+
+.mappingTable {
+	display:flex;
+	width:100%;
+	box-shadow: none;
+	border: none;
+	padding:0px;
+});
+
+.mappingTablePair div {
+	padding-left:0px;
+	padding-right:0px;
+}
+
+.mappingCell input {
+	margin-bottom:0px!important;
+}
+
+.mappingCell label {
+	left:0px!important;	
+}
+
+.mappingCell {
+	margin-left:0px!important;
+	margin-right:15px;
+	padding-left:0px!important;
+	padding-right:0px!important;
+}
+
+.mappingCell div {
+	margin-top:0px;
+	
+}
+
+.mappingCell .advancedSettingsBtn {
+	margin-top:0px!important;
+}
+
+.mappingCell .advancedSettingsBtn a {
+	font-size:8pt;
+}
+
+.mappingTablePair {
+	display:flex;	
+	margin-top: 0px!important;
+	position:relative;
+	margin-bottom:10px;
+}
+
+.newPairBtn i {
+	content:url('icons/icon_addLine_gray.svg');
+	width:16px!important;
+	border-radius:50%;
+	position: absolute;
+    top: -4px;
+    right: 0px;
+}
+
+.newPairBtn:hover i {
+	content:url('icons/icon_addLine_green.svg');
+	transform:scale(1.2);
+}
+
+.newPairBtn {
+	padding-top:7px;
+	position: absolute;
+	width:fit-content;
+    right: 7px;
+}
+
+.deleteRowBtn {
+	top:5px;
+	margin-top:0px!important;
+	position: absolute;
+    right: 15px;
+    height: 40px;
+    width: fit-content;
+}
+
+.deleteRowBtn i {
+	content:url('icons/icon_deleteLine_gray.svg');
+	margin:0px!important;
+	padding-top:7px;
+	padding:0px!important;
+	position: relative;
+	width:10px!important;
+    right: -2px;
+    top: 10px;
+}
+
+.deleteRowBtn:hover i {
+	transform:scale(1.5);
+	content:url('icons/icon_deleteLine_red.svg');
+}
+
+
+

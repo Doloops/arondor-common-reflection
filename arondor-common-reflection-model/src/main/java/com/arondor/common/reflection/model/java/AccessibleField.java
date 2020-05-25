@@ -84,12 +84,26 @@ public interface AccessibleField extends Serializable
     boolean isMandatory();
 
     /**
+     * Is the field a password ?
+     * 
+     * @return true if the field is a password, false otherwise
+     */
+    boolean isPassword();
+
+    /**
      * Get default value of field (for primitive : String, Integer,Float,
      * Boolean)
      * 
      * @return
      */
     String getDefaultValue();
+
+    /**
+     * Get placeholder of field (for primitive : String, Integer,Float)
+     * 
+     * @return placeholder value
+     */
+    String getPlaceholder();
 
     /**
      * Is the field bind to enum type

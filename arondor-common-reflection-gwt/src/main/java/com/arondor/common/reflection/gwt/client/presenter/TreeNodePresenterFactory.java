@@ -16,6 +16,7 @@
 package com.arondor.common.reflection.gwt.client.presenter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -40,50 +41,32 @@ public class TreeNodePresenterFactory
 {
     private final static Logger LOG = Logger.getLogger(TreeNodePresenterFactory.class.getName());
 
-    private static final int MAX_DESCRIPTION_LENGTH = 60;
-
     public TreeNodePresenter createChildNodePresenter(GWTReflectionServiceAsync rpcService,
             ObjectConfigurationMap objectConfigurationMap, TreeNodePresenter.ChildCreatorDisplay display,
             AccessibleField accessibleField)
     {
         String fieldName = accessibleField.getName();
         String fieldClassName = accessibleField.getClassName();
-        String fieldDescription = accessibleField.getDescription();
-        String fieldLongDescription = accessibleField.getLongDescription();
-        String fieldDefaultBehavior = accessibleField.getDefaultBehavior();
-        boolean mandatory = accessibleField.isMandatory();
+        boolean isMandatory = accessibleField.isMandatory();
         String defaultValue = accessibleField.getDefaultValue();
-        boolean enumProperty = accessibleField.isEnumProperty();
+        String placeholder = accessibleField.getPlaceholder();
+        String classDeclaredIn = accessibleField.getDeclaredInClass();
+        boolean isEnumProperty = accessibleField.isEnumProperty();
         List<String> genericTypes = accessibleField.getGenericParameterClassList();
 
-        return createChildNodePresenter(rpcService, objectConfigurationMap, display, fieldName, fieldClassName,
-                fieldDescription, fieldLongDescription, fieldDefaultBehavior, mandatory, defaultValue, enumProperty,
-                accessibleField.getDeclaredInClass(), genericTypes);
-    }
-
-    public TreeNodePresenter createChildNodePresenter(GWTReflectionServiceAsync rpcService,
-            ObjectConfigurationMap objectConfigurationMap, TreeNodePresenter.ChildCreatorDisplay display,
-            String fieldName, final String fieldClassName, String fieldDescription)
-    {
-        return createChildNodePresenter(rpcService, objectConfigurationMap, display, fieldName, fieldClassName,
-                fieldDescription, null, null, false, null, false, null, null);
-    }
-
-    public TreeNodePresenter createChildNodePresenter(GWTReflectionServiceAsync rpcService,
-            ObjectConfigurationMap objectConfigurationMap, TreeNodePresenter.ChildCreatorDisplay display,
-            String fieldName, final String fieldClassName, String fieldDescription, String fieldLongDescription,
-            String defaultBehavior, boolean isMandatory, String defaultValue, boolean isEnumProperty,
-            final String classDeclaredIn, List<String> genericTypes)
-    {
         TreeNodePresenter childPresenter = null;
         if (PrimitiveTypeUtil.isPrimitiveType(fieldClassName))
         {
-            LOG.finest("Field " + fieldName + " is primitive type");
-            childPresenter = new PrimitiveTreeNodePresenter(fieldName,
-                    display.createPrimitiveChild(fieldClassName, isMandatory));
+            LOG.finest("Field " + fieldName + " is primitive type, class=" + fieldClassName + ", defaultValue="
+                    + defaultValue);
+            childPresenter = new PrimitiveTreeNodePresenter(display.createPrimitiveChild(fieldClassName, isMandatory));
             if (defaultValue != null && !defaultValue.equals(""))
             {
                 ((PrimitiveTreeNodePresenter) childPresenter).setDefaultValue(defaultValue);
+            }
+            if (placeholder != null && !placeholder.equals(""))
+            {
+                ((PrimitiveTreeNodePresenter) childPresenter).setPlaceholder(placeholder);
             }
             PrimitiveConfiguration primitiveConfiguration = new PrimitiveConfigurationBean();
             childPresenter.setElementConfiguration(primitiveConfiguration);
@@ -96,31 +79,40 @@ public class TreeNodePresenterFactory
         else if (isStringListField(fieldClassName, genericTypes))
         {
             LOG.finest("Field " + fieldName + " is a string list");
-            childPresenter = new StringListTreeNodePresenter(fieldName, display.createStringListChild());
+            childPresenter = new StringListTreeNodePresenter(fieldName, display.createStringListChild(isMandatory));
+            if (defaultValue != null && !defaultValue.equals(""))
+            {
+                ((StringListTreeNodePresenter) childPresenter)
+                        .setDefaultValue(Arrays.asList(defaultValue.trim().split("\n")));
+            }
+            if (placeholder != null && !placeholder.equals(""))
+            {
+                ((StringListTreeNodePresenter) childPresenter)
+                        .setPlaceholder(Arrays.asList(placeholder.trim().split("\n")));
+            }
         }
         else if (fieldClassName.equals("java.util.Map") && genericTypes != null && genericTypes.size() == 2)
         {
-            LOG.severe(
+            LOG.finest(
                     "Field " + fieldName + " is an object map of " + genericTypes.get(0) + ", " + genericTypes.get(1));
-            childPresenter = new MapTreeNodePresenter(rpcService, objectConfigurationMap, fieldName, genericTypes,
-                    display.createMapChild());
+            childPresenter = new MapTreeNodePresenter(rpcService, objectConfigurationMap, genericTypes,
+                    display.createMapChild(isMandatory));
         }
         else if (fieldClassName.equals("java.util.List") && genericTypes != null && genericTypes.size() == 1)
         {
             LOG.finest("Field " + fieldName + " is an " + genericTypes.get(0) + " list");
             String genericType = genericTypes.get(0);
-            childPresenter = new ListTreeNodePresenter(rpcService, objectConfigurationMap, fieldName, genericType,
-                    display.createListChild());
+            childPresenter = new ListTreeNodePresenter(rpcService, objectConfigurationMap, genericType,
+                    display.createListChild(isMandatory));
         }
         else
         {
             LOG.finest("Field " + fieldName + " is an object " + fieldClassName);
-            childPresenter = new ClassTreeNodePresenter(rpcService, objectConfigurationMap, fieldName, fieldClassName,
-                    isMandatory, display.createClassChild(isMandatory));
+            childPresenter = new ClassTreeNodePresenter(rpcService, objectConfigurationMap, fieldClassName, isMandatory,
+                    display.createClassChild(isMandatory));
         }
 
-        setNodeNameAndDescription(fieldName, fieldClassName, fieldDescription, fieldLongDescription, defaultBehavior,
-                isMandatory, childPresenter);
+        setNodeNameAndDescription(fieldName, accessibleField, childPresenter);
         return childPresenter;
     }
 
@@ -129,7 +121,7 @@ public class TreeNodePresenterFactory
             final String classDeclaredIn)
     {
         final EnumTreeNodePresenter childPresenter = new EnumTreeNodePresenter(fieldName,
-                display.createEnumListChild());
+                display.createEnumListChild(false));
 
         if (classDeclaredIn != null)
         {
@@ -176,33 +168,25 @@ public class TreeNodePresenterFactory
         return childPresenter;
     }
 
-    private void setNodeNameAndDescription(String fieldName, String fieldClassName, String fieldDescription,
-            String fieldLongDescription, String defaultBehavior, boolean isMandatory, TreeNodePresenter childPresenter)
+    private void setNodeNameAndDescription(String fieldName, AccessibleField accessibleField,
+            TreeNodePresenter childPresenter)
     {
-        String nodeName = fieldName;
-        String nodeDescription = null;
-        if (fieldDescription != null)
+        childPresenter.getDisplay().setNodeName(fieldName);
+        if (accessibleField.getDescription() != null)
         {
-            if (fieldDescription.length() < MAX_DESCRIPTION_LENGTH)
-            {
-                nodeName = fieldDescription;
-            }
-            else
-            {
-                nodeName = fieldDescription.substring(0, MAX_DESCRIPTION_LENGTH) + "...";
-                nodeDescription = fieldDescription;
-            }
+            childPresenter.getDisplay().setNodeDescription(accessibleField.getDescription());
         }
-        if (fieldLongDescription != null)
+        else
         {
-            nodeDescription = fieldLongDescription;
+            childPresenter.getDisplay().setNodeDescription(fieldName);
         }
-        String fieldPrefix = isMandatory ? "* " : "";
-
-        childPresenter.getDisplay().setNodeName(fieldPrefix + nodeName);
-        if (nodeDescription != null)
+        if (accessibleField.getLongDescription() != null)
         {
-            childPresenter.getDisplay().setNodeDescription(nodeDescription);
+            childPresenter.getDisplay().setNodeLongDescription(accessibleField.getLongDescription());
+        }
+        if (accessibleField.isPassword())
+        {
+            childPresenter.getDisplay().setIsPassword();
         }
     }
 

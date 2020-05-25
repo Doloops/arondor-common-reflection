@@ -13,14 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.arondor.common.reflection.gwt.client.view;
+package com.arondor.common.management.mbean.annotation;
 
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-public class MyValueChangeEvent<T> extends ValueChangeEvent<T>
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+public @interface DefaultValue
 {
-    public MyValueChangeEvent(T value)
-    {
-        super(value);
-    }
+    /**
+     * The default value of this element
+     * 
+     * @return the default value of this element
+     */
+    String value();
 }

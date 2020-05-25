@@ -52,7 +52,7 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
     public SimpleObjectConfigurationMapPresenter(GWTReflectionServiceAsync rpcService, String fieldName,
             ObjectConfigurationMapDisplay mapDisplay)
     {
-        super(rpcService, null, fieldName, GENERIC_TYPES, mapDisplay);
+        super(rpcService, null, GENERIC_TYPES, mapDisplay);
         mapDisplay.setNodeName(fieldName);
         super.setObjectConfigurationMap(new ObjectConfigurationMapBean());
     }

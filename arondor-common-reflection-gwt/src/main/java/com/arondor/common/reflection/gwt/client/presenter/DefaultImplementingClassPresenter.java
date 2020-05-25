@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import com.arondor.common.reflection.gwt.client.event.MyValueChangeEvent;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
-import com.arondor.common.reflection.gwt.client.view.MyValueChangeEvent;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.arondor.common.reflection.model.java.AccessibleClass;
@@ -47,7 +47,10 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
         this.display.setBaseClassName(baseClassName);
         bind();
 
-        addImplementingClass(ImplementingClass.NULL_CLASS);
+        // if (!isMandatory)
+        // {
+        // addImplementingClass(ImplementingClass.NULL_CLASS);
+        // }
 
         fetchBaseClass();
         fetchImplementations();
@@ -63,7 +66,7 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
         {
             final String referenceName = entry.getKey();
             final String referenceClassName = entry.getValue().getClassName();
-            final ImplementingClass implementingClass = new ImplementingClass(true, referenceName);
+            final ImplementingClass implementingClass = new ImplementingClass(true, null);
 
             if (referenceClassName.equals(baseClassName))
             {
@@ -100,15 +103,15 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<ImplementingClass> valueChangeHandler)
     {
         valueChangeHandlerRegistrations.add(valueChangeHandler);
-        final HandlerRegistration registration = this.display.addValueChangeHandler(new ValueChangeHandler<String>()
-        {
-            @Override
-            public void onValueChange(ValueChangeEvent<String> event)
-            {
-                ImplementingClass implementingClass = ImplementingClass.parseImplementingClass(event.getValue());
-                valueChangeHandler.onValueChange(new MyValueChangeEvent<ImplementingClass>(implementingClass));
-            }
-        });
+        final HandlerRegistration registration = this.display
+                .addValueChangeHandler(new ValueChangeHandler<ImplementingClass>()
+                {
+                    @Override
+                    public void onValueChange(ValueChangeEvent<ImplementingClass> event)
+                    {
+                        valueChangeHandler.onValueChange(event);
+                    }
+                });
 
         return new HandlerRegistration()
         {
@@ -124,12 +127,12 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
 
     private void bind()
     {
-        display.addValueChangeHandler(new ValueChangeHandler<String>()
+        display.addValueChangeHandler(new ValueChangeHandler<ImplementingClass>()
         {
             @Override
-            public void onValueChange(ValueChangeEvent<String> event)
+            public void onValueChange(ValueChangeEvent<ImplementingClass> event)
             {
-                currentImplementingClass = ImplementingClass.parseImplementingClass(event.getValue());
+                currentImplementingClass = event.getValue();
                 LOG.finest("Changed implementClassName=" + currentImplementingClass);
             }
         });
@@ -179,18 +182,13 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
     {
         Collections.sort(implementingClasses);
 
-        List<String> names = new ArrayList<String>();
-        for (ImplementingClass implementingClass : implementingClasses)
-        {
-            names.add(implementingClass.toString());
-        }
-        display.setImplementingClasses(names);
+        display.setImplementingClasses(implementingClasses);
 
         LOG.finest("currentImplementingClass=" + currentImplementingClass);
 
         if (implementingClasses.contains(currentImplementingClass))
         {
-            display.selectImplementingClass(currentImplementingClass.toString());
+            display.selectImplementingClass(currentImplementingClass);
         }
 
         updateDisplayScheduled = false;
@@ -210,7 +208,7 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
             {
                 if (isInstantiatable(result))
                 {
-                    addImplementingClass(new ImplementingClass(false, result.getName()));
+                    addImplementingClass(new ImplementingClass(false, result));
                 }
             }
         });
@@ -232,17 +230,20 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
                 {
                     if (isInstantiatable(clazz))
                     {
-                        addImplementingClass(new ImplementingClass(false, clazz.getName()));
+                        addImplementingClass(new ImplementingClass(false, clazz));
                     }
                 }
+                LOG.info("fetchImplementations() : Base class " + baseClassName + ", results=" + result.size()
+                        + ", current=" + currentImplementingClass);
                 if (result.size() == 1 && isMandatory && currentImplementingClass == ImplementingClass.NULL_CLASS)
                 {
                     /**
                      * There is only one result.
                      */
-                    // convert AccessibleClass#1 into ImplementingClass
-                    ImplementingClass implementingClass = new ImplementingClass(false,
-                            result.iterator().next().getName());
+                    AccessibleClass firstClass = result.iterator().next();
+                    LOG.info("Selecting default class :" + firstClass.getName() + " as implementation of "
+                            + baseClassName);
+                    ImplementingClass implementingClass = new ImplementingClass(false, firstClass);
                     setImplementingClass(implementingClass);
 
                     ValueChangeEvent<ImplementingClass> event = new MyValueChangeEvent<ImplementingClass>(
@@ -271,7 +272,7 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
     public void setImplementingClass(ImplementingClass implementingClass)
     {
         this.currentImplementingClass = implementingClass;
-        display.selectImplementingClass(currentImplementingClass.toString());
+        display.selectImplementingClass(currentImplementingClass);
     }
 
     @Override

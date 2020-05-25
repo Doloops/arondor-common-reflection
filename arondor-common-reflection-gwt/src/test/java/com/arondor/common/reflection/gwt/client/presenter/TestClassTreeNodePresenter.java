@@ -9,6 +9,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -18,6 +19,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -31,6 +33,7 @@ import com.arondor.common.reflection.gwt.client.testclasses.TestInterface;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
+import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.arondor.common.reflection.parser.java.JavaAccessibleClassParser;
 import com.arondor.common.reflection.parser.java.JavaClassPathAccessibleClassProvider;
 import com.arondor.common.reflection.service.DefaultReflectionService;
@@ -73,8 +76,8 @@ public class TestClassTreeNodePresenter
                 System.err.println("selectImplementingClass(" + invocation.getArguments()[0] + ")");
                 return null;
             }
-        }).when(implView).selectImplementingClass(anyString());
-        when(nodeView.createPrimitiveChild(anyString(), false))
+        }).when(implView).selectImplementingClass(ImplementingClass.NULL_CLASS);
+        when(nodeView.createPrimitiveChild(anyString(), Matchers.eq(false)))
                 .thenAnswer(new Answer<PrimitiveTreeNodePresenter.PrimitiveDisplay>()
                 {
                     @Override
@@ -95,19 +98,27 @@ public class TestClassTreeNodePresenter
         return nodeView;
     }
 
+    private AccessibleClass createAccessibleClass(Class<?> clazz)
+    {
+        /**
+         * TODO IMPLEMENT THIS
+         */
+        throw new RuntimeException("NOT IMPLEMENTED !");
+    }
+
     @Test
     public void testChangeBaseClassName()
     {
         ClassTreeNodePresenter.ClassDisplay nodeView = mockClassTreeNodePresenterDisplay();
 
-        final List<ValueChangeHandler<String>> changeHandlers = new ArrayList<ValueChangeHandler<String>>();
+        final List<ValueChangeHandler<ImplementingClass>> changeHandlers = new ArrayList<ValueChangeHandler<ImplementingClass>>();
         when(nodeView.getImplementingClassDisplay().addValueChangeHandler(any(ValueChangeHandler.class)))
                 .then(new Answer<HandlerRegistration>()
                 {
                     @Override
                     public HandlerRegistration answer(InvocationOnMock invocation) throws Throwable
                     {
-                        changeHandlers.add((ValueChangeHandler<String>) invocation.getArguments()[0]);
+                        changeHandlers.add((ValueChangeHandler<ImplementingClass>) invocation.getArguments()[0]);
                         return mock(HandlerRegistration.class);
                     }
                 });
@@ -115,12 +126,13 @@ public class TestClassTreeNodePresenter
         ClassTreeNodePresenter nodePresenter = new ClassTreeNodePresenter(rpcService, null,
                 TestInterface.class.getName(), nodeView);
         assertEquals(TestInterface.class.getName(), nodePresenter.getBaseClassName());
-        assertNull(nodePresenter.getImplementingClass().getName());
+        assertNull(nodePresenter.getImplementingClass().getFullName());
         verify(nodeView.getImplementingClassDisplay()).setBaseClassName(TestInterface.class.getName());
 
-        ValueChangeEvent<String> valueChangeEvent = mock(ValueChangeEvent.class);
-        when(valueChangeEvent.getValue()).thenReturn(TestClass.class.getName());
-        for (ValueChangeHandler<String> changeHandler : changeHandlers)
+        ValueChangeEvent<ImplementingClass> valueChangeEvent = mock(ValueChangeEvent.class);
+        when(valueChangeEvent.getValue())
+                .thenReturn(new ImplementingClass(false, createAccessibleClass(TestClass.class)));
+        for (ValueChangeHandler<ImplementingClass> changeHandler : changeHandlers)
         {
             changeHandler.onValueChange(valueChangeEvent);
         }
@@ -128,8 +140,8 @@ public class TestClassTreeNodePresenter
          * We shall not call selectImplementingClass because it's the widget
          * that selected the class
          */
-        verify(nodeView.getImplementingClassDisplay(), atLeastOnce()).selectImplementingClass(anyString());
-        assertEquals(TestClass.class.getName(), nodePresenter.getImplementingClass().getName());
+        verify(nodeView.getImplementingClassDisplay(), never()).selectImplementingClass(ImplementingClass.NULL_CLASS);
+        assertEquals(TestClass.class.getName(), nodePresenter.getImplementingClass().getFullName());
     }
 
     @Test
@@ -141,7 +153,7 @@ public class TestClassTreeNodePresenter
                 TestInterface.class.getName(), nodeView);
         assertEquals(TestInterface.class.getName(), nodePresenter.getBaseClassName());
         assertNotNull(nodePresenter.getImplementingClass());
-        assertNull(nodePresenter.getImplementingClass().getName());
+        assertNull(nodePresenter.getImplementingClass().getFullName());
         verify(nodeView.getImplementingClassDisplay()).setBaseClassName(TestInterface.class.getName());
 
         ObjectConfiguration objectConfiguration = factory.createObjectConfiguration();
@@ -150,8 +162,9 @@ public class TestClassTreeNodePresenter
 
         nodePresenter.setElementConfiguration(objectConfiguration);
 
-        verify(nodeView.getImplementingClassDisplay(), atLeastOnce()).selectImplementingClass(anyString());
-        assertEquals(TestClass.class.getName(), nodePresenter.getImplementingClass().getName());
+        verify(nodeView.getImplementingClassDisplay(), atLeastOnce())
+                .selectImplementingClass(new ImplementingClass(false, createAccessibleClass(TestClass.class)));
+        assertEquals(TestClass.class.getName(), nodePresenter.getImplementingClass().getFullName());
 
         ElementConfiguration elementConfiguration = nodePresenter.getElementConfiguration(factory);
         assertNotNull(elementConfiguration);

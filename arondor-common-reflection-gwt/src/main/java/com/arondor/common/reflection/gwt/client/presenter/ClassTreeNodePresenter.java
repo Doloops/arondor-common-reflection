@@ -51,8 +51,6 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
 
     private final ClassDisplay display;
 
-    private final String fieldName;
-
     private final ImplementingClassPresenter implementingClassPresenter;
 
     private final GWTReflectionServiceAsync rpcService;
@@ -62,20 +60,18 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
     public ClassTreeNodePresenter(GWTReflectionServiceAsync rpcService, ObjectConfigurationMap objectConfigurationMap,
             String baseClassName, ClassDisplay view)
     {
-        this(rpcService, objectConfigurationMap, null, baseClassName, true, view);
+        this(rpcService, objectConfigurationMap, baseClassName, true, view);
         display.setNodeName(baseClassName);
     }
 
     protected ClassTreeNodePresenter(GWTReflectionServiceAsync rpcService,
-            ObjectConfigurationMap objectConfigurationMap, String fieldName, String baseClassName, boolean isMandatory,
-            ClassDisplay view)
+            ObjectConfigurationMap objectConfigurationMap, String baseClassName, boolean isMandatory, ClassDisplay view)
     {
-        this.fieldName = fieldName;
         this.rpcService = rpcService;
         this.display = view;
         this.objectConfigurationMap = objectConfigurationMap;
 
-        LOG.finest("Create new TreeNodePresenter for fieldName=" + fieldName + ", baseClassName=" + baseClassName);
+        LOG.finest("Create new TreeNodePresenter for baseClassName=" + baseClassName);
 
         implementingClassPresenter = new DefaultImplementingClassPresenter(rpcService, objectConfigurationMap,
                 baseClassName, isMandatory, display.getImplementingClassDisplay());
@@ -96,7 +92,7 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
                 }
                 else
                 {
-                    updateAccessibleClass(event.getValue().getName(), null);
+                    updateAccessibleClass(event.getValue().getFullName(), null);
                 }
             }
         });
@@ -138,9 +134,8 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
 
     private void updateAccessibleClass(AccessibleClass accessibleClass, ObjectConfiguration objectConfiguration)
     {
-        LOG.finest("field=" + fieldName + ", updateAccessibleClass(class="
-                + (accessibleClass != null ? accessibleClass.getName() : null) + ", objectConfiguration="
-                + objectConfiguration + ")");
+        LOG.finest("* updateAccessibleClass(class=" + (accessibleClass != null ? accessibleClass.getName() : null)
+                + ", objectConfiguration=" + objectConfiguration + ")");
 
         clearFields();
 
@@ -151,8 +146,7 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
 
             if (objectConfiguration != null)
             {
-                implementingClassPresenter
-                        .setImplementingClass(new ImplementingClass(false, objectConfiguration.getClassName()));
+                implementingClassPresenter.setImplementingClass(new ImplementingClass(false, accessibleClass));
 
                 if (PrimitiveTypeUtil.isPrimitiveType(objectConfiguration.getClassName())
                         && objectConfiguration.getConstructorArguments().size() == 1)
@@ -193,17 +187,14 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
 
         for (AccessibleField accessibleField : sortedAccessibleFields)
         {
-            TreeNodePresenter childPresenter = TreeNodePresenterFactory.getInstance()
-                    .createChildNodePresenter(rpcService, objectConfigurationMap, display, accessibleField);
-            LOG.finest("At field=" + accessibleField.getName() + ", created childPresenter=" + childPresenter);
-            classTreeNodePresenterMap.put(accessibleField.getName(), childPresenter);
+            if (accessibleField.getWritable())
+            {
+                TreeNodePresenter childPresenter = TreeNodePresenterFactory.getInstance()
+                        .createChildNodePresenter(rpcService, objectConfigurationMap, display, accessibleField);
+                LOG.finest("At field=" + accessibleField.getName() + ", created childPresenter=" + childPresenter);
+                classTreeNodePresenterMap.put(accessibleField.getName(), childPresenter);
+            }
         }
-    }
-
-    @Override
-    public String getFieldName()
-    {
-        return fieldName;
     }
 
     public String getBaseClassName()
@@ -221,13 +212,13 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
     public ElementConfiguration getElementConfiguration(ObjectConfigurationFactory objectConfigurationFactory)
     {
         if (implementingClassPresenter.getImplementingClass() == null
-                || implementingClassPresenter.getImplementingClass().getName() == null)
+                || implementingClassPresenter.getImplementingClass().getFullName() == null)
         {
             return null;
         }
-        if (PrimitiveTypeUtil.isPrimitiveType(implementingClassPresenter.getImplementingClass().getName()))
+        if (PrimitiveTypeUtil.isPrimitiveType(implementingClassPresenter.getImplementingClass().getFullName()))
         {
-            String implementingClass = implementingClassPresenter.getImplementingClass().getName();
+            String implementingClass = implementingClassPresenter.getImplementingClass().getFullName();
             if (implementingClass.equals("java.lang.String"))
             {
                 /**
@@ -251,7 +242,7 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
         else if (implementingClassPresenter.getImplementingClass().isReference())
         {
             ReferenceConfiguration referenceConfiguration = objectConfigurationFactory.createReferenceConfiguration();
-            referenceConfiguration.setReferenceName(implementingClassPresenter.getImplementingClass().getName());
+            referenceConfiguration.setReferenceName(implementingClassPresenter.getImplementingClass().getFullName());
             return referenceConfiguration;
         }
         else
@@ -265,7 +256,7 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
     {
         ObjectConfiguration objectConfiguration = objectConfigurationFactory.createObjectConfiguration();
         objectConfiguration.setFields(new LinkedHashMap<String, ElementConfiguration>());
-        objectConfiguration.setClassName(implementingClassPresenter.getImplementingClass().getName());
+        objectConfiguration.setClassName(implementingClassPresenter.getImplementingClass().getFullName());
 
         updateChildObjectConfigurations(objectConfigurationFactory, objectConfiguration);
         return objectConfiguration;
@@ -316,8 +307,7 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
         {
             clearFields();
             ReferenceConfiguration referenceConfiguration = (ReferenceConfiguration) elementConfiguration;
-            implementingClassPresenter
-                    .setImplementingClass(new ImplementingClass(true, referenceConfiguration.getReferenceName()));
+            implementingClassPresenter.setImplementingClass(new ImplementingClass(true, null));
             display.setActive(true);
         }
     }

@@ -74,6 +74,11 @@ public class AccessibleFieldBean implements AccessibleField
     private boolean mandatory;
 
     /**
+     * Is this attribute a password field
+     */
+    private boolean password;
+
+    /**
      * Attribute default value
      */
     private String defaultValue;
@@ -88,6 +93,8 @@ public class AccessibleFieldBean implements AccessibleField
      * instead of a 'get' prefix
      */
     private boolean is = false;
+
+    private String placeholder;
 
     /**
      * Attribute description constructor
@@ -217,6 +224,17 @@ public class AccessibleFieldBean implements AccessibleField
     }
 
     @Override
+    public boolean isPassword()
+    {
+        return password;
+    }
+
+    public void setPassword(boolean password)
+    {
+        this.password = password;
+    }
+
+    @Override
     public String getDefaultValue()
     {
         return defaultValue;
@@ -258,5 +276,16 @@ public class AccessibleFieldBean implements AccessibleField
     public void setDefaultBehavior(String defaultBehavior)
     {
         this.defaultBehavior = defaultBehavior;
+    }
+
+    @Override
+    public String getPlaceholder()
+    {
+        return placeholder;
+    }
+
+    public void setPlaceholder(String placeholder)
+    {
+        this.placeholder = placeholder;
     }
 }

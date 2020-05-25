@@ -13,6 +13,7 @@ public class NClassTreeView extends FlowPanel
 
     public NClassTreeView()
     {
+        rootView.disableReset();
         getElement().addClassName(CssBundle.INSTANCE.css().rootTreeNode());
         add(rootView);
     }
