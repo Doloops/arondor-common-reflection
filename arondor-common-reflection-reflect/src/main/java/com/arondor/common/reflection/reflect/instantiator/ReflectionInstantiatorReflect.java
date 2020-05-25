@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import com.arondor.common.reflection.api.catalog.AccessibleClassCatalog;
 import com.arondor.common.reflection.api.instantiator.InstantiationContext;
 import com.arondor.common.reflection.api.instantiator.ReflectionInstantiator;
@@ -42,6 +44,8 @@ import com.arondor.common.reflection.util.StrongReference;
 
 public class ReflectionInstantiatorReflect implements ReflectionInstantiator
 {
+    private final static Logger LOG = Logger.getLogger(ReflectionInstantiatorReflect.class);
+
     private AccessibleClassParser accessibleClassParser;
 
     public synchronized AccessibleClassParser getAccessibleClassParser()
@@ -226,14 +230,14 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
     }
 
     private <T> T doInstantiateObject(ObjectConfiguration objectConfiguration, InstantiationContext context,
-            Class<?> clazz) throws InstantiationException, IllegalAccessException, ClassNotFoundException,
+            Class<T> clazz) throws InstantiationException, IllegalAccessException, ClassNotFoundException,
             NoSuchMethodException, InvocationTargetException
     {
         T object = null;
         if (objectConfiguration.getConstructorArguments() == null
                 || objectConfiguration.getConstructorArguments().isEmpty())
         {
-            object = (T) clazz.newInstance();
+            object = clazz.newInstance();
         }
         else if (objectConfiguration.getConstructorArguments().size() == 1 && Enum.class.isAssignableFrom(clazz))
         {
@@ -267,11 +271,17 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
     private Object instantiateElementConfiguration(ElementConfiguration elementConfiguration, String elementClassName,
             InstantiationContext context) throws ClassNotFoundException
     {
+        if (elementConfiguration == null)
+        {
+            return null;
+        }
         switch (elementConfiguration.getFieldConfigurationType())
         {
         case Primitive:
-            Object convertedFieldValue = convertPrimitive(((PrimitiveConfiguration) elementConfiguration).getValue(),
-                    elementClassName);
+            String primitiveValue = ((PrimitiveConfiguration) elementConfiguration).getValue();
+            if (primitiveValue == null)
+                return null;
+            Object convertedFieldValue = convertPrimitive(primitiveValue, elementClassName);
             return convertedFieldValue;
         case Object:
             ObjectConfiguration objectConfiguration = (ObjectConfiguration) elementConfiguration;
@@ -303,7 +313,6 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
         default:
             throw new RuntimeException("NOT IMPLEMENTED YET :" + elementConfiguration.getFieldConfigurationType());
         }
-
     }
 
     private <T> void setFields(T object, ObjectConfiguration objectConfiguration, InstantiationContext context)
@@ -329,7 +338,22 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
             ElementConfiguration fieldConfiguration = fieldEntry.getValue();
 
             T fieldObject = (T) instantiateElementConfiguration(fieldConfiguration, fieldClassName, context);
-            setterMethod.invoke(object, fieldObject);
+            try
+            {
+                setterMethod.invoke(object, fieldObject);
+            }
+            catch (IllegalArgumentException e)
+            {
+                if (fieldObject == null)
+                {
+                    LOG.error("While setting " + fieldName + " on class " + object.getClass().getName() + ", caught "
+                            + e.getMessage());
+                }
+                else
+                {
+                    throw e;
+                }
+            }
         }
     }
 

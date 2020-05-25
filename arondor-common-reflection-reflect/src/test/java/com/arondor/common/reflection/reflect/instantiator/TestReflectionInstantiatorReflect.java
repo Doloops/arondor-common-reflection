@@ -79,7 +79,48 @@ public class TestReflectionInstantiatorReflect
 
         assertEquals("Value for property1", classA.getProperty1());
         assertEquals(82377, classA.getProperty2());
+    }
 
+    @Test
+    public void testInstantiateClassA_Null_StringPrimitive() throws ReflectionException
+    {
+        ObjectConfiguration configuration = objectConfigurationFactory.createObjectConfiguration();
+        configuration.setClassName(TestClassA.class.getName());
+
+        configuration.setFields(new HashMap<String, ElementConfiguration>());
+
+        configuration.getFields().put("property1", objectConfigurationFactory.createPrimitiveConfiguration(null));
+
+        Object objectA = reflectionInstantiator.instanciateObject(configuration, Object.class, instantationContext);
+        assertNotNull(objectA);
+
+        assertEquals(TestClassA.class, objectA.getClass());
+        assertTrue(objectA instanceof TestClassA);
+
+        TestClassA classA = (TestClassA) objectA;
+
+        assertEquals(null, classA.getProperty1());
+    }
+
+    @Test
+    public void testInstantiateClassA_Null_JavaPrimitive() throws ReflectionException
+    {
+        ObjectConfiguration configuration = objectConfigurationFactory.createObjectConfiguration();
+        configuration.setClassName(TestClassA.class.getName());
+
+        configuration.setFields(new HashMap<String, ElementConfiguration>());
+
+        configuration.getFields().put("property2", objectConfigurationFactory.createPrimitiveConfiguration(null));
+
+        Object objectA = reflectionInstantiator.instanciateObject(configuration, Object.class, instantationContext);
+        assertNotNull(objectA);
+
+        assertEquals(TestClassA.class, objectA.getClass());
+        assertTrue(objectA instanceof TestClassA);
+
+        TestClassA classA = (TestClassA) objectA;
+
+        assertEquals(null, classA.getProperty1());
     }
 
     @Test
