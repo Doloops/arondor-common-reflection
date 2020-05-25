@@ -86,20 +86,19 @@ public class TestDefaultImplementingClassPresenter
         Mockito.verify(display, Mockito.atLeastOnce()).setImplementingClasses(captor.capture());
 
         List<ImplementingClass> result = (List<ImplementingClass>) captor.getValue();
-        Assert.assertEquals("Invalid result : " + result, 2, result.size());
+        Assert.assertEquals("Invalid result : " + result, 1, result.size());
         ImplementingClass firstResult = result.get(0);
-        Assert.assertEquals(ImplementingClass.NULL_CLASS, firstResult);
         Assert.assertEquals(
                 new ImplementingClass(false, createAccessibleClass("com.arondor.testing.SomeConcreteClass")),
-                result.get(1));
+                firstResult);
     }
 
-    private AccessibleClass createAccessibleClass(String className)
+    private AccessibleClass createAccessibleClass(String clazz)
     {
-        /**
-         * TODO IMPLEMENT THIS
-         */
-        throw new RuntimeException("NOT IMPLEMENTED !");
+        AccessibleClassBean bean = new AccessibleClassBean();
+        bean.setName(clazz);
+        bean.setSuperclass(Object.class.getName());
+        return bean;
     }
 
 }

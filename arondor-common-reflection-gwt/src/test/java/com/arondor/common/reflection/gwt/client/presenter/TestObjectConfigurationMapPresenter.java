@@ -9,6 +9,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.arondor.common.reflection.api.parser.AccessibleClassProvider;
 import com.arondor.common.reflection.bean.config.ObjectConfigurationFactoryBean;
+import com.arondor.common.reflection.bean.config.ObjectConfigurationMapBean;
 import com.arondor.common.reflection.catalog.SimpleAccessibleClassCatalog;
 import com.arondor.common.reflection.gwt.client.api.ObjectConfigurationMapPresenter;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter.ClassDisplay;
@@ -55,11 +56,21 @@ public class TestObjectConfigurationMapPresenter
         HasClickHandlers hasClickHandlers = Mockito.mock(HasClickHandlers.class);
         Mockito.when(objectConfigurationMapDisplay.addElementClickHandler()).thenReturn(hasClickHandlers);
         MapPairDisplay mapNodeDisplay = Mockito.mock(MapPairDisplay.class);
-        // Mockito.when(objectConfigurationMapDisplay.createPair()).thenReturn(mapNodeDisplay);
-
+        Mockito.when(objectConfigurationMapDisplay.createPair(Matchers.any(), Matchers.any()))
+                .thenReturn(mapNodeDisplay);
         PrimitiveDisplay primitiveDisplay = Mockito.mock(PrimitiveDisplay.class);
+        Mockito.when(mapNodeDisplay.getKeyDisplay()).thenReturn(Mockito.mock(PrimitiveDisplay.class));
+        ClassDisplay subClassDisplay = Mockito.mock(ClassDisplay.class);
+        ClassDisplay valueDisplay = subClassDisplay;
+        Mockito.when(mapNodeDisplay.getValueDisplay()).thenReturn(valueDisplay);
+        Mockito.when(valueDisplay.getImplementingClassDisplay())
+                .thenReturn(Mockito.mock(ImplementingClassDisplay.class));
+        Mockito.when(valueDisplay.createClassChild(Matchers.anyBoolean())).thenReturn(subClassDisplay);
+        Mockito.when(mapNodeDisplay.removePairClickHandler()).thenReturn(Mockito.mock(HasClickHandlers.class));
+        Mockito.when(subClassDisplay.getImplementingClassDisplay())
+                .thenReturn(Mockito.mock(ImplementingClassDisplay.class));
         // Mockito.when(mapNodeDisplay.createPrimitiveChild(Matchers.eq(false))).thenReturn(primitiveDisplay);
-        ClassDisplay classDisplay = Mockito.mock(ClassDisplay.class);
+        ClassDisplay classDisplay = subClassDisplay;
         // Mockito.when(mapNodeDisplay.createClassChild(false)).thenReturn(classDisplay);
         Mockito.when(classDisplay.createClassChild(false)).thenReturn(classDisplay);
         ListRootDisplay listDisplay = Mockito.mock(ListRootDisplay.class);
@@ -85,7 +96,7 @@ public class TestObjectConfigurationMapPresenter
         ObjectConfigurationMapPresenter objectConfigurationMapPresenter = new SimpleObjectConfigurationMapPresenter(
                 gwtReflectionService, fieldName, objectConfigurationMapDisplay);
 
-        final String context = "testreflection-config.xml";// "file:///home/caroline/ARender-Rendition-2.2.2-rc0/conf/arender-rendition.xml";
+        final String context = "testreflection-config.xml";
         XMLBeanDefinitionParser parser = new XMLBeanDefinitionParser(context);
         ObjectConfigurationMap objectConfigurationMap = parser.parse();
 
@@ -101,7 +112,9 @@ public class TestObjectConfigurationMapPresenter
 
         ObjectConfigurationMap result = objectConfigurationMapPresenter
                 .getObjectConfigurationMap(objectConfigurationFactory);
+        Assert.assertTrue(result instanceof ObjectConfigurationMapBean);
         Assert.assertNotNull(result);
+        Assert.assertEquals(1, result.size());
         Assert.assertTrue(result.containsKey("accessibleClassProvider"));
         Assert.assertEquals(objectConfigurationMap.size(), result.size());
 

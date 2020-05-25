@@ -24,6 +24,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import com.arondor.common.reflection.bean.config.ObjectConfigurationFactoryBean;
+import com.arondor.common.reflection.bean.java.AccessibleClassBean;
 import com.arondor.common.reflection.catalog.SimpleAccessibleClassCatalog;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter.ClassDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter;
@@ -100,10 +101,10 @@ public class TestClassTreeNodePresenter
 
     private AccessibleClass createAccessibleClass(Class<?> clazz)
     {
-        /**
-         * TODO IMPLEMENT THIS
-         */
-        throw new RuntimeException("NOT IMPLEMENTED !");
+        AccessibleClassBean bean = new AccessibleClassBean();
+        bean.setName(clazz.getName());
+        bean.setSuperclass(Object.class.getName());
+        return bean;
     }
 
     @Test

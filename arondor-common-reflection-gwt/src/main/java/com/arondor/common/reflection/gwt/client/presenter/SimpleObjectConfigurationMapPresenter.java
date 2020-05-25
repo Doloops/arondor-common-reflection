@@ -18,6 +18,7 @@ package com.arondor.common.reflection.gwt.client.presenter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import com.arondor.common.reflection.bean.config.ObjectConfigurationFactoryBean;
 import com.arondor.common.reflection.bean.config.ObjectConfigurationMapBean;
@@ -35,6 +36,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
         implements ObjectConfigurationMapPresenter
 {
+    private static final Logger LOG = Logger.getLogger(SimpleObjectConfigurationMapPresenter.class.getName());
 
     private static final List<String> GENERIC_TYPES = new ArrayList<String>();
 
@@ -128,6 +130,7 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
                     .getElementConfiguration(objectConfigurationFactory);
             if (!(keyElementConfiguration instanceof PrimitiveConfiguration))
             {
+                LOG.warning("Skipping element because key is of class " + keyElementConfiguration.getClass().getName());
                 continue;
             }
             PrimitiveConfiguration primitiveKey = (PrimitiveConfiguration) keyElementConfiguration;
@@ -136,6 +139,8 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
                     .getElementConfiguration(objectConfigurationFactory);
             if (!(valueConfiguration instanceof ObjectConfiguration))
             {
+                LOG.warning(
+                        "Skipping element because value is of class " + keyElementConfiguration.getClass().getName());
                 continue;
             }
             ObjectConfiguration objectConfiguration = (ObjectConfiguration) valueConfiguration;
