@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.arondor.common</groupId>
 	<artifactId>arondor-common-reflection</artifactId>
@@ -30,26 +32,33 @@
 		<gwt.version>2.8.2</gwt.version>
 		<gwt.material.design.version>2.2</gwt.material.design.version>
 		<jdom.version>2.0.2</jdom.version>
+		
+		<log4j.version>2.13.3</log4j.version>
 	</properties>
 
 	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
 		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.16</version>
-			<scope>compile</scope>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>${log4j.version}</version>
 		</dependency>
+		<dependency>
+		  <groupId>org.apache.logging.log4j</groupId>
+		  <artifactId>log4j-1.2-api</artifactId>
+		  <version>${log4j.version}</version>
+		</dependency>		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.8.2</version>
+			<version>4.13</version>
 			<type>jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
-			<version>1.9.0</version>
+			<version>1.9.5</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
