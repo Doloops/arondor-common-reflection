@@ -3,6 +3,7 @@ package com.arondor.common.reflection.xstream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.arondor.common.reflection.bean.config.ListConfigurationBean;
@@ -22,12 +23,9 @@ public class GWTXStream2ObjectDefinitionConverterLL
 {
     private static final Logger LOG = Logger.getLogger(GWTXStream2ObjectDefinitionConverterLL.class.getName());
 
-    private String classAttributeName = "class";
+    private static final boolean DEBUG = LOG.isLoggable(Level.FINEST);
 
-    private static void debug(String message)
-    {
-        LOG.info("GWTX2OLL " + message);
-    }
+    private String classAttributeName = "class";
 
     public String getClassAttributeName()
     {
@@ -62,7 +60,8 @@ public class GWTXStream2ObjectDefinitionConverterLL
 
     protected ObjectConfiguration parseObject(Element objectElement, String guessedParentClass)
     {
-        debug("parseObject() objectElement=" + objectElement.getNodeName());
+        if (DEBUG)
+            LOG.finest("parseObject() objectElement=" + objectElement.getNodeName());
         ObjectConfiguration oc = new ObjectConfigurationBean();
         if (guessedParentClass == null)
         {
@@ -72,7 +71,8 @@ public class GWTXStream2ObjectDefinitionConverterLL
         oc.setFields(new HashMap<String, ElementConfiguration>());
         for (Node childNode = objectElement.getFirstChild(); childNode != null; childNode = childNode.getNextSibling())
         {
-            debug("* parseObject() childNode=" + childNode.getNodeType() + " - " + childNode.getNodeName());
+            if (DEBUG)
+                LOG.finest("* parseObject() childNode=" + childNode.getNodeType() + " - " + childNode.getNodeName());
             switch (childNode.getNodeType())
             {
             case Node.TEXT_NODE:
@@ -95,7 +95,8 @@ public class GWTXStream2ObjectDefinitionConverterLL
                 break;
             }
             default:
-                debug("Not handled : type " + childNode.getNodeType());
+                if (DEBUG)
+                    LOG.finest("Not handled : type " + childNode.getNodeType());
             }
         }
 
@@ -122,7 +123,8 @@ public class GWTXStream2ObjectDefinitionConverterLL
         {
             guessedClass = element.getAttribute("class");
         }
-        debug("* parseElement() element=" + element.getNodeName() + ", guessedClass=" + guessedClass);
+        if (DEBUG)
+            LOG.finest("* parseElement() element=" + element.getNodeName() + ", guessedClass=" + guessedClass);
         if (element.getChildNodes().getLength() == 1 && element.getFirstChild().getNodeType() == Node.TEXT_NODE)
         {
             String nodeValue = element.getFirstChild().getNodeValue();
@@ -130,31 +132,36 @@ public class GWTXStream2ObjectDefinitionConverterLL
             {
                 return null;
             }
-            debug("Primitive type : " + element.getNodeName() + "=" + nodeValue);
+            if (DEBUG)
+                LOG.finest("Primitive type : " + element.getNodeName() + "=" + nodeValue);
             PrimitiveConfiguration pc = new PrimitiveConfigurationBean();
             pc.setValue(nodeValue);
             return pc;
         }
         if (guessedClass != null && !isList(guessedClass))
         {
-            debug("* parseElement() this is an explicit object : '" + guessedClass + "'");
+            if (DEBUG)
+                LOG.finest("* parseElement() this is an explicit object : '" + guessedClass + "'");
             return parseObject(element, guessedClass);
         }
         if (element.getChildNodes().getLength() == 1 && element.getFirstChild() instanceof Element
                 && element.getFirstChild().getNodeName().equals("map"))
         {
             MapConfiguration mapConfiguration = parseMap((Element) element.getFirstChild());
-            debug("* parseElement(" + element.getNodeName() + ") : map with "
-                    + mapConfiguration.getMapConfiguration().size() + " items.");
+            if (DEBUG)
+                LOG.finest("* parseElement(" + element.getNodeName() + ") : map with "
+                        + mapConfiguration.getMapConfiguration().size() + " items.");
             return mapConfiguration;
         }
         List<Element> elements = elementsList(element.getChildNodes());
         if (elements.size() > 1 || (elements.size() == 1 && isPrimitive(elements.get(0))) || isList(guessedClass))
         {
-            debug("* parseElement() this is a list !");
+            if (DEBUG)
+                LOG.finest("* parseElement() this is a list !");
             return parseList(elements);
         }
-        debug("* parseElement() this is a ... I don't know, object ?");
+        if (DEBUG)
+            LOG.finest("* parseElement() this is a ... I don't know, object ?");
         return parseObject(element, guessedClass);
     }
 
@@ -166,13 +173,16 @@ public class GWTXStream2ObjectDefinitionConverterLL
     private boolean isPrimitive(Element element)
     {
         String nodeName = element.getNodeName();
-        debug("isPrimitive(" + nodeName + ")");
+        if (DEBUG)
+            LOG.finest("isPrimitive(" + nodeName + ")");
         if (nodeName.equals("float") || nodeName.equals("int") || nodeName.equals("string"))
         {
-            debug("isPrimitive(" + nodeName + ") => true");
+            if (DEBUG)
+                LOG.finest("isPrimitive(" + nodeName + ") => true");
             return true;
         }
-        debug("isPrimitive(" + nodeName + ") => false");
+        if (DEBUG)
+            LOG.finest("isPrimitive(" + nodeName + ") => false");
         return false;
     }
 
