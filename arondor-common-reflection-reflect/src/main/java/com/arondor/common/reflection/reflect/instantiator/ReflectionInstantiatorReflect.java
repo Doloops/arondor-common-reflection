@@ -48,6 +48,18 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
 
     private AccessibleClassParser accessibleClassParser;
 
+    private ClassLoader classLoader = this.getClass().getClassLoader();
+
+    public ClassLoader getClassLoader()
+    {
+        return classLoader;
+    }
+
+    public void setClassLoader(ClassLoader classLoader)
+    {
+        this.classLoader = classLoader;
+    }
+
     public synchronized AccessibleClassParser getAccessibleClassParser()
     {
         if (accessibleClassParser == null)
@@ -105,7 +117,7 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
         Class<?> clazz = localClassCache.get(className);
         if (clazz == null)
         {
-            clazz = this.getClass().getClassLoader().loadClass(className);
+            clazz = classLoader.loadClass(className);
             localClassCache.put(className, clazz);
         }
         return clazz;
