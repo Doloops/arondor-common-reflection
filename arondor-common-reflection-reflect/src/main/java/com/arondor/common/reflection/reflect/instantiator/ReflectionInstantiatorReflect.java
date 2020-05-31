@@ -212,31 +212,31 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
         }
         catch (ClassNotFoundException e)
         {
-            throw new RuntimeException("Could resolve class " + className, e);
+            throw new RuntimeException("Could not resolve class " + className, e);
         }
         catch (InstantiationException e)
         {
-            throw new RuntimeException("Could resolve class " + className, e);
+            throw new RuntimeException("Could not resolve class " + className, e);
         }
         catch (NoSuchMethodException e)
         {
-            throw new RuntimeException("Could resolve class " + className, e);
+            throw new RuntimeException("Could not resolve class " + className, e);
         }
         catch (SecurityException e)
         {
-            throw new RuntimeException("Could resolve class " + className, e);
+            throw new RuntimeException("Could not resolve class " + className, e);
         }
         catch (IllegalAccessException e)
         {
-            throw new RuntimeException("Could resolve class " + className, e);
+            throw new RuntimeException("Could not resolve class " + className, e);
         }
         catch (IllegalArgumentException e)
         {
-            throw new RuntimeException("Could resolve class " + className, e);
+            throw new RuntimeException("Could not resolve class " + className, e);
         }
         catch (InvocationTargetException e)
         {
-            throw new RuntimeException("Could resolve class " + className, e);
+            throw new RuntimeException("Could not resolve class " + className, e);
         }
 
     }
