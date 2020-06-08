@@ -28,6 +28,7 @@ import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
 import com.arondor.common.reflection.model.config.ReferenceConfiguration;
 import com.arondor.common.reflection.reflect.testclasses.TestClassA;
+import com.arondor.common.reflection.reflect.testclasses.TestClassA1;
 import com.arondor.common.reflection.reflect.testclasses.TestClassB;
 import com.arondor.common.reflection.reflect.testclasses.TestClassC;
 import com.arondor.common.reflection.reflect.testclasses.TestClassC.EnumValue;
@@ -100,6 +101,52 @@ public class TestReflectionInstantiatorReflect
         TestClassA classA = (TestClassA) objectA;
 
         assertEquals(null, classA.getProperty1());
+    }
+
+    @Test
+    public void testInstantiateClassA1_Null_StringPrimitive() throws ReflectionException
+    {
+        ObjectConfiguration configuration = objectConfigurationFactory.createObjectConfiguration();
+        configuration.setClassName(TestClassA1.class.getName());
+
+        configuration.setFields(new HashMap<String, ElementConfiguration>());
+
+        configuration.getFields().put("property1", objectConfigurationFactory.createPrimitiveConfiguration(null));
+
+        Object objectA = reflectionInstantiator.instanciateObject(configuration, Object.class, instantationContext);
+        assertNotNull(objectA);
+
+        assertEquals(TestClassA1.class, objectA.getClass());
+        assertTrue(objectA instanceof TestClassA1);
+
+        TestClassA1 classA = (TestClassA1) objectA;
+
+        assertEquals(null, classA.getProperty1());
+    }
+
+    @Test
+    public void testInstantiateClassA1_Null_ObjectConfiguration() throws ReflectionException
+    {
+        ObjectConfiguration configuration = objectConfigurationFactory.createObjectConfiguration();
+        configuration.setClassName(TestClassA1.class.getName());
+
+        configuration.setFields(new HashMap<String, ElementConfiguration>());
+
+        configuration.getFields().put("property1", null);
+
+        Object objectA = reflectionInstantiator.instanciateObject(configuration, Object.class, instantationContext);
+        assertNotNull(objectA);
+
+        assertEquals(TestClassA1.class, objectA.getClass());
+        assertTrue(objectA instanceof TestClassA1);
+
+        TestClassA1 classA = (TestClassA1) objectA;
+
+        /**
+         * Default configuration is to skip null ElementConfiguration, so the
+         * default shall remain
+         */
+        assertEquals("DefaultString", classA.getProperty1());
     }
 
     @Test

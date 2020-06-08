@@ -42,6 +42,15 @@ import com.arondor.common.reflection.parser.java.JavaAccessibleClassParser;
 import com.arondor.common.reflection.reflect.runtime.SimpleInstantiationContext;
 import com.arondor.common.reflection.util.StrongReference;
 
+/**
+ * Implementation of {@link ReflectionInstantiator} based on Java reflection (as
+ * opposed to runtimes without reflection, such as GWT).
+ * 
+ * This is somewhat just a partial rewrite of spring-beans.
+ * 
+ * @author Francois Barre
+ *
+ */
 public class ReflectionInstantiatorReflect implements ReflectionInstantiator
 {
     private final static Logger LOG = Logger.getLogger(ReflectionInstantiatorReflect.class);
@@ -49,6 +58,18 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
     private AccessibleClassParser accessibleClassParser;
 
     private ClassLoader classLoader = this.getClass().getClassLoader();
+
+    /**
+     * Determine if errors in field settings shall throw exceptions
+     */
+    private boolean haltOnFieldSettingExceptions = false;
+
+    /**
+     * Determine if null {@link ElementConfiguration}s in fields should be
+     * skipped. This is a sane default but prevents overriding existing fields
+     * back to null.
+     */
+    private boolean skipNullFieldConfigurations = true;
 
     public ClassLoader getClassLoader()
     {
@@ -343,28 +364,36 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
             AccessibleField accessibleField = accessibleClass.getAccessibleFields().get(fieldName);
             if (accessibleField == null)
             {
-                throw new InstantiationException("Invalid field name : " + fieldName);
+                LOG.error("Invalid field name " + fieldName + " at class " + accessibleClass.getName());
+                if (isHaltOnFieldSettingExceptions())
+                    throw new InstantiationException(
+                            "Invalid field name " + fieldName + " at class " + accessibleClass.getName());
+                continue;
             }
             String fieldClassName = accessibleField.getClassName();
             Method setterMethod = getSetterMethod(objectConfiguration.getClassName(), setterName, fieldClassName);
             ElementConfiguration fieldConfiguration = fieldEntry.getValue();
 
-            T fieldObject = (T) instantiateElementConfiguration(fieldConfiguration, fieldClassName, context);
+            if (fieldConfiguration == null)
+            {
+                LOG.warn("Field configuration for " + fieldName + " of Class " + accessibleClass.getName()
+                        + " is null : " + (isSkipNullFieldConfigurations() ? "Skipping." : "Trying."));
+                if (isSkipNullFieldConfigurations())
+                    continue;
+            }
+
             try
             {
+                T fieldObject = (T) instantiateElementConfiguration(fieldConfiguration, fieldClassName, context);
                 setterMethod.invoke(object, fieldObject);
             }
-            catch (IllegalArgumentException e)
+            catch (RuntimeException e)
             {
-                if (fieldObject == null)
-                {
-                    LOG.error("While setting " + fieldName + " on class " + object.getClass().getName() + ", caught "
-                            + e.getMessage());
-                }
-                else
-                {
-                    throw e;
-                }
+                LOG.error("While setting " + fieldName + " on class " + object.getClass().getName() + ", caught "
+                        + e.getMessage(), e);
+                if (isHaltOnFieldSettingExceptions())
+                    throw new RuntimeException("While setting " + fieldName + " on class " + object.getClass().getName()
+                            + ", caught " + e.getMessage(), e);
             }
         }
     }
@@ -423,5 +452,25 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
                 objectInstanciationHook.remove(hook);
             }
         };
+    }
+
+    public boolean isHaltOnFieldSettingExceptions()
+    {
+        return haltOnFieldSettingExceptions;
+    }
+
+    public void setHaltOnFieldSettingExceptions(boolean haltOnFieldSettingExceptions)
+    {
+        this.haltOnFieldSettingExceptions = haltOnFieldSettingExceptions;
+    }
+
+    public boolean isSkipNullFieldConfigurations()
+    {
+        return skipNullFieldConfigurations;
+    }
+
+    public void setSkipNullFieldConfigurations(boolean skipNullFieldConfigurations)
+    {
+        this.skipNullFieldConfigurations = skipNullFieldConfigurations;
     }
 }
