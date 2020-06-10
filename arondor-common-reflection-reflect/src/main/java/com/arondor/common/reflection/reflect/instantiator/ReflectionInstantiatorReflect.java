@@ -381,6 +381,14 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
                 if (isSkipNullFieldConfigurations())
                     continue;
             }
+            if (fieldConfiguration instanceof PrimitiveConfiguration
+                    && ((PrimitiveConfiguration) fieldConfiguration).getValue() == null)
+            {
+                LOG.warn("Primitive field configuration for " + fieldName + " of Class " + accessibleClass.getName()
+                        + " has null value : " + (isSkipNullFieldConfigurations() ? "Skipping." : "Trying."));
+                if (isSkipNullFieldConfigurations())
+                    continue;
+            }
 
             try
             {
