@@ -23,6 +23,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
 
 import org.apache.log4j.Logger;
 
@@ -208,50 +209,68 @@ public abstract class AbstractJavaAccessibleClassProvider implements AccessibleC
         doScanJar(catalog, pathFile);
     }
 
-    protected void doScanJar(AccessibleClassCatalog catalog, File pathFile)
+    protected void doScanJar(AccessibleClassCatalog catalog, File jarPath)
     {
-        LOG.debug("Openning jar '" + pathFile.getAbsolutePath() + "'");
-        JarFile jarFile = null;
-        try
+        LOG.debug("Openning jar '" + jarPath.getAbsolutePath() + "'");
+        try (JarFile jarFile = new JarFile(jarPath))
         {
-            jarFile = new JarFile(pathFile);
-            Enumeration<JarEntry> entries = jarFile.entries();
-            while (entries.hasMoreElements())
+            doScanJar(catalog, jarFile);
+        }
+        catch (IOException | RuntimeException e)
+        {
+            LOG.error("Could not scan jar : " + jarPath.getAbsolutePath(), e);
+        }
+    }
+
+    private void doScanSubJar(AccessibleClassCatalog catalog, JarFile parentJar, JarEntry jarEntry) throws IOException
+    {
+        LOG.debug("Openning jar '" + jarEntry.getName() + "'");
+        JarInputStream jis = new JarInputStream(parentJar.getInputStream(jarEntry));
+        while (true)
+        {
+            JarEntry childEntry = jis.getNextJarEntry();
+            if (childEntry == null)
+                break;
+            processEntryAsClass(catalog, childEntry);
+        }
+    }
+
+    private void processEntryAsClass(AccessibleClassCatalog catalog, JarEntry entry)
+    {
+        if (entry.getName().endsWith(".class") && !entry.getName().contains("$"))
+        {
+
+            String clz = entry.getName().substring(0, entry.getName().length() - ".class".length());
+
+            /**
+             * Regardless on which platform we are on, convert both \\ and / to
+             * a dot.
+             */
+            clz = clz.replace('\\', '.').replace('/', '.');
+            if (isClassInPackagePrefixes(clz))
             {
-                JarEntry entry = entries.nextElement();
-                LOG.debug("Opening entry : " + entry.getName());
-                if (entry.getName().endsWith(".class") && !entry.getName().contains("$"))
-                {
-
-                    String clz = entry.getName().substring(0, entry.getName().length() - ".class".length());
-
-                    /**
-                     * Regardless on which platform we are on, convert both \\
-                     * and / to a dot.
-                     */
-                    clz = clz.replace('\\', '.').replace('/', '.');
-                    if (isClassInPackagePrefixes(clz))
-                    {
-                        addClass(catalog, clz);
-                    }
-                }
+                addClass(catalog, clz);
             }
         }
-        catch (Throwable t)
+    }
+
+    protected void doScanJar(AccessibleClassCatalog catalog, JarFile jarFile)
+    {
+        Enumeration<JarEntry> entries = jarFile.entries();
+        while (entries.hasMoreElements())
         {
-            LOG.error("Could not scan jar : " + pathFile.getAbsolutePath(), t);
-        }
-        finally
-        {
-            if (jarFile != null)
+            JarEntry entry = entries.nextElement();
+            LOG.debug("Opening entry : " + entry.getName());
+            processEntryAsClass(catalog, entry);
+            if (entry.getName().endsWith(".jar"))
             {
                 try
                 {
-                    jarFile.close();
+                    doScanSubJar(catalog, jarFile, entry);
                 }
                 catch (IOException e)
                 {
-                    LOG.error("Could not close jar : " + pathFile.getAbsolutePath());
+                    LOG.error("Could not read entry " + entry.getName() + " in " + jarFile.getName());
                 }
             }
         }

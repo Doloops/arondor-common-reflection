@@ -16,6 +16,11 @@
 package com.arondor.common.reflection.parser.java;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.jar.Manifest;
 
 import org.apache.log4j.Logger;
 
@@ -31,6 +36,9 @@ public class JavaClassPathAccessibleClassProvider extends AbstractJavaAccessible
 {
     private static final Logger LOG = Logger.getLogger(JavaAccessibleClassParser.class);
 
+    private String extraClassPath;
+
+    @Override
     public void provideClasses(AccessibleClassCatalog catalog)
     {
         doParse(catalog);
@@ -44,12 +52,47 @@ public class JavaClassPathAccessibleClassProvider extends AbstractJavaAccessible
             LOG.info("* " + prefix);
         }
 
-        doScanClasspathForPackages(catalog);
+        String classpath = System.getProperty("java.class.path");
+        doScanClasspathForPackages(catalog, classpath);
+
+        String loaderpath = System.getProperty("loader.path");
+        if (loaderpath != null)
+        {
+            doScanClasspathForPackages(catalog, loaderpath);
+        }
+        if (extraClassPath != null)
+        {
+            doScanClasspathForPackages(catalog, extraClassPath);
+        }
     }
 
-    protected void doScanClasspathForPackages(AccessibleClassCatalog catalog)
+    private String readManifestLoaderPath() throws IOException
     {
-        String classpath = System.getProperty("java.class.path");
+        Enumeration<URL> urls = getClass().getClassLoader().getResources("META-INF/MANIFEST.MF");
+
+        for (URL url = urls.nextElement(); urls.hasMoreElements(); url = urls.nextElement())
+        {
+            LOG.info("At manifest : " + url);
+            try (InputStream is = url.openStream())
+            {
+                LOG.info("Manifest at " + is);
+                if (is == null)
+                    return null;
+                Manifest manifest = new Manifest(is);
+                LOG.info("Manifest is " + manifest);
+                manifest.getMainAttributes().keySet().forEach(x -> LOG.info("Main attr key=" + x));
+
+                manifest.getEntries().keySet().forEach(x -> LOG.info("Entries key=" + x));
+                Object attr = manifest.getMainAttributes().get("Loader-Path");
+                if (attr != null)
+                    return attr.toString();
+            }
+        }
+        return null;
+    }
+
+    protected void doScanClasspathForPackages(AccessibleClassCatalog catalog, String classpath)
+    {
         LOG.info("Scanning classpath : " + classpath);
         char separator[] = { File.pathSeparatorChar };
         String classpathItem[] = classpath.split(new String(separator));
@@ -71,6 +114,16 @@ public class JavaClassPathAccessibleClassProvider extends AbstractJavaAccessible
                 LOG.warn("Do not known how to handle classpath : " + pathFile.getAbsolutePath());
             }
         }
+    }
+
+    public String getExtraClassPath()
+    {
+        return extraClassPath;
+    }
+
+    public void setExtraClassPath(String extraClassPath)
+    {
+        this.extraClassPath = extraClassPath;
     }
 
 }

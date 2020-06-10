@@ -249,7 +249,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
             setFieldDeclaredInClass(field, method.getDeclaringClass());
             if (!field.getClassName().equals(fieldType.getName()))
             {
-                LOG.warn("Incompatible setter type at class " + clazz.getName() + ", getter said "
+                LOG.debug("Incompatible setter type at class " + clazz.getName() + ", getter said "
                         + field.getClassName() + ", setter said " + fieldType.getName());
                 // LOG.warn("Overriding getter type to the setter type " +
                 // fieldType.getName());
@@ -285,7 +285,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
             }
             else
             {
-                LOG.warn("Field " + field.getName() + " already declared in class " + field.getDeclaredInClass()
+                LOG.debug("Field " + field.getName() + " already declared in class " + field.getDeclaredInClass()
                         + ", now said to be declared (or overridden) in " + declaredClass.getName());
                 return;
             }
@@ -382,7 +382,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         {
             if (!propertyClass.getName().equals(attributeInfo.getClassName()))
             {
-                LOG.warn("Diverging classes at setter for class " + clazz.getName() + ", property " + propertyName
+                LOG.debug("Diverging classes at setter for class " + clazz.getName() + ", property " + propertyName
                         + " : was " + attributeInfo.getClassName() + ", now is " + propertyClass.getName());
             }
         }
@@ -512,7 +512,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         }
         catch (NoClassDefFoundError e)
         {
-            LOG.warn("Could not get methods for clazz " + clazz.getName(), e);
+            LOG.debug("Could not get methods for clazz " + clazz.getName(), e);
             return null;
         }
         AccessibleClassBean accessClass = createBaseAccessibleClass(clazz);
