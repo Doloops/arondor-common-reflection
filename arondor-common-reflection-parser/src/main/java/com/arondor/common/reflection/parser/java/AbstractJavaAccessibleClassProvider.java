@@ -285,11 +285,11 @@ public abstract class AbstractJavaAccessibleClassProvider implements AccessibleC
         }
         catch (ClassNotFoundException e)
         {
-            LOG.error("Could not get class for name : " + className, e);
+            LOG.error("Could not get class for name : " + className);
         }
         catch (NoClassDefFoundError e)
         {
-            LOG.error("Could not get class for name : " + className, e);
+            LOG.error("Could not get class for name : " + className);
         }
     }
 
