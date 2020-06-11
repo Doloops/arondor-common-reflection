@@ -10,6 +10,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -98,14 +101,10 @@ public class TestAsyncInstantiator
         classes.add(parser.parseAccessibleClass(TestClass1.class));
 
         AsyncPackages asyncPackages = new AsyncPackages();
-        asyncPackages.put(
-                "module1",
-                Lists.newArrayList(parser.parseAccessibleClass(TestModule1Class1.class),
-                        parser.parseAccessibleClass(TestModule1Class2.class)));
-        asyncPackages.put(
-                "module2",
-                Lists.newArrayList(parser.parseAccessibleClass(TestModule2Class1.class),
-                        parser.parseAccessibleClass(TestModule2Class2.class)));
+        asyncPackages.put("module1", Lists.newArrayList(parser.parseAccessibleClass(TestModule1Class1.class),
+                parser.parseAccessibleClass(TestModule1Class2.class)));
+        asyncPackages.put("module2", Lists.newArrayList(parser.parseAccessibleClass(TestModule2Class1.class),
+                parser.parseAccessibleClass(TestModule2Class2.class)));
 
         NoReflectRegistrarGenerator gen = new NoReflectRegistrarGenerator();
 
@@ -149,6 +148,23 @@ public class TestAsyncInstantiator
         javax.tools.JavaCompiler javaCompiler = javax.tools.ToolProvider.getSystemJavaCompiler();
         int result = javaCompiler.run(null, null, null, "-Xlint:unchecked", "-d", "target/classes/", path);
         LOG.info("Compile result : " + result);
+
+        try
+        {
+            URL[] urls = { new URL("file://target/classes/") };
+            URLClassLoader urlClassLoader = new URLClassLoader(urls, getClass().getClassLoader());
+            if (urlClassLoader != null)
+            {
+                Class<?> clazz = urlClassLoader.loadClass(completeClassName);
+                LOG.info("Loaded class : " + clazz.getName());
+                return clazz;
+            }
+        }
+        catch (RuntimeException | MalformedURLException e)
+        {
+            LOG.error("Caught " + e.getMessage());
+        }
+
         ClassLoader classLoader = javax.tools.ToolProvider.getSystemToolClassLoader();
 
         Class<?> clazz = classLoader.loadClass(completeClassName);
@@ -278,26 +294,25 @@ public class TestAsyncInstantiator
 
         final CountDownLatch latch = new CountDownLatch(1);
 
-        asyncInstantiator.instanciateObject(root, Object.class, instantationContext,
-                new InstantiationCallback<Object>()
-                {
-                    @Override
-                    public void onFailure(Throwable caught)
-                    {
-                        Assert.fail("Failed : " + caught);
-                    }
+        asyncInstantiator.instanciateObject(root, Object.class, instantationContext, new InstantiationCallback<Object>()
+        {
+            @Override
+            public void onFailure(Throwable caught)
+            {
+                Assert.fail("Failed : " + caught);
+            }
 
-                    @Override
-                    public void onSuccess(Object result)
-                    {
-                        assertNotNull(result);
-                        assertTrue(result instanceof TestClass1);
-                        TestClass1 testClass1 = (TestClass1) result;
-                        assertNotNull(testClass1.getTestModule1Class1());
+            @Override
+            public void onSuccess(Object result)
+            {
+                assertNotNull(result);
+                assertTrue(result instanceof TestClass1);
+                TestClass1 testClass1 = (TestClass1) result;
+                assertNotNull(testClass1.getTestModule1Class1());
 
-                        latch.countDown();
-                    }
-                });
+                latch.countDown();
+            }
+        });
 
         latch.await();
     }
@@ -322,28 +337,27 @@ public class TestAsyncInstantiator
 
         final CountDownLatch latch = new CountDownLatch(1);
 
-        asyncInstantiator.instanciateObject(root, Object.class, instantationContext,
-                new InstantiationCallback<Object>()
-                {
-                    @Override
-                    public void onFailure(Throwable caught)
-                    {
-                    }
+        asyncInstantiator.instanciateObject(root, Object.class, instantationContext, new InstantiationCallback<Object>()
+        {
+            @Override
+            public void onFailure(Throwable caught)
+            {
+            }
 
-                    @Override
-                    public void onSuccess(Object result)
-                    {
-                        assertNotNull(result);
-                        assertTrue(result instanceof TestClass1);
-                        TestClass1 testClass1 = (TestClass1) result;
-                        assertNotNull(testClass1.getTestModule1Class1());
+            @Override
+            public void onSuccess(Object result)
+            {
+                assertNotNull(result);
+                assertTrue(result instanceof TestClass1);
+                TestClass1 testClass1 = (TestClass1) result;
+                assertNotNull(testClass1.getTestModule1Class1());
 
-                        TestModule1Class1 testModule1Class1 = testClass1.getTestModule1Class1();
+                TestModule1Class1 testModule1Class1 = testClass1.getTestModule1Class1();
 
-                        assertNotNull(testModule1Class1.getTestModule2Class1());
-                        latch.countDown();
-                    }
-                });
+                assertNotNull(testModule1Class1.getTestModule2Class1());
+                latch.countDown();
+            }
+        });
 
         latch.await();
     }
@@ -380,47 +394,46 @@ public class TestAsyncInstantiator
 
         final long start = System.currentTimeMillis();
 
-        asyncInstantiator.instanciateObject(root, Object.class, instantationContext,
-                new InstantiationCallback<Object>()
+        asyncInstantiator.instanciateObject(root, Object.class, instantationContext, new InstantiationCallback<Object>()
+        {
+            @Override
+            public void onFailure(Throwable caught)
+            {
+            }
+
+            @Override
+            public void onSuccess(Object result)
+            {
+                final long end = System.currentTimeMillis();
+
+                LOG.info("Instantiation took :" + (end - start) + "ms");
+
+                assertNotNull(result);
+                assertTrue(result instanceof TestClass1);
+                TestClass1 testClass1 = (TestClass1) result;
+                assertNotNull(testClass1.getTestModule1Class1());
+
+                TestModule1Class1 testModule1Class1 = testClass1.getTestModule1Class1();
+
+                for (int cycle = 0; cycle < maxCycle; cycle++)
                 {
-                    @Override
-                    public void onFailure(Throwable caught)
+                    TestModule2Class1 testModule2Class1 = testModule1Class1.getTestModule2Class1();
+                    assertNotNull(testModule2Class1);
+                    assertNotSame(testModule1Class1, testModule2Class1.getTestModule1Class1());
+                    testModule1Class1 = testModule2Class1.getTestModule1Class1();
+                    if (cycle < maxCycle - 1)
                     {
+                        assertNotNull(testModule1Class1);
                     }
-
-                    @Override
-                    public void onSuccess(Object result)
+                    else
                     {
-                        final long end = System.currentTimeMillis();
-
-                        LOG.info("Instantiation took :" + (end - start) + "ms");
-
-                        assertNotNull(result);
-                        assertTrue(result instanceof TestClass1);
-                        TestClass1 testClass1 = (TestClass1) result;
-                        assertNotNull(testClass1.getTestModule1Class1());
-
-                        TestModule1Class1 testModule1Class1 = testClass1.getTestModule1Class1();
-
-                        for (int cycle = 0; cycle < maxCycle; cycle++)
-                        {
-                            TestModule2Class1 testModule2Class1 = testModule1Class1.getTestModule2Class1();
-                            assertNotNull(testModule2Class1);
-                            assertNotSame(testModule1Class1, testModule2Class1.getTestModule1Class1());
-                            testModule1Class1 = testModule2Class1.getTestModule1Class1();
-                            if (cycle < maxCycle - 1)
-                            {
-                                assertNotNull(testModule1Class1);
-                            }
-                            else
-                            {
-                                assertNull(testModule1Class1);
-                                LOG.info("End of cycle:" + cycle);
-                            }
-                        }
-                        latch.countDown();
+                        assertNull(testModule1Class1);
+                        LOG.info("End of cycle:" + cycle);
                     }
-                });
+                }
+                latch.countDown();
+            }
+        });
 
         latch.await();
     }

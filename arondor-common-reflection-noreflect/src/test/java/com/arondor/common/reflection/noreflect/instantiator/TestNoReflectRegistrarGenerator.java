@@ -5,8 +5,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ServiceLoader;
 
 import org.apache.log4j.Logger;
 import org.junit.Before;
@@ -35,7 +40,7 @@ public class TestNoReflectRegistrarGenerator extends TestNoReflectSharedTests
     private final static Logger LOG = Logger.getLogger(TestNoReflectRegistrarGenerator.class);
 
     private void doGenerate() throws FileNotFoundException, ClassNotFoundException, NoSuchMethodException,
-            SecurityException, InstantiationException, IllegalAccessException
+            SecurityException, InstantiationException, IllegalAccessException, MalformedURLException
     {
         parser = new JavaAccessibleClassParser();
 
@@ -92,24 +97,47 @@ public class TestNoReflectRegistrarGenerator extends TestNoReflectSharedTests
         this.instantationContext = noReflect.createDefaultInstantiationContext();
     }
 
-    private Class<?> runtimeCompileAndLoadClass(String path, String completeClassName) throws ClassNotFoundException
+    private Class<?> runtimeCompileAndLoadClass(String path, String completeClassName)
+            throws ClassNotFoundException, MalformedURLException
     {
         @SuppressWarnings("restriction")
         javax.tools.JavaCompiler javaCompiler = javax.tools.ToolProvider.getSystemJavaCompiler();
         @SuppressWarnings("restriction")
         int result = javaCompiler.run(null, null, null, "-Xlint:unchecked", "-d", "target/classes/", path);
         LOG.info("Compile result : " + result);
+
+        URL[] urls = { new URL("file://target/classes/") };
+        URLClassLoader urlClassLoader = new URLClassLoader(urls, getClass().getClassLoader());
+        if (urlClassLoader != null)
+        {
+            Class<?> clazz = urlClassLoader.loadClass(completeClassName);
+            LOG.info("Loaded class : " + clazz.getName());
+            return clazz;
+        }
+
         @SuppressWarnings("restriction")
         ClassLoader classLoader = javax.tools.ToolProvider.getSystemToolClassLoader();
+        if (classLoader != null)
+        {
+            Class<?> clazz = classLoader.loadClass(completeClassName);
+            LOG.info("Loaded class : " + clazz.getName());
+            return clazz;
+        }
 
-        Class<?> clazz = classLoader.loadClass(completeClassName);
-        LOG.info("Loaded class : " + clazz.getName());
-        return clazz;
+        Iterator<ClassLoader> classLoaders = ServiceLoader.load(ClassLoader.class).iterator();
+        while (classLoaders.hasNext())
+        {
+            ClassLoader cl = classLoaders.next();
+            Class<?> clazz = cl.loadClass(completeClassName);
+            LOG.info("Loaded class : " + clazz.getName());
+            return clazz;
+        }
+        throw new RuntimeException("Could not load class " + completeClassName + " from path " + path);
     }
 
     @Before
     public void initialize() throws FileNotFoundException, ClassNotFoundException, NoSuchMethodException,
-            SecurityException, InstantiationException, IllegalAccessException
+            SecurityException, InstantiationException, IllegalAccessException, MalformedURLException
     {
         doGenerate();
     }

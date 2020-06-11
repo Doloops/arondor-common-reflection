@@ -104,7 +104,7 @@ public class TestReflectionInstantiatorReflect
     }
 
     @Test
-    public void testInstantiateClassA1_Null_StringPrimitive() throws ReflectionException
+    public void testInstantiateClassA1_Null_StringPrimitive_NO_null_override() throws ReflectionException
     {
         ObjectConfiguration configuration = objectConfigurationFactory.createObjectConfiguration();
         configuration.setClassName(TestClassA1.class.getName());
@@ -113,6 +113,28 @@ public class TestReflectionInstantiatorReflect
 
         configuration.getFields().put("property1", objectConfigurationFactory.createPrimitiveConfiguration(null));
 
+        Object objectA = reflectionInstantiator.instanciateObject(configuration, Object.class, instantationContext);
+        assertNotNull(objectA);
+
+        assertEquals(TestClassA1.class, objectA.getClass());
+        assertTrue(objectA instanceof TestClassA1);
+
+        TestClassA1 classA = (TestClassA1) objectA;
+
+        assertEquals("DefaultString", classA.getProperty1());
+    }
+
+    @Test
+    public void testInstantiateClassA1_Null_StringPrimitive_WITH_null_override() throws ReflectionException
+    {
+        ObjectConfiguration configuration = objectConfigurationFactory.createObjectConfiguration();
+        configuration.setClassName(TestClassA1.class.getName());
+
+        configuration.setFields(new HashMap<String, ElementConfiguration>());
+
+        configuration.getFields().put("property1", objectConfigurationFactory.createPrimitiveConfiguration(null));
+
+        ((ReflectionInstantiatorReflect) reflectionInstantiator).setSkipNullFieldConfigurations(false);
         Object objectA = reflectionInstantiator.instanciateObject(configuration, Object.class, instantationContext);
         assertNotNull(objectA);
 
