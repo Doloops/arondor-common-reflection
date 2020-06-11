@@ -48,12 +48,10 @@ public class DefaultGWTReflectionService extends RemoteServiceServlet implements
         accessibleClassProvider.provideClasses(defaultReflectionService.getAccessibleClassCatalog());
     }
 
-    @Override
-    protected ReflectionService getReflectionService()
+    private ReflectionService getReflectionService()
     {
         return ReflectionServiceFactory.getInstance().getReflectionService();
     }
-    
 
     @Override
     public AccessibleClass getAccessibleClass(String className)
