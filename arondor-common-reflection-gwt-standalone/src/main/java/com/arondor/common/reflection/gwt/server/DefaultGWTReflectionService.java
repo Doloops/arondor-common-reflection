@@ -15,15 +15,21 @@
  */
 package com.arondor.common.reflection.gwt.server;
 
+import java.rmi.RemoteException;
+import java.util.Collection;
+
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.arondor.common.reflection.api.parser.AccessibleClassProvider;
 import com.arondor.common.reflection.api.service.ReflectionService;
+import com.arondor.common.reflection.gwt.client.service.GWTReflectionService;
+import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.arondor.common.reflection.service.DefaultReflectionService;
 import com.arondor.common.reflection.service.ReflectionServiceFactory;
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-public class DefaultGWTReflectionService extends GWTReflectionServiceStub
+public class DefaultGWTReflectionService extends RemoteServiceServlet implements GWTReflectionService
 {
     /**
      * 
@@ -46,5 +52,32 @@ public class DefaultGWTReflectionService extends GWTReflectionServiceStub
     protected ReflectionService getReflectionService()
     {
         return ReflectionServiceFactory.getInstance().getReflectionService();
+    }
+    
+
+    @Override
+    public AccessibleClass getAccessibleClass(String className)
+    {
+        try
+        {
+            return getReflectionService().getAccessibleClass(className);
+        }
+        catch (RemoteException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Collection<AccessibleClass> getImplementingAccessibleClasses(String name)
+    {
+        try
+        {
+            return getReflectionService().getImplementingAccessibleClasses(name);
+        }
+        catch (RemoteException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 }

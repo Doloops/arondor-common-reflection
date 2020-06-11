@@ -16,8 +16,12 @@
 package com.arondor.common.reflection.service;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -52,26 +56,38 @@ public class DefaultReflectionService implements ReflectionService
         setAccessibleClassCatalog(AccessibleClassCatalagParser.parseFromResource(resource));
     }
 
+    private List<Pattern> compiledFilters = new ArrayList<Pattern>();
+
     public void setFilter(List<String> filters)
     {
         for (String filter : filters)
         {
             LOG.info("Filtering using filter '" + filter + "'");
             Pattern pattern = Pattern.compile(filter.replace("*", ".*"));
-            for (AccessibleClass clazz : accessibleClassCatalog
-                    .getImplementingAccessibleClasses(Object.class.getName()))
+            compiledFilters.add(pattern);
+        }
+
+    }
+
+    public AccessibleClass filterClass(AccessibleClass clazz)
+    {
+        Set<String> excluded = new HashSet<String>();
+        for (Pattern pattern : compiledFilters)
+        {
+            for (Map.Entry<String, AccessibleField> entry : clazz.getAccessibleFields().entrySet())
             {
-                List<String> excluded = clazz.getAccessibleFields().values().stream().filter(f -> {
-                    return matches(clazz, f, pattern);
-                }).map(f -> {
-                    return f.getName();
-                }).collect(Collectors.toList());
-                if (!excluded.isEmpty())
-                {
-                    excluded.forEach(key -> clazz.getAccessibleFields().remove(key));
-                }
+                if (!entry.getKey().equals(entry.getValue().getName()))
+                    LOG.warn("Field has incorrect name ! key=" + entry.getKey() + " but field tells "
+                            + entry.getValue().getName());
+                if (matches(clazz, entry.getValue(), pattern))
+                    excluded.add(entry.getKey());
             }
         }
+        if (!excluded.isEmpty())
+        {
+            excluded.forEach(key -> clazz.getAccessibleFields().remove(key));
+        }
+        return clazz;
     }
 
     private boolean matches(AccessibleClass clazz, AccessibleField field, Pattern pattern)
@@ -120,7 +136,7 @@ public class DefaultReflectionService implements ReflectionService
         try
         {
             clazz = Class.forName(clazzName);
-            return getAccessibleClassParser().parseAccessibleClass(clazz);
+            return filterClass(getAccessibleClassParser().parseAccessibleClass(clazz));
         }
         catch (ClassNotFoundException e)
         {
@@ -131,7 +147,8 @@ public class DefaultReflectionService implements ReflectionService
     @Override
     public Collection<AccessibleClass> getImplementingAccessibleClasses(String name) throws RemoteException
     {
-        return getAccessibleClassCatalog().getImplementingAccessibleClasses(name);
+        return getAccessibleClassCatalog().getImplementingAccessibleClasses(name).stream().map(x -> filterClass(x))
+                .collect(Collectors.toList());
     }
 
     public void setAccessibleClassProviders(List<AccessibleClassProvider> providers)
