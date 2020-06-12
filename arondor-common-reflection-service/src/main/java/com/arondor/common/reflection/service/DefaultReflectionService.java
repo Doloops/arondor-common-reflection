@@ -71,21 +71,28 @@ public class DefaultReflectionService implements ReflectionService
 
     public AccessibleClass filterClass(AccessibleClass clazz)
     {
-        Set<String> excluded = new HashSet<String>();
-        for (Pattern pattern : compiledFilters)
+        /*
+         * Because we alter the class itself, grant against concurrent
+         * modifications
+         */
+        synchronized (clazz)
         {
-            for (Map.Entry<String, AccessibleField> entry : clazz.getAccessibleFields().entrySet())
+            Set<String> excluded = new HashSet<String>();
+            for (Pattern pattern : compiledFilters)
             {
-                if (!entry.getKey().equals(entry.getValue().getName()))
-                    LOG.warn("Field has incorrect name ! key=" + entry.getKey() + " but field tells "
-                            + entry.getValue().getName());
-                if (matches(clazz, entry.getValue(), pattern))
-                    excluded.add(entry.getKey());
+                for (Map.Entry<String, AccessibleField> entry : clazz.getAccessibleFields().entrySet())
+                {
+                    if (!entry.getKey().equals(entry.getValue().getName()))
+                        LOG.warn("Field has incorrect name ! key=" + entry.getKey() + " but field tells "
+                                + entry.getValue().getName());
+                    if (matches(clazz, entry.getValue(), pattern))
+                        excluded.add(entry.getKey());
+                }
             }
-        }
-        if (!excluded.isEmpty())
-        {
-            excluded.forEach(key -> clazz.getAccessibleFields().remove(key));
+            if (!excluded.isEmpty())
+            {
+                excluded.forEach(key -> clazz.getAccessibleFields().remove(key));
+            }
         }
         return clazz;
     }
