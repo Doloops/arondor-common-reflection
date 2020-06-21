@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.arondor.common</groupId>
 		<artifactId>arondor-common-reflection</artifactId>
-		<version>1.0.0-rc0</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	<groupId>com.arondor.common.reflection</groupId>
 	<artifactId>arondor-common-reflection-gwt-standalone</artifactId>
@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-gwt</artifactId>
-			<version>1.0.0-rc0</version>
+			<version>1.0.0-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.eclipse.jetty</groupId>
@@ -40,12 +40,12 @@
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-xstream</artifactId>
-			<version>1.0.0-rc0</version>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-service</artifactId>
-			<version>1.0.0-rc0</version>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
@@ -58,28 +58,28 @@
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-api</artifactId>
-			<version>1.0.0-rc0</version>
+			<version>1.0.0-SNAPSHOT</version>
 			<scope>provided</scope>
 			<classifier>sources</classifier>
 		</dependency>
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-model</artifactId>
-			<version>1.0.0-rc0</version>
+			<version>1.0.0-SNAPSHOT</version>
 			<scope>provided</scope>
 			<classifier>sources</classifier>
 		</dependency>
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-gwt</artifactId>
-			<version>1.0.0-rc0</version>
+			<version>1.0.0-SNAPSHOT</version>
 			<scope>provided</scope>
 			<classifier>sources</classifier>
 		</dependency>
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-xstream</artifactId>
-			<version>1.0.0-rc0</version>
+			<version>1.0.0-SNAPSHOT</version>
 			<scope>provided</scope>
 			<classifier>sources</classifier>
 		</dependency>
