@@ -39,7 +39,11 @@ public class AccessibleClassPresenterFactory
      */
     private AccessibleClassPresenterFactory()
     {
+    }
 
+    static
+    {
+        CssBundle.INSTANCE.css().ensureInjected();
     }
 
     private static final ViewFactory FACTORY = new NViewFactory();
@@ -47,7 +51,6 @@ public class AccessibleClassPresenterFactory
     public static AccessibleClassPresenter createAccessibleClassPresenter(GWTReflectionServiceAsync rpcService,
             ObjectConfigurationMap objectConfigurationMap, String baseClassName)
     {
-        CssBundle.INSTANCE.css().ensureInjected();
         return new HierarchicAccessibleClassPresenter(rpcService, objectConfigurationMap, baseClassName,
                 FACTORY.createClassDisplay());
     }

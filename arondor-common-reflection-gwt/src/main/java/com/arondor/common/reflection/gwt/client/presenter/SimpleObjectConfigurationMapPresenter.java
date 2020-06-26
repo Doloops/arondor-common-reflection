@@ -55,7 +55,7 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
             ObjectConfigurationMapDisplay mapDisplay)
     {
         super(rpcService, null, GENERIC_TYPES, mapDisplay);
-        mapDisplay.setNodeName(fieldName);
+        mapDisplay.setNodeDescription(fieldName);
         super.setObjectConfigurationMap(new ObjectConfigurationMapBean());
     }
 

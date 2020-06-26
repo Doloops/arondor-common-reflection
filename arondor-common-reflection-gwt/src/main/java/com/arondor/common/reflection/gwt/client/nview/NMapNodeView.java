@@ -1,12 +1,9 @@
 package com.arondor.common.reflection.gwt.client.nview;
 
-import java.util.Map;
-
 import com.arondor.common.reflection.gwt.client.CssBundle;
 import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePresenter.MapPairDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePresenter.MapRootDisplay;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 
@@ -15,10 +12,6 @@ import gwt.material.design.client.ui.MaterialLabel;
 
 public class NMapNodeView extends NNodeView implements MapRootDisplay
 {
-    CellTable<Map<String, String>> table = new CellTable<Map<String, String>>();
-
-    FlowPanel pair = new FlowPanel();
-
     FlowPanel header = new FlowPanel();
 
     MaterialCard mappingTable = new MaterialCard();
