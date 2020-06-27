@@ -15,22 +15,30 @@
  */
 package com.arondor.common.reflection.gwt.client.api;
 
+import java.util.List;
+
+import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePresenter.MapPairDisplay;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.google.gwt.user.client.ui.IsWidget;
 
 public interface ObjectConfigurationMapPresenter
 {
-    void setObjectConfigurationMap(ObjectConfigurationMap objectConfigurationMap);
+    interface MapPairDisplayWithScope extends MapPairDisplay
+    {
+        void setAvailableScopes(List<String> availableScopes);
 
-    ObjectConfigurationMap getObjectConfigurationMap(ObjectConfigurationFactory objectConfigurationFactory);
+        void setScope(String scope);
+
+        String getScope();
+    }
+
+    void clearObjectConfigurations();
+
+    void addObjectConfigurationMap(String scope, ObjectConfigurationMap objectConfigurationMap);
+
+    ObjectConfigurationMap getObjectConfigurationMap(String scope,
+            ObjectConfigurationFactory objectConfigurationFactory);
 
     IsWidget getDisplayWidget();
-
-    /**
-     * Add external beans as reference
-     *
-     * @param objectConfigurationMap
-     */
-    void addExternalConfigurationMap(ObjectConfigurationMap objectConfigurationMap);
 }

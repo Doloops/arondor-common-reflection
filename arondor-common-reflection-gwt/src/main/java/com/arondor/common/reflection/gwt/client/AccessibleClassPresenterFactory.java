@@ -15,6 +15,8 @@
  */
 package com.arondor.common.reflection.gwt.client;
 
+import java.util.List;
+
 import com.arondor.common.reflection.gwt.client.api.AccessibleClassPresenter;
 import com.arondor.common.reflection.gwt.client.api.ObjectConfigurationMapPresenter;
 import com.arondor.common.reflection.gwt.client.nview.NViewFactory;
@@ -56,9 +58,9 @@ public class AccessibleClassPresenterFactory
     }
 
     public static ObjectConfigurationMapPresenter createObjectConfigurationMapPresenter(
-            GWTReflectionServiceAsync rpcService)
+            GWTReflectionServiceAsync rpcService, List<String> availableScopes)
     {
         ObjectConfigurationMapDisplay mapDisplay = new ObjectConfigurationMapView();
-        return new SimpleObjectConfigurationMapPresenter(rpcService, "Shared Objects", mapDisplay);
+        return new SimpleObjectConfigurationMapPresenter(rpcService, "Shared Objects", mapDisplay, availableScopes);
     }
 }

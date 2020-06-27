@@ -36,6 +36,8 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
 
     private final List<ImplementingClass> implementingClasses = new ArrayList<ImplementingClass>();
 
+    private final ObjectConfigurationMap objectConfigurationMap;
+
     public DefaultImplementingClassPresenter(GWTReflectionServiceAsync rpcService,
             ObjectConfigurationMap objectConfigurationMap, String baseClassName, boolean isMandatory,
             ImplementingClassDisplay display)
@@ -45,6 +47,7 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
         this.display = display;
         this.rpcService = rpcService;
         this.display.setBaseClassName(baseClassName);
+        this.objectConfigurationMap = objectConfigurationMap;
         bind();
 
         // if (!isMandatory)
@@ -53,11 +56,7 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
         // }
 
         fetchBaseClass();
-        fetchImplementations();
-        if (objectConfigurationMap != null)
-        {
-            fetchObjectConfigurations(objectConfigurationMap);
-        }
+
     }
 
     private void fetchObjectConfigurations(ObjectConfigurationMap objectConfigurationMap)
@@ -210,6 +209,7 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
                 {
                     addImplementingClass(new ImplementingClass(false, result));
                 }
+                fetchImplementations();
             }
         });
     }
@@ -252,6 +252,11 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
                     {
                         handler.onValueChange(event);
                     }
+                }
+
+                if (objectConfigurationMap != null)
+                {
+                    fetchObjectConfigurations(objectConfigurationMap);
                 }
             }
 

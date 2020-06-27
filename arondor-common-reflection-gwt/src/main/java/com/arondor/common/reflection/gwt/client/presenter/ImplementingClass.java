@@ -73,6 +73,10 @@ public class ImplementingClass implements Comparable<ImplementingClass>
     {
         if (reference && o.reference)
         {
+            if (fullName == null && o.fullName == null)
+                return 0;
+            if (fullName == null)
+                return -1;
             return fullName.compareTo(o.fullName);
         }
         if (reference)

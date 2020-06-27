@@ -65,7 +65,7 @@ public class MapTreeNodePresenter implements TreeNodePresenter
      */
     private final List<String> genericTypes;
 
-    private final GWTReflectionServiceAsync rpcService;
+    protected final GWTReflectionServiceAsync rpcService;
 
     private ObjectConfigurationMap objectConfigurationMap;
 
@@ -128,7 +128,7 @@ public class MapTreeNodePresenter implements TreeNodePresenter
         TreeNodePresenter keyPresenter = new PrimitiveTreeNodePresenter(pairView.getKeyDisplay());
         TreeNodePresenter valuePresenter = createValuePresenter(pairView.getValueDisplay(), valueClass);
 
-        final KeyValuePresenterPair keyValuePresenterPair = new KeyValuePresenterPair(keyPresenter, valuePresenter);
+        KeyValuePresenterPair keyValuePresenterPair = new KeyValuePresenterPair(keyPresenter, valuePresenter, pairView);
         keyValuePresenters.add(keyValuePresenterPair);
 
         pairView.removePairClickHandler().addClickHandler(new ClickHandler()
@@ -184,7 +184,7 @@ public class MapTreeNodePresenter implements TreeNodePresenter
         return mapConfiguration;
     }
 
-    protected void addChild(ElementConfiguration keyConfiguration, ElementConfiguration valueConfiguration)
+    private void addChild(ElementConfiguration keyConfiguration, ElementConfiguration valueConfiguration)
     {
         KeyValuePresenterPair keyValuePresenterPair = addChild();
         keyValuePresenterPair.getKeyPresenter().setElementConfiguration(keyConfiguration);
@@ -211,7 +211,7 @@ public class MapTreeNodePresenter implements TreeNodePresenter
     }
 
     @Override
-    public Display getDisplay()
+    public MapRootDisplay getDisplay()
     {
         return mapRootDisplay;
     }
