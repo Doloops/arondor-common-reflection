@@ -18,7 +18,6 @@ package com.arondor.common.reflection.gwt.client.api;
 import java.util.List;
 
 import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePresenter.MapPairDisplay;
-import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -37,8 +36,7 @@ public interface ObjectConfigurationMapPresenter
 
     void addObjectConfigurationMap(String scope, ObjectConfigurationMap objectConfigurationMap);
 
-    ObjectConfigurationMap getObjectConfigurationMap(String scope,
-            ObjectConfigurationFactory objectConfigurationFactory);
+    ObjectConfigurationMap getObjectConfigurationMap(String scope);
 
     IsWidget getDisplayWidget();
 }

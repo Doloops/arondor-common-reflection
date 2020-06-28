@@ -110,8 +110,7 @@ public class TestObjectConfigurationMapPresenter
 
         objectConfigurationMapPresenter.addObjectConfigurationMap(null, objectConfigurationMap);
 
-        ObjectConfigurationMap result = objectConfigurationMapPresenter.getObjectConfigurationMap(null,
-                objectConfigurationFactory);
+        ObjectConfigurationMap result = objectConfigurationMapPresenter.getObjectConfigurationMap(null);
         Assert.assertTrue(result instanceof ObjectConfigurationMapBean);
         Assert.assertNotNull(result);
         Assert.assertEquals(1, result.size());

@@ -23,7 +23,6 @@ import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePres
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeNodePresenter;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
-import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 
@@ -95,7 +94,7 @@ public interface TreeNodePresenter
         ListTreeNodePresenter.ListRootDisplay createListChild(boolean isMandatory);
     }
 
-    ElementConfiguration getElementConfiguration(ObjectConfigurationFactory objectConfigurationFactory);
+    ElementConfiguration getElementConfiguration();
 
     void setElementConfiguration(ElementConfiguration elementConfiguration);
 

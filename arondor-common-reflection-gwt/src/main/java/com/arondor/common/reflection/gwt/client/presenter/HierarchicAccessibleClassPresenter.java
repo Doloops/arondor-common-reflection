@@ -17,12 +17,12 @@ package com.arondor.common.reflection.gwt.client.presenter;
 
 import java.util.logging.Logger;
 
+import com.arondor.common.reflection.gwt.client.AccessibleClassPresenterFactory;
 import com.arondor.common.reflection.gwt.client.api.AccessibleClassPresenter;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
-import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.arondor.common.reflection.model.config.ReferenceConfiguration;
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -40,10 +40,10 @@ public class HierarchicAccessibleClassPresenter implements AccessibleClassPresen
     private final ClassTreePresenter classTreePresenter;
 
     public HierarchicAccessibleClassPresenter(GWTReflectionServiceAsync rpcService,
-            ObjectConfigurationMap objectConfigurationMap, String baseClassName, Display view)
+            ObjectReferencesProvider objectReferencesProvider, String baseClassName, Display view)
     {
         this.display = view;
-        this.classTreePresenter = new ClassTreePresenter(rpcService, objectConfigurationMap, baseClassName,
+        this.classTreePresenter = new ClassTreePresenter(rpcService, objectReferencesProvider, baseClassName,
                 display.getClassTreeDisplay());
         bind();
     }
@@ -54,10 +54,11 @@ public class HierarchicAccessibleClassPresenter implements AccessibleClassPresen
     }
 
     @Override
-    public ObjectConfiguration getObjectConfiguration(ObjectConfigurationFactory objectConfigurationFactory)
+    public ObjectConfiguration getObjectConfiguration()
     {
-        ElementConfiguration elementConfiguration = classTreePresenter.getRootNodePresenter()
-                .getElementConfiguration(objectConfigurationFactory);
+        ObjectConfigurationFactory objectConfigurationFactory = AccessibleClassPresenterFactory
+                .getObjectConfigurationFactory();
+        ElementConfiguration elementConfiguration = classTreePresenter.getRootNodePresenter().getElementConfiguration();
         LOG.finest("Got root elementConfiguration=" + elementConfiguration);
         if (elementConfiguration == null)
         {

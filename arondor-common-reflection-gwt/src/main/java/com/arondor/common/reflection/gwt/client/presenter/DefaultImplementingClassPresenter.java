@@ -3,14 +3,12 @@ package com.arondor.common.reflection.gwt.client.presenter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import com.arondor.common.reflection.gwt.client.event.MyValueChangeEvent;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
-import com.arondor.common.reflection.model.config.ObjectConfiguration;
-import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
@@ -37,18 +35,17 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
 
     private final List<ImplementingClass> implementingClasses = new ArrayList<ImplementingClass>();
 
-    private final ObjectConfigurationMap objectConfigurationMap;
+    private final ObjectReferencesProvider objectReferencesProvider;
 
     public DefaultImplementingClassPresenter(GWTReflectionServiceAsync rpcService,
-            ObjectConfigurationMap objectConfigurationMap, String baseClassName, boolean isMandatory,
+            ObjectReferencesProvider objectReferencesProvider, String baseClassName, boolean isMandatory,
             ImplementingClassDisplay display)
     {
         this.baseClassName = baseClassName;
         this.isMandatory = isMandatory;
         this.display = display;
         this.rpcService = rpcService;
-        this.display.setBaseClassName(baseClassName);
-        this.objectConfigurationMap = objectConfigurationMap;
+        this.objectReferencesProvider = objectReferencesProvider;
         bind();
 
         // if (!isMandatory)
@@ -57,7 +54,7 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
         // }
 
         fetchBaseClass();
-        fetchObjectConfigurations();
+        populateObjectReferences();
 
         display.onOpenImplementingClasses(new Command()
         {
@@ -65,48 +62,62 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
             public void execute()
             {
                 LOG.info("onOpenImplementingClasses()");
-                fetchObjectConfigurations();
+                populateObjectReferences();
             }
         });
     }
 
-    private void fetchObjectConfigurations()
+    private void populateObjectReferences()
     {
-        if (objectConfigurationMap == null)
+        if (objectReferencesProvider == null)
             return;
-        for (Map.Entry<String, ObjectConfiguration> entry : objectConfigurationMap.entrySet())
+        objectReferencesProvider.provide(new AsyncCallback<Collection<ImplementingClass>>()
         {
-            final String referenceName = entry.getKey();
-            final String referenceClassName = entry.getValue().getClassName();
-            final ImplementingClass implementingClass = new ImplementingClass(true, referenceClassName, referenceName);
-
-            if (referenceClassName.equals(baseClassName))
+            @Override
+            public void onFailure(Throwable caught)
             {
-                addImplementingClass(implementingClass);
+                LOG.severe("Could not provide object references ! " + caught.getMessage());
             }
-            else
+
+            @Override
+            public void onSuccess(Collection<ImplementingClass> result)
             {
-                rpcService.getAccessibleClass(referenceClassName, new AsyncCallback<AccessibleClass>()
+                removeImplementClassReferences();
+
+                for (ImplementingClass implementingClass : result)
                 {
-                    @Override
-                    public void onFailure(Throwable caught)
-                    {
-                    }
+                    final String referenceClassName = implementingClass.getClassName();
 
-                    @Override
-                    public void onSuccess(AccessibleClass result)
+                    if (referenceClassName.equals(baseClassName))
                     {
-                        for (String interfaceName : result.getAllInterfaces())
-                        {
-                            if (interfaceName.equals(baseClassName))
-                            {
-                                addImplementingClass(implementingClass);
-                            }
-                        }
+                        addImplementingClass(implementingClass);
                     }
-                });
+                    else
+                    {
+                        rpcService.getAccessibleClass(referenceClassName, new AsyncCallback<AccessibleClass>()
+                        {
+                            @Override
+                            public void onFailure(Throwable caught)
+                            {
+                            }
+
+                            @Override
+                            public void onSuccess(AccessibleClass result)
+                            {
+                                for (String interfaceName : result.getAllInterfaces())
+                                {
+                                    if (interfaceName.equals(baseClassName))
+                                    {
+                                        addImplementingClass(implementingClass);
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+                doUpdateDisplay();
             }
-        }
+        });
     }
 
     private final List<ValueChangeHandler<ImplementingClass>> valueChangeHandlerRegistrations = new ArrayList<ValueChangeHandler<ImplementingClass>>();
@@ -148,6 +159,18 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
                 LOG.finest("Changed implementClassName=" + currentImplementingClass);
             }
         });
+    }
+
+    private void removeImplementClassReferences()
+    {
+        /**
+         * Cleanup all references
+         */
+        for (Iterator<ImplementingClass> iterator = implementingClasses.iterator(); iterator.hasNext();)
+        {
+            if (iterator.next().isReference())
+                iterator.remove();
+        }
     }
 
     private void addImplementingClass(ImplementingClass implementingClass)

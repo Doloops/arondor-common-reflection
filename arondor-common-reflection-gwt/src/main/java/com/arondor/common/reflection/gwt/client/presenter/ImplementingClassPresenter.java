@@ -26,8 +26,6 @@ public interface ImplementingClassPresenter
 {
     public interface ImplementingClassDisplay extends IsWidget
     {
-        void setBaseClassName(String baseClassName);
-
         void setImplementingClasses(Collection<ImplementingClass> implementingClasses);
 
         void selectImplementingClass(ImplementingClass implementingClass);

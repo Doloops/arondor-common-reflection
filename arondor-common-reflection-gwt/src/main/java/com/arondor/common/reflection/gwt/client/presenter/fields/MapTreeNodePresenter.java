@@ -21,16 +21,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import com.arondor.common.reflection.gwt.client.AccessibleClassPresenterFactory;
 import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter.ClassDisplay;
+import com.arondor.common.reflection.gwt.client.presenter.ObjectReferencesProvider;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter.PrimitiveDisplay;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.MapConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
-import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -67,23 +68,18 @@ public class MapTreeNodePresenter implements TreeNodePresenter
 
     protected final GWTReflectionServiceAsync rpcService;
 
-    private ObjectConfigurationMap objectConfigurationMap;
+    private final ObjectReferencesProvider objectReferencesProvider;
 
-    public ObjectConfigurationMap getObjectConfigurationMap()
+    protected ObjectReferencesProvider getObjectReferencesProvider()
     {
-        return objectConfigurationMap;
+        return objectReferencesProvider;
     }
 
-    public void setObjectConfigurationMap(ObjectConfigurationMap objectConfigurationMap)
-    {
-        this.objectConfigurationMap = objectConfigurationMap;
-    }
-
-    public MapTreeNodePresenter(GWTReflectionServiceAsync rpcService, ObjectConfigurationMap objectConfigurationMap,
+    public MapTreeNodePresenter(GWTReflectionServiceAsync rpcService, ObjectReferencesProvider objectReferencesProvider,
             List<String> genericTypes, MapRootDisplay mapDisplay)
     {
         this.rpcService = rpcService;
-        this.objectConfigurationMap = objectConfigurationMap;
+        this.objectReferencesProvider = objectReferencesProvider;
         this.mapRootDisplay = mapDisplay;
         this.genericTypes = genericTypes;
 
@@ -150,28 +146,28 @@ public class MapTreeNodePresenter implements TreeNodePresenter
         }
         if (valueDisplay instanceof ClassDisplay)
         {
-            return new ClassTreeNodePresenter(rpcService, objectConfigurationMap, valueClass,
+            return new ClassTreeNodePresenter(rpcService, objectReferencesProvider, valueClass,
                     (ClassDisplay) valueDisplay);
         }
         throw new RuntimeException("Could not instantiate presenter for view : " + valueDisplay.getClass().getName());
     }
 
     @Override
-    public ElementConfiguration getElementConfiguration(ObjectConfigurationFactory objectConfigurationFactory)
+    public ElementConfiguration getElementConfiguration()
     {
         if (!mapRootDisplay.isActive())
         {
             return null;
         }
+        ObjectConfigurationFactory objectConfigurationFactory = AccessibleClassPresenterFactory
+                .getObjectConfigurationFactory();
         MapConfiguration mapConfiguration = objectConfigurationFactory.createMapConfiguration();
         mapConfiguration.setMapConfiguration(new HashMap<ElementConfiguration, ElementConfiguration>());
 
         for (KeyValuePresenterPair keyValuePresenterPair : keyValuePresenters)
         {
-            ElementConfiguration key = keyValuePresenterPair.getKeyPresenter()
-                    .getElementConfiguration(objectConfigurationFactory);
-            ElementConfiguration value = keyValuePresenterPair.getValuePresenter()
-                    .getElementConfiguration(objectConfigurationFactory);
+            ElementConfiguration key = keyValuePresenterPair.getKeyPresenter().getElementConfiguration();
+            ElementConfiguration value = keyValuePresenterPair.getValuePresenter().getElementConfiguration();
             if (key != null && value != null)
             {
                 mapConfiguration.getMapConfiguration().put(key, value);

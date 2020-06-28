@@ -30,7 +30,6 @@ import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNo
 import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
-import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
 import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.arondor.common.reflection.model.java.AccessibleField;
@@ -42,7 +41,7 @@ public class TreeNodePresenterFactory
     private final static Logger LOG = Logger.getLogger(TreeNodePresenterFactory.class.getName());
 
     public TreeNodePresenter createChildNodePresenter(GWTReflectionServiceAsync rpcService,
-            ObjectConfigurationMap objectConfigurationMap, TreeNodePresenter.ChildCreatorDisplay display,
+            ObjectReferencesProvider objectReferencesProvider, TreeNodePresenter.ChildCreatorDisplay display,
             AccessibleField accessibleField)
     {
         String fieldName = accessibleField.getName();
@@ -95,21 +94,21 @@ public class TreeNodePresenterFactory
         {
             LOG.finest(
                     "Field " + fieldName + " is an object map of " + genericTypes.get(0) + ", " + genericTypes.get(1));
-            childPresenter = new MapTreeNodePresenter(rpcService, objectConfigurationMap, genericTypes,
+            childPresenter = new MapTreeNodePresenter(rpcService, objectReferencesProvider, genericTypes,
                     display.createMapChild(isMandatory));
         }
         else if (fieldClassName.equals("java.util.List") && genericTypes != null && genericTypes.size() == 1)
         {
             LOG.finest("Field " + fieldName + " is an " + genericTypes.get(0) + " list");
             String genericType = genericTypes.get(0);
-            childPresenter = new ListTreeNodePresenter(rpcService, objectConfigurationMap, genericType,
+            childPresenter = new ListTreeNodePresenter(rpcService, objectReferencesProvider, genericType,
                     display.createListChild(isMandatory));
         }
         else
         {
             LOG.finest("Field " + fieldName + " is an object " + fieldClassName);
-            childPresenter = new ClassTreeNodePresenter(rpcService, objectConfigurationMap, fieldClassName, isMandatory,
-                    display.createClassChild(isMandatory));
+            childPresenter = new ClassTreeNodePresenter(rpcService, objectReferencesProvider, fieldClassName,
+                    isMandatory, display.createClassChild(isMandatory));
         }
 
         setNodeNameAndDescription(fieldName, accessibleField, childPresenter);

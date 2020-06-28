@@ -18,11 +18,11 @@ package com.arondor.common.reflection.gwt.client.presenter.fields;
 import java.util.List;
 
 import com.arondor.common.reflection.bean.config.PrimitiveConfigurationBean;
+import com.arondor.common.reflection.gwt.client.AccessibleClassPresenterFactory;
 import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
-import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
@@ -52,6 +52,7 @@ public class EnumTreeNodePresenter implements TreeNodePresenter
     {
         enumDisplay.addValueChangeHandler(new ValueChangeHandler<String>()
         {
+            @Override
             public void onValueChange(ValueChangeEvent<String> event)
             {
                 fieldValue = event.getValue();
@@ -59,6 +60,7 @@ public class EnumTreeNodePresenter implements TreeNodePresenter
         });
         enumDisplay.addTreeNodeClearHandler(new TreeNodeClearEvent.Handler()
         {
+            @Override
             public void onTreeNodeClearEvent(TreeNodeClearEvent treeNodeClearEvent)
             {
                 fieldValue = null;
@@ -72,15 +74,18 @@ public class EnumTreeNodePresenter implements TreeNodePresenter
         return fieldName;
     }
 
-    public ElementConfiguration getElementConfiguration(ObjectConfigurationFactory objectConfigurationFactory)
+    @Override
+    public ElementConfiguration getElementConfiguration()
     {
         if (fieldValue != null && !fieldValue.isEmpty())
         {
-            return objectConfigurationFactory.createPrimitiveConfiguration(fieldValue);
+            return AccessibleClassPresenterFactory.getObjectConfigurationFactory()
+                    .createPrimitiveConfiguration(fieldValue);
         }
         return null;
     }
 
+    @Override
     public void setElementConfiguration(ElementConfiguration elementConfiguration)
     {
         if (elementConfiguration instanceof ObjectConfiguration)
@@ -100,6 +105,7 @@ public class EnumTreeNodePresenter implements TreeNodePresenter
         }
     }
 
+    @Override
     public Display getDisplay()
     {
         return enumDisplay;

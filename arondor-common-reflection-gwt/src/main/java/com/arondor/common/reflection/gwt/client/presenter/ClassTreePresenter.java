@@ -16,7 +16,6 @@
 package com.arondor.common.reflection.gwt.client.presenter;
 
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
-import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.google.gwt.user.client.ui.HasVisibility;
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -31,13 +30,13 @@ public class ClassTreePresenter
 
     private final Display display;
 
-    public ClassTreePresenter(GWTReflectionServiceAsync rpcService, ObjectConfigurationMap objectConfigurationMap,
+    public ClassTreePresenter(GWTReflectionServiceAsync rpcService, ObjectReferencesProvider objectReferencesProvider,
             String baseClassName, Display view)
     {
         this.display = view;
 
         setRootNodePresenter(
-                new ClassTreeNodePresenter(rpcService, objectConfigurationMap, baseClassName, display.getRootView()));
+                new ClassTreeNodePresenter(rpcService, objectReferencesProvider, baseClassName, display.getRootView()));
 
         if (getRootNodePresenter().getDisplay() instanceof HasVisibility)
         {
