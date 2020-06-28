@@ -27,8 +27,6 @@ public class ImplementingClass implements Comparable<ImplementingClass>
 
     public static final ImplementingClass NULL_CLASS = new ImplementingClass(false, null, null);
 
-    public static final String NULL_VALUE = "null";
-
     public ImplementingClass(boolean reference, String fullName, String displayName)
     {
         this.reference = reference;

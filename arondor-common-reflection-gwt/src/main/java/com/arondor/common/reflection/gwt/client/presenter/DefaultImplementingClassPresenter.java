@@ -115,7 +115,7 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
                         });
                     }
                 }
-                doUpdateDisplay();
+                display.setImplementingClasses(implementingClasses);
             }
         });
     }
@@ -221,7 +221,8 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
 
         LOG.finest("currentImplementingClass=" + currentImplementingClass);
 
-        if (implementingClasses.contains(currentImplementingClass))
+        if (currentImplementingClass != ImplementingClass.NULL_CLASS
+                && implementingClasses.contains(currentImplementingClass))
         {
             display.selectImplementingClass(currentImplementingClass);
         }
@@ -271,7 +272,7 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
                 }
                 LOG.info("fetchImplementations() : Base class " + baseClassName + ", results=" + result.size()
                         + ", current=" + currentImplementingClass);
-                if (result.size() == 1 && isMandatory && currentImplementingClass == ImplementingClass.NULL_CLASS)
+                if (result.size() == 1 && isMandatory && currentImplementingClass == null)
                 {
                     /**
                      * There is only one result.

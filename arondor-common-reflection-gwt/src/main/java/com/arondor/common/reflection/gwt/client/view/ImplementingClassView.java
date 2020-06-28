@@ -37,8 +37,6 @@ import gwt.material.design.addins.client.combobox.MaterialComboBox;
 import gwt.material.design.addins.client.combobox.events.SelectItemEvent;
 import gwt.material.design.addins.client.combobox.events.SelectItemEvent.SelectComboHandler;
 import gwt.material.design.client.constants.TextAlign;
-import gwt.material.design.client.events.OpeningEvent;
-import gwt.material.design.client.events.OpeningEvent.OpeningHandler;
 import gwt.material.design.client.ui.html.Option;
 
 public class ImplementingClassView extends Composite implements ImplementingClassDisplay
@@ -74,26 +72,13 @@ public class ImplementingClassView extends Composite implements ImplementingClas
     @Override
     public HandlerRegistration onOpenImplementingClasses(Command command)
     {
-        if (false)
-        {
-            return implementingListInput.addOpenHandler(new OpenHandler<ImplementingClass>()
-            {
-                @Override
-                public void onOpen(OpenEvent<ImplementingClass> event)
-                {
-                    LOG.info("onOpenImplementingClasses()");
-                    command.execute();
-                }
-            });
-        }
-        return implementingListInput.addOpeningHandler(new OpeningHandler()
+        return implementingListInput.addOpenHandler(new OpenHandler<ImplementingClass>()
         {
             @Override
-            public void onOpening(OpeningEvent event)
+            public void onOpen(OpenEvent<ImplementingClass> event)
             {
-                LOG.info("onOpening()");
+                LOG.info("onOpenImplementingClasses()");
                 command.execute();
-                LOG.info("onOpening() DONE");
             }
         });
     }
@@ -110,7 +95,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
             @Override
             public void execute()
             {
-                implementingListInput.getLabel().getElement().removeClassName("select2label");
+                // implementingListInput.getLabel().getElement().removeClassName("select2label");
             }
         });
 
@@ -128,16 +113,20 @@ public class ImplementingClassView extends Composite implements ImplementingClas
     @Override
     public void setImplementingClasses(Collection<ImplementingClass> implementingClasses)
     {
-        implementingListInput.getLabel().getElement().removeClassName("select2label");
+        // implementingListInput.getLabel().getElement().removeClassName("select2label");
         LOG.finest("Selected classes : " + implementingClasses);
-        implementingListInput.clear();
+        // implementingListInput.clear();
+
         // implementingListInput.addItem("", ImplementingClass.NULL_CLASS);
         for (ImplementingClass implementingClass : implementingClasses)
         {
+            if (implementingListInput.getValues().contains(implementingClass))
+                continue;
             Option option = implementingListInput.addItem(prettyPrint(implementingClass), implementingClass);
             if (implementingClass.getClassName() != null)
                 option.setTitle(implementingClass.getClassName());
         }
+
         if (selectedClass == ImplementingClass.NULL_CLASS)
         {
             implementingListInput.unselect();
@@ -146,10 +135,12 @@ public class ImplementingClassView extends Composite implements ImplementingClas
 
     private void doSelect(ImplementingClass clazz)
     {
+        LOG.finest("doSelect class=" + clazz);
         selectedClass = clazz;
         if (clazz == ImplementingClass.NULL_CLASS)
         {
             implementingListInput.unselect();
+            return;
         }
         LOG.finest("Selecting class : " + clazz + " from a choice of " + implementingListInput.getValues().size()
                 + " items");
@@ -166,7 +157,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
             LOG.info("Selected item #" + index + " for clazz " + clazz);
             implementingListInput.setSelectedIndex(index);
         }
-        implementingListInput.getLabel().getElement().addClassName("select2label");
+        // implementingListInput.getLabel().getElement().addClassName("select2label");
         // LOG.warning("Could not select class : " + className);
     }
 
@@ -178,9 +169,13 @@ public class ImplementingClassView extends Composite implements ImplementingClas
             @Override
             public void onSelectItem(SelectItemEvent<ImplementingClass> event)
             {
-                selectedClass = event.getSelectedValues().get(0);
-                LOG.finest("Selected " + selectedClass);
-                valueChangeHandler.onValueChange(new MyValueChangeEvent<ImplementingClass>(selectedClass));
+                LOG.finest("onSelectItem() selected size=" + event.getSelectedValues().size());
+                if (!event.getSelectedValues().isEmpty())
+                {
+                    selectedClass = event.getSelectedValues().get(0);
+                    LOG.finest("Selected " + selectedClass);
+                    valueChangeHandler.onValueChange(new MyValueChangeEvent<ImplementingClass>(selectedClass));
+                }
             }
         });
     }
