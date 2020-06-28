@@ -29,6 +29,7 @@ public class SimpleInstantiationContext implements InstantiationContext
 {
     private Map<String, Object> instances = new HashMap<String, Object>();
 
+    @Override
     public Object getSharedObject(String name)
     {
         Object object = instances.get(name);
@@ -47,11 +48,13 @@ public class SimpleInstantiationContext implements InstantiationContext
         return null;
     }
 
+    @Override
     public void putSharedObject(String name, Object reference)
     {
         instances.put(name, reference);
     }
 
+    @Override
     public ObjectConfiguration getSharedObjectConfiguration(String name)
     {
         if (objetConfigurations == null)
@@ -63,11 +66,7 @@ public class SimpleInstantiationContext implements InstantiationContext
 
     private final Map<String, ObjectConfiguration> objetConfigurations = new HashMap<String, ObjectConfiguration>();
 
-    public void setSharedObjectConfigurations(ObjectConfigurationMap objetConfigurations)
-    {
-        addSharedObjectConfigurations(objetConfigurations);
-    }
-
+    @Override
     public void addSharedObjectConfigurations(ObjectConfigurationMap objetConfigurations)
     {
         for (Map.Entry<String, ObjectConfiguration> entry : objetConfigurations.entrySet())
@@ -78,6 +77,7 @@ public class SimpleInstantiationContext implements InstantiationContext
 
     private List<SharedObjectResolver> sharedObjectResolvers = new ArrayList<SharedObjectResolver>();
 
+    @Override
     public void addSharedObjectResolver(SharedObjectResolver sharedObjectResolver)
     {
         sharedObjectResolvers.add(sharedObjectResolver);

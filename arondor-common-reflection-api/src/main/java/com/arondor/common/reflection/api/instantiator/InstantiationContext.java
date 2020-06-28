@@ -33,14 +33,6 @@ public interface InstantiationContext
 
     public ObjectConfiguration getSharedObjectConfiguration(String name);
 
-    /**
-     * 
-     * @param objetConfigurations
-     * @deprecated {@link InstantiationContext#addSharedObjectConfigurations(ObjectConfigurationMap)}
-     */
-    @Deprecated
-    public void setSharedObjectConfigurations(ObjectConfigurationMap objetConfigurations);
-
     public void addSharedObjectConfigurations(ObjectConfigurationMap objetConfigurations);
 
     public void addSharedObjectResolver(SharedObjectResolver sharedObjectResolver);

@@ -366,7 +366,7 @@ public class TestReflectionInstantiatorReflect
         ObjectConfigurationMap configurationMap = objectConfigurationFactory.createObjectConfigurationMap();
         String objectName = "myClassA";
         configurationMap.put(objectName, configuration);
-        instantationContext.setSharedObjectConfigurations(configurationMap);
+        instantationContext.addSharedObjectConfigurations(configurationMap);
 
         assertNull("Object shall not exist !", instantationContext.getSharedObject(objectName));
 
@@ -395,7 +395,7 @@ public class TestReflectionInstantiatorReflect
         ObjectConfigurationMap configurationMap = objectConfigurationFactory.createObjectConfigurationMap();
         String objectName = "myClassA";
         configurationMap.put(objectName, configuration);
-        instantationContext.setSharedObjectConfigurations(configurationMap);
+        instantationContext.addSharedObjectConfigurations(configurationMap);
 
         assertNull("Object shall not exist !", instantationContext.getSharedObject(objectName));
 
