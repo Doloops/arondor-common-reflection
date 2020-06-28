@@ -88,8 +88,7 @@ public class TestDefaultImplementingClassPresenter
         List<ImplementingClass> result = (List<ImplementingClass>) captor.getValue();
         Assert.assertEquals("Invalid result : " + result, 1, result.size());
         ImplementingClass firstResult = result.get(0);
-        Assert.assertEquals(
-                new ImplementingClass(false, createAccessibleClass("com.arondor.testing.SomeConcreteClass")),
+        Assert.assertEquals(new ImplementingClass(createAccessibleClass("com.arondor.testing.SomeConcreteClass")),
                 firstResult);
     }
 

@@ -34,10 +34,13 @@ import gwt.material.design.addins.client.combobox.MaterialComboBox;
 import gwt.material.design.addins.client.combobox.events.SelectItemEvent;
 import gwt.material.design.addins.client.combobox.events.SelectItemEvent.SelectComboHandler;
 import gwt.material.design.client.constants.TextAlign;
+import gwt.material.design.client.ui.html.Option;
 
 public class ImplementingClassView extends Composite implements ImplementingClassDisplay
 {
     private static final Logger LOG = Logger.getLogger(ImplementingClassView.class.getName());
+
+    private static final String REFERENCE_PREFIX = "Reference : ";
 
     private MaterialComboBox<ImplementingClass> implementingListInput = new MaterialComboBox<ImplementingClass>();
 
@@ -80,6 +83,15 @@ public class ImplementingClassView extends Composite implements ImplementingClas
 
     }
 
+    private String prettyPrint(ImplementingClass implementingClass)
+    {
+        if (implementingClass.isReference())
+        {
+            return REFERENCE_PREFIX + implementingClass.getDisplayName();
+        }
+        return implementingClass.getDisplayName();
+    }
+
     @Override
     public void setImplementingClasses(Collection<ImplementingClass> implementingClasses)
     {
@@ -89,8 +101,9 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         // implementingListInput.addItem("", ImplementingClass.NULL_CLASS);
         for (ImplementingClass implementingClass : implementingClasses)
         {
-            implementingListInput.addItem(implementingClass.getBaseName(), implementingClass)
-                    .setTitle(implementingClass.getFullName());
+            Option option = implementingListInput.addItem(prettyPrint(implementingClass), implementingClass);
+            if (implementingClass.getClassName() != null)
+                option.setTitle(implementingClass.getClassName());
         }
         if (selectedClass == ImplementingClass.NULL_CLASS)
         {
@@ -107,16 +120,19 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         }
         LOG.finest("Selecting class : " + clazz + " from a choice of " + implementingListInput.getValues().size()
                 + " items");
-        int index = implementingListInput.getIndexByString(clazz.getFullName());
+        int index = implementingListInput.getValueIndex(clazz);
+
         if (index == -1)
         {
-            implementingListInput.addItem(clazz.getBaseName(), clazz);
+            LOG.info("Adding item for clazz " + clazz + " => " + prettyPrint(clazz));
+            implementingListInput.addItem(prettyPrint(clazz), clazz);
             implementingListInput.setSelectedIndex(implementingListInput.getValues().size() - 1);
         }
         else
         {
+            LOG.info("Selected item #" + index + " for clazz " + clazz);
             implementingListInput.setSelectedIndex(index);
-            implementingListInput.getLabel().getElement().addClassName("select2label");
+            // implementingListInput.getLabel().getElement().addClassName("select2label");
         }
         // LOG.warning("Could not select class : " + className);
     }
@@ -151,6 +167,12 @@ public class ImplementingClassView extends Composite implements ImplementingClas
     @Override
     public void setNodeDescription(String label)
     {
-        implementingListInput.setLabel(label);
+        /**
+         * TODO We skip updating Node Description here !!
+         */
+        if (false)
+        {
+            implementingListInput.setLabel(label);
+        }
     }
 }
