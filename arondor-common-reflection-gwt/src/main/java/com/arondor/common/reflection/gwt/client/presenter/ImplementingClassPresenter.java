@@ -19,6 +19,7 @@ import java.util.Collection;
 
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.IsWidget;
 
 public interface ImplementingClassPresenter
@@ -33,9 +34,11 @@ public interface ImplementingClassPresenter
 
         HandlerRegistration addValueChangeHandler(ValueChangeHandler<ImplementingClass> valueChangeHandler);
 
+        HandlerRegistration onOpenImplementingClasses(Command command);
+
         void setNodeDescription(String label);
 
-        void resetComboBox();
+        void resetImplementingList();
     }
 
     HandlerRegistration addValueChangeHandler(ValueChangeHandler<ImplementingClass> valueChangeHandler);

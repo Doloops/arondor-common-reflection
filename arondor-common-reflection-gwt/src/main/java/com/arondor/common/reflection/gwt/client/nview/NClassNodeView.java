@@ -49,7 +49,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
             @Override
             public void onClick(ClickEvent event)
             {
-                implementingClassView.resetComboBox();
+                implementingClassView.resetImplementingList();
                 setActive(false);
                 clear();
             }

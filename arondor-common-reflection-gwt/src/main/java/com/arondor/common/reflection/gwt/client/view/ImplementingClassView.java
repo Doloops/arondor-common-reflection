@@ -26,8 +26,11 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.OpenEvent;
+import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Composite;
 
 import gwt.material.design.addins.client.combobox.MaterialComboBox;
@@ -63,10 +66,25 @@ public class ImplementingClassView extends Composite implements ImplementingClas
                 implementingListInput.open();
             }
         });
+
     }
 
     @Override
-    public void resetComboBox()
+    public HandlerRegistration onOpenImplementingClasses(Command command)
+    {
+        return implementingListInput.addOpenHandler(new OpenHandler<ImplementingClass>()
+        {
+            @Override
+            public void onOpen(OpenEvent<ImplementingClass> event)
+            {
+                LOG.info("onOpenImplementingClasses()");
+                command.execute();
+            }
+        });
+    }
+
+    @Override
+    public void resetImplementingList()
     {
         implementingListInput.unselect();
         selectedClass = ImplementingClass.NULL_CLASS;
@@ -132,7 +150,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         {
             LOG.info("Selected item #" + index + " for clazz " + clazz);
             implementingListInput.setSelectedIndex(index);
-            // implementingListInput.getLabel().getElement().addClassName("select2label");
+            implementingListInput.getLabel().getElement().addClassName("select2label");
         }
         // LOG.warning("Could not select class : " + className);
     }
@@ -170,7 +188,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         /**
          * TODO We skip updating Node Description here !!
          */
-        if (false)
+        if (true)
         {
             implementingListInput.setLabel(label);
         }

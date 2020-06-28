@@ -18,6 +18,7 @@ import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class DefaultImplementingClassPresenter implements ImplementingClassPresenter
@@ -56,11 +57,23 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
         // }
 
         fetchBaseClass();
+        fetchObjectConfigurations();
 
+        display.onOpenImplementingClasses(new Command()
+        {
+            @Override
+            public void execute()
+            {
+                LOG.info("onOpenImplementingClasses()");
+                fetchObjectConfigurations();
+            }
+        });
     }
 
-    private void fetchObjectConfigurations(ObjectConfigurationMap objectConfigurationMap)
+    private void fetchObjectConfigurations()
     {
+        if (objectConfigurationMap == null)
+            return;
         for (Map.Entry<String, ObjectConfiguration> entry : objectConfigurationMap.entrySet())
         {
             final String referenceName = entry.getKey();
@@ -169,7 +182,7 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
                     doUpdateDisplay();
                     return false;
                 }
-            }, 20);
+            }, 50);
         }
         else
         {
@@ -252,11 +265,6 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
                     {
                         handler.onValueChange(event);
                     }
-                }
-
-                if (objectConfigurationMap != null)
-                {
-                    fetchObjectConfigurations(objectConfigurationMap);
                 }
             }
 
