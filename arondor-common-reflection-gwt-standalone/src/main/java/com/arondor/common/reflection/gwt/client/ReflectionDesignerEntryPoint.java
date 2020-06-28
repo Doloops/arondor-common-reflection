@@ -19,14 +19,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.arondor.common.reflection.bean.config.ObjectConfigurationFactoryBean;
-import com.arondor.common.reflection.bean.config.ObjectConfigurationMapBean;
 import com.arondor.common.reflection.gwt.client.api.AccessibleClassPresenter;
+import com.arondor.common.reflection.gwt.client.presenter.ObjectReferencesProvider;
 import com.arondor.common.reflection.gwt.client.presenter.ReflectionDesignerPresenter;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.gwt.client.service.RestDirectReflectionServiceAsync;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
-import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.arondor.common.reflection.xstream.GWTObjectConfigurationParser;
 import com.arondor.common.reflection.xstream.GWTObjectConfigurationSerializer;
 import com.google.gwt.core.client.EntryPoint;
@@ -72,7 +71,7 @@ public class ReflectionDesignerEntryPoint implements EntryPoint
 
     private GWTObjectConfigurationParser parser = new GWTObjectConfigurationParser();
 
-    private ObjectConfigurationMap objectConfigurationMap = new ObjectConfigurationMapBean();
+    private final ObjectReferencesProvider objectReferencesProvider = null;
 
     private AccessibleClassPresenter rootPresenter;
 
@@ -85,7 +84,7 @@ public class ReflectionDesignerEntryPoint implements EntryPoint
             baseClassName = "com.arondor.fast2p8.model.task.Task";
         }
         rootPresenter = AccessibleClassPresenterFactory.createAccessibleClassPresenter(reflectionService,
-                objectConfigurationMap, baseClassName);
+                objectReferencesProvider, baseClassName);
 
         RootPanel.get().clear();
         RootPanel.get().add(rootPresenter.getDisplayWidget());
@@ -106,7 +105,7 @@ public class ReflectionDesignerEntryPoint implements EntryPoint
 
     public String getConfiguration()
     {
-        ObjectConfiguration objectConfiguration = rootPresenter.getObjectConfiguration(objectConfigurationFactory);
+        ObjectConfiguration objectConfiguration = rootPresenter.getObjectConfiguration();
 
         String xml = serializer.serialize(objectConfiguration);
 

@@ -102,6 +102,12 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
     };
 
     public SimpleObjectConfigurationMapPresenter(GWTReflectionServiceAsync rpcService, String fieldName,
+            ObjectConfigurationMapDisplay mapDisplay)
+    {
+        this(rpcService, fieldName, mapDisplay, null);
+    }
+
+    public SimpleObjectConfigurationMapPresenter(GWTReflectionServiceAsync rpcService, String fieldName,
             ObjectConfigurationMapDisplay mapDisplay, List<String> availableScopes)
     {
         super(rpcService, new DelayedObjectReferencesProvider(), GENERIC_TYPES, mapDisplay);

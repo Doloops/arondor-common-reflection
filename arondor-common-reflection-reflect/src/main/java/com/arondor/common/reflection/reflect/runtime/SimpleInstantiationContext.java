@@ -69,6 +69,10 @@ public class SimpleInstantiationContext implements InstantiationContext
     @Override
     public void addSharedObjectConfigurations(ObjectConfigurationMap objetConfigurations)
     {
+        if (objetConfigurations == null)
+        {
+            return;
+        }
         for (Map.Entry<String, ObjectConfiguration> entry : objetConfigurations.entrySet())
         {
             this.objetConfigurations.put(entry.getKey(), entry.getValue());
