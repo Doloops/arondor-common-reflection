@@ -552,7 +552,6 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
     private void parseAccessibleFieldsDefaultValue(AccessibleClassBean accessClass, Class<?> clazz,
             Map<String, AccessibleField> exposedAttributes)
     {
-
         Object o = instanciateObject(clazz);
         if (o == null)
         {
@@ -561,7 +560,6 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
 
         for (AccessibleField field : exposedAttributes.values())
         {
-
             if (isPrimitiveType(field.getClassName()))
             {
 
@@ -578,7 +576,6 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
                 LOG.debug("Skipping field " + field.getName() + ", unsupported type " + field.getClassName()
                         + " for default value retrieving");
             }
-
         }
 
     }
@@ -601,23 +598,31 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         }
         catch (NoSuchMethodException e)
         {
-            LOG.warn("NoSuchMethodException for attribute : " + field.getName());
+            LOG.warn("NoSuchMethodException for class " + clazz.getName() + ", attribute : " + field.getName());
         }
         catch (SecurityException e)
         {
-            LOG.warn("SecurityException : " + field.getName());
+            LOG.warn("SecurityException for class " + clazz.getName() + ", attribute : " + field.getName());
         }
         catch (IllegalAccessException e)
         {
-            LOG.warn("IllegalAccessException : " + field.getName());
+            LOG.warn("IllegalAccessException for class " + clazz.getName() + ", attribute : " + field.getName());
         }
         catch (IllegalArgumentException e)
         {
-            LOG.warn("IllegalArgumentException : " + field.getName());
+            LOG.warn("IllegalArgumentException for class " + clazz.getName() + ", attribute : " + field.getName());
         }
         catch (InvocationTargetException e)
         {
-            LOG.warn("InvocationTargetException : " + field.getName());
+            LOG.warn("InvocationTargetException for class " + clazz.getName() + ", attribute : " + field.getName());
+        }
+        catch (RuntimeException e)
+        {
+            LOG.warn("RuntimeException for class " + clazz.getName() + ", attribute : " + field.getName());
+        }
+        catch (Error e)
+        {
+            LOG.warn("Error for class " + clazz.getName() + ", attribute : " + field.getName());
         }
         finally
         {
@@ -649,11 +654,15 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         }
         catch (UnsupportedOperationException e)
         {
-            LOG.warn("IllegalAccessException for class : " + clazz.getName(), e);
+            LOG.warn("UnsupportedOperationException for class : " + clazz.getName(), e);
         }
         catch (RuntimeException e)
         {
-            LOG.warn("IllegalAccessException for class : " + clazz.getName(), e);
+            LOG.warn("RuntimeException for class : " + clazz.getName(), e);
+        }
+        catch (Error e)
+        {
+            LOG.warn("Error for class : " + clazz.getName(), e);
         }
         return o;
     }
