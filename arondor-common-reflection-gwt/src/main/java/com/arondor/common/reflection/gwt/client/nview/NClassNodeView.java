@@ -64,8 +64,8 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         advancedSettings.getElement().addClassName(CssBundle.INSTANCE.css().advancedSettingsBtn());
 
         String rnd = String.valueOf(Math.random()).substring(2);
-        advancedSettings.getElement().setInnerHTML(
-                "<a data-toggle=\"collapse\"  href=\"#advancedSettings" + rnd + "\">> Advanced settings</a>");
+        advancedSettings.getElement()
+                .setInnerHTML("<a data-toggle=\"collapse\"  href=\"#advancedSettings" + rnd + "\">More</a>");
 
         advancedSettings.getElement().addClassName(CssBundle.INSTANCE.css().hideAdvancedSettings());
 
