@@ -19,8 +19,9 @@ public class NClassNodeViewWithKey extends NClassNodeView implements MapPairDisp
 
     public NClassNodeViewWithKey(String keyClass, String valueClass)
     {
-        keyTextBox.setClass("outlined col-5 pl-0");
+        keyTextBox.setClass("outlined col-4 pl-0");
         keyTextBox.getElement().getElementsByTagName("input").getItem(0).addClassName("mb-0");
+        keyTextBox.setLabel("Key");
         getOptionsArea().getElement().setAttribute("style", "width:100%;padding-left:10px;");
 
         getElement().addClassName("pl-0 m-0");
@@ -37,6 +38,8 @@ public class NClassNodeViewWithKey extends NClassNodeView implements MapPairDisp
         });
 
         bind();
+
+        setNodeDescription("Selected class");
     }
 
     @Override

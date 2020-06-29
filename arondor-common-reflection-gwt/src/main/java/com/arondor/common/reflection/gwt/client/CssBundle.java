@@ -14,8 +14,8 @@ public interface CssBundle extends ClientBundle
         @ClassName("rootTreeNode")
         String rootTreeNode();
 
-        // @ClassName("implementingClassView")
-        // String implementingClassView();
+        @ClassName("scopeSelector")
+        String scopeSelector();
 
         @ClassName("nodeField")
         String nodeField();
@@ -70,6 +70,9 @@ public interface CssBundle extends ClientBundle
 
         @ClassName("deleteRowBtn")
         String deleteRowBtn();
+
+        @ClassName("contentGroup")
+        String classContentGroup();
     }
 
     static final CssBundle INSTANCE = GWT.create(CssBundle.class);

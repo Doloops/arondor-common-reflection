@@ -189,12 +189,6 @@ public class ImplementingClassView extends Composite implements ImplementingClas
     @Override
     public void setNodeDescription(String label)
     {
-        /**
-         * TODO We skip updating Node Description here !!
-         */
-        if (true)
-        {
-            implementingListInput.setLabel(label);
-        }
+        implementingListInput.setLabel(label);
     }
 }

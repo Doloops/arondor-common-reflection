@@ -1,5 +1,5 @@
 .classNode .nodeField {
-	padding: 0px 0px 0px 30px;
+/*	padding: 0px 0px 0px 30px; */
 /* 	margin-top:5px; */
 	margin-bottom:15px;
 	text-align:left!important;
@@ -22,6 +22,10 @@
 .rootTreeNode div {
 	line-height: normal;
 	margin-top: 5px;
+}
+
+.rootTreeNode .scopeSelector {
+	margin-bottom: 0px;
 }
 
 .nodeName{
@@ -109,6 +113,10 @@
 	position:relative;
 }
 
+.classNode {
+	border-left: 3px solid #42A5F5;
+}
+
 .mappingTable .advancedSettingsBtn {
 	margin-top:0px!important;
 }
@@ -130,32 +138,36 @@
 	transition-duration: .5s;
 }
 
-.mandatoryChildren {
+.classNode .contentGroup{
+	/* border-left: 1px solid #42A5F5; */
+	margin-bottom: 10px;
 }
 
-.advancedSettingsBtn{
+.classNode .mandatoryChildren {
+}
+
+.classNode .advancedSettingsBtn{
 	margin-top:10px!important;
 	margin-bottom:3px;
 	font-size:9pt!important;
 	color:#1d7ae2;
 }
 
-.advancedSettingsBtn a {
+.classNode .advancedSettingsBtn a {
 	height:20px;
 	color:#0066cc;
 	font-weight:500; /*semi-bold*/
 	font-size:13px;
 	text-align:center;
-	padding-left:10px;
+	margin-left:8px;
 }
 
-.advancedSettingsBtn a:hover {
+.classNode .advancedSettingsBtn a:hover {
 	text-decoration: underline!important;
 }
 	
-.optionalChildren{
+.classNode .optionalChildren{
 	margin:0px 0px 30px 10px;
-	border-left: 5px solid aliceblue;
 }
 
 .nodeField {

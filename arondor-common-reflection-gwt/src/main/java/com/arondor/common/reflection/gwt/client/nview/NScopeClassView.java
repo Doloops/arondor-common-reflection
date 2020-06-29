@@ -2,19 +2,22 @@ package com.arondor.common.reflection.gwt.client.nview;
 
 import java.util.List;
 
+import com.arondor.common.reflection.gwt.client.CssBundle;
 import com.arondor.common.reflection.gwt.client.api.ObjectConfigurationMapPresenter.MapPairDisplayWithScope;
-import com.google.gwt.dom.client.Style.Unit;
 
-import gwt.material.design.client.ui.MaterialListBox;
+import gwt.material.design.addins.client.combobox.MaterialComboBox;
 
 public class NScopeClassView extends NClassNodeViewWithKey implements MapPairDisplayWithScope
 {
-    private MaterialListBox scopeBox = new MaterialListBox();
+    private MaterialComboBox<String> scopeBox = new MaterialComboBox<String>();
 
     public NScopeClassView(String keyClass, String valueClass)
     {
         super(keyClass, valueClass);
-        scopeBox.getElement().getStyle().setWidth(120f, Unit.PX);
+        // scopeBox.getElement().getStyle().setWidth(120f, Unit.PX);
+        scopeBox.getElement().setClassName("outlined col-1 pl-0");
+        scopeBox.getElement().addClassName(CssBundle.INSTANCE.css().scopeSelector());
+        scopeBox.setLabel("Scope");
     }
 
     @Override
@@ -29,18 +32,21 @@ public class NScopeClassView extends NClassNodeViewWithKey implements MapPairDis
     public void setAvailableScopes(List<String> scopes)
     {
         for (String scope : scopes)
-            scopeBox.add(scope);
+            scopeBox.addItem(scope);
     }
 
     @Override
     public void setScope(String scope)
     {
-        scopeBox.setValue(scope);
+        scopeBox.unselect();
+        scopeBox.setSelectedIndex(scopeBox.getValueIndex(scope));
     }
 
     @Override
     public String getScope()
     {
-        return scopeBox.getValue();
+        if (scopeBox.getSelectedValue().isEmpty())
+            return null;
+        return scopeBox.getSelectedValue().get(0);
     }
 }
