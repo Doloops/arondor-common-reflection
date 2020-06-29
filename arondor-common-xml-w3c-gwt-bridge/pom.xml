@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.arondor.common</groupId>
 		<artifactId>arondor-common-reflection</artifactId>
-		<version>1.0.0-rc2</version>
+		<version>1.0.0-rc3</version>
 	</parent>
 	<groupId>com.arondor.common.reflection</groupId>
 	<artifactId>arondor-common-xml-w3c-gwt-bridge</artifactId>
