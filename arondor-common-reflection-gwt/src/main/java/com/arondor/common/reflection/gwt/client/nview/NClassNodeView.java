@@ -49,7 +49,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
             @Override
             public void onClick(ClickEvent event)
             {
-                implementingClassView.resetComboBox();
+                implementingClassView.resetImplementingList();
                 setActive(false);
                 clear();
             }
@@ -65,8 +65,6 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         optionalChildren.getElement().setId("advancedSettings" + rnd);
 
         optionalChildren.getElement().addClassName("collapse");
-
-        // implementingClassView.setProperLabel("blabla");
 
         bind();
     }
@@ -89,7 +87,6 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         add(optionsArea);
 
         advancedSettings.getElement().addClassName(CssBundle.INSTANCE.css().hideAdvancedSettings());
-
     }
 
     protected FlowPanel getOptionsArea()

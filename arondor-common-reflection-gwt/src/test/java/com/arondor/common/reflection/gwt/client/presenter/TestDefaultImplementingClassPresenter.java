@@ -15,7 +15,6 @@ import org.mockito.stubbing.Answer;
 
 import com.arondor.common.reflection.bean.java.AccessibleClassBean;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
-import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -75,12 +74,12 @@ public class TestDefaultImplementingClassPresenter
             }
         }).when(rpcService).getImplementingAccessibleClasses(Matchers.anyString(), Matchers.any(AsyncCallback.class));
 
-        ObjectConfigurationMap objectConfigurationMap = null;
+        ObjectReferencesProvider objectReferencesProvider = null;
         String baseClassName = "java.lang.Object";
         ImplementingClassPresenter.ImplementingClassDisplay display = Mockito
                 .mock(ImplementingClassPresenter.ImplementingClassDisplay.class);
         DefaultImplementingClassPresenter presenter = new DefaultImplementingClassPresenter(rpcService,
-                objectConfigurationMap, baseClassName, false, display);
+                objectReferencesProvider, baseClassName, false, display);
 
         ArgumentCaptor<Collection> captor = ArgumentCaptor.forClass(Collection.class);
         Mockito.verify(display, Mockito.atLeastOnce()).setImplementingClasses(captor.capture());
@@ -88,8 +87,7 @@ public class TestDefaultImplementingClassPresenter
         List<ImplementingClass> result = (List<ImplementingClass>) captor.getValue();
         Assert.assertEquals("Invalid result : " + result, 1, result.size());
         ImplementingClass firstResult = result.get(0);
-        Assert.assertEquals(
-                new ImplementingClass(false, createAccessibleClass("com.arondor.testing.SomeConcreteClass")),
+        Assert.assertEquals(new ImplementingClass(createAccessibleClass("com.arondor.testing.SomeConcreteClass")),
                 firstResult);
     }
 

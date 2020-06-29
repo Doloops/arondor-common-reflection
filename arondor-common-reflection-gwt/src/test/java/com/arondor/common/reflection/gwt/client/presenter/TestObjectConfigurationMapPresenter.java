@@ -94,7 +94,7 @@ public class TestObjectConfigurationMapPresenter
         Mockito.when(classDisplay.getImplementingClassDisplay()).thenReturn(display);
 
         ObjectConfigurationMapPresenter objectConfigurationMapPresenter = new SimpleObjectConfigurationMapPresenter(
-                gwtReflectionService, fieldName, objectConfigurationMapDisplay);
+                gwtReflectionService, fieldName, objectConfigurationMapDisplay, null);
 
         final String context = "testreflection-config.xml";
         XMLBeanDefinitionParser parser = new XMLBeanDefinitionParser(context);
@@ -108,10 +108,9 @@ public class TestObjectConfigurationMapPresenter
         ElementConfiguration cacheProvider = providersList.getListConfiguration().get(1);
         Assert.assertTrue(cacheProvider instanceof ObjectConfiguration);
 
-        objectConfigurationMapPresenter.setObjectConfigurationMap(objectConfigurationMap);
+        objectConfigurationMapPresenter.addObjectConfigurationMap(null, objectConfigurationMap);
 
-        ObjectConfigurationMap result = objectConfigurationMapPresenter
-                .getObjectConfigurationMap(objectConfigurationFactory);
+        ObjectConfigurationMap result = objectConfigurationMapPresenter.getObjectConfigurationMap(null);
         Assert.assertTrue(result instanceof ObjectConfigurationMapBean);
         Assert.assertNotNull(result);
         Assert.assertEquals(1, result.size());

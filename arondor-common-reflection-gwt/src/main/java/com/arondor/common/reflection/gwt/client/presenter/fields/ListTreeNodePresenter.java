@@ -19,14 +19,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.arondor.common.reflection.bean.java.AccessibleFieldBean;
+import com.arondor.common.reflection.gwt.client.AccessibleClassPresenterFactory;
 import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent;
+import com.arondor.common.reflection.gwt.client.presenter.ObjectReferencesProvider;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenterFactory;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ListConfiguration;
-import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
-import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -42,17 +42,17 @@ public class ListTreeNodePresenter implements TreeNodePresenter
 
     private final GWTReflectionServiceAsync rpcService;
 
-    private final ObjectConfigurationMap objectConfigurationMap;
+    private final ObjectReferencesProvider objectReferencesProvider;
 
     private final ListRootDisplay listDisplay;
 
     private final String genericType;
 
-    public ListTreeNodePresenter(GWTReflectionServiceAsync rpcService, ObjectConfigurationMap objectConfigurationMap,
-            String genericType, ListRootDisplay listDisplay)
+    public ListTreeNodePresenter(GWTReflectionServiceAsync rpcService,
+            ObjectReferencesProvider objectReferencesProvider, String genericType, ListRootDisplay listDisplay)
     {
         this.rpcService = rpcService;
-        this.objectConfigurationMap = objectConfigurationMap;
+        this.objectReferencesProvider = objectReferencesProvider;
         this.listDisplay = listDisplay;
         this.genericType = genericType;
 
@@ -83,7 +83,7 @@ public class ListTreeNodePresenter implements TreeNodePresenter
         entryBean.setDescription("Entry");
 
         final TreeNodePresenter childPresenter = TreeNodePresenterFactory.getInstance()
-                .createChildNodePresenter(rpcService, objectConfigurationMap, listDisplay, entryBean);
+                .createChildNodePresenter(rpcService, objectReferencesProvider, listDisplay, entryBean);
 
         childPresenter.getDisplay().addTreeNodeClearHandler(new TreeNodeClearEvent.Handler()
         {
@@ -104,17 +104,18 @@ public class ListTreeNodePresenter implements TreeNodePresenter
     }
 
     @Override
-    public ElementConfiguration getElementConfiguration(ObjectConfigurationFactory objectConfigurationFactory)
+    public ElementConfiguration getElementConfiguration()
     {
         if (!listDisplay.isActive())
         {
             return null;
         }
-        ListConfiguration listConfiguration = objectConfigurationFactory.createListConfiguration();
+        ListConfiguration listConfiguration = AccessibleClassPresenterFactory.getObjectConfigurationFactory()
+                .createListConfiguration();
         listConfiguration.setListConfiguration(new ArrayList<ElementConfiguration>());
         for (TreeNodePresenter presenter : childPresenters)
         {
-            ElementConfiguration childConfiguration = presenter.getElementConfiguration(objectConfigurationFactory);
+            ElementConfiguration childConfiguration = presenter.getElementConfiguration();
             listConfiguration.getListConfiguration().add(childConfiguration);
         }
         return listConfiguration;

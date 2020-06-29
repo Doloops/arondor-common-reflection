@@ -116,8 +116,7 @@ public class ReflectionDesignerPresenter
             @Override
             public void onClick(ClickEvent event)
             {
-                ObjectConfigurationMap map = objectConfigurationMapPresenter
-                        .getObjectConfigurationMap(objectConfigurationFactory);
+                ObjectConfigurationMap map = objectConfigurationMapPresenter.getObjectConfigurationMap(null);
                 if (map.size() == 1)
                 {
                     ObjectConfiguration firstOne = map.get(map.keySet().iterator().next());
@@ -177,7 +176,7 @@ public class ReflectionDesignerPresenter
             @Override
             public void onSuccess(ObjectConfigurationMap result)
             {
-                objectConfigurationMapPresenter.setObjectConfigurationMap(result);
+                objectConfigurationMapPresenter.addObjectConfigurationMap(null, result);
             }
 
             @Override

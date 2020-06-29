@@ -18,6 +18,7 @@ package com.arondor.common.reflection.gwt.client.presenter.fields;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.arondor.common.reflection.gwt.client.AccessibleClassPresenterFactory;
 import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
@@ -91,10 +92,12 @@ public class StringListTreeNodePresenter implements TreeNodePresenter
     }
 
     @Override
-    public ElementConfiguration getElementConfiguration(ObjectConfigurationFactory objectConfigurationFactory)
+    public ElementConfiguration getElementConfiguration()
     {
         if (values != null)
         {
+            ObjectConfigurationFactory objectConfigurationFactory = AccessibleClassPresenterFactory
+                    .getObjectConfigurationFactory();
             ListConfiguration listConfiguration = objectConfigurationFactory.createListConfiguration();
             listConfiguration.setListConfiguration(new ArrayList<ElementConfiguration>());
             for (String value : values)

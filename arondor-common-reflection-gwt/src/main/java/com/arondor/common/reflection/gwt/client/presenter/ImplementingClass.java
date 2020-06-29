@@ -21,24 +21,22 @@ public class ImplementingClass implements Comparable<ImplementingClass>
 {
     private final boolean reference;
 
-    private final String fullName;
+    private final String className;
 
-    private final String baseName;
+    private final String displayName;
 
-    private final AccessibleClass clazz;
+    public static final ImplementingClass NULL_CLASS = new ImplementingClass(false, null, null);
 
-    public static final ImplementingClass NULL_CLASS = new ImplementingClass(false, null);
-
-    public static final String NULL_VALUE = "null";
-
-    public static final String REFERENCE_PREFIX = "Reference : ";
-
-    public ImplementingClass(boolean reference, AccessibleClass clazz)
+    public ImplementingClass(boolean reference, String fullName, String displayName)
     {
         this.reference = reference;
-        this.clazz = clazz;
-        this.fullName = (clazz != null ? clazz.getName() : null);
-        this.baseName = (clazz != null ? clazz.getClassBaseName() : null);
+        this.className = fullName;
+        this.displayName = displayName;
+    }
+
+    public ImplementingClass(AccessibleClass clazz)
+    {
+        this(false, clazz.getName(), clazz.getClassBaseName());
     }
 
     public boolean isReference()
@@ -53,9 +51,9 @@ public class ImplementingClass implements Comparable<ImplementingClass>
      * @return the full name (package details + className) of the implementing
      *         class
      */
-    public String getFullName()
+    public String getClassName()
     {
-        return fullName;
+        return className;
     }
 
     /**
@@ -63,9 +61,9 @@ public class ImplementingClass implements Comparable<ImplementingClass>
      * 
      * @return the name (class name) of the implementing class
      */
-    public String getBaseName()
+    public String getDisplayName()
     {
-        return baseName;
+        return displayName;
     }
 
     @Override
@@ -73,7 +71,11 @@ public class ImplementingClass implements Comparable<ImplementingClass>
     {
         if (reference && o.reference)
         {
-            return fullName.compareTo(o.fullName);
+            if (displayName == null && o.displayName == null)
+                return 0;
+            if (displayName == null)
+                return -1;
+            return displayName.compareTo(o.displayName);
         }
         if (reference)
         {
@@ -83,19 +85,19 @@ public class ImplementingClass implements Comparable<ImplementingClass>
         {
             return -1;
         }
-        if (fullName == null && o.fullName == null)
+        if (className == null && o.className == null)
         {
             return 0;
         }
-        if (fullName == null)
+        if (className == null)
         {
             return -1;
         }
-        if (o.fullName == null)
+        if (o.className == null)
         {
             return 1;
         }
-        return fullName.compareTo(o.fullName);
+        return className.compareTo(o.className);
     }
 
     @Override
@@ -111,30 +113,12 @@ public class ImplementingClass implements Comparable<ImplementingClass>
     @Override
     public int hashCode()
     {
-        return (reference ? 23 : 17) + ((fullName != null) ? fullName.hashCode() : 0);
+        return (reference ? 23 : 17) + ((className != null) ? className.hashCode() : 0);
     }
 
     @Override
     public String toString()
     {
-        if (reference)
-        {
-            return REFERENCE_PREFIX + fullName;
-        }
-        return fullName;
-    }
-
-    public static ImplementingClass parseImplementingClass(String value)
-    {
-        if (value.equals(NULL_VALUE))
-        {
-            return NULL_CLASS;
-        }
-        else if (value.startsWith(REFERENCE_PREFIX))
-        {
-            value = value.substring(ImplementingClass.REFERENCE_PREFIX.length());
-            return new ImplementingClass(true, null);
-        }
-        return new ImplementingClass(false, null);
+        return "{reference=" + reference + ", className=" + className + ", displayName=" + displayName + "}";
     }
 }

@@ -139,6 +139,10 @@ public class DefaultReflectionService implements ReflectionService
                 return clazz;
             }
         }
+        if (getAccessibleClassParser() == null)
+        {
+            throw new IllegalArgumentException("No AccessibleClassParser provided ! Could not get " + clazzName);
+        }
         Class<?> clazz;
         try
         {

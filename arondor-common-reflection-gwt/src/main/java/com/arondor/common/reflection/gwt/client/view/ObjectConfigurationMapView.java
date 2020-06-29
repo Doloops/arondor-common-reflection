@@ -1,89 +1,31 @@
 package com.arondor.common.reflection.gwt.client.view;
 
-import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent.Handler;
+import com.arondor.common.reflection.gwt.client.CssBundle;
+import com.arondor.common.reflection.gwt.client.nview.NMapNodeView;
+import com.arondor.common.reflection.gwt.client.nview.NScopeClassView;
 import com.arondor.common.reflection.gwt.client.presenter.SimpleObjectConfigurationMapPresenter.ObjectConfigurationMapDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePresenter.MapPairDisplay;
-import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.IsWidget;
 
-public class ObjectConfigurationMapView implements ObjectConfigurationMapDisplay
+public class ObjectConfigurationMapView extends NMapNodeView implements ObjectConfigurationMapDisplay
 {
-
-    @Override
-    public HasClickHandlers addElementClickHandler()
+    public ObjectConfigurationMapView()
     {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void setNodeName(String name)
-    {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void setNodeDescription(String description)
-    {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void setNodeLongDescription(String longDescription)
-    {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void setActive(boolean active)
-    {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public boolean isActive()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public void clear()
-    {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void addTreeNodeClearHandler(Handler handler)
-    {
-        // TODO Auto-generated method stub
-
+        getElement().addClassName(CssBundle.INSTANCE.css().rootTreeNode());
     }
 
     @Override
     public IsWidget getDisplayWidget()
     {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void setIsPassword()
-    {
-        // TODO Auto-generated method stub
-
+        return this;
     }
 
     @Override
     public MapPairDisplay createPair(String keyClass, String valueClass)
     {
-        // TODO Auto-generated method stub
-        return null;
+        NScopeClassView newPair = new NScopeClassView(keyClass, valueClass);
+        newPair.clear();
+        mappingTable.add(newPair.asWidget());
+        return newPair;
     }
-
 }

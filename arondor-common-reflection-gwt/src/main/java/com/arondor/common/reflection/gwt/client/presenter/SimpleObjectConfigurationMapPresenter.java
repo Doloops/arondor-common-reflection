@@ -16,21 +16,25 @@
 package com.arondor.common.reflection.gwt.client.presenter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.arondor.common.reflection.bean.config.ObjectConfigurationFactoryBean;
-import com.arondor.common.reflection.bean.config.ObjectConfigurationMapBean;
+import com.arondor.common.reflection.gwt.client.AccessibleClassPresenterFactory;
 import com.arondor.common.reflection.gwt.client.api.ObjectConfigurationMapPresenter;
+import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter.ClassDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.KeyValuePresenterPair;
 import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePresenter;
+import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
-import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.IsWidget;
 
 public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
@@ -51,12 +55,66 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
         IsWidget getDisplayWidget();
     }
 
+    private final List<String> availableScopes;
+
+    private static class DelayedObjectReferencesProvider implements ObjectReferencesProvider
+    {
+        private ObjectReferencesProvider delegate;
+
+        @Override
+        public void provide(AsyncCallback<Collection<ImplementingClass>> callback)
+        {
+            delegate.provide(callback);
+        }
+
+        public void setDelegate(ObjectReferencesProvider delegate)
+        {
+            this.delegate = delegate;
+        }
+    }
+
+    ObjectReferencesProvider topLevelObjectRefencesProvider = new ObjectReferencesProvider()
+    {
+        @Override
+        public void provide(AsyncCallback<Collection<ImplementingClass>> callback)
+        {
+            List<ImplementingClass> implementingClasses = new ArrayList<ImplementingClass>();
+            for (KeyValuePresenterPair presenter : getKeyValuePresenters())
+            {
+                String key = getKeyForPresenter(presenter);
+                if (key == null)
+                    continue;
+                ElementConfiguration valueConfiguration = presenter.getValuePresenter().getElementConfiguration();
+                if (!(valueConfiguration instanceof ObjectConfiguration))
+                {
+                    continue;
+                }
+                ObjectConfiguration objectConfiguration = (ObjectConfiguration) valueConfiguration;
+                if (objectConfiguration.getClassName() == null)
+                {
+                    continue;
+                }
+                LOG.info("Found reference : class=" + objectConfiguration.getClassName() + ", key=" + key);
+                implementingClasses.add(new ImplementingClass(true, objectConfiguration.getClassName(), key));
+            }
+            callback.onSuccess(implementingClasses);
+        }
+    };
+
     public SimpleObjectConfigurationMapPresenter(GWTReflectionServiceAsync rpcService, String fieldName,
             ObjectConfigurationMapDisplay mapDisplay)
     {
-        super(rpcService, null, GENERIC_TYPES, mapDisplay);
-        mapDisplay.setNodeName(fieldName);
-        super.setObjectConfigurationMap(new ObjectConfigurationMapBean());
+        this(rpcService, fieldName, mapDisplay, null);
+    }
+
+    public SimpleObjectConfigurationMapPresenter(GWTReflectionServiceAsync rpcService, String fieldName,
+            ObjectConfigurationMapDisplay mapDisplay, List<String> availableScopes)
+    {
+        super(rpcService, new DelayedObjectReferencesProvider(), GENERIC_TYPES, mapDisplay);
+        mapDisplay.setNodeDescription(fieldName);
+        this.availableScopes = availableScopes;
+
+        ((DelayedObjectReferencesProvider) getObjectReferencesProvider()).setDelegate(topLevelObjectRefencesProvider);
     }
 
     /**
@@ -99,48 +157,95 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
     }
 
     @Override
-    public void setObjectConfigurationMap(ObjectConfigurationMap objectConfigurationMap)
+    public void addObjectConfigurationMap(String scope, ObjectConfigurationMap objectConfigurationMap)
     {
         if (objectConfigurationMap != null)
         {
-            super.getObjectConfigurationMap().putAll(objectConfigurationMap);
             for (Map.Entry<String, ObjectConfiguration> entry : objectConfigurationMap.entrySet())
             {
-                addChild(new MyPrimitiveConfiguration(entry.getKey()), entry.getValue());
+                LOG.info("Adding scope=" + scope + ", object=" + entry.getKey() + ", class="
+                        + entry.getValue().getClassName());
+                addChild(scope, new MyPrimitiveConfiguration(entry.getKey()), entry.getValue());
             }
         }
     }
 
     @Override
-    public void addExternalConfigurationMap(ObjectConfigurationMap objectConfigurationMap)
+    public void clearObjectConfigurations()
     {
-        if (objectConfigurationMap != null)
+        super.getKeyValuePresenters().clear();
+        super.getDisplay().clear();
+    }
+
+    private KeyValuePresenterPair addChild(String scope, ElementConfiguration keyConfiguration,
+            ElementConfiguration valueConfiguration)
+    {
+        KeyValuePresenterPair childPair = addChild();
+        childPair.getKeyPresenter().setElementConfiguration(keyConfiguration);
+        childPair.getValuePresenter().setElementConfiguration(valueConfiguration);
+
+        if (childPair.getDisplay() instanceof MapPairDisplayWithScope)
         {
-            super.getObjectConfigurationMap().putAll(objectConfigurationMap);
+            MapPairDisplayWithScope scopePairView = (MapPairDisplayWithScope) childPair.getDisplay();
+            scopePairView.setScope(scope);
         }
+        return childPair;
     }
 
     @Override
-    public ObjectConfigurationMap getObjectConfigurationMap(ObjectConfigurationFactory objectConfigurationFactory)
+    protected KeyValuePresenterPair addChild()
     {
-        ObjectConfigurationMap objectConfigurationMap = objectConfigurationFactory.createObjectConfigurationMap();
+        getDisplay().setActive(true);
+        String keyClass = GENERIC_TYPES.get(0);
+        String valueClass = GENERIC_TYPES.get(1);
+        MapPairDisplay pairView = getDisplay().createPair(keyClass, valueClass);
+        if (pairView instanceof MapPairDisplayWithScope)
+        {
+            MapPairDisplayWithScope scopePairView = (MapPairDisplayWithScope) pairView;
+            scopePairView.setAvailableScopes(availableScopes);
+        }
+
+        TreeNodePresenter keyPresenter = new PrimitiveTreeNodePresenter(pairView.getKeyDisplay());
+        TreeNodePresenter valuePresenter = new ClassTreeNodePresenter(rpcService, getObjectReferencesProvider(),
+                valueClass, (ClassDisplay) pairView.getValueDisplay());
+
+        KeyValuePresenterPair keyValuePresenterPair = new KeyValuePresenterPair(keyPresenter, valuePresenter, pairView);
+        getKeyValuePresenters().add(keyValuePresenterPair);
+
+        pairView.removePairClickHandler().addClickHandler(new ClickHandler()
+        {
+            @Override
+            public void onClick(ClickEvent event)
+            {
+                getKeyValuePresenters().remove(keyValuePresenterPair);
+            }
+        });
+        return keyValuePresenterPair;
+    }
+
+    @Override
+    public ObjectConfigurationMap getObjectConfigurationMap(String forScope)
+    {
+        ObjectConfigurationMap objectConfigurationMap = AccessibleClassPresenterFactory.getObjectConfigurationFactory()
+                .createObjectConfigurationMap();
         for (KeyValuePresenterPair presenter : getKeyValuePresenters())
         {
-            ElementConfiguration keyElementConfiguration = presenter.getKeyPresenter()
-                    .getElementConfiguration(objectConfigurationFactory);
-            if (!(keyElementConfiguration instanceof PrimitiveConfiguration))
+            if (presenter.getDisplay() instanceof MapPairDisplayWithScope)
             {
-                LOG.warning("Skipping element because key is of class " + keyElementConfiguration.getClass().getName());
-                continue;
+                String scope = ((MapPairDisplayWithScope) presenter.getDisplay()).getScope();
+                if (forScope != null && !forScope.equals(scope))
+                {
+                    LOG.finest("Skipping presenter bound to scope " + scope + ", only selecting " + forScope);
+                    continue;
+                }
             }
-            PrimitiveConfiguration primitiveKey = (PrimitiveConfiguration) keyElementConfiguration;
-            String keyString = primitiveKey.getValue();
-            ElementConfiguration valueConfiguration = presenter.getValuePresenter()
-                    .getElementConfiguration(objectConfigurationFactory);
+
+            String keyString = getKeyForPresenter(presenter);
+
+            ElementConfiguration valueConfiguration = presenter.getValuePresenter().getElementConfiguration();
             if (!(valueConfiguration instanceof ObjectConfiguration))
             {
-                LOG.warning(
-                        "Skipping element because value is of class " + keyElementConfiguration.getClass().getName());
+                LOG.warning("Skipping element because value is of class " + valueConfiguration.getClass().getName());
                 continue;
             }
             ObjectConfiguration objectConfiguration = (ObjectConfiguration) valueConfiguration;
@@ -149,19 +254,27 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
         return objectConfigurationMap;
     }
 
+    private String getKeyForPresenter(KeyValuePresenterPair presenter)
+    {
+        ElementConfiguration keyElementConfiguration = presenter.getKeyPresenter().getElementConfiguration();
+        if (keyElementConfiguration == null)
+        {
+            LOG.warning("Skipping element because configuration is null !");
+            return null;
+        }
+        if (!(keyElementConfiguration instanceof PrimitiveConfiguration))
+        {
+            LOG.warning("Skipping element because key is of class " + keyElementConfiguration.getClass().getName());
+            return null;
+        }
+        PrimitiveConfiguration primitiveKey = (PrimitiveConfiguration) keyElementConfiguration;
+        String keyString = primitiveKey.getValue();
+        return keyString;
+    }
+
     @Override
     public IsWidget getDisplayWidget()
     {
         return ((ObjectConfigurationMapDisplay) getDisplay()).getDisplayWidget();
-    }
-
-    @Override
-    protected KeyValuePresenterPair addChild()
-    {
-        /**
-         * Force refresh accessible beans for use as references
-         */
-        addExternalConfigurationMap(getObjectConfigurationMap(new ObjectConfigurationFactoryBean()));
-        return super.addChild();
     }
 }

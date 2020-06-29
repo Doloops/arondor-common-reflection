@@ -32,7 +32,7 @@ import com.arondor.common.reflection.model.java.AccessibleMethod;
 /**
  * Simple Class Catalog Parser
  * 
- * @author francois
+ * @author Francois Barre
  * 
  */
 public class SimpleAccessibleClassCatalog implements AccessibleClassCatalog
@@ -53,6 +53,7 @@ public class SimpleAccessibleClassCatalog implements AccessibleClassCatalog
 
         AccessibleFieldBean stringValue = new AccessibleFieldBean("value", "The String value", String.class, true,
                 true);
+        stringValue.setMandatory(true);
         stringClass.getAccessibleFields().put(stringValue.getName(), stringValue);
 
         accessibleClassMap.put(stringClass.getName(), stringClass);

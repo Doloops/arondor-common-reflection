@@ -35,11 +35,12 @@ public class NClassNodeViewWithKey extends NClassNodeView implements MapPairDisp
                 getElement().removeFromParent();
             }
         });
-        add(deleteRowBtn);
+
+        bind();
     }
 
     @Override
-    public void bind()
+    protected void bind()
     {
         if (keyTextBox != null)
         {

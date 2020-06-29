@@ -15,16 +15,21 @@
  */
 package com.arondor.common.reflection.gwt.client;
 
+import java.util.List;
+
+import com.arondor.common.reflection.bean.config.ObjectConfigurationFactoryBean;
 import com.arondor.common.reflection.gwt.client.api.AccessibleClassPresenter;
 import com.arondor.common.reflection.gwt.client.api.ObjectConfigurationMapPresenter;
 import com.arondor.common.reflection.gwt.client.nview.NViewFactory;
 import com.arondor.common.reflection.gwt.client.presenter.HierarchicAccessibleClassPresenter;
+import com.arondor.common.reflection.gwt.client.presenter.ObjectReferencesProvider;
 import com.arondor.common.reflection.gwt.client.presenter.SimpleObjectConfigurationMapPresenter;
 import com.arondor.common.reflection.gwt.client.presenter.SimpleObjectConfigurationMapPresenter.ObjectConfigurationMapDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.ViewFactory;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.gwt.client.view.ObjectConfigurationMapView;
-import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
+import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
+import com.google.gwt.core.client.GWT;
 
 /**
  * Helper class to create Hierarchic Class Presenters
@@ -39,23 +44,36 @@ public class AccessibleClassPresenterFactory
      */
     private AccessibleClassPresenterFactory()
     {
+    }
 
+    static
+    {
+        if (GWT.isClient())
+        {
+            CssBundle.INSTANCE.css().ensureInjected();
+        }
     }
 
     private static final ViewFactory FACTORY = new NViewFactory();
 
     public static AccessibleClassPresenter createAccessibleClassPresenter(GWTReflectionServiceAsync rpcService,
-            ObjectConfigurationMap objectConfigurationMap, String baseClassName)
+            ObjectReferencesProvider objectReferencesProvider, String baseClassName)
     {
-        CssBundle.INSTANCE.css().ensureInjected();
-        return new HierarchicAccessibleClassPresenter(rpcService, objectConfigurationMap, baseClassName,
+        return new HierarchicAccessibleClassPresenter(rpcService, objectReferencesProvider, baseClassName,
                 FACTORY.createClassDisplay());
     }
 
     public static ObjectConfigurationMapPresenter createObjectConfigurationMapPresenter(
-            GWTReflectionServiceAsync rpcService)
+            GWTReflectionServiceAsync rpcService, List<String> availableScopes)
     {
         ObjectConfigurationMapDisplay mapDisplay = new ObjectConfigurationMapView();
-        return new SimpleObjectConfigurationMapPresenter(rpcService, "Shared Objects", mapDisplay);
+        return new SimpleObjectConfigurationMapPresenter(rpcService, "Shared Objects", mapDisplay, availableScopes);
+    }
+
+    private static final ObjectConfigurationFactory OBJECT_CONFIGURATION_FACTORY = new ObjectConfigurationFactoryBean();
+
+    public static ObjectConfigurationFactory getObjectConfigurationFactory()
+    {
+        return OBJECT_CONFIGURATION_FACTORY;
     }
 }

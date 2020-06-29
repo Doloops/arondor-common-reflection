@@ -15,6 +15,7 @@
  */
 package com.arondor.common.reflection.gwt.client.presenter.fields;
 
+import com.arondor.common.reflection.gwt.client.AccessibleClassPresenterFactory;
 import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent;
 import com.arondor.common.reflection.gwt.client.nview.prim.NStringView;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter;
@@ -67,8 +68,10 @@ public class PrimitiveTreeNodePresenter implements TreeNodePresenter
     }
 
     @Override
-    public ElementConfiguration getElementConfiguration(ObjectConfigurationFactory objectConfigurationFactory)
+    public ElementConfiguration getElementConfiguration()
     {
+        ObjectConfigurationFactory objectConfigurationFactory = AccessibleClassPresenterFactory
+                .getObjectConfigurationFactory();
         if (fieldValue != null && !fieldValue.isEmpty())
         {
             return objectConfigurationFactory.createPrimitiveConfiguration(fieldValue);

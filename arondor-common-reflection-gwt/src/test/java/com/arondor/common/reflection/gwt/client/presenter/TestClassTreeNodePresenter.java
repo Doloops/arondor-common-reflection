@@ -127,12 +127,11 @@ public class TestClassTreeNodePresenter
         ClassTreeNodePresenter nodePresenter = new ClassTreeNodePresenter(rpcService, null,
                 TestInterface.class.getName(), nodeView);
         assertEquals(TestInterface.class.getName(), nodePresenter.getBaseClassName());
-        assertNull(nodePresenter.getImplementingClass().getFullName());
-        verify(nodeView.getImplementingClassDisplay()).setBaseClassName(TestInterface.class.getName());
+        assertNull(nodePresenter.getImplementingClass().getClassName());
+        // verify(nodeView.getImplementingClassDisplay()).setBaseClassName(TestInterface.class.getName());
 
         ValueChangeEvent<ImplementingClass> valueChangeEvent = mock(ValueChangeEvent.class);
-        when(valueChangeEvent.getValue())
-                .thenReturn(new ImplementingClass(false, createAccessibleClass(TestClass.class)));
+        when(valueChangeEvent.getValue()).thenReturn(new ImplementingClass(createAccessibleClass(TestClass.class)));
         for (ValueChangeHandler<ImplementingClass> changeHandler : changeHandlers)
         {
             changeHandler.onValueChange(valueChangeEvent);
@@ -142,7 +141,7 @@ public class TestClassTreeNodePresenter
          * that selected the class
          */
         verify(nodeView.getImplementingClassDisplay(), never()).selectImplementingClass(ImplementingClass.NULL_CLASS);
-        assertEquals(TestClass.class.getName(), nodePresenter.getImplementingClass().getFullName());
+        assertEquals(TestClass.class.getName(), nodePresenter.getImplementingClass().getClassName());
     }
 
     @Test
@@ -154,8 +153,8 @@ public class TestClassTreeNodePresenter
                 TestInterface.class.getName(), nodeView);
         assertEquals(TestInterface.class.getName(), nodePresenter.getBaseClassName());
         assertNotNull(nodePresenter.getImplementingClass());
-        assertNull(nodePresenter.getImplementingClass().getFullName());
-        verify(nodeView.getImplementingClassDisplay()).setBaseClassName(TestInterface.class.getName());
+        assertNull(nodePresenter.getImplementingClass().getClassName());
+        // verify(nodeView.getImplementingClassDisplay()).setBaseClassName(TestInterface.class.getName());
 
         ObjectConfiguration objectConfiguration = factory.createObjectConfiguration();
         objectConfiguration.setFields(new HashMap<String, ElementConfiguration>());
@@ -164,10 +163,10 @@ public class TestClassTreeNodePresenter
         nodePresenter.setElementConfiguration(objectConfiguration);
 
         verify(nodeView.getImplementingClassDisplay(), atLeastOnce())
-                .selectImplementingClass(new ImplementingClass(false, createAccessibleClass(TestClass.class)));
-        assertEquals(TestClass.class.getName(), nodePresenter.getImplementingClass().getFullName());
+                .selectImplementingClass(new ImplementingClass(createAccessibleClass(TestClass.class)));
+        assertEquals(TestClass.class.getName(), nodePresenter.getImplementingClass().getClassName());
 
-        ElementConfiguration elementConfiguration = nodePresenter.getElementConfiguration(factory);
+        ElementConfiguration elementConfiguration = nodePresenter.getElementConfiguration();
         assertNotNull(elementConfiguration);
         assertTrue(elementConfiguration instanceof ObjectConfiguration);
         ObjectConfiguration createdObjectConfiguration = (ObjectConfiguration) elementConfiguration;
