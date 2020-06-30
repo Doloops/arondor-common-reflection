@@ -165,6 +165,14 @@
 .classNode .advancedSettingsBtn a:hover {
 	text-decoration: underline!important;
 }
+
+.classNode .advancedSettingsBtn a[aria-expanded="false"]:before {
+	content:'More';
+}
+
+.classNode .advancedSettingsBtn a[aria-expanded="true"]:before {
+	content:'Less';
+}
 	
 .classNode .optionalChildren{
 	margin:0px 0px 30px 10px;
