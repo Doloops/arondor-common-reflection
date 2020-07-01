@@ -241,9 +241,29 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
             }
 
             String keyString = getKeyForPresenter(presenter);
+            if (keyString == null)
+            {
+                presenter.displayKeyError("Shared objects must have a key to be saved");
+                LOG.warning("Skipping element because key is null !");
+            }
+            else if (objectConfigurationMap.containsKey(keyString))
+            {
+                presenter.displayKeyError("Several shared objects have same key" + keyString);
+                LOG.warning("Skipping elements because multiple keys have same value : " + keyString);
+                continue;
+            }
+            else
+            {
+                presenter.displayKeyValid();
+            }
 
             ElementConfiguration valueConfiguration = presenter.getValuePresenter().getElementConfiguration();
-            if (!(valueConfiguration instanceof ObjectConfiguration))
+            if (valueConfiguration == null)
+            {
+                LOG.warning("Skipping element because value configuration is null");
+                continue;
+            }
+            else if (!(valueConfiguration instanceof ObjectConfiguration))
             {
                 LOG.warning("Skipping element because value is of class " + valueConfiguration.getClass().getName());
                 continue;
@@ -252,16 +272,14 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
             objectConfigurationMap.put(keyString, objectConfiguration);
         }
         return objectConfigurationMap;
+
     }
 
     private String getKeyForPresenter(KeyValuePresenterPair presenter)
     {
         ElementConfiguration keyElementConfiguration = presenter.getKeyPresenter().getElementConfiguration();
         if (keyElementConfiguration == null)
-        {
-            LOG.warning("Skipping element because configuration is null !");
             return null;
-        }
         if (!(keyElementConfiguration instanceof PrimitiveConfiguration))
         {
             LOG.warning("Skipping element because key is of class " + keyElementConfiguration.getClass().getName());

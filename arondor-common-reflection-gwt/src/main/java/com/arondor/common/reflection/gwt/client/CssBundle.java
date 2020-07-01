@@ -70,6 +70,12 @@ public interface CssBundle extends ClientBundle
 
         @ClassName("deleteRowBtn")
         String deleteRowBtn();
+
+        @ClassName("contentGroup")
+        String classContentGroup();
+
+        @ClassName("keyError")
+        String keyError();
     }
 
     static final CssBundle INSTANCE = GWT.create(CssBundle.class);
