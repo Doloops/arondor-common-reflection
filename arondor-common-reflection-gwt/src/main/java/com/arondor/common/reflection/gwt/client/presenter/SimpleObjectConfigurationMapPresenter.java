@@ -248,7 +248,7 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
             }
             else if (objectConfigurationMap.containsKey(keyString))
             {
-                presenter.displayKeyError("Several shared objects have same key" + keyString);
+                presenter.displayKeyError("Several shared objects have same key : '" + keyString + "'");
                 LOG.warning("Skipping elements because multiple keys have same value : " + keyString);
                 continue;
             }
@@ -261,11 +261,13 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
             if (valueConfiguration == null)
             {
                 LOG.warning("Skipping element because value configuration is null");
+                presenter.displayKeyError("Shared objects must have a valid class");
                 continue;
             }
             else if (!(valueConfiguration instanceof ObjectConfiguration))
             {
                 LOG.warning("Skipping element because value is of class " + valueConfiguration.getClass().getName());
+                presenter.displayKeyError("Shared objects must have a valid class");
                 continue;
             }
             ObjectConfiguration objectConfiguration = (ObjectConfiguration) valueConfiguration;
