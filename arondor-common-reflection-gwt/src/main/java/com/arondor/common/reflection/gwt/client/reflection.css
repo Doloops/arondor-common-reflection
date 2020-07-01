@@ -141,6 +141,7 @@
 .classNode .contentGroup{
 	/* border-left: 1px solid #42A5F5; */
 	margin-bottom: 10px;
+	padding-right:0px;
 }
 
 .classNode .mandatoryChildren {

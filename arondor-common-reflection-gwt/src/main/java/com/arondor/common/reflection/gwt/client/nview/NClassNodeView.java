@@ -58,7 +58,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         });
 
         contentGroup.getElement().addClassName(CssBundle.INSTANCE.css().classContentGroup());
-        contentGroup.getElement().addClassName("col-11");
+        contentGroup.getElement().addClassName("col-12");
         mandatoryChildren.getElement().addClassName(CssBundle.INSTANCE.css().classMandatoryChildren());
         optionalChildren.getElement().addClassName(CssBundle.INSTANCE.css().classOptionalChildren());
         advancedSettings.getElement().addClassName(CssBundle.INSTANCE.css().advancedSettingsBtn());
