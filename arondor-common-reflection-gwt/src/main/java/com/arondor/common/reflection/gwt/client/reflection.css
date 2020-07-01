@@ -1,5 +1,5 @@
 .classNode .nodeField {
-	padding: 0px 0px 0px 30px;
+/*	padding: 0px 0px 0px 30px; */
 /* 	margin-top:5px; */
 	margin-bottom:15px;
 	text-align:left!important;
@@ -22,6 +22,10 @@
 .rootTreeNode div {
 	line-height: normal;
 	margin-top: 5px;
+}
+
+.rootTreeNode .scopeSelector {
+	margin-bottom: 0px;
 }
 
 .nodeName{
@@ -50,6 +54,18 @@
 	padding-right:30px;
 }
 
+.booleanField .description {
+	overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 85%;
+    width:auto;
+}
+
+.booleanField div div {
+	width:100%;
+}
+
 .nodeName label {
 	font-size: inherit;
 	color:inherit;
@@ -71,8 +87,9 @@
 	margin-bottom:0px;
 }
 
-.booleanField div .resetBtn i {
+.booleanField div .resetBtn {
 	top:5px;
+	position:absolute;
 }
 
 .stringField {
@@ -109,6 +126,10 @@
 	position:relative;
 }
 
+.classNode {
+	border-left: 3px solid #42A5F5;
+}
+
 .mappingTable .advancedSettingsBtn {
 	margin-top:0px!important;
 }
@@ -136,32 +157,43 @@
 	padding-right:0px;
 }
 
+<<<<<<< HEAD
 .mandatoryChildren {
+=======
+.classNode .mandatoryChildren {
+>>>>>>> master
 }
 
-.advancedSettingsBtn{
+.classNode .advancedSettingsBtn{
 	margin-top:10px!important;
 	margin-bottom:3px;
 	font-size:9pt!important;
 	color:#1d7ae2;
 }
 
-.advancedSettingsBtn a {
+.classNode .advancedSettingsBtn a {
 	height:20px;
 	color:#0066cc;
 	font-weight:500; /*semi-bold*/
 	font-size:13px;
 	text-align:center;
-	padding-left:10px;
+	margin-left:8px;
 }
 
-.advancedSettingsBtn a:hover {
+.classNode .advancedSettingsBtn a:hover {
 	text-decoration: underline!important;
 }
+
+.classNode .advancedSettingsBtn a[aria-expanded="false"]:before {
+	content:'More';
+}
+
+.classNode .advancedSettingsBtn a[aria-expanded="true"]:before {
+	content:'Less';
+}
 	
-.optionalChildren{
+.classNode .optionalChildren{
 	margin:0px 0px 30px 10px;
-	border-left: 5px solid aliceblue;
 }
 
 .nodeField {

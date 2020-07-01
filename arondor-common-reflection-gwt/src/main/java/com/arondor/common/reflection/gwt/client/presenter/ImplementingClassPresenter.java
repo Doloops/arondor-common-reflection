@@ -37,6 +37,8 @@ public interface ImplementingClassPresenter
         void setNodeDescription(String label);
 
         void resetImplementingList();
+
+        void setNodeLongDescription(String longDescription);
     }
 
     HandlerRegistration addValueChangeHandler(ValueChangeHandler<ImplementingClass> valueChangeHandler);

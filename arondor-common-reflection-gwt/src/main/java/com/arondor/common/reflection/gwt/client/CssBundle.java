@@ -14,8 +14,8 @@ public interface CssBundle extends ClientBundle
         @ClassName("rootTreeNode")
         String rootTreeNode();
 
-        // @ClassName("implementingClassView")
-        // String implementingClassView();
+        @ClassName("scopeSelector")
+        String scopeSelector();
 
         @ClassName("nodeField")
         String nodeField();
@@ -74,8 +74,13 @@ public interface CssBundle extends ClientBundle
         @ClassName("contentGroup")
         String classContentGroup();
 
+<<<<<<< HEAD
         @ClassName("keyError")
         String keyError();
+=======
+        @ClassName("description")
+        String description();
+>>>>>>> master
     }
 
     static final CssBundle INSTANCE = GWT.create(CssBundle.class);

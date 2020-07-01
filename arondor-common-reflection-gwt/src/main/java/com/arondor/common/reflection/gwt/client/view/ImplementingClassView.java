@@ -26,6 +26,10 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -49,6 +53,8 @@ public class ImplementingClassView extends Composite implements ImplementingClas
 
     private ImplementingClass selectedClass = ImplementingClass.NULL_CLASS;
 
+    private String longDesc;
+
     public ImplementingClassView()
     {
         initWidget(implementingListInput);
@@ -57,6 +63,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         implementingListInput.setTextAlign(TextAlign.LEFT);
         implementingListInput.setStyle("width:100%;margin-top:0px;margin-bottom:0px;");
         implementingListInput.getElement().addClassName(CssBundle.INSTANCE.css().comboBox());
+        resetImplementingList();
 
         implementingListInput.getLabel().addClickHandler(new ClickHandler()
         {
@@ -67,6 +74,22 @@ public class ImplementingClassView extends Composite implements ImplementingClas
             }
         });
 
+        implementingListInput.addMouseOverHandler(new MouseOverHandler()
+        {
+            @Override
+            public void onMouseOver(MouseOverEvent event)
+            {
+                implementingListInput.setHelperText(longDesc);
+            }
+        });
+        implementingListInput.addMouseOutHandler(new MouseOutHandler()
+        {
+            @Override
+            public void onMouseOut(MouseOutEvent event)
+            {
+                implementingListInput.clearHelperText();
+            }
+        });
     }
 
     @Override
@@ -95,7 +118,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
             @Override
             public void execute()
             {
-                // implementingListInput.getLabel().getElement().removeClassName("select2label");
+                implementingListInput.getLabel().getElement().removeClassName("select2label");
             }
         });
 
@@ -189,12 +212,12 @@ public class ImplementingClassView extends Composite implements ImplementingClas
     @Override
     public void setNodeDescription(String label)
     {
-        /**
-         * TODO We skip updating Node Description here !!
-         */
-        if (true)
-        {
-            implementingListInput.setLabel(label);
-        }
+        implementingListInput.setLabel(label);
+    }
+
+    @Override
+    public void setNodeLongDescription(String longDescription)
+    {
+        this.longDesc = longDescription;
     }
 }

@@ -23,6 +23,8 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
 
     private final FlowPanel selectGroup = new FlowPanel();
 
+    private final FlowPanel contentGroup = new FlowPanel();
+
     private final FlowPanel optionsArea = new FlowPanel();
 
     private final FlowPanel mandatoryChildren = new FlowPanel();
@@ -55,15 +57,19 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
             }
         });
 
+        contentGroup.getElement().addClassName(CssBundle.INSTANCE.css().classContentGroup());
+        contentGroup.getElement().addClassName("col-12");
         mandatoryChildren.getElement().addClassName(CssBundle.INSTANCE.css().classMandatoryChildren());
         optionalChildren.getElement().addClassName(CssBundle.INSTANCE.css().classOptionalChildren());
         advancedSettings.getElement().addClassName(CssBundle.INSTANCE.css().advancedSettingsBtn());
 
         String rnd = String.valueOf(Math.random()).substring(2);
         advancedSettings.getElement().setInnerHTML(
-                "<a data-toggle=\"collapse\"  href=\"#advancedSettings" + rnd + "\">> Advanced settings</a>");
-        optionalChildren.getElement().setId("advancedSettings" + rnd);
+                "<a data-toggle=\"collapse\" aria-expanded=\"false\" href=\"#advancedSettings" + rnd + "\"></a>");
 
+        advancedSettings.getElement().addClassName(CssBundle.INSTANCE.css().hideAdvancedSettings());
+
+        optionalChildren.getElement().setId("advancedSettings" + rnd);
         optionalChildren.getElement().addClassName("collapse");
 
         bind();
@@ -79,14 +85,16 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         selectGroup.add(implementingClassView);
         selectGroup.add(getResetFieldBtn());
 
+        add(selectGroup);
+
+        contentGroup.add(mandatoryChildren);
+
         optionsArea.add(advancedSettings);
         optionsArea.add(optionalChildren);
 
-        add(selectGroup);
-        add(mandatoryChildren);
-        add(optionsArea);
+        contentGroup.add(optionsArea);
 
-        advancedSettings.getElement().addClassName(CssBundle.INSTANCE.css().hideAdvancedSettings());
+        add(contentGroup);
     }
 
     protected FlowPanel getOptionsArea()
