@@ -279,7 +279,10 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
     {
         ElementConfiguration keyElementConfiguration = presenter.getKeyPresenter().getElementConfiguration();
         if (keyElementConfiguration == null)
+        {
+            LOG.warning("Skipping element because configuration is null !");
             return null;
+        }
         if (!(keyElementConfiguration instanceof PrimitiveConfiguration))
         {
             LOG.warning("Skipping element because key is of class " + keyElementConfiguration.getClass().getName());
