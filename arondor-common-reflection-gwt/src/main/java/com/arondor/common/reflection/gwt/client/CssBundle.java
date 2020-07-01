@@ -74,13 +74,11 @@ public interface CssBundle extends ClientBundle
         @ClassName("contentGroup")
         String classContentGroup();
 
-<<<<<<< HEAD
         @ClassName("keyError")
         String keyError();
-=======
+
         @ClassName("description")
         String description();
->>>>>>> master
     }
 
     static final CssBundle INSTANCE = GWT.create(CssBundle.class);
