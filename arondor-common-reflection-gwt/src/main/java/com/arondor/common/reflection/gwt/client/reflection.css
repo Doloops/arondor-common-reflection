@@ -54,6 +54,18 @@
 	padding-right:30px;
 }
 
+.booleanField .description {
+	overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 85%;
+    width:auto;
+}
+
+.booleanField div div {
+	width:100%;
+}
+
 .nodeName label {
 	font-size: inherit;
 	color:inherit;
@@ -75,8 +87,9 @@
 	margin-bottom:0px;
 }
 
-.booleanField div .resetBtn i {
+.booleanField div .resetBtn {
 	top:5px;
+	position:absolute;
 }
 
 .stringField {

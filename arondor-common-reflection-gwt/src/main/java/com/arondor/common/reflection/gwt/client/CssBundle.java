@@ -73,6 +73,9 @@ public interface CssBundle extends ClientBundle
 
         @ClassName("contentGroup")
         String classContentGroup();
+
+        @ClassName("description")
+        String description();
     }
 
     static final CssBundle INSTANCE = GWT.create(CssBundle.class);

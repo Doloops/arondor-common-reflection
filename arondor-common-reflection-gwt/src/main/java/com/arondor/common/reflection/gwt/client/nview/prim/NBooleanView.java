@@ -32,6 +32,7 @@ public class NBooleanView extends NNodeView implements PrimitiveDisplay
         checkBox.getSpan().setMarginLeft(6);
         checkBox.setTextAlign(TextAlign.LEFT);
         checkBox.getLabel().setStyle("align-items:center");
+        checkBox.getOnLabel().getElement().addClassName(CssBundle.INSTANCE.css().description());
 
         groupPanel.getElement().addClassName("input-group");
         groupPanel.getElement().setAttribute("style", "margin:0px");
