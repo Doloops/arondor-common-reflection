@@ -1,13 +1,16 @@
 package com.arondor.common.reflection.gwt.client.nview;
 
+import com.arondor.common.reflection.gwt.client.CssBundle;
 import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent.Handler;
+import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter.ErrorDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter.PrimitiveDisplay;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 
 import gwt.material.design.client.ui.MaterialTextBox;
+import gwt.material.design.client.ui.MaterialToast;
 
-public class PrimitiveMaterialDisplay implements PrimitiveDisplay
+public class PrimitiveMaterialDisplay implements PrimitiveDisplay, ErrorDisplay
 {
     private final MaterialTextBox textBox;
 
@@ -95,6 +98,20 @@ public class PrimitiveMaterialDisplay implements PrimitiveDisplay
     {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public void displayError(String message)
+    {
+        MaterialToast.fireToast(message, 2_500);
+        textBox.getElement().addClassName(CssBundle.INSTANCE.css().keyError());
+        textBox.setPlaceholder("Fill in the key ");
+    }
+
+    @Override
+    public void displayValid()
+    {
+        textBox.getElement().removeClassName(CssBundle.INSTANCE.css().keyError());
     }
 
 }

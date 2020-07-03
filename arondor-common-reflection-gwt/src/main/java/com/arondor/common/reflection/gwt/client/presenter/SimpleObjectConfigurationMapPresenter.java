@@ -241,17 +241,40 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
             }
 
             String keyString = getKeyForPresenter(presenter);
+            if (keyString == null)
+            {
+                presenter.displayKeyError("Shared objects must have a key to be saved");
+                LOG.warning("Skipping element because key is null !");
+            }
+            else if (objectConfigurationMap.containsKey(keyString))
+            {
+                presenter.displayKeyError("Several shared objects have same key : '" + keyString + "'");
+                LOG.warning("Skipping elements because multiple keys have same value : " + keyString);
+                continue;
+            }
+            else
+            {
+                presenter.displayKeyValid();
+            }
 
             ElementConfiguration valueConfiguration = presenter.getValuePresenter().getElementConfiguration();
-            if (!(valueConfiguration instanceof ObjectConfiguration))
+            if (valueConfiguration == null)
+            {
+                LOG.warning("Skipping element because value configuration is null");
+                presenter.displayKeyError("Shared objects must have a valid class");
+                continue;
+            }
+            else if (!(valueConfiguration instanceof ObjectConfiguration))
             {
                 LOG.warning("Skipping element because value is of class " + valueConfiguration.getClass().getName());
+                presenter.displayKeyError("Shared objects must have a valid class");
                 continue;
             }
             ObjectConfiguration objectConfiguration = (ObjectConfiguration) valueConfiguration;
             objectConfigurationMap.put(keyString, objectConfiguration);
         }
         return objectConfigurationMap;
+
     }
 
     private String getKeyForPresenter(KeyValuePresenterPair presenter)

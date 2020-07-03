@@ -16,6 +16,7 @@
 package com.arondor.common.reflection.gwt.client.presenter.fields;
 
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter;
+import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter.ErrorDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePresenter.MapPairDisplay;
 
 public class KeyValuePresenterPair
@@ -32,6 +33,22 @@ public class KeyValuePresenterPair
         this.keyPresenter = keyPresenter;
         this.valuePresenter = valuePresenter;
         this.display = display;
+    }
+
+    public void displayKeyError(String message)
+    {
+        if (keyPresenter.getDisplay() instanceof ErrorDisplay)
+        {
+            ((ErrorDisplay) keyPresenter.getDisplay()).displayError(message);
+        }
+    }
+
+    public void displayKeyValid()
+    {
+        if (keyPresenter.getDisplay() instanceof ErrorDisplay)
+        {
+            ((ErrorDisplay) keyPresenter.getDisplay()).displayValid();
+        }
     }
 
     public TreeNodePresenter getKeyPresenter()

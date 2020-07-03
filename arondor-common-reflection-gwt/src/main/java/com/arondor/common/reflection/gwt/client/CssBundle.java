@@ -74,6 +74,9 @@ public interface CssBundle extends ClientBundle
         @ClassName("contentGroup")
         String classContentGroup();
 
+        @ClassName("keyError")
+        String keyError();
+
         @ClassName("description")
         String description();
     }

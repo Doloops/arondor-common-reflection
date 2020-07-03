@@ -312,5 +312,8 @@
 	content:url('icons/icon_deleteLine_red.svg');
 }
 
+.keyError input {
+	background-color: #FFA896;
+}
 
 

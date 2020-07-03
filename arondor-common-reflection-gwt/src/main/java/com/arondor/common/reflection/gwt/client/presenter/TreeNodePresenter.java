@@ -76,7 +76,13 @@ public interface TreeNodePresenter
         HandlerRegistration addValueChangeHandler(ValueChangeHandler<T> valueChangeHandler);
 
         void setPlaceholder(T value);
+    }
 
+    public interface ErrorDisplay
+    {
+        void displayError(String message);
+
+        void displayValid();
     }
 
     public interface ChildCreatorDisplay extends Display
