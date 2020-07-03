@@ -118,7 +118,8 @@ public class ImplementingClassView extends Composite implements ImplementingClas
             @Override
             public void execute()
             {
-                implementingListInput.getLabel().getElement().removeClassName("select2label");
+                if (implementingListInput.getValues() != null && implementingListInput.getValues().size() < 1)
+                    implementingListInput.getLabel().getElement().removeClassName("select2label");
             }
         });
 
