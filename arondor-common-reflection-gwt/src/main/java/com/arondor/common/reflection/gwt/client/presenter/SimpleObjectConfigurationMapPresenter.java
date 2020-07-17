@@ -163,6 +163,11 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
         {
             for (Map.Entry<String, ObjectConfiguration> entry : objectConfigurationMap.entrySet())
             {
+                if (entry.getValue() == null)
+                {
+                    LOG.warning("Object configuration with key " + entry.getKey() + " does not have any value");
+                    return;
+                }
                 LOG.info("Adding scope=" + scope + ", object=" + entry.getKey() + ", class="
                         + entry.getValue().getClassName());
                 addChild(scope, new MyPrimitiveConfiguration(entry.getKey()), entry.getValue());
