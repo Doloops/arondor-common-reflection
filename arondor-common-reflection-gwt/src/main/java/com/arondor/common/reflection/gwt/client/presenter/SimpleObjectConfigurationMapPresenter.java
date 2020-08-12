@@ -233,6 +233,7 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
     {
         ObjectConfigurationMap objectConfigurationMap = AccessibleClassPresenterFactory.getObjectConfigurationFactory()
                 .createObjectConfigurationMap();
+        int presentersForScope = 0, errorCount = 0;
         for (KeyValuePresenterPair presenter : getKeyValuePresenters())
         {
             if (presenter.getDisplay() instanceof MapPairDisplayWithScope)
@@ -244,17 +245,19 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
                     continue;
                 }
             }
-
+            presentersForScope++;
             String keyString = getKeyForPresenter(presenter);
-            if (keyString == null)
+            if (keyString == null || keyString.trim().isEmpty())
             {
-                presenter.displayKeyError("Shared objects must have a key to be saved");
-                LOG.warning("Skipping element because key is null !");
+                presenter.displayKeyError("Must not be empty");
+                errorCount++;
+                continue;
             }
-            else if (objectConfigurationMap.containsKey(keyString))
+            keyString = keyString.trim();
+            if (objectConfigurationMap.containsKey(keyString))
             {
-                presenter.displayKeyError("Several shared objects have same key : '" + keyString + "'");
-                LOG.warning("Skipping elements because multiple keys have same value : " + keyString);
+                presenter.displayKeyError("Must be unique : '" + keyString + "'");
+                errorCount++;
                 continue;
             }
             else
@@ -265,21 +268,26 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
             ElementConfiguration valueConfiguration = presenter.getValuePresenter().getElementConfiguration();
             if (valueConfiguration == null)
             {
-                LOG.warning("Skipping element because value configuration is null");
-                presenter.displayKeyError("Shared objects must have a valid class");
+                presenter.displayKeyError("Must have a valid class");
+                errorCount++;
                 continue;
             }
             else if (!(valueConfiguration instanceof ObjectConfiguration))
             {
-                LOG.warning("Skipping element because value is of class " + valueConfiguration.getClass().getName());
-                presenter.displayKeyError("Shared objects must have a valid class");
+                presenter.displayKeyError("Must have a valid class");
+                errorCount++;
                 continue;
             }
             ObjectConfiguration objectConfiguration = (ObjectConfiguration) valueConfiguration;
             objectConfigurationMap.put(keyString, objectConfiguration);
         }
+        if (errorCount > 0)
+        {
+            throw new IllegalArgumentException("Invalid configuration for scope " + forScope + ": " + errorCount
+                    + " errors on a total of " + presentersForScope + " elements, only " + objectConfigurationMap.size()
+                    + " valid elements.");
+        }
         return objectConfigurationMap;
-
     }
 
     private String getKeyForPresenter(KeyValuePresenterPair presenter)

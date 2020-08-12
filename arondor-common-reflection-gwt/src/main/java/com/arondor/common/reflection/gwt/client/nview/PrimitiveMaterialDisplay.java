@@ -8,7 +8,6 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 
 import gwt.material.design.client.ui.MaterialTextBox;
-import gwt.material.design.client.ui.MaterialToast;
 
 public class PrimitiveMaterialDisplay implements PrimitiveDisplay, ErrorDisplay
 {
@@ -100,18 +99,29 @@ public class PrimitiveMaterialDisplay implements PrimitiveDisplay, ErrorDisplay
 
     }
 
+    private String initialLabel;
+
     @Override
     public void displayError(String message)
     {
-        MaterialToast.fireToast(message, 2_500);
+        if (initialLabel == null)
+        {
+            initialLabel = textBox.getLabel().getText();
+        }
+        // MaterialToast.fireToast(message, 2_500);
         textBox.getElement().addClassName(CssBundle.INSTANCE.css().keyError());
         textBox.setPlaceholder("Fill in the key ");
+        textBox.setLabel(initialLabel + " - " + message);
     }
 
     @Override
     public void displayValid()
     {
         textBox.getElement().removeClassName(CssBundle.INSTANCE.css().keyError());
+        if (initialLabel != null)
+            textBox.setLabel(initialLabel);
+        else
+            initialLabel = textBox.getLabel().getText();
     }
 
 }
