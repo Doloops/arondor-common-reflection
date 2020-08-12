@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans default-lazy-init="true" default-autowire="no"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+	<bean name="beanWithMap" class="BeanWithMap" scope="prototype">
+		<property name="factories">
+			<map>
+				<entry>
+					<key>
+						<value>Key1</value>
+					</key>
+					<value>Value1</value>
+				</entry>
+			</map>
+		</property>
+
+	</bean>
+</beans>
+	
