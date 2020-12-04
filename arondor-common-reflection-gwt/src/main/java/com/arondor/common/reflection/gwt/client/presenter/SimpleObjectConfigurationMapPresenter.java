@@ -32,6 +32,7 @@ import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationMap;
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
+import com.arondor.common.reflection.model.config.ReferenceConfiguration;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -71,6 +72,14 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
         {
             this.delegate = delegate;
         }
+
+        @Override
+        public void share(ObjectConfiguration objectConfiguration, String name,
+                AsyncCallback<ReferenceConfiguration> callback)
+        {
+            // TODO Auto-generated method stub
+
+        }
     }
 
     ObjectReferencesProvider topLevelObjectRefencesProvider = new ObjectReferencesProvider()
@@ -99,6 +108,15 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
             }
             callback.onSuccess(implementingClasses);
         }
+
+        @Override
+        public void share(ObjectConfiguration objectConfiguration, String name,
+                AsyncCallback<ReferenceConfiguration> callback)
+        {
+            // TODO Auto-generated method stub
+
+        }
+
     };
 
     public SimpleObjectConfigurationMapPresenter(GWTReflectionServiceAsync rpcService, String fieldName,

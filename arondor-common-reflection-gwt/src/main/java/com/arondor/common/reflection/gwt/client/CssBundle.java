@@ -79,6 +79,24 @@ public interface CssBundle extends ClientBundle
 
         @ClassName("description")
         String description();
+        
+        @ClassName("shareButton")
+        String shareButton();
+        
+        @ClassName ("sharePanel")
+        String sharePanel();
+
+        @ClassName ("convertTaskDialog")
+        String convertTaskDialog();
+
+        @ClassName ("dialogContent")
+        String dialogContent();
+        
+        @ClassName ("cancelConversionBtn")
+        String cancelConversionBtn();
+
+        @ClassName ("doConversionBtn")
+        String doConversionBtn();
     }
 
     static final CssBundle INSTANCE = GWT.create(CssBundle.class);

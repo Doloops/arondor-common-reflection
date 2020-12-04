@@ -15,7 +15,15 @@ import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeN
 import com.arondor.common.reflection.gwt.client.view.ImplementingClassView;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
+
+import gwt.material.design.client.ui.MaterialButton;
+import gwt.material.design.client.ui.MaterialDialog;
+import gwt.material.design.client.ui.MaterialDialogContent;
+import gwt.material.design.client.ui.MaterialDialogFooter;
+import gwt.material.design.client.ui.MaterialTextBox;
+import gwt.material.design.client.ui.MaterialTitle;
 
 public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.ClassDisplay
 {
@@ -32,6 +40,16 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     private final FlowPanel optionalChildren = new FlowPanel();
 
     private final FlowPanel advancedSettings = new FlowPanel();
+
+    private final FlowPanel sharePanel = new FlowPanel();
+
+    private final MaterialButton shareButton = new MaterialButton();
+
+    private final MaterialDialog convertTaskDialog = new MaterialDialog();
+
+    private final MaterialButton btnCancelConversion = new MaterialButton(), btnConvertTask = new MaterialButton();
+
+    private final MaterialTextBox keyNameTextBox = new MaterialTextBox();
 
     public NClassNodeView()
     {
@@ -56,8 +74,44 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
             }
         });
 
+        convertTaskDialog.getElement().addClassName(CssBundle.INSTANCE.css().convertTaskDialog());
+
+        MaterialDialogContent dialogContent = new MaterialDialogContent();
+        dialogContent.getElement().addClassName(CssBundle.INSTANCE.css().dialogContent());
+
+        MaterialTitle title = new MaterialTitle();
+        title.setTitle("Convert a task");
+
+        keyNameTextBox.setClass("outlined");
+        keyNameTextBox.setLabel("Shared object name");
+        keyNameTextBox.setFocus(true);
+
+        dialogContent.add(title);
+        dialogContent.add(keyNameTextBox);
+
+        convertTaskDialog.add(dialogContent);
+
+        MaterialDialogFooter dialogFooter = new MaterialDialogFooter();
+
+        btnCancelConversion.getElement().addClassName(CssBundle.INSTANCE.css().cancelConversionBtn());
+        btnCancelConversion.setText("Cancel conversion");
+
+        btnConvertTask.getElement().addClassName(CssBundle.INSTANCE.css().doConversionBtn());
+        btnConvertTask.setText("Convert to map shared object");
+
+        dialogFooter.add(btnCancelConversion);
+        dialogFooter.add(btnConvertTask);
+
+        convertTaskDialog.add(dialogFooter);
+
         contentGroup.getElement().addClassName(CssBundle.INSTANCE.css().classContentGroup());
         contentGroup.getElement().addClassName("col-12");
+
+        sharePanel.getElement().addClassName(CssBundle.INSTANCE.css().sharePanel());
+
+        shareButton.getElement().addClassName(CssBundle.INSTANCE.css().shareButton());
+        shareButton.setText("Convert to Shared Object");
+
         mandatoryChildren.getElement().addClassName(CssBundle.INSTANCE.css().classMandatoryChildren());
         optionalChildren.getElement().addClassName(CssBundle.INSTANCE.css().classOptionalChildren());
 
@@ -88,6 +142,11 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
 
         add(selectGroup);
 
+        add(convertTaskDialog);
+
+        sharePanel.add(shareButton);
+
+        contentGroup.add(sharePanel);
         contentGroup.add(mandatoryChildren);
 
         optionsArea.add(advancedSettings);
@@ -101,6 +160,30 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     protected FlowPanel getOptionsArea()
     {
         return optionsArea;
+    }
+
+    /**
+     * @return name fill in the pop-up
+     */
+    @Override
+    public String getKeyName()
+    {
+        return keyNameTextBox.getText();
+    }
+
+    @Override
+    public MaterialDialog getConvertTaskDialog()
+    {
+        return convertTaskDialog;
+    }
+
+    /**
+     * Remove the share button from a shared object display
+     */
+    @Override
+    public void removeSharedButton()
+    {
+        sharePanel.remove(shareButton);
     }
 
     private void addChildView(boolean isMandatory, NNodeView childView)
@@ -176,7 +259,6 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     @Override
     public EnumDisplay createEnumListChild(boolean isMandatory)
     {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -199,7 +281,6 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     @Override
     public ListRootDisplay createListChild(boolean isMandatory)
     {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -223,6 +304,33 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     public void setNodeDescription(String description)
     {
         implementingClassView.setNodeDescription(description);
+    }
+
+    /**
+     * Add the click handler on share button
+     */
+    @Override
+    public HandlerRegistration onShare(ClickHandler handler)
+    {
+        return shareButton.addClickHandler(handler);
+    }
+
+    /**
+     * Add the click handler on the pop-up cancel sharing button
+     */
+    @Override
+    public HandlerRegistration onCancelShare(ClickHandler handler)
+    {
+        return btnCancelConversion.addClickHandler(handler);
+    }
+
+    /**
+     * Add the click handler on the pop-up share button
+     */
+    @Override
+    public HandlerRegistration onDoShare(ClickHandler handler)
+    {
+        return btnConvertTask.addClickHandler(handler);
     }
 
 }
