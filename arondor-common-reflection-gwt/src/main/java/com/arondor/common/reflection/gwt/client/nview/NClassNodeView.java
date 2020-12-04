@@ -47,7 +47,6 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
 
         getResetFieldBtn().addClickHandler(new ClickHandler()
         {
-
             @Override
             public void onClick(ClickEvent event)
             {
@@ -61,11 +60,13 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         contentGroup.getElement().addClassName("col-12");
         mandatoryChildren.getElement().addClassName(CssBundle.INSTANCE.css().classMandatoryChildren());
         optionalChildren.getElement().addClassName(CssBundle.INSTANCE.css().classOptionalChildren());
+
         advancedSettings.getElement().addClassName(CssBundle.INSTANCE.css().advancedSettingsBtn());
 
         String rnd = String.valueOf(Math.random()).substring(2);
-        advancedSettings.getElement().setInnerHTML(
-                "<a data-toggle=\"collapse\" aria-expanded=\"false\" href=\"#advancedSettings" + rnd + "\"></a>");
+        advancedSettings.getElement()
+                .setInnerHTML("<a data-toggle=\"collapse\" aria-expanded=\"false\" href=\"#advancedSettings" + rnd
+                        + "\" class=\"collapsed\"></a>");
 
         advancedSettings.getElement().addClassName(CssBundle.INSTANCE.css().hideAdvancedSettings());
 
@@ -207,9 +208,15 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     {
         super.clear();
         mandatoryChildren.clear();
+        resetAdvancedSettings();
         optionalChildren.clear();
         optionalChildren.getElement().removeClassName("show");
         bind();
+    }
+
+    private void resetAdvancedSettings()
+    {
+        advancedSettings.getElement().getElementsByTagName("a").getItem(0).addClassName("collapsed");
     }
 
     @Override
