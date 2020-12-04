@@ -192,6 +192,38 @@
 	margin:0px 0px 30px 10px;
 }
 
+.classNode .shareButton{
+	background-color:#FFFFFF;
+	color: #42A5F5;
+	cursor: pointer;	
+}
+
+.classNode .sharePanel{
+	float: right;
+	padding-bottom: 10px;
+}
+
+.classNode .convertTaskDialog{
+	width: fit-content!important;
+	height: fit-content;
+}
+
+.classNode .dialogContent{
+	padding-bottom: 0px;
+	border: 0px;
+}
+
+.classNode .cancelConversionBtn{
+	margin-right: 24px!important;
+	margin-left: 20px!important;
+	background-color: #F44336;
+}
+
+.classNode .doConversionBtn{
+	margin-right: 20px!important;
+	background-color: #4CAF50;
+}
+
 .nodeField {
 	margin:10px 0px;
 }

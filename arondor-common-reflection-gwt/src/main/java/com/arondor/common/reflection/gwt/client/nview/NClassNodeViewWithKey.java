@@ -55,6 +55,8 @@ public class NClassNodeViewWithKey extends NClassNodeView implements MapPairDisp
             add(deleteRowBtn);
         }
         super.bind();
+
+        removeSharedButton();
     }
 
     @Override
