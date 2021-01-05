@@ -171,6 +171,15 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         return keyNameTextBox.getText();
     }
 
+    /*
+     * Clear pop-up name field 
+     */
+    @Override
+    public void clearKeyName()
+    {
+        keyNameTextBox.setText("");
+    }
+
     @Override
     public MaterialDialog getConvertTaskDialog()
     {

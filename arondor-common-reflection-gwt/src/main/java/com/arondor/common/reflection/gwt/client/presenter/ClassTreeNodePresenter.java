@@ -56,6 +56,8 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
 
         String getKeyName();
 
+        void clearKeyName();
+
         MaterialDialog getConvertTaskDialog();
 
         HandlerRegistration onCancelShare(ClickHandler handler);
@@ -159,7 +161,7 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
                 if (!name.isEmpty())
                 {
                     objectReferencesProvider.share(getObjectConfiguration(), name,
-                            new AsyncCallback<ReferenceConfiguration>()
+                            new AsyncCallback<ImplementingClass>()
                             {
 
                                 @Override
@@ -169,12 +171,17 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
                                 }
 
                                 @Override
-                                public void onSuccess(ReferenceConfiguration result)
+                                public void onSuccess(ImplementingClass result)
                                 {
-                                    setElementConfiguration(result);
+                                    clearFields();
+                                    implementingClassPresenter.setImplementingClass(result);
+                                    display.setActive(true);
+                                    display.removeSharedButton();
+                                    display.getConvertTaskDialog().close();
                                 }
                             });
-                    display.getConvertTaskDialog().close();
+                    display.clearKeyName();
+
                 }
                 else
                 {
