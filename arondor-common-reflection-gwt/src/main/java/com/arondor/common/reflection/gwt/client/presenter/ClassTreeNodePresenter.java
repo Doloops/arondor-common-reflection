@@ -63,9 +63,6 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
         HandlerRegistration onCancelShare(ClickHandler handler);
 
         HandlerRegistration onDoShare(ClickHandler handler);
-
-        void removeSharedButton();
-
     }
 
     private final Map<String, TreeNodePresenter> classTreeNodePresenterMap = new HashMap<String, TreeNodePresenter>();
@@ -112,7 +109,6 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
                 {
                     clearFields();
                     display.setActive(true);
-                    display.removeSharedButton();
                 }
                 else
                 {
@@ -142,18 +138,15 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
 
         display.onCancelShare(new ClickHandler()
         {
-
             @Override
             public void onClick(ClickEvent event)
             {
                 display.getConvertTaskDialog().close();
-
             }
         });
 
         display.onDoShare(new ClickHandler()
         {
-
             @Override
             public void onClick(ClickEvent event)
             {
@@ -163,7 +156,6 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
                     objectReferencesProvider.share(getObjectConfiguration(), name,
                             new AsyncCallback<ImplementingClass>()
                             {
-
                                 @Override
                                 public void onFailure(Throwable caught)
                                 {
@@ -176,12 +168,10 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
                                     clearFields();
                                     implementingClassPresenter.setImplementingClass(result);
                                     display.setActive(true);
-                                    display.removeSharedButton();
                                     display.getConvertTaskDialog().close();
                                 }
                             });
                     display.clearKeyName();
-
                 }
                 else
                 {
@@ -407,7 +397,6 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
             implementingClassPresenter
                     .setImplementingClass(new ImplementingClass(true, null, referenceConfiguration.getReferenceName()));
             display.setActive(true);
-            display.removeSharedButton();
         }
     }
 

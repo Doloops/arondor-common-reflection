@@ -20,6 +20,7 @@ import java.util.Collection;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 
 public interface ImplementingClassPresenter
@@ -39,6 +40,8 @@ public interface ImplementingClassPresenter
         void resetImplementingList();
 
         void setNodeLongDescription(String longDescription);
+
+        FocusPanel getSharedObjectIcon();
     }
 
     HandlerRegistration addValueChangeHandler(ValueChangeHandler<ImplementingClass> valueChangeHandler);

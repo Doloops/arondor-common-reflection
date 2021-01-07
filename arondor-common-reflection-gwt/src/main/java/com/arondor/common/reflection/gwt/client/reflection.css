@@ -242,6 +242,17 @@
 	font-size:0.7rem;
 }
 
+.comboBox {
+	width:100%;
+	margin-top:0px;
+	margin-bottom:0px;
+	text-align: left;
+}
+
+.comboBox span[class="select2-selection__rendered"] {
+	padding-left: 40px!important;
+}
+
 .comboBox label {
 	top:13px!important;
 }
