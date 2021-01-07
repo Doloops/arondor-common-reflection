@@ -41,10 +41,6 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
 
     private final FlowPanel advancedSettings = new FlowPanel();
 
-    private final FlowPanel sharePanel = new FlowPanel();
-
-    private final MaterialButton shareButton = new MaterialButton();
-
     private final MaterialDialog convertTaskDialog = new MaterialDialog();
 
     private final MaterialButton btnCancelConversion = new MaterialButton(), btnConvertTask = new MaterialButton();
@@ -56,6 +52,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         getElement().addClassName(CssBundle.INSTANCE.css().classNode());
 
         selectGroup.getElement().addClassName("input-group");
+        selectGroup.add(implementingClassView.getSharedObjectIcon());
 
         // implementingClassView.asWidget().getElement().addClassName("form-control");
 
@@ -107,11 +104,6 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         contentGroup.getElement().addClassName(CssBundle.INSTANCE.css().classContentGroup());
         contentGroup.getElement().addClassName("col-12");
 
-        sharePanel.getElement().addClassName(CssBundle.INSTANCE.css().sharePanel());
-
-        shareButton.getElement().addClassName(CssBundle.INSTANCE.css().shareButton());
-        shareButton.setText("Convert to Shared Object");
-
         mandatoryChildren.getElement().addClassName(CssBundle.INSTANCE.css().classMandatoryChildren());
         optionalChildren.getElement().addClassName(CssBundle.INSTANCE.css().classOptionalChildren());
 
@@ -144,9 +136,6 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
 
         add(convertTaskDialog);
 
-        sharePanel.add(shareButton);
-
-        contentGroup.add(sharePanel);
         contentGroup.add(mandatoryChildren);
 
         optionsArea.add(advancedSettings);
@@ -172,7 +161,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     }
 
     /*
-     * Clear pop-up name field 
+     * Clear pop-up name field
      */
     @Override
     public void clearKeyName()
@@ -184,15 +173,6 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     public MaterialDialog getConvertTaskDialog()
     {
         return convertTaskDialog;
-    }
-
-    /**
-     * Remove the share button from a shared object display
-     */
-    @Override
-    public void removeSharedButton()
-    {
-        sharePanel.remove(shareButton);
     }
 
     private void addChildView(boolean isMandatory, NNodeView childView)
@@ -321,7 +301,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     @Override
     public HandlerRegistration onShare(ClickHandler handler)
     {
-        return shareButton.addClickHandler(handler);
+        return implementingClassView.getSharedObjectIcon().addClickHandler(handler);
     }
 
     /**
