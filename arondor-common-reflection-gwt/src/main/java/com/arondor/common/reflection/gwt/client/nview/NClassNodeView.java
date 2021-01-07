@@ -129,20 +129,16 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
 
     protected void bind()
     {
-        selectGroup.add(implementingClassView);
-        selectGroup.add(getResetFieldBtn());
-
-        add(selectGroup);
-
         add(convertTaskDialog);
 
-        contentGroup.add(mandatoryChildren);
+        selectGroup.add(implementingClassView);
+        selectGroup.add(getResetFieldBtn());
+        add(selectGroup);
 
         optionsArea.add(advancedSettings);
         optionsArea.add(optionalChildren);
-
+        contentGroup.add(mandatoryChildren);
         contentGroup.add(optionsArea);
-
         add(contentGroup);
     }
 

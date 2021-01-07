@@ -8,6 +8,9 @@ public interface CssBundle extends ClientBundle
 {
     interface Css extends CssResource
     {
+        @ClassName("sharedObjectImg")
+        String sharedObjectImg();
+
         @ClassName("classNode")
         String classNode();
 
@@ -79,23 +82,23 @@ public interface CssBundle extends ClientBundle
 
         @ClassName("description")
         String description();
-        
+
         @ClassName("shareButton")
         String shareButton();
-        
-        @ClassName ("sharePanel")
+
+        @ClassName("sharePanel")
         String sharePanel();
 
-        @ClassName ("convertTaskDialog")
+        @ClassName("convertTaskDialog")
         String convertTaskDialog();
 
-        @ClassName ("dialogContent")
+        @ClassName("dialogContent")
         String dialogContent();
-        
-        @ClassName ("cancelConversionBtn")
+
+        @ClassName("cancelConversionBtn")
         String cancelConversionBtn();
 
-        @ClassName ("doConversionBtn")
+        @ClassName("doConversionBtn")
         String doConversionBtn();
     }
 
