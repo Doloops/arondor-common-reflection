@@ -49,8 +49,6 @@ public class ImplementingClassView extends Composite implements ImplementingClas
 {
     private static final Logger LOG = Logger.getLogger(ImplementingClassView.class.getName());
 
-    private static final String REFERENCE_PREFIX = "Reference : ";
-
     private MaterialComboBox<ImplementingClass> implementingListInput = new MaterialComboBox<ImplementingClass>();
 
     private ImplementingClass selectedClass = ImplementingClass.NULL_CLASS;
@@ -79,7 +77,6 @@ public class ImplementingClassView extends Composite implements ImplementingClas
                 implementingListInput.open();
             }
         });
-
         implementingListInput.addMouseOverHandler(new MouseOverHandler()
         {
             @Override
@@ -129,15 +126,13 @@ public class ImplementingClassView extends Composite implements ImplementingClas
                     implementingListInput.getLabel().getElement().removeClassName("select2label");
             }
         });
-
     }
 
     private String prettyPrint(ImplementingClass implementingClass)
     {
         if (implementingClass.isReference())
-        {
-            return REFERENCE_PREFIX + implementingClass.getDisplayName();
-        }
+            sharedObjectImg.setUrl("/images/view-shared-object.svg");
+
         return implementingClass.getDisplayName();
     }
 
@@ -159,9 +154,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         }
 
         if (selectedClass == ImplementingClass.NULL_CLASS)
-        {
             implementingListInput.unselect();
-        }
     }
 
     private void doSelect(ImplementingClass clazz)
