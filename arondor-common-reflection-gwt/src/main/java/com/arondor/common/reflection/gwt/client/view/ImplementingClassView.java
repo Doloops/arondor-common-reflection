@@ -38,13 +38,11 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.Image;
 
 import gwt.material.design.addins.client.combobox.MaterialComboBox;
 import gwt.material.design.addins.client.combobox.events.SelectItemEvent;
 import gwt.material.design.addins.client.combobox.events.SelectItemEvent.SelectComboHandler;
-import gwt.material.design.client.constants.IconSize;
-import gwt.material.design.client.constants.IconType;
-import gwt.material.design.client.ui.MaterialIcon;
 import gwt.material.design.client.ui.html.Option;
 
 public class ImplementingClassView extends Composite implements ImplementingClassDisplay
@@ -59,9 +57,9 @@ public class ImplementingClassView extends Composite implements ImplementingClas
 
     private String longDesc;
 
-    private FocusPanel sharedObjectIcon = new FocusPanel();
+    private FocusPanel sharedObjectPanel = new FocusPanel();
 
-    private MaterialIcon icon = new MaterialIcon();
+    private Image sharedObjectImg = new Image("/images/convert-shared-object.svg");
 
     public ImplementingClassView()
     {
@@ -69,14 +67,10 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         implementingListInput.setClass("outlined");
         implementingListInput.getElement().addClassName(CssBundle.INSTANCE.css().comboBox());
         resetImplementingList();
+        sharedObjectPanel.add(sharedObjectImg);
+        sharedObjectPanel.getElement().getStyle().setVisibility(Visibility.HIDDEN);
 
-        icon.setIconType(IconType.POLYMER);
-        icon.setIconSize(IconSize.SMALL);
-        sharedObjectIcon.add(icon);
-        sharedObjectIcon.getElement().getStyle().setVisibility(Visibility.HIDDEN);
-        icon.getElement().setAttribute("style",
-                "left: 5px;cursor: pointer;position: absolute;top: 50%;transform: translate(0%, -65%);z-index: 500;");
-
+        sharedObjectImg.getElement().addClassName(CssBundle.INSTANCE.css().sharedObjectImg());
         implementingListInput.getLabel().addClickHandler(new ClickHandler()
         {
             @Override
@@ -122,7 +116,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
     public void resetImplementingList()
     {
         implementingListInput.unselect();
-        sharedObjectIcon.getElement().getStyle().setVisibility(Visibility.HIDDEN);
+        sharedObjectPanel.getElement().getStyle().setVisibility(Visibility.HIDDEN);
         selectedClass = ImplementingClass.NULL_CLASS;
 
         // to prevent the onLoad() MaterialCombobox call
@@ -212,7 +206,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
                     selectedClass = event.getSelectedValues().get(0);
                     LOG.finest("Selected " + selectedClass);
                     valueChangeHandler.onValueChange(new MyValueChangeEvent<ImplementingClass>(selectedClass));
-                    sharedObjectIcon.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+                    sharedObjectPanel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
                 }
             }
         });
@@ -239,7 +233,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
     @Override
     public FocusPanel getSharedObjectIcon()
     {
-        return sharedObjectIcon;
+        return sharedObjectPanel;
     }
 
 }
