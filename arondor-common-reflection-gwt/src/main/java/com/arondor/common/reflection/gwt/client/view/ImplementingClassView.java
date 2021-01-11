@@ -24,6 +24,7 @@ import com.arondor.common.reflection.gwt.client.presenter.ImplementingClass;
 import com.arondor.common.reflection.gwt.client.presenter.ImplementingClassPresenter.ImplementingClassDisplay;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -55,9 +56,13 @@ public class ImplementingClassView extends Composite implements ImplementingClas
 
     private String longDesc;
 
-    private FocusPanel sharedObjectPanel = new FocusPanel();
+    private FocusPanel sharedObjectCreatePanel = new FocusPanel();
 
-    private Image sharedObjectImg = new Image("/images/convert-shared-object.svg");
+    private FocusPanel sharedObjectForwardPanel = new FocusPanel();
+
+    private Image sharedObjectImg = new Image("/icons/convert-shared-object.svg");
+
+    private Image sharedObjectViewImg = new Image("/icons/view-shared-object.svg");
 
     public ImplementingClassView()
     {
@@ -65,10 +70,15 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         implementingListInput.setClass("outlined");
         implementingListInput.getElement().addClassName(CssBundle.INSTANCE.css().comboBox());
         resetImplementingList();
-        sharedObjectPanel.add(sharedObjectImg);
-        sharedObjectPanel.getElement().getStyle().setVisibility(Visibility.HIDDEN);
+        sharedObjectCreatePanel.add(sharedObjectImg);
+        sharedObjectCreatePanel.getElement().getStyle().setDisplay(Display.NONE);
+
+        sharedObjectForwardPanel.add(sharedObjectViewImg);
+        sharedObjectForwardPanel.getElement().getStyle().setDisplay(Display.NONE);
 
         sharedObjectImg.getElement().addClassName(CssBundle.INSTANCE.css().sharedObjectImg());
+        sharedObjectViewImg.getElement().addClassName(CssBundle.INSTANCE.css().sharedObjectImg());
+
         implementingListInput.getLabel().addClickHandler(new ClickHandler()
         {
             @Override
@@ -113,7 +123,8 @@ public class ImplementingClassView extends Composite implements ImplementingClas
     public void resetImplementingList()
     {
         implementingListInput.unselect();
-        sharedObjectPanel.getElement().getStyle().setVisibility(Visibility.HIDDEN);
+        // sharedObjectCreatePanel.getElement().getStyle().setDisplay(Display.NONE);
+        // sharedObjectForwardPanel.getElement().getStyle().setDisplay(Display.NONE);
         selectedClass = ImplementingClass.NULL_CLASS;
 
         // to prevent the onLoad() MaterialCombobox call
@@ -131,7 +142,15 @@ public class ImplementingClassView extends Composite implements ImplementingClas
     private String prettyPrint(ImplementingClass implementingClass)
     {
         if (implementingClass.isReference())
-            sharedObjectImg.setUrl("/images/view-shared-object.svg");
+        {
+            sharedObjectCreatePanel.getElement().getStyle().setDisplay(Display.NONE);
+            sharedObjectForwardPanel.getElement().getStyle().setDisplay(Display.BLOCK);
+        }
+        else
+        {
+            sharedObjectForwardPanel.getElement().getStyle().setDisplay(Display.NONE);
+            sharedObjectCreatePanel.getElement().getStyle().setDisplay(Display.BLOCK);
+        }
 
         return implementingClass.getDisplayName();
     }
@@ -148,7 +167,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         {
             if (implementingListInput.getValues().contains(implementingClass))
                 continue;
-            Option option = implementingListInput.addItem(prettyPrint(implementingClass), implementingClass);
+            Option option = implementingListInput.addItem(implementingClass.getDisplayName(), implementingClass);
             if (implementingClass.getClassName() != null)
                 option.setTitle(implementingClass.getClassName());
         }
@@ -183,6 +202,15 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         }
         // implementingListInput.getLabel().getElement().addClassName("select2label");
         // LOG.warning("Could not select class : " + className);
+        if (clazz.isReference())
+        {
+            sharedObjectForwardPanel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+        }
+        else
+        {
+            sharedObjectCreatePanel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+
+        }
     }
 
     @Override
@@ -199,7 +227,11 @@ public class ImplementingClassView extends Composite implements ImplementingClas
                     selectedClass = event.getSelectedValues().get(0);
                     LOG.finest("Selected " + selectedClass);
                     valueChangeHandler.onValueChange(new MyValueChangeEvent<ImplementingClass>(selectedClass));
-                    sharedObjectPanel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+                    if (selectedClass.isReference())
+                        sharedObjectForwardPanel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+                    else
+                        sharedObjectCreatePanel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+                    prettyPrint(selectedClass);
                 }
             }
         });
@@ -224,9 +256,14 @@ public class ImplementingClassView extends Composite implements ImplementingClas
     }
 
     @Override
-    public FocusPanel getSharedObjectIcon()
+    public FocusPanel getSharedObjectCreatePanel()
     {
-        return sharedObjectPanel;
+        return sharedObjectCreatePanel;
     }
 
+    @Override
+    public FocusPanel getSharedObjectForwardPanel()
+    {
+        return sharedObjectForwardPanel;
+    }
 }

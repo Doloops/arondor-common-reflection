@@ -54,6 +54,8 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
 
         HandlerRegistration onShare(ClickHandler handler);
 
+        HandlerRegistration forwardToSharedObject(ClickHandler handler);
+
         String getKeyName();
 
         void clearKeyName();
@@ -63,6 +65,8 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
         HandlerRegistration onCancelShare(ClickHandler handler);
 
         HandlerRegistration onDoShare(ClickHandler handler);
+
+        void setSharedObjectDisplay(Boolean isRef);
     }
 
     private final Map<String, TreeNodePresenter> classTreeNodePresenterMap = new HashMap<String, TreeNodePresenter>();
@@ -180,6 +184,35 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
             }
 
         });
+
+        display.forwardToSharedObject(new ClickHandler()
+        {
+
+            @Override
+            public void onClick(ClickEvent event)
+            {
+                // faire transiter ref pour la mettre en avant dans liste des SO
+                String key = implementingClassPresenter.getImplementingClass().getDisplayName();
+                objectReferencesProvider.forward(key, new AsyncCallback<ImplementingClass>()
+                {
+
+                    @Override
+                    public void onFailure(Throwable caught)
+                    {
+                        // TODO Auto-generated method stub
+
+                    }
+
+                    @Override
+                    public void onSuccess(ImplementingClass result)
+                    {
+                        // TODO Auto-generated method stub
+
+                    }
+                });
+
+            }
+        });
     }
 
     private void updateAccessibleClass(String className, final ObjectConfiguration objectConfiguration)
@@ -220,7 +253,12 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
 
             if (objectConfiguration != null)
             {
-                implementingClassPresenter.setImplementingClass(new ImplementingClass(accessibleClass));
+                ImplementingClass implementingClass = new ImplementingClass(accessibleClass);
+                implementingClassPresenter.setImplementingClass(implementingClass);
+                if (implementingClass.isReference())
+                    display.setSharedObjectDisplay(true);
+                else
+                    display.setSharedObjectDisplay(false);
 
                 if (PrimitiveTypeUtil.isPrimitiveType(objectConfiguration.getClassName())
                         && objectConfiguration.getConstructorArguments().size() == 1)
