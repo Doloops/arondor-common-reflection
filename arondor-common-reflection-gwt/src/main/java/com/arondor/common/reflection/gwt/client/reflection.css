@@ -180,12 +180,12 @@
 	text-decoration: underline!important;
 }
 
-.classNode .advancedSettingsBtn a[aria-expanded="false"]:before {
-	content:'More';
+.classNode .advancedSettingsBtn a:before {
+	content:'Less';
 }
 
-.classNode .advancedSettingsBtn a[aria-expanded="true"]:before {
-	content:'Less';
+.classNode .advancedSettingsBtn a[class="collapsed"]:before {
+	content:'More';
 }
 	
 .classNode .optionalChildren{
