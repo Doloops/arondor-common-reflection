@@ -41,7 +41,9 @@ public interface ImplementingClassPresenter
 
         void setNodeLongDescription(String longDescription);
 
-        FocusPanel getSharedObjectIcon();
+        FocusPanel getSharedObjectCreatePanel();
+
+        FocusPanel getSharedObjectForwardPanel();
     }
 
     HandlerRegistration addValueChangeHandler(ValueChangeHandler<ImplementingClass> valueChangeHandler);

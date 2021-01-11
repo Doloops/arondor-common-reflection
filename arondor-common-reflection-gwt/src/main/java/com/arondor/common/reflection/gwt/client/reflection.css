@@ -138,7 +138,7 @@
     left: 5px;
     cursor: pointer;
     position: absolute;
-    top: 50%;
+    top: 60%;
     transform: translate(0%, -65%);
     z-index: 500;
     width: 30px!important;

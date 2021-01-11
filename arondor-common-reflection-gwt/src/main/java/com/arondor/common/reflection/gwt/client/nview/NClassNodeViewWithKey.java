@@ -27,6 +27,8 @@ public class NClassNodeViewWithKey extends NClassNodeView implements MapPairDisp
         getElement().addClassName("pl-0 m-0");
 
         getSelectGroup().getElement().addClassName("col-6 pr-0 pl-0 mb-0");
+        getSelectGroup().remove(super.implementingClassView.getSharedObjectCreatePanel());
+        getSelectGroup().remove(super.implementingClassView.getSharedObjectForwardPanel());
 
         deleteRowBtn.addClickHandler(new ClickHandler()
         {
