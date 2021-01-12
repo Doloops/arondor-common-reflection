@@ -191,7 +191,6 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
             @Override
             public void onClick(ClickEvent event)
             {
-                // faire transiter ref pour la mettre en avant dans liste des SO
                 String key = implementingClassPresenter.getImplementingClass().getDisplayName();
                 objectReferencesProvider.forward(key, new AsyncCallback<ImplementingClass>()
                 {

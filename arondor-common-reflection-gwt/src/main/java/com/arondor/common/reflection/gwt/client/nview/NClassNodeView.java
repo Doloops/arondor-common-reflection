@@ -79,7 +79,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         dialogContent.getElement().addClassName(CssBundle.INSTANCE.css().dialogContent());
 
         MaterialTitle title = new MaterialTitle();
-        title.setTitle("Convert a task");
+        title.setTitle("Convert to shared object");
 
         keyNameTextBox.setClass("outlined");
         keyNameTextBox.setLabel("Shared object name");

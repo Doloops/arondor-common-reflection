@@ -123,8 +123,6 @@ public class ImplementingClassView extends Composite implements ImplementingClas
     public void resetImplementingList()
     {
         implementingListInput.unselect();
-        // sharedObjectCreatePanel.getElement().getStyle().setDisplay(Display.NONE);
-        // sharedObjectForwardPanel.getElement().getStyle().setDisplay(Display.NONE);
         selectedClass = ImplementingClass.NULL_CLASS;
 
         // to prevent the onLoad() MaterialCombobox call
