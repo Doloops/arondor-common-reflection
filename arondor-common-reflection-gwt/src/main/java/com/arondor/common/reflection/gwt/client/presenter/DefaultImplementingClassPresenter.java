@@ -272,6 +272,13 @@ public class DefaultImplementingClassPresenter implements ImplementingClassPrese
                 }
                 LOG.info("fetchImplementations() : Base class " + baseClassName + ", results=" + result.size()
                         + ", current=" + currentImplementingClass);
+                
+                if (getBaseClassName().equals("com.arondor.fast2p8.model.taskflow.design.TaskLinkCondition"))
+                {
+                    display.getSharedObjectCreatePanel().removeFromParent();
+                    display.getSharedObjectForwardPanel().removeFromParent();
+                }
+                
                 if (result.size() == 1 && isMandatory && currentImplementingClass == null)
                 {
                     /**
