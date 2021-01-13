@@ -18,6 +18,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.RootPanel;
 
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialDialog;
@@ -131,7 +132,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
 
     protected void bind()
     {
-        add(convertTaskDialog);
+        RootPanel.get().add(convertTaskDialog);
 
         selectGroup.add(implementingClassView);
         selectGroup.add(getResetFieldBtn());
