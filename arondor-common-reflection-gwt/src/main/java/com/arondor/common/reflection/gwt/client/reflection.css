@@ -134,6 +134,22 @@
 	margin-top:0px!important;
 }
 
+.sharedObjectImg {
+    left: 5px;
+    cursor: pointer;
+    position: absolute;
+    top: 60%;
+    transform: translate(0%, -65%);
+    z-index: 500;
+    width: 30px!important;
+    filter: grayscale(1) brightness(1.50);
+}
+
+.sharedObjectImg:hover{
+	filter: grayscale(0) brightness(1);	
+}
+
+	
 .resetBtn i {
 	position:absolute!important;
 	right:-9px;
@@ -192,6 +208,38 @@
 	margin:0px 0px 30px 10px;
 }
 
+.classNode .shareButton{
+	background-color:#FFFFFF;
+	color: #42A5F5;
+	cursor: pointer;	
+}
+
+.classNode .sharePanel{
+	float: right;
+	padding-bottom: 10px;
+}
+
+.classNode .convertTaskDialog{
+	width: fit-content!important;
+	height: fit-content;
+}
+
+.classNode .dialogContent{
+	padding-bottom: 0px;
+	border: 0px;
+}
+
+.classNode .cancelConversionBtn{
+	margin-right: 24px!important;
+	margin-left: 20px!important;
+	background-color: #F44336;
+}
+
+.classNode .doConversionBtn{
+	margin-right: 20px!important;
+	background-color: #4CAF50;
+}
+
 .nodeField {
 	margin:10px 0px;
 }
@@ -208,6 +256,17 @@
 	position:relative;
 	top:-10px;
 	font-size:0.7rem;
+}
+
+.comboBox {
+	width:100%;
+	margin-top:0px;
+	margin-bottom:0px;
+	text-align: left;
+}
+
+.comboBox span[class="select2-selection__rendered"] {
+	padding-left: 40px!important;
 }
 
 .comboBox label {

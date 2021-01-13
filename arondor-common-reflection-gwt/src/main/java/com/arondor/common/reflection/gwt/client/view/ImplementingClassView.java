@@ -24,6 +24,8 @@ import com.arondor.common.reflection.gwt.client.presenter.ImplementingClass;
 import com.arondor.common.reflection.gwt.client.presenter.ImplementingClassPresenter.ImplementingClassDisplay;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
@@ -36,11 +38,12 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.Image;
 
 import gwt.material.design.addins.client.combobox.MaterialComboBox;
 import gwt.material.design.addins.client.combobox.events.SelectItemEvent;
 import gwt.material.design.addins.client.combobox.events.SelectItemEvent.SelectComboHandler;
-import gwt.material.design.client.constants.TextAlign;
 import gwt.material.design.client.ui.html.Option;
 
 public class ImplementingClassView extends Composite implements ImplementingClassDisplay
@@ -55,15 +58,28 @@ public class ImplementingClassView extends Composite implements ImplementingClas
 
     private String longDesc;
 
+    private FocusPanel sharedObjectCreatePanel = new FocusPanel();
+
+    private FocusPanel sharedObjectForwardPanel = new FocusPanel();
+
+    private Image sharedObjectImg = new Image("/icons/convert-shared-object.svg");
+
+    private Image sharedObjectViewImg = new Image("/icons/view-shared-object.svg");
+
     public ImplementingClassView()
     {
         initWidget(implementingListInput);
-
         implementingListInput.setClass("outlined");
-        implementingListInput.setTextAlign(TextAlign.LEFT);
-        implementingListInput.setStyle("width:100%;margin-top:0px;margin-bottom:0px;");
         implementingListInput.getElement().addClassName(CssBundle.INSTANCE.css().comboBox());
         resetImplementingList();
+        sharedObjectCreatePanel.add(sharedObjectImg);
+        sharedObjectCreatePanel.getElement().getStyle().setDisplay(Display.NONE);
+
+        sharedObjectForwardPanel.add(sharedObjectViewImg);
+        sharedObjectForwardPanel.getElement().getStyle().setDisplay(Display.NONE);
+
+        sharedObjectImg.getElement().addClassName(CssBundle.INSTANCE.css().sharedObjectImg());
+        sharedObjectViewImg.getElement().addClassName(CssBundle.INSTANCE.css().sharedObjectImg());
 
         implementingListInput.getLabel().addClickHandler(new ClickHandler()
         {
@@ -73,7 +89,6 @@ public class ImplementingClassView extends Composite implements ImplementingClas
                 implementingListInput.open();
             }
         });
-
         implementingListInput.addMouseOverHandler(new MouseOverHandler()
         {
             @Override
@@ -122,15 +137,18 @@ public class ImplementingClassView extends Composite implements ImplementingClas
                     implementingListInput.getLabel().getElement().removeClassName("select2label");
             }
         });
-
     }
 
     private String prettyPrint(ImplementingClass implementingClass)
     {
         if (implementingClass.isReference())
         {
+            sharedObjectCreatePanel.getElement().getStyle().setDisplay(Display.NONE);
+            sharedObjectForwardPanel.getElement().getStyle().setDisplay(Display.BLOCK);
             return REFERENCE_PREFIX + implementingClass.getDisplayName();
         }
+        sharedObjectForwardPanel.getElement().getStyle().setDisplay(Display.NONE);
+        sharedObjectCreatePanel.getElement().getStyle().setDisplay(Display.BLOCK);
         return implementingClass.getDisplayName();
     }
 
@@ -146,15 +164,13 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         {
             if (implementingListInput.getValues().contains(implementingClass))
                 continue;
-            Option option = implementingListInput.addItem(prettyPrint(implementingClass), implementingClass);
+            Option option = implementingListInput.addItem(implementingClass.getDisplayName(), implementingClass);
             if (implementingClass.getClassName() != null)
                 option.setTitle(implementingClass.getClassName());
         }
 
         if (selectedClass == ImplementingClass.NULL_CLASS)
-        {
             implementingListInput.unselect();
-        }
     }
 
     private void doSelect(ImplementingClass clazz)
@@ -183,6 +199,15 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         }
         // implementingListInput.getLabel().getElement().addClassName("select2label");
         // LOG.warning("Could not select class : " + className);
+        if (clazz.isReference())
+        {
+            sharedObjectForwardPanel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+        }
+        else
+        {
+            sharedObjectCreatePanel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+
+        }
     }
 
     @Override
@@ -199,6 +224,11 @@ public class ImplementingClassView extends Composite implements ImplementingClas
                     selectedClass = event.getSelectedValues().get(0);
                     LOG.finest("Selected " + selectedClass);
                     valueChangeHandler.onValueChange(new MyValueChangeEvent<ImplementingClass>(selectedClass));
+                    if (selectedClass.isReference())
+                        sharedObjectForwardPanel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+                    else
+                        sharedObjectCreatePanel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+                    prettyPrint(selectedClass);
                 }
             }
         });
@@ -220,5 +250,17 @@ public class ImplementingClassView extends Composite implements ImplementingClas
     public void setNodeLongDescription(String longDescription)
     {
         this.longDesc = longDescription;
+    }
+
+    @Override
+    public FocusPanel getSharedObjectCreatePanel()
+    {
+        return sharedObjectCreatePanel;
+    }
+
+    @Override
+    public FocusPanel getSharedObjectForwardPanel()
+    {
+        return sharedObjectForwardPanel;
     }
 }

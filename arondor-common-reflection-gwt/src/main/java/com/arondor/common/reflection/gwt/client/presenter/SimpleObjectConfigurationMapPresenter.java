@@ -71,6 +71,21 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
         {
             this.delegate = delegate;
         }
+
+        @Override
+        public void share(ObjectConfiguration objectConfiguration, String name,
+                AsyncCallback<ImplementingClass> callback)
+        {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void forward(String key, AsyncCallback<ImplementingClass> callback)
+        {
+            // TODO Auto-generated method stub
+
+        }
     }
 
     ObjectReferencesProvider topLevelObjectRefencesProvider = new ObjectReferencesProvider()
@@ -99,6 +114,22 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
             }
             callback.onSuccess(implementingClasses);
         }
+
+        @Override
+        public void share(ObjectConfiguration objectConfiguration, String name,
+                AsyncCallback<ImplementingClass> callback)
+        {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void forward(String key, AsyncCallback<ImplementingClass> callback)
+        {
+            // TODO Auto-generated method stub
+
+        }
+
     };
 
     public SimpleObjectConfigurationMapPresenter(GWTReflectionServiceAsync rpcService, String fieldName,

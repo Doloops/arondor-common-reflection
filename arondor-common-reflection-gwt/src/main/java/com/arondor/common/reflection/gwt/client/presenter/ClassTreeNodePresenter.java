@@ -34,9 +34,15 @@ import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.arondor.common.reflection.model.java.AccessibleField;
 import com.arondor.common.reflection.util.PrimitiveTypeUtil;
 import com.arondor.common.reflection.util.StrongReference;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import gwt.material.design.client.ui.MaterialDialog;
+import gwt.material.design.client.ui.MaterialToast;
 
 public class ClassTreeNodePresenter implements TreeNodePresenter
 {
@@ -45,6 +51,22 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
     public interface ClassDisplay extends TreeNodePresenter.ChildCreatorDisplay
     {
         ImplementingClassPresenter.ImplementingClassDisplay getImplementingClassDisplay();
+
+        HandlerRegistration onShare(ClickHandler handler);
+
+        HandlerRegistration forwardToSharedObject(ClickHandler handler);
+
+        String getKeyName();
+
+        void clearKeyName();
+
+        MaterialDialog getConvertTaskDialog();
+
+        HandlerRegistration onCancelShare(ClickHandler handler);
+
+        HandlerRegistration onDoShare(ClickHandler handler);
+
+        void setSharedObjectDisplay(Boolean isRef);
     }
 
     private final Map<String, TreeNodePresenter> classTreeNodePresenterMap = new HashMap<String, TreeNodePresenter>();
@@ -86,6 +108,7 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
             @Override
             public void onValueChange(ValueChangeEvent<ImplementingClass> event)
             {
+                LOG.finest("value change");
                 if (event.getValue().isReference())
                 {
                     clearFields();
@@ -105,6 +128,88 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
             {
                 implementingClassPresenter.setImplementingClass(ImplementingClass.NULL_CLASS);
                 clearFields();
+            }
+        });
+
+        display.onShare(new ClickHandler()
+        {
+            @Override
+            public void onClick(ClickEvent event)
+            {
+                display.getConvertTaskDialog().open();
+            }
+        });
+
+        display.onCancelShare(new ClickHandler()
+        {
+            @Override
+            public void onClick(ClickEvent event)
+            {
+                display.getConvertTaskDialog().close();
+            }
+        });
+
+        display.onDoShare(new ClickHandler()
+        {
+            @Override
+            public void onClick(ClickEvent event)
+            {
+                String name = display.getKeyName();
+                if (!name.isEmpty())
+                {
+                    objectReferencesProvider.share(getObjectConfiguration(), name,
+                            new AsyncCallback<ImplementingClass>()
+                            {
+                                @Override
+                                public void onFailure(Throwable caught)
+                                {
+                                    LOG.info("Could not get reference configuration");
+                                }
+
+                                @Override
+                                public void onSuccess(ImplementingClass result)
+                                {
+                                    clearFields();
+                                    implementingClassPresenter.setImplementingClass(result);
+                                    display.setActive(true);
+                                    display.getConvertTaskDialog().close();
+                                }
+                            });
+                    display.clearKeyName();
+                }
+                else
+                {
+                    MaterialToast.fireToast("Enter the name of your shared object");
+                }
+            }
+
+        });
+
+        display.forwardToSharedObject(new ClickHandler()
+        {
+
+            @Override
+            public void onClick(ClickEvent event)
+            {
+                String key = implementingClassPresenter.getImplementingClass().getDisplayName();
+                objectReferencesProvider.forward(key, new AsyncCallback<ImplementingClass>()
+                {
+
+                    @Override
+                    public void onFailure(Throwable caught)
+                    {
+                        // TODO Auto-generated method stub
+
+                    }
+
+                    @Override
+                    public void onSuccess(ImplementingClass result)
+                    {
+                        // TODO Auto-generated method stub
+
+                    }
+                });
+
             }
         });
     }
@@ -147,7 +252,12 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
 
             if (objectConfiguration != null)
             {
-                implementingClassPresenter.setImplementingClass(new ImplementingClass(accessibleClass));
+                ImplementingClass implementingClass = new ImplementingClass(accessibleClass);
+                implementingClassPresenter.setImplementingClass(implementingClass);
+                if (implementingClass.isReference())
+                    display.setSharedObjectDisplay(true);
+                else
+                    display.setSharedObjectDisplay(false);
 
                 if (PrimitiveTypeUtil.isPrimitiveType(objectConfiguration.getClassName())
                         && objectConfiguration.getConstructorArguments().size() == 1)
@@ -249,23 +359,24 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
         }
         else
         {
+            ImplementingClass implementingClass = implementingClassPresenter.getImplementingClass();
+            LOG.info("Serializing for implementingClass=" + implementingClass);
+            if (implementingClass.isReference())
+            {
+                ReferenceConfiguration referenceConfiguration = objectConfigurationFactory
+                        .createReferenceConfiguration();
+                referenceConfiguration.setReferenceName(implementingClass.getDisplayName());
+                return referenceConfiguration;
+            }
             return getObjectConfiguration();
         }
 
     }
 
-    private ElementConfiguration getObjectConfiguration()
+    private ObjectConfiguration getObjectConfiguration()
     {
         ObjectConfigurationFactory objectConfigurationFactory = AccessibleClassPresenterFactory
                 .getObjectConfigurationFactory();
-        ImplementingClass implementingClass = implementingClassPresenter.getImplementingClass();
-        LOG.info("Serializing for implementingClass=" + implementingClass);
-        if (implementingClass.isReference())
-        {
-            ReferenceConfiguration referenceConfiguration = objectConfigurationFactory.createReferenceConfiguration();
-            referenceConfiguration.setReferenceName(implementingClass.getDisplayName());
-            return referenceConfiguration;
-        }
 
         ObjectConfiguration objectConfiguration = objectConfigurationFactory.createObjectConfiguration();
         objectConfiguration.setFields(new LinkedHashMap<String, ElementConfiguration>());
@@ -292,7 +403,7 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
     @Override
     public void setElementConfiguration(ElementConfiguration elementConfiguration)
     {
-        LOG.finest("setElementConfiguration :" + elementConfiguration);
+        LOG.warning("setElementConfiguration :" + elementConfiguration);
         if (elementConfiguration instanceof ObjectConfiguration)
         {
             ObjectConfiguration objectConfiguration = (ObjectConfiguration) elementConfiguration;
