@@ -17,22 +17,14 @@ package com.arondor.common.reflection.bean.config;
 
 import java.util.List;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Transient;
-
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ListConfiguration;
 
-@Entity
-@DiscriminatorValue("LIST")
 public class ListConfigurationBean extends ElementConfigurationBean implements ListConfiguration
 {
-    /**
-     * 
-     */
     private static final long serialVersionUID = 5759802389815006707L;
 
+    @Override
     public ElementConfigurationType getFieldConfigurationType()
     {
         return ElementConfigurationType.List;
@@ -43,17 +35,15 @@ public class ListConfigurationBean extends ElementConfigurationBean implements L
 
     }
 
-    // @OneToMany(cascade = CascadeType.ALL)
-    // , targetEntity = ElementConfigurationBean.class
-    // @DiscriminatorColumn(columnDefinition = "DTYPE")
-    @Transient
     private List<ElementConfiguration> listConfiguration;
 
+    @Override
     public List<ElementConfiguration> getListConfiguration()
     {
         return listConfiguration;
     }
 
+    @Override
     public void setListConfiguration(List<ElementConfiguration> listConfiguration)
     {
         this.listConfiguration = listConfiguration;

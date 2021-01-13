@@ -15,21 +15,13 @@
  */
 package com.arondor.common.reflection.bean.config;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-
 import com.arondor.common.reflection.model.config.ReferenceConfiguration;
 
-@Entity
-@DiscriminatorValue("REF")
 public class ReferenceConfigurationBean extends ElementConfigurationBean implements ReferenceConfiguration
 {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1417667245091703766L;
 
+    @Override
     public ElementConfigurationType getFieldConfigurationType()
     {
         return ElementConfigurationType.Reference;
@@ -42,16 +34,19 @@ public class ReferenceConfigurationBean extends ElementConfigurationBean impleme
 
     private String referenceName;
 
+    @Override
     public String getReferenceName()
     {
         return referenceName;
     }
 
+    @Override
     public void setReferenceName(String referenceName)
     {
         this.referenceName = referenceName;
     }
 
+    @Override
     public String toString()
     {
         return "ReferenceConfigurationBean [" + referenceName + "]";

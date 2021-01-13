@@ -15,20 +15,13 @@
  */
 package com.arondor.common.reflection.bean.config;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
 
-@Entity
-@DiscriminatorValue("PRIM")
 public class PrimitiveConfigurationBean extends ElementConfigurationBean implements PrimitiveConfiguration
 {
-    /**
-     * 
-     */
     private static final long serialVersionUID = 6752703137456191989L;
 
+    @Override
     public ElementConfigurationType getFieldConfigurationType()
     {
         return ElementConfigurationType.Primitive;
@@ -41,11 +34,13 @@ public class PrimitiveConfigurationBean extends ElementConfigurationBean impleme
 
     private String value;
 
+    @Override
     public String getValue()
     {
         return value;
     }
 
+    @Override
     public void setValue(String value)
     {
         this.value = value;
