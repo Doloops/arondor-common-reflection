@@ -53,6 +53,8 @@ public class AccessibleFieldBean implements AccessibleField
 
     private String defaultBehavior;
 
+    private String example;
+
     /**
      * Attribute class
      */
@@ -287,5 +289,16 @@ public class AccessibleFieldBean implements AccessibleField
     public void setPlaceholder(String placeholder)
     {
         this.placeholder = placeholder;
+    }
+
+    @Override
+    public String getExample()
+    {
+        return example;
+    }
+
+    public void setExample(String example)
+    {
+        this.example = example;
     }
 }
