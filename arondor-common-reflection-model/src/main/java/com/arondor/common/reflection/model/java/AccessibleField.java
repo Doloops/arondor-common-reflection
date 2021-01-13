@@ -33,6 +33,12 @@ public interface AccessibleField extends Serializable
 
     /**
      * 
+     * @return the field Class name
+     */
+    String getClassName();
+
+    /**
+     * 
      * @return the field description
      */
     String getDescription();
@@ -51,9 +57,9 @@ public interface AccessibleField extends Serializable
 
     /**
      * 
-     * @return the field Class name
+     * @return an example use for the field
      */
-    String getClassName();
+    String getExample();
 
     /**
      * The generic Parameter class list for generics
