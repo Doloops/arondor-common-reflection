@@ -14,13 +14,14 @@
 		<module>arondor-common-reflection-api</module>
 		<module>arondor-common-reflection-parser</module>
 		<module>arondor-common-reflection-noreflect</module>
-		<module>arondor-common-reflection-service</module>
 		<module>arondor-common-reflection-reflect</module>
 		<module>arondor-common-reflection-mbean</module>
 		<module>arondor-common-xml-w3c-gwt-bridge</module>
 
 		<module>arondor-common-reflection-gwt</module>
 		<module>arondor-common-reflection-xstream</module>
+		<module>arondor-common-reflection-service</module>
+
 		<module>arondor-common-reflection-gwt-standalone</module>
 		<!-- <module>arondor-common-reflection-sample-gwt</module> -->
 	</modules>
@@ -28,12 +29,16 @@
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+
+		<log4j.version>2.13.3</log4j.version>
+		<junit.version>4.13.1</junit.version>
+		<mockito.version>1.9.5</mockito.version>
+		<xstream.version>1.4.15</xstream.version>
 		<org.springframework.version>5.2.6.RELEASE</org.springframework.version>
 		<gwt.version>2.8.2</gwt.version>
 		<gwt.material.design.version>2.2</gwt.material.design.version>
 		<jdom.version>2.0.2</jdom.version>
-		
-		<log4j.version>2.13.3</log4j.version>
+
 	</properties>
 
 	<dependencies>
@@ -44,21 +49,21 @@
 			<version>${log4j.version}</version>
 		</dependency>
 		<dependency>
-		  <groupId>org.apache.logging.log4j</groupId>
-		  <artifactId>log4j-1.2-api</artifactId>
-		  <version>${log4j.version}</version>
-		</dependency>		
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-1.2-api</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.13</version>
+			<version>${junit.version}</version>
 			<type>jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
-			<version>1.9.5</version>
+			<version>${mockito.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

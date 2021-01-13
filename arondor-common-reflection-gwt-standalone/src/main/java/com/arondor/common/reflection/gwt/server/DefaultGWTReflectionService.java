@@ -15,7 +15,6 @@
  */
 package com.arondor.common.reflection.gwt.server;
 
-import java.rmi.RemoteException;
 import java.util.Collection;
 
 import org.springframework.beans.factory.BeanFactory;
@@ -56,26 +55,12 @@ public class DefaultGWTReflectionService extends RemoteServiceServlet implements
     @Override
     public AccessibleClass getAccessibleClass(String className)
     {
-        try
-        {
-            return getReflectionService().getAccessibleClass(className);
-        }
-        catch (RemoteException e)
-        {
-            throw new RuntimeException(e);
-        }
+        return getReflectionService().getAccessibleClass(className);
     }
 
     @Override
     public Collection<AccessibleClass> getImplementingAccessibleClasses(String name)
     {
-        try
-        {
-            return getReflectionService().getImplementingAccessibleClasses(name);
-        }
-        catch (RemoteException e)
-        {
-            throw new RuntimeException(e);
-        }
+        return getReflectionService().getImplementingAccessibleClasses(name);
     }
 }
