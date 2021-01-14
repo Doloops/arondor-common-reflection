@@ -525,7 +525,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
         catch (NoClassDefFoundError e)
         {
             LOG.debug("Could not get methods for clazz " + clazz.getName(), e);
-            return null;
+            methods = new Method[0];
         }
         AccessibleClassBean accessClass = createBaseAccessibleClass(clazz);
 
@@ -569,7 +569,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
             if (annotation.annotationType().getName().equals("javax.xml.bind.annotation.XmlAccessorType")
                     || annotation.annotationType().getName().equals("javax.xml.bind.annotation.XmlEnum"))
             {
-                LOG.warn("Dubious and deprecated annotation " + annotation.annotationType() + " set on class "
+                LOG.debug("Dubious and deprecated annotation " + annotation.annotationType() + " set on class "
                         + clazz.getName());
                 continue;
             }
@@ -585,7 +585,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
                     if (m.getName().equals("value"))
                     {
                         Object value = m.invoke(annotationObject);
-                        LOG.error("Class " + clazz.getName() + " : Annotation " + annotation.annotationType().getName()
+                        LOG.debug("Class " + clazz.getName() + " : Annotation " + annotation.annotationType().getName()
                                 + "=" + value);
 
                         Map<String, String> annotationsMap = accessClass.getAnnotations();

@@ -285,11 +285,11 @@ public abstract class AbstractJavaAccessibleClassProvider implements AccessibleC
         }
         catch (ClassNotFoundException e)
         {
-            LOG.error("Could not get class for name : " + className);
+            LOG.debug("Could not get class for name : " + className + " : " + e.getMessage(), e);
         }
         catch (NoClassDefFoundError e)
         {
-            LOG.error("Could not get class for name : " + className);
+            LOG.debug("Could not get class for name : " + className + " : " + e.getMessage(), e);
         }
     }
 
@@ -298,7 +298,7 @@ public abstract class AbstractJavaAccessibleClassProvider implements AccessibleC
         AccessibleClass accessibleClass = accessibleClassParser.parseAccessibleClass(clazz);
         if (accessibleClass == null)
         {
-            LOG.error("Could not parse class :" + clazz.getName());
+            LOG.debug("Could not parse class :" + clazz.getName());
             return;
         }
         catalog.addAccessibleClass(accessibleClass);
