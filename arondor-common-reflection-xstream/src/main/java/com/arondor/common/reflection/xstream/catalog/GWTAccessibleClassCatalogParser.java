@@ -167,6 +167,11 @@ public class GWTAccessibleClassCatalogParser
         {
             fieldBean.setPlaceholder(placeholder);
         }
+        String example = getChildValue(fieldElement, "example");
+        if (example != null && !example.equals(""))
+        {
+            fieldBean.setExample(example);
+        }
         String defaultBehavior = getChildValue(fieldElement, "defaultBehavior");
         if (defaultBehavior != null && !defaultBehavior.equals(""))
         {

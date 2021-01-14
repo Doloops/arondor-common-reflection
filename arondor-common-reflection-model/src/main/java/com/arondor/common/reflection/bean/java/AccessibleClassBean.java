@@ -233,7 +233,18 @@ public class AccessibleClassBean implements AccessibleClass
             accessibleEnums = new HashMap<String, List<String>>();
         }
         accessibleEnums.put(enumName, values);
-
     }
 
+    private Map<String, String> annotations;
+
+    @Override
+    public Map<String, String> getAnnotations()
+    {
+        return annotations;
+    }
+
+    public void setAnnotations(Map<String, String> annotations)
+    {
+        this.annotations = annotations;
+    }
 }

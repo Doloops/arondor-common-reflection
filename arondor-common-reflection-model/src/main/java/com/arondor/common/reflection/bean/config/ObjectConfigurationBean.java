@@ -18,74 +18,47 @@ package com.arondor.common.reflection.bean.config;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 
-@Entity
-// @Table(name = "ObjectConfiguration")
-@DiscriminatorValue("OBJ")
 public class ObjectConfigurationBean implements ObjectConfiguration
 {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 5011548715444426003L;
-
-    public ElementConfigurationType getFieldConfigurationType()
-    {
-        return ElementConfigurationType.Object;
-    }
 
     public ObjectConfigurationBean()
     {
 
     }
 
-    @Id
-    @GeneratedValue
-    private long persistentId;
-
-    public void setPersistentId(long persistentId)
+    @Override
+    public ElementConfigurationType getFieldConfigurationType()
     {
-        this.persistentId = persistentId;
-    }
-
-    public long getPersistentId()
-    {
-        return persistentId;
+        return ElementConfigurationType.Object;
     }
 
     private String className;
 
+    @Override
     public String getClassName()
     {
         return className;
     }
 
+    @Override
     public void setClassName(String className)
     {
         this.className = className;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, targetEntity = ElementConfigurationBean.class)
-    // @JoinTable(name = "FieldConfigMap", joinColumns = @JoinColumn(name =
-    // "objectConfigId"), inverseJoinColumns = @JoinColumn(name =
-    // "fieldConfigId"))
     private Map<String, ElementConfiguration> fields;
 
+    @Override
     public Map<String, ElementConfiguration> getFields()
     {
         return fields;
     }
 
+    @Override
     public void setFields(Map<String, ElementConfiguration> fields)
     {
         this.fields = fields;
@@ -103,14 +76,15 @@ public class ObjectConfigurationBean implements ObjectConfiguration
         this.referenceName = referenceName;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, targetEntity = ElementConfigurationBean.class)
     private List<ElementConfiguration> constructorArguments;
 
+    @Override
     public List<ElementConfiguration> getConstructorArguments()
     {
         return constructorArguments;
     }
 
+    @Override
     public void setConstructorArguments(List<ElementConfiguration> constructorArguments)
     {
         this.constructorArguments = constructorArguments;
@@ -118,11 +92,13 @@ public class ObjectConfigurationBean implements ObjectConfiguration
 
     private boolean singleton = false;
 
+    @Override
     public void setSingleton(boolean singleton)
     {
         this.singleton = singleton;
     }
 
+    @Override
     public boolean isSingleton()
     {
         return singleton;
@@ -130,11 +106,13 @@ public class ObjectConfigurationBean implements ObjectConfiguration
 
     private String objectName;
 
+    @Override
     public String getObjectName()
     {
         return objectName;
     }
 
+    @Override
     public void setObjectName(String objectName)
     {
         this.objectName = objectName;
@@ -143,9 +121,10 @@ public class ObjectConfigurationBean implements ObjectConfiguration
     @Override
     public String toString()
     {
-        return "ObjectConfigurationBean [className="
-                + className
-                + ((constructorArguments != null && !constructorArguments.isEmpty()) ? (", constructor=" + constructorArguments)
-                        : "") + ", fields=" + fields + "]";
+        return "ObjectConfigurationBean [className=" + className
+                + ((constructorArguments != null && !constructorArguments.isEmpty())
+                        ? (", constructor=" + constructorArguments)
+                        : "")
+                + ", fields=" + fields + "]";
     }
 }

@@ -50,6 +50,8 @@ public class ImplementingClassView extends Composite implements ImplementingClas
 {
     private static final Logger LOG = Logger.getLogger(ImplementingClassView.class.getName());
 
+    private static final String REFERENCE_PREFIX = "Reference : ";
+
     private MaterialComboBox<ImplementingClass> implementingListInput = new MaterialComboBox<ImplementingClass>();
 
     private ImplementingClass selectedClass = ImplementingClass.NULL_CLASS;
@@ -143,12 +145,11 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         {
             sharedObjectCreatePanel.getElement().getStyle().setDisplay(Display.NONE);
             sharedObjectForwardPanel.getElement().getStyle().setDisplay(Display.BLOCK);
+
+            return REFERENCE_PREFIX + implementingClass.getDisplayName();
         }
-        else
-        {
-            sharedObjectForwardPanel.getElement().getStyle().setDisplay(Display.NONE);
-            sharedObjectCreatePanel.getElement().getStyle().setDisplay(Display.BLOCK);
-        }
+        sharedObjectForwardPanel.getElement().getStyle().setDisplay(Display.NONE);
+        sharedObjectCreatePanel.getElement().getStyle().setDisplay(Display.BLOCK);
 
         return implementingClass.getDisplayName();
     }

@@ -15,7 +15,6 @@
  */
 package com.arondor.common.reflection.service;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -125,7 +124,7 @@ public class DefaultReflectionService implements ReflectionService
     }
 
     @Override
-    public AccessibleClass getAccessibleClass(String clazzName) throws RemoteException
+    public AccessibleClass getAccessibleClass(String clazzName)
     {
         if (clazzName == null)
         {
@@ -151,12 +150,12 @@ public class DefaultReflectionService implements ReflectionService
         }
         catch (ClassNotFoundException e)
         {
-            throw new RemoteException("Could not get class", e);
+            throw new RuntimeException("Could not get class", e);
         }
     }
 
     @Override
-    public Collection<AccessibleClass> getImplementingAccessibleClasses(String name) throws RemoteException
+    public Collection<AccessibleClass> getImplementingAccessibleClasses(String name)
     {
         return getAccessibleClassCatalog().getImplementingAccessibleClasses(name).stream().map(x -> filterClass(x))
                 .collect(Collectors.toList());

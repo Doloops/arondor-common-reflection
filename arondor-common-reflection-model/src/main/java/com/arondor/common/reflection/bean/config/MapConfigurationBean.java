@@ -17,15 +17,9 @@ package com.arondor.common.reflection.bean.config;
 
 import java.util.Map;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Transient;
-
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.MapConfiguration;
 
-@Entity
-@DiscriminatorValue("MAP")
 public class MapConfigurationBean extends ElementConfigurationBean implements MapConfiguration
 {
     /**
@@ -33,6 +27,7 @@ public class MapConfigurationBean extends ElementConfigurationBean implements Ma
      */
     private static final long serialVersionUID = 2968136864852828441L;
 
+    @Override
     public ElementConfigurationType getFieldConfigurationType()
     {
         return ElementConfigurationType.Map;
@@ -43,21 +38,21 @@ public class MapConfigurationBean extends ElementConfigurationBean implements Ma
 
     }
 
-    // @ManyToMany(cascade = CascadeType.ALL)
-    // , targetEntity = ElementConfigurationBean.class
-    @Transient
     private Map<ElementConfiguration, ElementConfiguration> mapConfiguration;
 
+    @Override
     public Map<ElementConfiguration, ElementConfiguration> getMapConfiguration()
     {
         return mapConfiguration;
     }
 
+    @Override
     public void setMapConfiguration(Map<ElementConfiguration, ElementConfiguration> mapConfiguration)
     {
         this.mapConfiguration = mapConfiguration;
     }
 
+    @Override
     public String toString()
     {
         return "MapConfigurationBean[" + mapConfiguration.entrySet() + "]";

@@ -15,13 +15,12 @@
  */
 package com.arondor.common.reflection.api.service;
 
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Collection;
 
 import com.arondor.common.reflection.model.java.AccessibleClass;
 
-public interface ReflectionService extends Remote
+public interface ReflectionService
 {
     /**
      * 
@@ -29,8 +28,7 @@ public interface ReflectionService extends Remote
      * @return
      * @throws RemoteException
      */
-    AccessibleClass getAccessibleClass(String clazzName) throws RemoteException;
+    AccessibleClass getAccessibleClass(String clazzName);
 
-    Collection<AccessibleClass> getImplementingAccessibleClasses(String name) throws RemoteException;
-
+    Collection<AccessibleClass> getImplementingAccessibleClasses(String name);
 }

@@ -13,11 +13,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.arondor.common.reflection.bean.config;
+package com.arondor.common.management.mbean.annotation;
 
-import com.arondor.common.reflection.model.config.ElementConfiguration;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-public abstract class ElementConfigurationBean implements ElementConfiguration
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Example
 {
-    private static final long serialVersionUID = 6717045194610707737L;
+    /**
+     * @return an example usage for the field
+     */
+    String value();
 }

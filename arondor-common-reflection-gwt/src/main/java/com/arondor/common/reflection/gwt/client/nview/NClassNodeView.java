@@ -18,6 +18,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.RootPanel;
 
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialDialog;
@@ -64,7 +65,6 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
 
         getResetFieldBtn().addClickHandler(new ClickHandler()
         {
-
             @Override
             public void onClick(ClickEvent event)
             {
@@ -109,11 +109,13 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
 
         mandatoryChildren.getElement().addClassName(CssBundle.INSTANCE.css().classMandatoryChildren());
         optionalChildren.getElement().addClassName(CssBundle.INSTANCE.css().classOptionalChildren());
+
         advancedSettings.getElement().addClassName(CssBundle.INSTANCE.css().advancedSettingsBtn());
 
         String rnd = String.valueOf(Math.random()).substring(2);
-        advancedSettings.getElement().setInnerHTML(
-                "<a data-toggle=\"collapse\" aria-expanded=\"false\" href=\"#advancedSettings" + rnd + "\"></a>");
+        advancedSettings.getElement()
+                .setInnerHTML("<a data-toggle=\"collapse\" aria-expanded=\"false\" href=\"#advancedSettings" + rnd
+                        + "\" class=\"collapsed\"></a>");
 
         advancedSettings.getElement().addClassName(CssBundle.INSTANCE.css().hideAdvancedSettings());
 
@@ -130,7 +132,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
 
     protected void bind()
     {
-        add(convertTaskDialog);
+        RootPanel.get().add(convertTaskDialog);
 
         selectGroup.add(implementingClassView);
         selectGroup.add(getResetFieldBtn());
