@@ -41,7 +41,8 @@ pipeline {
 		}
 		stage('Build Release') {	
 			when {
-				branch "release-1.0.0-rc9"
+				/* branch "release-1.0.0-rc9" */
+				expression { branch ==~ /^release/ }
 			}
 			steps {
 				script {
