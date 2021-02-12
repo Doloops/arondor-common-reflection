@@ -1,0 +1,64 @@
+@Library('utils') _
+import org.jenkinsci.plugins.pipeline.modeldefinition.Utils
+
+def JIRA_KEY = "ACR"
+def POM_PATH = "pom.xml"
+def DEVELOP_BRANCH = "master"
+def BUILD_CMD = "clean install -DskipITs -fn"
+
+pipeline {
+    agent any
+    stages {
+        stage('Preparation') {
+            steps {
+                script {
+                    env.MAVEN_HOME = tool 'maven3'
+                    DEPLOY_VERSION = readMavenPom().getVersion()
+    				NEW_TAG = readMavenPom().getArtifactId()
+                }
+            }
+        }
+		stage('Build Branch') {	
+			when {
+				not { branch "${DEVELOP_BRANCH}"}
+			}
+			steps {
+				script {
+					pipelineUtils.mavenBuild(POM_PATH, BUILD_CMD)
+				}
+			}
+		}
+		stage('Build Develop') {	
+			when {
+				branch "${DEVELOP_BRANCH}"
+			}
+			steps {
+				script {
+					ARTIFACTORY = "arondor-snapshot"
+					pipelineUtils.mavenBuild(POM_PATH, BUILD_CMD)
+				}
+			}
+		}
+		stage("Build Release') {
+			when {
+				expression { branch ==~ /release-.*/ }
+			}
+			steps {
+				script {
+					ARTIFACTORY = "arondor-release"
+					pipelineUtils.mavenBuild(POM_PATH, BUILD_CMD)
+				}
+			}
+		}
+
+    }
+    post { 
+        always { 
+            junit allowEmptyResults: true, testResults:  '**/target/surefire-reports/TEST-*.xml'
+        }
+    }
+    
+    options {
+	  buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '10')
+	}
+}
