@@ -21,6 +21,7 @@ pipeline {
 		stage('Build Branch') {	
 			when {
 				not { branch "${DEVELOP_BRANCH}"}
+				not { expression { BRANCH_NAME ==~ /^(release-.*)/ } }
 			}
 			steps {
 				script {
