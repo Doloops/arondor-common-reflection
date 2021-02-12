@@ -3,6 +3,7 @@ package com.arondor.common.reflection.gwt.client.nview;
 import com.arondor.common.reflection.gwt.client.CssBundle;
 import com.arondor.common.reflection.gwt.client.nview.prim.NBooleanView;
 import com.arondor.common.reflection.gwt.client.nview.prim.NIntView;
+import com.arondor.common.reflection.gwt.client.nview.prim.NScriptView;
 import com.arondor.common.reflection.gwt.client.nview.prim.NStringListView;
 import com.arondor.common.reflection.gwt.client.nview.prim.NStringView;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter;
@@ -244,6 +245,14 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     }
 
     @Override
+    public PrimitiveDisplay createScriptChild(String scriptType, boolean isMandatory)
+    {
+        NScriptView view = new NScriptView();
+        addChildView(isMandatory, view);
+        return view;
+    }
+
+    @Override
     public EnumDisplay createEnumListChild(boolean isMandatory)
     {
         return null;
@@ -322,4 +331,5 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     {
         return btnConvertTask.addClickHandler(handler);
     }
+
 }

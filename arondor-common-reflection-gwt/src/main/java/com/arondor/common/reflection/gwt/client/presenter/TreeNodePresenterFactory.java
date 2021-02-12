@@ -27,10 +27,12 @@ import com.arondor.common.reflection.gwt.client.presenter.fields.EnumTreeNodePre
 import com.arondor.common.reflection.gwt.client.presenter.fields.ListTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter;
+import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter.PrimitiveDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
+import com.arondor.common.reflection.model.java.AccessibleAnnotation;
 import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.arondor.common.reflection.model.java.AccessibleField;
 import com.arondor.common.reflection.util.PrimitiveTypeUtil;
@@ -39,6 +41,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class TreeNodePresenterFactory
 {
     private final static Logger LOG = Logger.getLogger(TreeNodePresenterFactory.class.getName());
+
+    private static final String ANNOTATION_SCRIPT_SOURCE = "com.arondor.common.management.mbean.annotation.ScriptSource";
 
     public TreeNodePresenter createChildNodePresenter(GWTReflectionServiceAsync rpcService,
             ObjectReferencesProvider objectReferencesProvider, TreeNodePresenter.ChildCreatorDisplay display,
@@ -58,7 +62,13 @@ public class TreeNodePresenterFactory
         {
             LOG.finest("Field " + fieldName + " is primitive type, class=" + fieldClassName + ", defaultValue="
                     + defaultValue);
-            childPresenter = new PrimitiveTreeNodePresenter(display.createPrimitiveChild(fieldClassName, isMandatory));
+            PrimitiveDisplay primitiveDisplay;
+            String scriptType = isScriptFieldType(accessibleField);
+            if (scriptType != null)
+                primitiveDisplay = display.createScriptChild(scriptType, isMandatory);
+            else
+                primitiveDisplay = display.createPrimitiveChild(fieldClassName, isMandatory);
+            childPresenter = new PrimitiveTreeNodePresenter(primitiveDisplay);
             if (defaultValue != null && !defaultValue.equals(""))
             {
                 ((PrimitiveTreeNodePresenter) childPresenter).setDefaultValue(defaultValue);
@@ -113,6 +123,22 @@ public class TreeNodePresenterFactory
 
         setNodeNameAndDescription(fieldName, accessibleField, childPresenter);
         return childPresenter;
+    }
+
+    private String isScriptFieldType(AccessibleField accessibleField)
+    {
+        if (accessibleField.getClassName().equals(String.class.getName()))
+        {
+            if (accessibleField.getAnnotations() != null)
+            {
+                AccessibleAnnotation annot = accessibleField.getAnnotations().get(ANNOTATION_SCRIPT_SOURCE);
+                if (annot != null)
+                {
+                    return annot.getValue();
+                }
+            }
+        }
+        return null;
     }
 
     private TreeNodePresenter createEnumListPresenter(GWTReflectionServiceAsync rpcService,

@@ -59,7 +59,7 @@ public interface AccessibleClass extends Serializable
 
     Map<String, List<String>> getAccessibleEnums();
 
-    Map<String, String> getAnnotations();
+    Map<String, AccessibleAnnotation> getAnnotations();
 
     String getClassBaseName();
 

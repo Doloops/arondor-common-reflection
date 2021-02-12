@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.apache.log4j.Logger;
 
@@ -39,10 +40,12 @@ import com.arondor.common.management.mbean.annotation.LongDescription;
 import com.arondor.common.management.mbean.annotation.Mandatory;
 import com.arondor.common.management.mbean.annotation.Password;
 import com.arondor.common.reflection.api.parser.AccessibleClassParser;
+import com.arondor.common.reflection.bean.java.AccessibleAnnotationBean;
 import com.arondor.common.reflection.bean.java.AccessibleClassBean;
 import com.arondor.common.reflection.bean.java.AccessibleConstructorBean;
 import com.arondor.common.reflection.bean.java.AccessibleFieldBean;
 import com.arondor.common.reflection.bean.java.AccessibleMethodBean;
+import com.arondor.common.reflection.model.java.AccessibleAnnotation;
 import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.arondor.common.reflection.model.java.AccessibleConstructor;
 import com.arondor.common.reflection.model.java.AccessibleField;
@@ -557,7 +560,26 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
 
     private void setAccessibleClassAnnotations(Class<?> clazz, AccessibleClassBean accessClass)
     {
-        for (Annotation annotation : clazz.getAnnotations())
+        Map<String, AccessibleAnnotation> map = parseAnnotations(clazz.getAnnotations(), clazz.getName(),
+                x -> clazz.getAnnotation(x));
+        if (!map.isEmpty())
+            accessClass.setAnnotations(map);
+    }
+
+    private void setAccessibleFieldAnnotations(Field field, AccessibleFieldBean accessField)
+    {
+        Map<String, AccessibleAnnotation> map = parseAnnotations(field.getAnnotations(), field.getName(),
+                x -> field.getAnnotation(x));
+        if (!map.isEmpty())
+            accessField.setAnnotations(map);
+    }
+
+    private Map<String, AccessibleAnnotation> parseAnnotations(Annotation[] annotations, String source,
+            Function<Class<? extends Annotation>, Object> annotationResolver)
+    {
+        Map<String, AccessibleAnnotation> annotationsMap = new HashMap<String, AccessibleAnnotation>();
+
+        for (Annotation annotation : annotations)
         {
             if (annotation.annotationType().equals(Description.class)
                     || annotation.annotationType().equals(LongDescription.class)
@@ -569,52 +591,38 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
             if (annotation.annotationType().getName().equals("javax.xml.bind.annotation.XmlAccessorType")
                     || annotation.annotationType().getName().equals("javax.xml.bind.annotation.XmlEnum"))
             {
-                LOG.warn("Dubious and deprecated annotation " + annotation.annotationType() + " set on class "
-                        + clazz.getName());
+                LOG.warn("Dubious and deprecated annotation " + annotation.annotationType() + " set on " + source);
                 continue;
             }
             LOG.debug("* At annotation: " + annotation.annotationType());
-            Object annotationObject = clazz.getAnnotation(annotation.annotationType());
+            Object annotationObject = annotationResolver.apply(annotation.annotationType());// clazz.getAnnotation(annotation.annotationType());
             LOG.debug("* Object=" + annotationObject);
 
             try
             {
                 Method[] annotationMethods = annotationObject.getClass().getMethods();
+
                 for (Method m : annotationMethods)
                 {
                     if (m.getName().equals("value"))
                     {
                         Object value = m.invoke(annotationObject);
-                        LOG.error("Class " + clazz.getName() + " : Annotation " + annotation.annotationType().getName()
-                                + "=" + value);
+                        LOG.info("Source " + source + " : Annotation " + annotation.annotationType().getName() + "="
+                                + value);
 
-                        Map<String, String> annotationsMap = accessClass.getAnnotations();
-                        if (annotationsMap == null)
-                        {
-                            annotationsMap = new HashMap<String, String>();
-                            accessClass.setAnnotations(annotationsMap);
-                        }
-                        annotationsMap.put(annotation.annotationType().getName(), value.toString());
+                        AccessibleAnnotationBean annotationBean = new AccessibleAnnotationBean();
+                        annotationBean.setValue(value.toString());
+                        annotationsMap.put(annotation.annotationType().getName(), annotationBean);
                     }
                 }
             }
-            catch (NoClassDefFoundError e)
+            catch (NoClassDefFoundError | IllegalAccessException | IllegalArgumentException
+                    | InvocationTargetException e)
             {
-                LOG.debug("Could not get methods for clazz " + clazz.getName(), e);
-            }
-            catch (IllegalAccessException e)
-            {
-                LOG.debug("Could not get methods for clazz " + clazz.getName(), e);
-            }
-            catch (IllegalArgumentException e)
-            {
-                LOG.debug("Could not get methods for clazz " + clazz.getName(), e);
-            }
-            catch (InvocationTargetException e)
-            {
-                LOG.debug("Could not get methods for clazz " + clazz.getName(), e);
+                LOG.debug("Could not get methods for " + source, e);
             }
         }
+        return annotationsMap;
     }
 
     /**
@@ -768,22 +776,25 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
              * We make an ugly cast because we do not want to expose setters in
              * the AccessibleField interface.
              */
-            AccessibleFieldBean accessibleFieldBean = (AccessibleFieldBean) accessibleField;
-            accessibleFieldBean.setClassName(normalizeClassName(accessibleField.getClassName()));
+            AccessibleFieldBean accessField = (AccessibleFieldBean) accessibleField;
+            accessField.setClassName(normalizeClassName(accessibleField.getClassName()));
 
             for (Class<?> superclass = clazz; superclass != null; superclass = superclass.getSuperclass())
             {
                 try
                 {
                     Field field = superclass.getDeclaredField(accessibleField.getName());
-                    accessibleFieldBean.setDescription(getFieldDescription(field));
-                    accessibleFieldBean.setLongDescription(getFieldLongDescription(field));
-                    accessibleFieldBean.setDefaultValue(getFieldDefaultValue(field));
-                    accessibleFieldBean.setDefaultBehavior(getFieldDefaultBehavior(field));
-                    accessibleFieldBean.setExample(getFieldExample(field));
-                    accessibleFieldBean.setMandatory(getFieldMandatory(field));
-                    accessibleFieldBean.setPassword(getFieldPassword(field));
-                    accessibleFieldBean.setEnumProperty(getAccessibleEnums(accessibleClass, field));
+
+                    accessField.setDescription(getFieldDescription(field));
+                    accessField.setLongDescription(getFieldLongDescription(field));
+                    accessField.setDefaultValue(getFieldDefaultValue(field));
+                    accessField.setDefaultBehavior(getFieldDefaultBehavior(field));
+                    accessField.setExample(getFieldExample(field));
+                    accessField.setMandatory(getFieldMandatory(field));
+                    accessField.setPassword(getFieldPassword(field));
+                    accessField.setEnumProperty(getAccessibleEnums(accessibleClass, field));
+
+                    setAccessibleFieldAnnotations(field, accessField);
 
                     break;
                 }

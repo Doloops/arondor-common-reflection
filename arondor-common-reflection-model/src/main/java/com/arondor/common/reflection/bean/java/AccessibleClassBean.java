@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.arondor.common.reflection.model.java.AccessibleAnnotation;
 import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.arondor.common.reflection.model.java.AccessibleConstructor;
 import com.arondor.common.reflection.model.java.AccessibleField;
@@ -235,15 +236,15 @@ public class AccessibleClassBean implements AccessibleClass
         accessibleEnums.put(enumName, values);
     }
 
-    private Map<String, String> annotations;
+    private Map<String, AccessibleAnnotation> annotations;
 
     @Override
-    public Map<String, String> getAnnotations()
+    public Map<String, AccessibleAnnotation> getAnnotations()
     {
         return annotations;
     }
 
-    public void setAnnotations(Map<String, String> annotations)
+    public void setAnnotations(Map<String, AccessibleAnnotation> annotations)
     {
         this.annotations = annotations;
     }

@@ -16,7 +16,9 @@
 package com.arondor.common.reflection.bean.java;
 
 import java.util.List;
+import java.util.Map;
 
+import com.arondor.common.reflection.model.java.AccessibleAnnotation;
 import com.arondor.common.reflection.model.java.AccessibleField;
 
 /**
@@ -97,6 +99,8 @@ public class AccessibleFieldBean implements AccessibleField
     private boolean is = false;
 
     private String placeholder;
+
+    private Map<String, AccessibleAnnotation> annotations;
 
     /**
      * Attribute description constructor
@@ -300,5 +304,16 @@ public class AccessibleFieldBean implements AccessibleField
     public void setExample(String example)
     {
         this.example = example;
+    }
+
+    @Override
+    public Map<String, AccessibleAnnotation> getAnnotations()
+    {
+        return annotations;
+    }
+
+    public void setAnnotations(Map<String, AccessibleAnnotation> annotations)
+    {
+        this.annotations = annotations;
     }
 }

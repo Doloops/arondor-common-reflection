@@ -17,6 +17,7 @@ package com.arondor.common.reflection.model.java;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Accessible Field : Model for Java class Field
@@ -132,4 +133,5 @@ public interface AccessibleField extends Serializable
      */
     String getDeclaredInClass();
 
+    Map<String, AccessibleAnnotation> getAnnotations();
 }

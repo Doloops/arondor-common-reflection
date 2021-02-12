@@ -21,6 +21,7 @@ import com.arondor.common.reflection.gwt.client.presenter.fields.EnumTreeNodePre
 import com.arondor.common.reflection.gwt.client.presenter.fields.ListTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter;
+import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter.PrimitiveDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeNodePresenter;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -98,6 +99,8 @@ public interface TreeNodePresenter
         MapTreeNodePresenter.MapRootDisplay createMapChild(boolean isMandatory);
 
         ListTreeNodePresenter.ListRootDisplay createListChild(boolean isMandatory);
+
+        PrimitiveDisplay createScriptChild(String scriptType, boolean isMandatory);
     }
 
     ElementConfiguration getElementConfiguration();
