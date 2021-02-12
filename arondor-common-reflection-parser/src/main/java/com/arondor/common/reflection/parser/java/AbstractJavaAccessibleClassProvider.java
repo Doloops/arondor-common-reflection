@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
@@ -75,6 +76,11 @@ public abstract class AbstractJavaAccessibleClassProvider implements AccessibleC
     public void setPackagePrefixes(List<String> packagePrefixes)
     {
         this.packagePrefixes = packagePrefixes;
+    }
+
+    public void setPackagePrefixes(String packagePrefixes)
+    {
+        setPackagePrefixes(Arrays.asList(packagePrefixes.split(",")));
     }
 
     public List<String> getPackagePrefixes()
@@ -298,7 +304,7 @@ public abstract class AbstractJavaAccessibleClassProvider implements AccessibleC
         AccessibleClass accessibleClass = accessibleClassParser.parseAccessibleClass(clazz);
         if (accessibleClass == null)
         {
-            LOG.error("Could not parse class :" + clazz.getName());
+            LOG.error("Could not parse class : " + clazz.getName());
             return;
         }
         catalog.addAccessibleClass(accessibleClass);
