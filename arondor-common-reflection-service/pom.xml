@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.arondor.common</groupId>
 		<artifactId>arondor-common-reflection</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.0-rc10</version>
 	</parent>
 	<artifactId>arondor-common-reflection-service</artifactId>
 	<groupId>com.arondor.common.reflection</groupId>
@@ -12,17 +12,17 @@
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-api</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>1.0.0-rc10</version>
 		</dependency>
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-parser</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>1.0.0-rc10</version>
 		</dependency>
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-xstream</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>1.0.0-rc10</version>
 		</dependency>
 	</dependencies>
 </project>
