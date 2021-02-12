@@ -332,8 +332,7 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
         LOG.info("Serializing for implementingClass=" + implementingClass);
         if (implementingClass == null)
         {
-            throw new IllegalArgumentException("Invalid non-reference null implementing class: "
-                    + implementingClassPresenter.getImplementingClass());
+            return null;
         }
 
         if (PrimitiveTypeUtil.isPrimitiveType(implementingClassPresenter.getImplementingClass().getClassName()))
