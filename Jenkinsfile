@@ -41,7 +41,7 @@ pipeline {
 		}
 		stage("Build Release') {
 			when {
-				expression { branch ==~ /release-/ }
+				branch "release"
 			}
 			steps {
 				script {
