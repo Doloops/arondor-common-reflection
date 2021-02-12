@@ -39,18 +39,6 @@ pipeline {
 				}
 			}
 		}
-		stage("Build Release') {
-			when {
-				branch "release"
-			}
-			steps {
-				script {
-					ARTIFACTORY = "arondor-release"
-					pipelineUtils.mavenBuild(POM_PATH, BUILD_CMD)
-				}
-			}
-		}
-
     }
     post { 
         always { 
