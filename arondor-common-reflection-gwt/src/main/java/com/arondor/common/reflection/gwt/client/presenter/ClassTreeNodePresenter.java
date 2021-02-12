@@ -65,8 +65,6 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
         HandlerRegistration onCancelShare(ClickHandler handler);
 
         HandlerRegistration onDoShare(ClickHandler handler);
-
-        void setSharedObjectDisplay(Boolean isRef);
     }
 
     private final Map<String, TreeNodePresenter> classTreeNodePresenterMap = new HashMap<String, TreeNodePresenter>();
@@ -254,10 +252,6 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
             {
                 ImplementingClass implementingClass = new ImplementingClass(accessibleClass);
                 implementingClassPresenter.setImplementingClass(implementingClass);
-                if (implementingClass.isReference())
-                    display.setSharedObjectDisplay(true);
-                else
-                    display.setSharedObjectDisplay(false);
 
                 if (PrimitiveTypeUtil.isPrimitiveType(objectConfiguration.getClassName())
                         && objectConfiguration.getConstructorArguments().size() == 1)
@@ -324,14 +318,26 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
     {
         ObjectConfigurationFactory objectConfigurationFactory = AccessibleClassPresenterFactory
                 .getObjectConfigurationFactory();
-        if (implementingClassPresenter.getImplementingClass() == null
-                || implementingClassPresenter.getImplementingClass().getClassName() == null)
+        if (implementingClassPresenter.getImplementingClass() == null)
         {
             return null;
         }
+        if (implementingClassPresenter.getImplementingClass().isReference())
+        {
+            ReferenceConfiguration referenceConfiguration = objectConfigurationFactory.createReferenceConfiguration();
+            referenceConfiguration.setReferenceName(implementingClassPresenter.getImplementingClass().getDisplayName());
+            return referenceConfiguration;
+        }
+        String implementingClass = implementingClassPresenter.getImplementingClass().getClassName();
+        LOG.info("Serializing for implementingClass=" + implementingClass);
+        if (implementingClass == null)
+        {
+            throw new IllegalArgumentException("Invalid non-reference null implementing class: "
+                    + implementingClassPresenter.getImplementingClass());
+        }
+
         if (PrimitiveTypeUtil.isPrimitiveType(implementingClassPresenter.getImplementingClass().getClassName()))
         {
-            String implementingClass = implementingClassPresenter.getImplementingClass().getClassName();
             if (implementingClass.equals("java.lang.String"))
             {
                 /**
@@ -351,26 +357,7 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
             }
             throw new RuntimeException("NOT IMPLEMENTED YET");
         }
-        else if (implementingClassPresenter.getImplementingClass().isReference())
-        {
-            ReferenceConfiguration referenceConfiguration = objectConfigurationFactory.createReferenceConfiguration();
-            referenceConfiguration.setReferenceName(implementingClassPresenter.getImplementingClass().getDisplayName());
-            return referenceConfiguration;
-        }
-        else
-        {
-            ImplementingClass implementingClass = implementingClassPresenter.getImplementingClass();
-            LOG.info("Serializing for implementingClass=" + implementingClass);
-            if (implementingClass.isReference())
-            {
-                ReferenceConfiguration referenceConfiguration = objectConfigurationFactory
-                        .createReferenceConfiguration();
-                referenceConfiguration.setReferenceName(implementingClass.getDisplayName());
-                return referenceConfiguration;
-            }
-            return getObjectConfiguration();
-        }
-
+        return getObjectConfiguration();
     }
 
     private ObjectConfiguration getObjectConfiguration()
