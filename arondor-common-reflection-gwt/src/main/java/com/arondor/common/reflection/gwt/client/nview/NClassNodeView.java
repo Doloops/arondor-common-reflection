@@ -13,7 +13,6 @@ import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePres
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter.PrimitiveDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeNodePresenter.StringListDisplay;
 import com.arondor.common.reflection.gwt.client.view.ImplementingClassView;
-import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -323,21 +322,4 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     {
         return btnConvertTask.addClickHandler(handler);
     }
-
-    @Override
-    public void setSharedObjectDisplay(Boolean isRef)
-    {
-        if (isRef)
-        {
-            implementingClassView.getSharedObjectCreatePanel().getElement().getStyle().setDisplay(Display.NONE);
-            implementingClassView.getSharedObjectForwardPanel().getElement().getStyle().setDisplay(Display.BLOCK);
-        }
-        else
-        {
-            implementingClassView.getSharedObjectCreatePanel().getElement().getStyle().setDisplay(Display.BLOCK);
-            implementingClassView.getSharedObjectForwardPanel().getElement().getStyle().setDisplay(Display.NONE);
-        }
-
-    }
-
 }

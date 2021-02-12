@@ -25,7 +25,6 @@ import com.arondor.common.reflection.gwt.client.presenter.ImplementingClassPrese
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
@@ -56,7 +55,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
 
     private ImplementingClass selectedClass = ImplementingClass.NULL_CLASS;
 
-    private String longDesc;
+    private String longDescription;
 
     private FocusPanel sharedObjectCreatePanel = new FocusPanel();
 
@@ -94,7 +93,8 @@ public class ImplementingClassView extends Composite implements ImplementingClas
             @Override
             public void onMouseOver(MouseOverEvent event)
             {
-                implementingListInput.setHelperText(longDesc);
+                if (longDescription != null)
+                    implementingListInput.setHelperText(longDescription);
             }
         });
         implementingListInput.addMouseOutHandler(new MouseOutHandler()
@@ -143,30 +143,29 @@ public class ImplementingClassView extends Composite implements ImplementingClas
     {
         if (implementingClass.isReference())
         {
-            sharedObjectCreatePanel.getElement().getStyle().setDisplay(Display.NONE);
-            sharedObjectForwardPanel.getElement().getStyle().setDisplay(Display.BLOCK);
-
             return REFERENCE_PREFIX + implementingClass.getDisplayName();
         }
-        sharedObjectForwardPanel.getElement().getStyle().setDisplay(Display.NONE);
-        sharedObjectCreatePanel.getElement().getStyle().setDisplay(Display.BLOCK);
 
         return implementingClass.getDisplayName();
+    }
+
+    private void updateSharedObjectPanel(ImplementingClass implementingClass)
+    {
+        boolean ref = implementingClass.isReference();
+        sharedObjectCreatePanel.getElement().getStyle().setDisplay(ref ? Display.NONE : Display.BLOCK);
+        sharedObjectForwardPanel.getElement().getStyle().setDisplay(ref ? Display.BLOCK : Display.NONE);
     }
 
     @Override
     public void setImplementingClasses(Collection<ImplementingClass> implementingClasses)
     {
-        // implementingListInput.getLabel().getElement().removeClassName("select2label");
         LOG.finest("Selected classes : " + implementingClasses);
-        // implementingListInput.clear();
 
-        // implementingListInput.addItem("", ImplementingClass.NULL_CLASS);
         for (ImplementingClass implementingClass : implementingClasses)
         {
             if (implementingListInput.getValues().contains(implementingClass))
                 continue;
-            Option option = implementingListInput.addItem(implementingClass.getDisplayName(), implementingClass);
+            Option option = implementingListInput.addItem(prettyPrint(implementingClass), implementingClass);
             if (implementingClass.getClassName() != null)
                 option.setTitle(implementingClass.getClassName());
         }
@@ -175,41 +174,31 @@ public class ImplementingClassView extends Composite implements ImplementingClas
             implementingListInput.unselect();
     }
 
-    private void doSelect(ImplementingClass clazz)
+    private void doSelect(ImplementingClass implementingClass)
     {
-        LOG.finest("doSelect class=" + clazz);
-        selectedClass = clazz;
-        if (clazz == ImplementingClass.NULL_CLASS)
+        LOG.finest("doSelect class=" + implementingClass);
+        selectedClass = implementingClass;
+        if (implementingClass == ImplementingClass.NULL_CLASS)
         {
             implementingListInput.unselect();
             return;
         }
-        LOG.finest("Selecting class : " + clazz + " from a choice of " + implementingListInput.getValues().size()
-                + " items");
-        int index = implementingListInput.getValueIndex(clazz);
+        LOG.finest("Selecting class : " + implementingClass + " from a choice of "
+                + implementingListInput.getValues().size() + " items");
+        int index = implementingListInput.getValueIndex(implementingClass);
 
         if (index == -1)
         {
-            LOG.info("Adding item for clazz " + clazz + " => " + prettyPrint(clazz));
-            implementingListInput.addItem(prettyPrint(clazz), clazz);
+            LOG.info("Adding item for class " + implementingClass + " => " + prettyPrint(implementingClass));
+            implementingListInput.addItem(prettyPrint(implementingClass), implementingClass);
             implementingListInput.setSelectedIndex(implementingListInput.getValues().size() - 1);
         }
         else
         {
-            LOG.info("Selected item #" + index + " for clazz " + clazz);
+            LOG.info("Selected item #" + index + " for clazz " + implementingClass);
             implementingListInput.setSelectedIndex(index);
         }
-        // implementingListInput.getLabel().getElement().addClassName("select2label");
-        // LOG.warning("Could not select class : " + className);
-        if (clazz.isReference())
-        {
-            sharedObjectForwardPanel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
-        }
-        else
-        {
-            sharedObjectCreatePanel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
-
-        }
+        updateSharedObjectPanel(implementingClass);
     }
 
     @Override
@@ -226,11 +215,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
                     selectedClass = event.getSelectedValues().get(0);
                     LOG.finest("Selected " + selectedClass);
                     valueChangeHandler.onValueChange(new MyValueChangeEvent<ImplementingClass>(selectedClass));
-                    if (selectedClass.isReference())
-                        sharedObjectForwardPanel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
-                    else
-                        sharedObjectCreatePanel.getElement().getStyle().setVisibility(Visibility.VISIBLE);
-                    prettyPrint(selectedClass);
+                    updateSharedObjectPanel(selectedClass);
                 }
             }
         });
@@ -251,7 +236,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
     @Override
     public void setNodeLongDescription(String longDescription)
     {
-        this.longDesc = longDescription;
+        this.longDescription = longDescription;
     }
 
     @Override
