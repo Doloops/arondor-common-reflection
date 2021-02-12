@@ -35,7 +35,18 @@ pipeline {
 			steps {
 				script {
 					ARTIFACTORY = "arondor-snapshot"
-					pipelineUtils.mavenBuild(POM_PATH, BUILD_CMD)
+					pipelineUtils.mavenBuildAndPublish(POM_PATH, BUILD_CMD)
+				}
+			}
+		}
+		stage('Build Release') {	
+			when {
+				branch "release-1.0.0-rc9"
+			}
+			steps {
+				script {
+					ARTIFACTORY = "arondor-release"
+					pipelineUtils.mavenBuildAndPublish(POM_PATH, BUILD_CMD)
 				}
 			}
 		}
