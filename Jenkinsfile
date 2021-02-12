@@ -41,7 +41,7 @@ pipeline {
 		}
 		stage('Build Release') {	
 			when {
-				expression { branch ==~ /^(release-.*)/ }
+				expression { BRANCH_NAME ==~ /^(release-.*)/ }
 			}
 			steps {
 				script {
