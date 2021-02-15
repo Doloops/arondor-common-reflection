@@ -255,7 +255,9 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     @Override
     public EnumDisplay createEnumListChild(boolean isMandatory)
     {
-        return null;
+        NEnumView view = new NEnumView();
+        addChildView(isMandatory, view);
+        return view;
     }
 
     @Override
@@ -277,7 +279,9 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     @Override
     public ListRootDisplay createListChild(boolean isMandatory)
     {
-        return null;
+        NListView listView = new NListView();
+        addChildView(isMandatory, listView);
+        return listView;
     }
 
     @Override

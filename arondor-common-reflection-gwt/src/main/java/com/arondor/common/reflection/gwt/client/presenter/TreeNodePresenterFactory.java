@@ -25,6 +25,7 @@ import com.arondor.common.reflection.bean.config.ObjectConfigurationBean;
 import com.arondor.common.reflection.bean.config.PrimitiveConfigurationBean;
 import com.arondor.common.reflection.gwt.client.presenter.fields.EnumTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.fields.ListTreeNodePresenter;
+import com.arondor.common.reflection.gwt.client.presenter.fields.ListTreeNodePresenter.ListRootDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.MapTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter.PrimitiveDisplay;
@@ -102,17 +103,16 @@ public class TreeNodePresenterFactory
         }
         else if (fieldClassName.equals("java.util.Map") && genericTypes != null && genericTypes.size() == 2)
         {
-            LOG.finest(
-                    "Field " + fieldName + " is an object map of " + genericTypes.get(0) + ", " + genericTypes.get(1));
+            LOG.finest("Field " + fieldName + " is a Map<" + genericTypes.get(0) + ", " + genericTypes.get(1) + ">");
             childPresenter = new MapTreeNodePresenter(rpcService, objectReferencesProvider, genericTypes,
                     display.createMapChild(isMandatory));
         }
         else if (fieldClassName.equals("java.util.List") && genericTypes != null && genericTypes.size() == 1)
         {
-            LOG.finest("Field " + fieldName + " is an " + genericTypes.get(0) + " list");
             String genericType = genericTypes.get(0);
-            childPresenter = new ListTreeNodePresenter(rpcService, objectReferencesProvider, genericType,
-                    display.createListChild(isMandatory));
+            LOG.finest("Field " + fieldName + " is a List<" + genericType + ">");
+            ListRootDisplay listView = display.createListChild(isMandatory);
+            childPresenter = new ListTreeNodePresenter(rpcService, objectReferencesProvider, genericType, listView);
         }
         else
         {

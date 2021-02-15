@@ -84,7 +84,7 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
         display.setNodeName(baseClassName);
     }
 
-    protected ClassTreeNodePresenter(GWTReflectionServiceAsync rpcService,
+    public ClassTreeNodePresenter(GWTReflectionServiceAsync rpcService,
             ObjectReferencesProvider objectReferencesProvider, String baseClassName, boolean isMandatory,
             ClassDisplay view)
     {

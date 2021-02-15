@@ -21,9 +21,10 @@ import java.util.List;
 import com.arondor.common.reflection.bean.java.AccessibleFieldBean;
 import com.arondor.common.reflection.gwt.client.AccessibleClassPresenterFactory;
 import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent;
+import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter;
+import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter.ClassDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.ObjectReferencesProvider;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter;
-import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenterFactory;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ListConfiguration;
@@ -33,11 +34,14 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 
 public class ListTreeNodePresenter implements TreeNodePresenter
 {
-    public interface ListRootDisplay extends ChildCreatorDisplay
+    public interface ListRootDisplay extends Display
     {
         HasClickHandlers addElementClickHandler();
 
         void removeChild(Display childDisplay);
+
+        ClassDisplay createChildDisplay();
+
     }
 
     private final GWTReflectionServiceAsync rpcService;
@@ -82,8 +86,13 @@ public class ListTreeNodePresenter implements TreeNodePresenter
         entryBean.setName("Entry");
         entryBean.setDescription("Entry");
 
-        final TreeNodePresenter childPresenter = TreeNodePresenterFactory.getInstance()
-                .createChildNodePresenter(rpcService, objectReferencesProvider, listDisplay, entryBean);
+        ClassDisplay display = listDisplay.createChildDisplay();
+        // final TreeNodePresenter childPresenter =
+        // TreeNodePresenterFactory.getInstance()
+        // .createChildNodePresenter(rpcService, objectReferencesProvider,
+        // listDisplay, entryBean);
+        TreeNodePresenter childPresenter = new ClassTreeNodePresenter(rpcService, objectReferencesProvider, genericType,
+                false, display.createClassChild(false));
 
         childPresenter.getDisplay().addTreeNodeClearHandler(new TreeNodeClearEvent.Handler()
         {

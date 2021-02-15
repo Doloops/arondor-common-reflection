@@ -33,7 +33,7 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
 
     protected final MaterialTextBox textBox = new MaterialTextBox();
 
-    private FlowPanel inputGroupPanel = new FlowPanel();
+    private final FlowPanel inputGroupPanel = new FlowPanel();
 
     private String defaultValue = "";
 
