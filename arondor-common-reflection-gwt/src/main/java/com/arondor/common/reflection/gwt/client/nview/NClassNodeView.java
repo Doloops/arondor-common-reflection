@@ -57,8 +57,6 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         selectGroup.add(implementingClassView.getSharedObjectCreatePanel());
         selectGroup.add(implementingClassView.getSharedObjectForwardPanel());
 
-        // implementingClassView.asWidget().getElement().addClassName("form-control");
-
         getResetFieldBtn().getElement().addClassName("input-group-append");
         getResetFieldBtn().getElement().addClassName(CssBundle.INSTANCE.css().resetBtn());
         getResetFieldBtn().getElement().setInnerHTML("<i></i>");
@@ -348,14 +346,14 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         super.setActive(active);
         if (active)
         {
-            advancedSettings.getElement().setAttribute("style", "display:visible;");
+            advancedSettings.getElement().removeClassName(CssBundle.INSTANCE.css().hideAdvancedSettings());
             getElement().addClassName(CssBundle.INSTANCE.css().active());
         }
         else
         {
             getElement().removeClassName(CssBundle.INSTANCE.css().active());
             advancedSettings.getElement().getElementsByTagName("a").getItem(0).setClassName("collapsed");
-            advancedSettings.getElement().setAttribute("style", "display:none;");
+            advancedSettings.getElement().addClassName(CssBundle.INSTANCE.css().hideAdvancedSettings());
         }
     }
 

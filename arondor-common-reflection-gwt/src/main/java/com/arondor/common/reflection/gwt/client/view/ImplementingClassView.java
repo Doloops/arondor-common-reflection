@@ -66,6 +66,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         initWidget(implementingListInput);
         implementingListInput.setClass("outlined");
         implementingListInput.getElement().addClassName(CssBundle.INSTANCE.css().comboBox());
+        implementingListInput.getElement().addClassName(CssBundle.INSTANCE.css().paddL40());
         // resetImplementingList();
         sharedObjectCreatePanel.add(sharedObjectImg);
         sharedObjectCreatePanel.getElement().getStyle().setDisplay(Display.NONE);

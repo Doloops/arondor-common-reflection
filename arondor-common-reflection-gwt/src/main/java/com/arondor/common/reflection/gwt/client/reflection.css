@@ -265,7 +265,7 @@
 	text-align: left;
 }
 
-.comboBox span[class="select2-selection__rendered"] {
+.paddL40 span[class="select2-selection__rendered"] {
 	padding-left: 40px!important;
 }
 
