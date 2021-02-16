@@ -19,20 +19,20 @@ public class NListView extends NNodeView implements ListRootDisplay
 
     private final MaterialButton addButton = new MaterialButton();
 
-    private final FlowPanel inputGroupPanel = new FlowPanel();
+    // private final FlowPanel inputGroupPanel = new FlowPanel();
 
     public NListView()
     {
-        LOG.severe(">> asking to create a listView");
-        inputGroupPanel.getElement().setAttribute("style", "border:3px solid red");
-        add(inputGroupPanel);
+        // LOG.severe(">> asking to create a listView");
+        // inputGroupPanel.getElement().setAttribute("style", "border:3px solid red");
+        // add(inputGroupPanel);
     }
 
     @Override
     public void setNodeDescription(String description)
     {
         // TODO Auto-generated method stub
-        LOG.severe(">> node description is : " + description);
+        LOG.severe("Node description is : " + description);
     }
 
     @Override
