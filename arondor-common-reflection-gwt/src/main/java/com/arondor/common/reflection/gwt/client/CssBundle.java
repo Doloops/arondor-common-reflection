@@ -100,6 +100,9 @@ public interface CssBundle extends ClientBundle
 
         @ClassName("doConversionBtn")
         String doConversionBtn();
+
+        @ClassName("active")
+        String active();
     }
 
     static final CssBundle INSTANCE = GWT.create(CssBundle.class);

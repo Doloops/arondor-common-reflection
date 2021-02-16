@@ -336,4 +336,20 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         return btnConvertTask.addClickHandler(handler);
     }
 
+    @Override
+    public void setActive(boolean active)
+    {
+        super.setActive(active);
+        if (active)
+        {
+            advancedSettings.getElement().setAttribute("style", "display:visible;");
+            getElement().addClassName(CssBundle.INSTANCE.css().active());
+        }
+        else
+        {
+            getElement().removeClassName(CssBundle.INSTANCE.css().active());
+            advancedSettings.getElement().setAttribute("style", "display:none;");
+        }
+    }
+
 }
