@@ -233,7 +233,7 @@ public class JavaAccessibleClassParser implements AccessibleClassParser
     private void parseExposedMethod(Class<?> clazz, Map<String, AccessibleField> exposedAttributes,
             List<Method> exposedMethods, boolean includeNonPrimitive, Method method)
     {
-        if (isGetterMethod(includeNonPrimitive, method))
+        if (isGetterMethod(includeNonPrimitive, method) && !method.getReturnType().getName().equals("void"))
         {
             String prop = getterToAttribute(method.getName());
             Class<?> fieldClass = method.getReturnType();

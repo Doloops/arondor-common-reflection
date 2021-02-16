@@ -121,7 +121,7 @@ public class JavaClassPathAccessibleClassProvider extends AbstractJavaAccessible
         }
         try
         {
-            exploreParsedClasses(catalog);
+            exploreAccessibleClasses(catalog);
         }
         catch (RuntimeException | Error e)
         {
@@ -129,18 +129,23 @@ public class JavaClassPathAccessibleClassProvider extends AbstractJavaAccessible
         }
     }
 
-    private void exploreParsedClasses(AccessibleClassCatalog catalog)
+    private void exploreAccessibleClasses(AccessibleClassCatalog catalog)
     {
         Collection<AccessibleClass> parsed = catalog.getImplementingAccessibleClasses(Object.class.getName());
         for (AccessibleClass clazz : parsed)
         {
-            for (Map.Entry<String, AccessibleField> entry : clazz.getAccessibleFields().entrySet())
-            {
-                AccessibleField field = entry.getValue();
-                String className = field.getClassName();
-                String context = "class=" + clazz.getName() + ", field=" + field.getName();
-                checkFieldClass(catalog, className, context);
-            }
+            exploreAccessibleClass(catalog, clazz);
+        }
+    }
+
+    private void exploreAccessibleClass(AccessibleClassCatalog catalog, AccessibleClass clazz)
+    {
+        for (Map.Entry<String, AccessibleField> entry : clazz.getAccessibleFields().entrySet())
+        {
+            AccessibleField field = entry.getValue();
+            String className = field.getClassName();
+            String context = "class=" + clazz.getName() + ", field=" + field.getName();
+            checkFieldClass(catalog, className, context);
         }
     }
 
@@ -174,6 +179,7 @@ public class JavaClassPathAccessibleClassProvider extends AbstractJavaAccessible
                 if (child != null)
                 {
                     LOG.debug("Added dependant class at " + context + ", missing class=" + className);
+                    exploreAccessibleClass(catalog, child);
                 }
                 else
                 {
