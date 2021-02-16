@@ -68,7 +68,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
             @Override
             public void onClick(ClickEvent event)
             {
-                // implementingClassView.resetImplementingList();
+                implementingClassView.reset();
                 setActive(false);
                 clear();
             }
@@ -354,6 +354,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         else
         {
             getElement().removeClassName(CssBundle.INSTANCE.css().active());
+            advancedSettings.getElement().getElementsByTagName("a").getItem(0).setClassName("collapsed");
             advancedSettings.getElement().setAttribute("style", "display:none;");
         }
     }
