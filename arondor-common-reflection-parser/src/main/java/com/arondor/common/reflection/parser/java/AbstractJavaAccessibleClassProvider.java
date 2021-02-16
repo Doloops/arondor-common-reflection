@@ -282,32 +282,34 @@ public abstract class AbstractJavaAccessibleClassProvider implements AccessibleC
         }
     }
 
-    protected void addClass(AccessibleClassCatalog catalog, String className)
+    protected AccessibleClass addClass(AccessibleClassCatalog catalog, String className)
     {
         try
         {
             Class<?> clazz = Class.forName(className, false, getEffectiveClassLoader());
-            addClass(catalog, clazz);
+            return addClass(catalog, clazz);
         }
         catch (ClassNotFoundException e)
         {
-            LOG.error("Could not get class for name : " + className);
+            LOG.error("Could not get class " + className + " : " + e.getMessage());
         }
         catch (NoClassDefFoundError e)
         {
-            LOG.error("Could not get class for name : " + className);
+            LOG.error("Could not get class " + className + " : " + e.getMessage());
         }
+        return null;
     }
 
-    protected void addClass(AccessibleClassCatalog catalog, Class<?> clazz)
+    protected AccessibleClass addClass(AccessibleClassCatalog catalog, Class<?> clazz)
     {
         AccessibleClass accessibleClass = accessibleClassParser.parseAccessibleClass(clazz);
         if (accessibleClass == null)
         {
-            LOG.error("Could not parse class : " + clazz.getName());
-            return;
+            LOG.debug("Could not parse class " + clazz.getName());
+            return null;
         }
         catalog.addAccessibleClass(accessibleClass);
+        return accessibleClass;
     }
 
     public boolean isAllowClassWithNoEmptyConstructor()

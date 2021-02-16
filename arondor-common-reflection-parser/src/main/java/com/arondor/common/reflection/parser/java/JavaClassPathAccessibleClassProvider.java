@@ -19,12 +19,17 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.jar.Manifest;
 
 import org.apache.log4j.Logger;
 
 import com.arondor.common.reflection.api.catalog.AccessibleClassCatalog;
+import com.arondor.common.reflection.model.java.AccessibleClass;
+import com.arondor.common.reflection.model.java.AccessibleField;
+import com.arondor.common.reflection.util.PrimitiveTypeUtil;
 
 /**
  * Parse all class path in search of classes
@@ -112,6 +117,68 @@ public class JavaClassPathAccessibleClassProvider extends AbstractJavaAccessible
             else
             {
                 LOG.warn("Do not known how to handle classpath : " + pathFile.getAbsolutePath());
+            }
+        }
+        try
+        {
+            exploreParsedClasses(catalog);
+        }
+        catch (RuntimeException | Error e)
+        {
+            LOG.error("Could not explore parsed exceptions: " + e.getMessage(), e);
+        }
+    }
+
+    private void exploreParsedClasses(AccessibleClassCatalog catalog)
+    {
+        Collection<AccessibleClass> parsed = catalog.getImplementingAccessibleClasses(Object.class.getName());
+        for (AccessibleClass clazz : parsed)
+        {
+            for (Map.Entry<String, AccessibleField> entry : clazz.getAccessibleFields().entrySet())
+            {
+                AccessibleField field = entry.getValue();
+                String className = field.getClassName();
+                String context = "class=" + clazz.getName() + ", field=" + field.getName();
+                checkFieldClass(catalog, className, context);
+            }
+        }
+    }
+
+    private void checkFieldClass(AccessibleClassCatalog catalog, String className, String context)
+    {
+        if (PrimitiveTypeUtil.isPrimitiveType(className))
+        {
+            LOG.debug("Field is primitive");
+        }
+        else if (className.equals("[B"))
+        {
+            LOG.debug("Field is primitive array");
+        }
+        else if (className.startsWith("java.lang.") || className.startsWith("java.util.")
+                || className.startsWith("java.io.") || className.startsWith("java.math."))
+        {
+            LOG.debug("Field is collection");
+        }
+        else if (className.startsWith("[L") && className.endsWith(";"))
+        {
+            String unary = className.substring(2, className.length() - 1);
+            checkFieldClass(catalog, unary, context);
+            return;
+        }
+        else
+        {
+            AccessibleClass child = catalog.getAccessibleClass(className);
+            if (child == null)
+            {
+                child = addClass(catalog, className);
+                if (child != null)
+                {
+                    LOG.debug("Added dependant class at " + context + ", missing class=" + className);
+                }
+                else
+                {
+                    LOG.error("Could not resolve class at " + context + ", missing class=" + className);
+                }
             }
         }
     }
