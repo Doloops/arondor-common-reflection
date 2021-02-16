@@ -219,6 +219,10 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         {
             view = new NStringView();
         }
+        // else if (fieldClassName.equals("java.util.List"))
+        // {
+        // view = new NListView();
+        // }
         // TODO long
         // TODO java.util.Map
         // TODO java.util.List
