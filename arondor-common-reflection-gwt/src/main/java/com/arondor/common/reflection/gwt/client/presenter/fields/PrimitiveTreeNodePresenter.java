@@ -16,7 +16,6 @@
 package com.arondor.common.reflection.gwt.client.presenter.fields;
 
 import com.arondor.common.reflection.gwt.client.AccessibleClassPresenterFactory;
-import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent;
 import com.arondor.common.reflection.gwt.client.nview.prim.NStringView;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
@@ -55,16 +54,6 @@ public class PrimitiveTreeNodePresenter implements TreeNodePresenter
                 fieldValue = event.getValue();
             }
         });
-        primitiveDisplay.addTreeNodeClearHandler(new TreeNodeClearEvent.Handler()
-        {
-            @Override
-            public void onTreeNodeClearEvent(TreeNodeClearEvent treeNodeClearEvent)
-            {
-                fieldValue = null;
-                primitiveDisplay.setDefaultValue(defaultValue);
-            }
-        });
-
     }
 
     @Override

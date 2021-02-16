@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import com.arondor.common.reflection.gwt.client.AccessibleClassPresenterFactory;
-import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter.ClassDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.ObjectReferencesProvider;
@@ -94,15 +93,6 @@ public class MapTreeNodePresenter implements TreeNodePresenter
             public void onClick(ClickEvent event)
             {
                 addChild();
-            }
-        });
-
-        mapRootDisplay.addTreeNodeClearHandler(new TreeNodeClearEvent.Handler()
-        {
-            @Override
-            public void onTreeNodeClearEvent(TreeNodeClearEvent treeNodeClearEvent)
-            {
-                keyValuePresenters.clear();
             }
         });
     }

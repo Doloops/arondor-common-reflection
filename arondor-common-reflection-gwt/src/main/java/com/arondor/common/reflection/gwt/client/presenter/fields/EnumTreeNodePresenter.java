@@ -19,7 +19,6 @@ import java.util.List;
 
 import com.arondor.common.reflection.bean.config.PrimitiveConfigurationBean;
 import com.arondor.common.reflection.gwt.client.AccessibleClassPresenterFactory;
-import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
@@ -58,15 +57,6 @@ public class EnumTreeNodePresenter implements TreeNodePresenter
                 fieldValue = event.getValue();
             }
         });
-        enumDisplay.addTreeNodeClearHandler(new TreeNodeClearEvent.Handler()
-        {
-            @Override
-            public void onTreeNodeClearEvent(TreeNodeClearEvent treeNodeClearEvent)
-            {
-                fieldValue = null;
-            }
-        });
-
     }
 
     public String getFieldName()

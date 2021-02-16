@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import com.arondor.common.reflection.gwt.client.AccessibleClassPresenterFactory;
-import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
@@ -51,6 +50,8 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
     public interface ClassDisplay extends TreeNodePresenter.ChildCreatorDisplay
     {
         ImplementingClassPresenter.ImplementingClassDisplay getImplementingClassDisplay();
+
+        HandlerRegistration onReset(ClickHandler handler);
 
         HandlerRegistration onShare(ClickHandler handler);
 
@@ -119,10 +120,10 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
             }
         });
 
-        display.addTreeNodeClearHandler(new TreeNodeClearEvent.Handler()
+        display.onReset(new ClickHandler()
         {
             @Override
-            public void onTreeNodeClearEvent(TreeNodeClearEvent treeNodeClearEvent)
+            public void onClick(ClickEvent event)
             {
                 implementingClassPresenter.setImplementingClass(ImplementingClass.NULL_CLASS);
                 clearFields();

@@ -68,7 +68,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
             @Override
             public void onClick(ClickEvent event)
             {
-                implementingClassView.resetImplementingList();
+                // implementingClassView.resetImplementingList();
                 setActive(false);
                 clear();
             }
@@ -325,6 +325,12 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     public HandlerRegistration onCancelShare(ClickHandler handler)
     {
         return btnCancelConversion.addClickHandler(handler);
+    }
+
+    @Override
+    public HandlerRegistration onReset(ClickHandler handler)
+    {
+        return getResetFieldBtn().addClickHandler(handler);
     }
 
     /**

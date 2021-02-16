@@ -15,7 +15,6 @@
  */
 package com.arondor.common.reflection.gwt.client.presenter;
 
-import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter.ClassDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.EnumTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.fields.ListTreeNodePresenter;
@@ -62,8 +61,6 @@ public interface TreeNodePresenter
         boolean isActive();
 
         void clear();
-
-        void addTreeNodeClearHandler(TreeNodeClearEvent.Handler handler);
 
         void setIsPassword();
     }

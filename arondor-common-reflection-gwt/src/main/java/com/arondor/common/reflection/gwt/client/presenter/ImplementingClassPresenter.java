@@ -37,7 +37,7 @@ public interface ImplementingClassPresenter
 
         void setNodeDescription(String label);
 
-        void resetImplementingList();
+        void reset();
 
         void setNodeLongDescription(String longDescription);
 

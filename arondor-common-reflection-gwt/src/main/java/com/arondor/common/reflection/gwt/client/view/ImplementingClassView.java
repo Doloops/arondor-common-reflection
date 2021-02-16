@@ -120,11 +120,10 @@ public class ImplementingClassView extends Composite implements ImplementingClas
     }
 
     @Override
-    public void resetImplementingList()
+    public void reset()
     {
         selectedClass = ImplementingClass.NULL_CLASS;
         selectImplementingClass(selectedClass);
-        fireEvent(new MyValueChangeEvent<ImplementingClass>(selectedClass));
 
         sharedObjectCreatePanel.getElement().getStyle().setDisplay(Display.NONE);
 
@@ -139,9 +138,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
             @Override
             public void execute()
             {
-                if (implementingListInput.getSelectedValues() == null
-                        || implementingListInput.getSelectedValues().isEmpty()
-                        || implementingListInput.getValues().size() < 1)
+                if (implementingListInput.getSelectedValue() == null || implementingListInput.getValues().size() < 1)
                 {
                     implementingListInput.getLabel().getElement().removeClassName("select2label");
                 }
@@ -160,11 +157,22 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         return implementingClass.getDisplayName();
     }
 
-    private void updateSharedObjectPanel(ImplementingClass implementingClass)
+    private void updateSharedObjectPanel()
     {
-        boolean ref = implementingClass.isReference();
-        sharedObjectCreatePanel.getElement().getStyle().setDisplay(ref ? Display.NONE : Display.BLOCK);
-        sharedObjectForwardPanel.getElement().getStyle().setDisplay(ref ? Display.BLOCK : Display.NONE);
+        boolean showCreate, showForward;
+        if (selectedClass == null || selectedClass == ImplementingClass.NULL_CLASS)
+        {
+            showCreate = false;
+            showForward = false;
+        }
+        else
+        {
+            boolean isReference = selectedClass.isReference();
+            showCreate = !isReference;
+            showForward = isReference;
+        }
+        sharedObjectCreatePanel.getElement().getStyle().setDisplay(showCreate ? Display.BLOCK : Display.NONE);
+        sharedObjectForwardPanel.getElement().getStyle().setDisplay(showForward ? Display.BLOCK : Display.NONE);
     }
 
     @Override
@@ -192,6 +200,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         if (implementingClass == ImplementingClass.NULL_CLASS)
         {
             implementingListInput.unselect();
+            updateSharedObjectPanel();
             return;
         }
         LOG.finest("Selecting class : " + implementingClass + " from a choice of "
@@ -209,7 +218,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
             LOG.info("Selected item #" + index + " for clazz " + implementingClass);
             implementingListInput.setSelectedIndex(index);
         }
-        updateSharedObjectPanel(implementingClass);
+        updateSharedObjectPanel();
     }
 
     @Override
@@ -228,7 +237,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
                         selectedClass = event.getSelectedValues().get(0);
                     LOG.finest("Selected " + selectedClass);
                     valueChangeHandler.onValueChange(new MyValueChangeEvent<ImplementingClass>(selectedClass));
-                    updateSharedObjectPanel(selectedClass);
+                    updateSharedObjectPanel();
                 }
             }
         });
