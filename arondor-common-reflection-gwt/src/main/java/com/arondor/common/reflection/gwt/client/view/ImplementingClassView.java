@@ -27,10 +27,6 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -70,7 +66,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         initWidget(implementingListInput);
         implementingListInput.setClass("outlined");
         implementingListInput.getElement().addClassName(CssBundle.INSTANCE.css().comboBox());
-        resetImplementingList();
+        implementingListInput.getElement().addClassName(CssBundle.INSTANCE.css().paddingLeft40());
         sharedObjectCreatePanel.add(sharedObjectImg);
         sharedObjectCreatePanel.getElement().getStyle().setDisplay(Display.NONE);
 
@@ -80,6 +76,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         sharedObjectImg.getElement().addClassName(CssBundle.INSTANCE.css().sharedObjectImg());
         sharedObjectViewImg.getElement().addClassName(CssBundle.INSTANCE.css().sharedObjectImg());
 
+        implementingListInput.setTitle(longDescription);
         implementingListInput.getLabel().addClickHandler(new ClickHandler()
         {
             @Override
@@ -88,23 +85,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
                 implementingListInput.open();
             }
         });
-        implementingListInput.addMouseOverHandler(new MouseOverHandler()
-        {
-            @Override
-            public void onMouseOver(MouseOverEvent event)
-            {
-                if (longDescription != null)
-                    implementingListInput.setHelperText(longDescription);
-            }
-        });
-        implementingListInput.addMouseOutHandler(new MouseOutHandler()
-        {
-            @Override
-            public void onMouseOut(MouseOutEvent event)
-            {
-                implementingListInput.clearHelperText();
-            }
-        });
+        fixLabelStyle();
     }
 
     @Override
@@ -122,38 +103,61 @@ public class ImplementingClassView extends Composite implements ImplementingClas
     }
 
     @Override
-    public void resetImplementingList()
+    public void reset()
     {
-        implementingListInput.unselect();
         selectedClass = ImplementingClass.NULL_CLASS;
+        selectImplementingClass(selectedClass);
 
+        sharedObjectCreatePanel.getElement().getStyle().setDisplay(Display.NONE);
+
+        fixLabelStyle();
+    }
+
+    private void fixLabelStyle()
+    {
         // to prevent the onLoad() MaterialCombobox call
         Scheduler.get().scheduleDeferred(new ScheduledCommand()
         {
             @Override
             public void execute()
             {
-                if (implementingListInput.getValues() != null && implementingListInput.getValues().size() < 1)
+                if (implementingListInput.getSelectedValue() == null
+                        || implementingListInput.getSelectedValue().isEmpty()
+                        || implementingListInput.getValues().size() < 1)
+                {
                     implementingListInput.getLabel().getElement().removeClassName("select2label");
+                }
             }
         });
     }
 
     private String prettyPrint(ImplementingClass implementingClass)
     {
+        if (implementingClass == null)
+            implementingClass = ImplementingClass.NULL_CLASS;
+
         if (implementingClass.isReference())
-        {
             return REFERENCE_PREFIX + implementingClass.getDisplayName();
-        }
 
         return implementingClass.getDisplayName();
     }
 
-    private void updateSharedObjectPanel(ImplementingClass implementingClass)
+    private void updateSharedObjectPanel()
     {
-        boolean ref = implementingClass.isReference();
-        sharedObjectCreatePanel.getElement().getStyle().setDisplay(ref ? Display.NONE : Display.BLOCK);
-        sharedObjectForwardPanel.getElement().getStyle().setDisplay(ref ? Display.BLOCK : Display.NONE);
+        boolean showCreate, showForward;
+        if (selectedClass == null || selectedClass == ImplementingClass.NULL_CLASS)
+        {
+            showCreate = false;
+            showForward = false;
+        }
+        else
+        {
+            boolean isReference = selectedClass.isReference();
+            showCreate = !isReference;
+            showForward = isReference;
+        }
+        sharedObjectCreatePanel.getElement().getStyle().setDisplay(showCreate ? Display.BLOCK : Display.NONE);
+        sharedObjectForwardPanel.getElement().getStyle().setDisplay(showForward ? Display.BLOCK : Display.NONE);
     }
 
     @Override
@@ -181,6 +185,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         if (implementingClass == ImplementingClass.NULL_CLASS)
         {
             implementingListInput.unselect();
+            updateSharedObjectPanel();
             return;
         }
         LOG.finest("Selecting class : " + implementingClass + " from a choice of "
@@ -198,7 +203,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
             LOG.info("Selected item #" + index + " for clazz " + implementingClass);
             implementingListInput.setSelectedIndex(index);
         }
-        updateSharedObjectPanel(implementingClass);
+        updateSharedObjectPanel();
     }
 
     @Override
@@ -210,12 +215,14 @@ public class ImplementingClassView extends Composite implements ImplementingClas
             public void onSelectItem(SelectItemEvent<ImplementingClass> event)
             {
                 LOG.finest("onSelectItem() selected size=" + event.getSelectedValues().size());
-                if (!event.getSelectedValues().isEmpty())
                 {
-                    selectedClass = event.getSelectedValues().get(0);
+                    if (event.getSelectedValues().isEmpty())
+                        selectedClass = ImplementingClass.NULL_CLASS;
+                    else
+                        selectedClass = event.getSelectedValues().get(0);
                     LOG.finest("Selected " + selectedClass);
                     valueChangeHandler.onValueChange(new MyValueChangeEvent<ImplementingClass>(selectedClass));
-                    updateSharedObjectPanel(selectedClass);
+                    updateSharedObjectPanel();
                 }
             }
         });
@@ -225,6 +232,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
     public void selectImplementingClass(ImplementingClass implementingClassName)
     {
         doSelect(implementingClassName);
+        fixLabelStyle();
     }
 
     @Override

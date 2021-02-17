@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.arondor.common.reflection.bean.config.ObjectConfigurationBean;
 import com.arondor.common.reflection.bean.config.PrimitiveConfigurationBean;
 import com.arondor.common.reflection.gwt.client.presenter.fields.EnumTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.fields.ListTreeNodePresenter;
@@ -31,7 +30,6 @@ import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNo
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter.PrimitiveDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
-import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
 import com.arondor.common.reflection.model.java.AccessibleAnnotation;
 import com.arondor.common.reflection.model.java.AccessibleClass;
@@ -188,8 +186,6 @@ public class TreeNodePresenterFactory
             });
 
         }
-        ObjectConfiguration objectConfiguration = new ObjectConfigurationBean();
-        childPresenter.setElementConfiguration(objectConfiguration);
         return childPresenter;
     }
 

@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.arondor.common.reflection.gwt.client.AccessibleClassPresenterFactory;
-import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ListConfiguration;
@@ -58,15 +57,6 @@ public class StringListTreeNodePresenter implements TreeNodePresenter
             public void onValueChange(ValueChangeEvent<List<String>> event)
             {
                 values = event.getValue();
-            }
-        });
-        primitiveDisplay.addTreeNodeClearHandler(new TreeNodeClearEvent.Handler()
-        {
-            @Override
-            public void onTreeNodeClearEvent(TreeNodeClearEvent treeNodeClearEvent)
-            {
-                fieldValue = null;
-                primitiveDisplay.setDefaultValue(defaultValue);
             }
         });
     }

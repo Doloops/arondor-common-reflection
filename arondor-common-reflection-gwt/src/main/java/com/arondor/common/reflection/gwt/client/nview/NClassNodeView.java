@@ -57,8 +57,6 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         selectGroup.add(implementingClassView.getSharedObjectCreatePanel());
         selectGroup.add(implementingClassView.getSharedObjectForwardPanel());
 
-        // implementingClassView.asWidget().getElement().addClassName("form-control");
-
         getResetFieldBtn().getElement().addClassName("input-group-append");
         getResetFieldBtn().getElement().addClassName(CssBundle.INSTANCE.css().resetBtn());
         getResetFieldBtn().getElement().setInnerHTML("<i></i>");
@@ -68,7 +66,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
             @Override
             public void onClick(ClickEvent event)
             {
-                implementingClassView.resetImplementingList();
+                implementingClassView.reset();
                 setActive(false);
                 clear();
             }
@@ -221,6 +219,10 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         {
             view = new NStringView();
         }
+        // else if (fieldClassName.equals("java.util.List"))
+        // {
+        // view = new NListView();
+        // }
         // TODO long
         // TODO java.util.Map
         // TODO java.util.List
@@ -327,6 +329,12 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         return btnCancelConversion.addClickHandler(handler);
     }
 
+    @Override
+    public HandlerRegistration onReset(ClickHandler handler)
+    {
+        return getResetFieldBtn().addClickHandler(handler);
+    }
+
     /**
      * Add the click handler on the pop-up share button
      */
@@ -334,6 +342,23 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     public HandlerRegistration onDoShare(ClickHandler handler)
     {
         return btnConvertTask.addClickHandler(handler);
+    }
+
+    @Override
+    public void setActive(boolean active)
+    {
+        super.setActive(active);
+        if (active)
+        {
+            advancedSettings.getElement().removeClassName(CssBundle.INSTANCE.css().hideAdvancedSettings());
+            getElement().addClassName(CssBundle.INSTANCE.css().active());
+        }
+        else
+        {
+            getElement().removeClassName(CssBundle.INSTANCE.css().active());
+            advancedSettings.getElement().getElementsByTagName("a").getItem(0).setClassName("collapsed");
+            advancedSettings.getElement().addClassName(CssBundle.INSTANCE.css().hideAdvancedSettings());
+        }
     }
 
 }

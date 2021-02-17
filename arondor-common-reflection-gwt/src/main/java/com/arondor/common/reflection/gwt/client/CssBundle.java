@@ -100,6 +100,12 @@ public interface CssBundle extends ClientBundle
 
         @ClassName("doConversionBtn")
         String doConversionBtn();
+
+        @ClassName("paddingLeft40")
+        String paddingLeft40();
+
+        @ClassName("active")
+        String active();
     }
 
     static final CssBundle INSTANCE = GWT.create(CssBundle.class);

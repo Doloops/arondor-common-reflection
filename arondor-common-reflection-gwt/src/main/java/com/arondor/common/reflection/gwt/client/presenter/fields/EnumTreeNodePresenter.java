@@ -19,10 +19,10 @@ import java.util.List;
 
 import com.arondor.common.reflection.bean.config.PrimitiveConfigurationBean;
 import com.arondor.common.reflection.gwt.client.AccessibleClassPresenterFactory;
-import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
+import com.arondor.common.reflection.model.config.PrimitiveConfiguration;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
@@ -58,15 +58,6 @@ public class EnumTreeNodePresenter implements TreeNodePresenter
                 fieldValue = event.getValue();
             }
         });
-        enumDisplay.addTreeNodeClearHandler(new TreeNodeClearEvent.Handler()
-        {
-            @Override
-            public void onTreeNodeClearEvent(TreeNodeClearEvent treeNodeClearEvent)
-            {
-                fieldValue = null;
-            }
-        });
-
     }
 
     public String getFieldName()
@@ -88,7 +79,12 @@ public class EnumTreeNodePresenter implements TreeNodePresenter
     @Override
     public void setElementConfiguration(ElementConfiguration elementConfiguration)
     {
-        if (elementConfiguration instanceof ObjectConfiguration)
+        if (elementConfiguration instanceof PrimitiveConfiguration)
+        {
+            PrimitiveConfiguration primitiveConfiguration = (PrimitiveConfiguration) elementConfiguration;
+            enumDisplay.setValue(primitiveConfiguration.getValue());
+        }
+        else if (elementConfiguration instanceof ObjectConfiguration)
         {
             ObjectConfiguration objectConfiguration = (ObjectConfiguration) elementConfiguration;
             if (objectConfiguration.getConstructorArguments() != null

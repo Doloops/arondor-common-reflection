@@ -20,7 +20,6 @@ import java.util.List;
 
 import com.arondor.common.reflection.bean.java.AccessibleFieldBean;
 import com.arondor.common.reflection.gwt.client.AccessibleClassPresenterFactory;
-import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter.ClassDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.ObjectReferencesProvider;
@@ -93,15 +92,6 @@ public class ListTreeNodePresenter implements TreeNodePresenter
         // listDisplay, entryBean);
         TreeNodePresenter childPresenter = new ClassTreeNodePresenter(rpcService, objectReferencesProvider, genericType,
                 false, display.createClassChild(false));
-
-        childPresenter.getDisplay().addTreeNodeClearHandler(new TreeNodeClearEvent.Handler()
-        {
-            @Override
-            public void onTreeNodeClearEvent(TreeNodeClearEvent treeNodeClearEvent)
-            {
-                removeChild(childPresenter);
-            }
-        });
         childPresenters.add(childPresenter);
         return childPresenter;
     }

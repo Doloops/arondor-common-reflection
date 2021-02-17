@@ -1,7 +1,6 @@
 package com.arondor.common.reflection.gwt.client.nview;
 
 import com.arondor.common.reflection.gwt.client.CssBundle;
-import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent.Handler;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
@@ -69,11 +68,6 @@ public abstract class NNodeView extends FlowPanel implements TreeNodePresenter.D
     public boolean isActive()
     {
         return active;
-    }
-
-    @Override
-    public void addTreeNodeClearHandler(Handler handler)
-    {
     }
 
     protected void disableReset()

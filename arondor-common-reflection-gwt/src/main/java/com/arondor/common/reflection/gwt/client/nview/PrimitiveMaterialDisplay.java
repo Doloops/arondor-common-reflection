@@ -1,7 +1,6 @@
 package com.arondor.common.reflection.gwt.client.nview;
 
 import com.arondor.common.reflection.gwt.client.CssBundle;
-import com.arondor.common.reflection.gwt.client.event.TreeNodeClearEvent.Handler;
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter.ErrorDisplay;
 import com.arondor.common.reflection.gwt.client.presenter.fields.PrimitiveTreeNodePresenter.PrimitiveDisplay;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -80,13 +79,6 @@ public class PrimitiveMaterialDisplay implements PrimitiveDisplay, ErrorDisplay
 
     @Override
     public void clear()
-    {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void addTreeNodeClearHandler(Handler handler)
     {
         // TODO Auto-generated method stub
 
