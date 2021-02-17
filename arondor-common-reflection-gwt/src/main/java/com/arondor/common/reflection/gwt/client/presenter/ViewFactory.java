@@ -2,5 +2,5 @@ package com.arondor.common.reflection.gwt.client.presenter;
 
 public interface ViewFactory
 {
-    HierarchicAccessibleClassPresenter.Display createClassDisplay();
+    HierarchicAccessibleClassPresenter.Display createClassDisplay(boolean isLink);
 }

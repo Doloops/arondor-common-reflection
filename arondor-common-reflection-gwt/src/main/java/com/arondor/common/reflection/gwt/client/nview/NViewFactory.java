@@ -7,9 +7,8 @@ public class NViewFactory implements ViewFactory
 {
 
     @Override
-    public HierarchicAccessibleClassPresenter.Display createClassDisplay()
+    public HierarchicAccessibleClassPresenter.Display createClassDisplay(boolean isLink)
     {
-        return new NClassTreeView();
+        return new NClassTreeView(isLink);
     }
-
 }

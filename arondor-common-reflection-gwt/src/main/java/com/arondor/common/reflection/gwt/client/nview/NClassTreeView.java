@@ -11,11 +11,17 @@ public class NClassTreeView extends FlowPanel
 {
     private final NClassNodeView rootView = new NClassNodeView();
 
-    public NClassTreeView()
+    public NClassTreeView(boolean isLink)
     {
-        rootView.disableReset();
+        if (!isLink)
+            rootView.disableReset();
         getElement().addClassName(CssBundle.INSTANCE.css().rootTreeNode());
         add(rootView);
+    }
+
+    public NClassTreeView()
+    {
+        this(false);
     }
 
     @Override

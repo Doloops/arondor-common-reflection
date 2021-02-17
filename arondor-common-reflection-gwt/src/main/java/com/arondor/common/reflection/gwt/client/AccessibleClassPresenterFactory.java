@@ -59,8 +59,9 @@ public class AccessibleClassPresenterFactory
     public static AccessibleClassPresenter createAccessibleClassPresenter(GWTReflectionServiceAsync rpcService,
             ObjectReferencesProvider objectReferencesProvider, String baseClassName)
     {
+        boolean isLink = baseClassName.equals("com.fast2.model.taskflow.design.TaskLinkCondition");
         return new HierarchicAccessibleClassPresenter(rpcService, objectReferencesProvider, baseClassName,
-                FACTORY.createClassDisplay());
+                FACTORY.createClassDisplay(isLink));
     }
 
     public static ObjectConfigurationMapPresenter createObjectConfigurationMapPresenter(
