@@ -48,7 +48,8 @@ public class NEnumView extends NNodeView implements EnumDisplay
             @Override
             public void execute()
             {
-                selectionBox.getLabel().getElement().removeClassName("select2label");
+                if (selectionBox.getValue().isEmpty())
+                    selectionBox.getLabel().getElement().removeClassName("select2label");
             }
         });
     }
