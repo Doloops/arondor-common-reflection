@@ -6,7 +6,6 @@ import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter
 import com.arondor.common.reflection.gwt.client.presenter.TreeNodePresenter.Display;
 import com.arondor.common.reflection.gwt.client.presenter.fields.ListTreeNodePresenter.ListRootDisplay;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.user.client.ui.FlowPanel;
 
 import gwt.material.design.client.ui.MaterialButton;
 
@@ -23,8 +22,9 @@ public class NListView extends NNodeView implements ListRootDisplay
 
     public NListView()
     {
-        // LOG.severe(">> asking to create a listView");
-        // inputGroupPanel.getElement().setAttribute("style", "border:3px solid red");
+        LOG.severe("ListView for task configuration not implemented yet !");
+        // inputGroupPanel.getElement().setAttribute("style", "border:3px solid
+        // red");
         // add(inputGroupPanel);
     }
 

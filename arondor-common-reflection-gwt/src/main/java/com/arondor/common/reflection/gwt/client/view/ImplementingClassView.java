@@ -66,8 +66,7 @@ public class ImplementingClassView extends Composite implements ImplementingClas
         initWidget(implementingListInput);
         implementingListInput.setClass("outlined");
         implementingListInput.getElement().addClassName(CssBundle.INSTANCE.css().comboBox());
-        implementingListInput.getElement().addClassName(CssBundle.INSTANCE.css().paddL40());
-        // resetImplementingList();
+        implementingListInput.getElement().addClassName(CssBundle.INSTANCE.css().paddingLeft40());
         sharedObjectCreatePanel.add(sharedObjectImg);
         sharedObjectCreatePanel.getElement().getStyle().setDisplay(Display.NONE);
 
@@ -86,23 +85,6 @@ public class ImplementingClassView extends Composite implements ImplementingClas
                 implementingListInput.open();
             }
         });
-        // implementingListInput.addMouseOverHandler(new MouseOverHandler()
-        // {
-        // @Override
-        // public void onMouseOver(MouseOverEvent event)
-        // {
-        // if (longDescription != null)
-        // implementingListInput.setHelperText(longDescription);
-        // }
-        // });
-        // implementingListInput.addMouseOutHandler(new MouseOutHandler()
-        // {
-        // @Override
-        // public void onMouseOut(MouseOutEvent event)
-        // {
-        // implementingListInput.clearHelperText();
-        // }
-        // });
         fixLabelStyle();
     }
 
@@ -128,12 +110,12 @@ public class ImplementingClassView extends Composite implements ImplementingClas
 
         sharedObjectCreatePanel.getElement().getStyle().setDisplay(Display.NONE);
 
-        // to prevent the onLoad() MaterialCombobox call
         fixLabelStyle();
     }
 
     private void fixLabelStyle()
     {
+        // to prevent the onLoad() MaterialCombobox call
         Scheduler.get().scheduleDeferred(new ScheduledCommand()
         {
             @Override

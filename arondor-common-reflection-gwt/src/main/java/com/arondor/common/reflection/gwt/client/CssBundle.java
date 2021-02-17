@@ -101,8 +101,8 @@ public interface CssBundle extends ClientBundle
         @ClassName("doConversionBtn")
         String doConversionBtn();
 
-        @ClassName("paddL40")
-        String paddL40();
+        @ClassName("paddingLeft40")
+        String paddingLeft40();
 
         @ClassName("active")
         String active();
