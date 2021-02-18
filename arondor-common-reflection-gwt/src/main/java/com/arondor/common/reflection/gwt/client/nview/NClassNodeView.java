@@ -195,10 +195,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     public ClassTreeNodePresenter.ClassDisplay createClassChild(boolean isMandatory)
     {
         NClassNodeView childView = new NClassNodeView();
-        if (isMandatory)
-        {
-            childView.disableReset();
-        }
+        childView.enableReset(!isMandatory);
         addChildView(isMandatory, childView);
         return childView;
     }

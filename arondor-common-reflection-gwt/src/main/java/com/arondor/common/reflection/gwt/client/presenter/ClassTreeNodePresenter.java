@@ -66,6 +66,8 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
         HandlerRegistration onCancelShare(ClickHandler handler);
 
         HandlerRegistration onDoShare(ClickHandler handler);
+
+        void enableReset(boolean enabled);
     }
 
     private final Map<String, TreeNodePresenter> classTreeNodePresenterMap = new HashMap<String, TreeNodePresenter>();

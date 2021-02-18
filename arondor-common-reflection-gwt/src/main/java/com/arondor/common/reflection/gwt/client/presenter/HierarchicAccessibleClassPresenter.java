@@ -92,4 +92,10 @@ public class HierarchicAccessibleClassPresenter implements AccessibleClassPresen
     {
         return getDisplay();
     }
+
+    @Override
+    public void enableReset(boolean enabled)
+    {
+        display.getClassTreeDisplay().getRootView().enableReset(enabled);
+    }
 }

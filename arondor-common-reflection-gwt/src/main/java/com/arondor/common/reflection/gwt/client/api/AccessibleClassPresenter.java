@@ -25,4 +25,6 @@ public interface AccessibleClassPresenter
     ObjectConfiguration getObjectConfiguration();
 
     IsWidget getDisplayWidget();
+
+    void enableReset(boolean enabled);
 }
