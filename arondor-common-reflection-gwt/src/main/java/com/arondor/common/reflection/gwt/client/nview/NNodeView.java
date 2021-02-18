@@ -11,9 +11,9 @@ public abstract class NNodeView extends FlowPanel implements TreeNodePresenter.D
 
     private final FocusPanel resetBtn = new FocusPanel();
 
-    private boolean resetEnabled = true;
-
     private String helperTextContent = "";
+
+    private boolean enableReset;
 
     protected NNodeView()
     {
@@ -21,7 +21,8 @@ public abstract class NNodeView extends FlowPanel implements TreeNodePresenter.D
 
         resetBtn.getElement().setInnerHTML("<i></i><span></span>");
         resetBtn.getElement().addClassName(CssBundle.INSTANCE.css().resetBtn());
-        resetBtn.getElement().addClassName(CssBundle.INSTANCE.css().hidden());
+
+        enableReset(false);
     }
 
     protected FocusPanel getResetFieldBtn()
@@ -54,14 +55,8 @@ public abstract class NNodeView extends FlowPanel implements TreeNodePresenter.D
     public void setActive(boolean active)
     {
         this.active = active;
-        if (active)
-        {
-            resetBtn.getElement().removeClassName(CssBundle.INSTANCE.css().hidden());
-        }
-        else
-        {
-            resetBtn.getElement().addClassName(CssBundle.INSTANCE.css().hidden());
-        }
+        getResetFieldBtn().setVisible(enableReset && active);
+
     }
 
     @Override
@@ -70,11 +65,10 @@ public abstract class NNodeView extends FlowPanel implements TreeNodePresenter.D
         return active;
     }
 
-    protected void disableReset()
+    public void enableReset(boolean enabled)
     {
-        resetEnabled = false;
-        getResetFieldBtn().setVisible(false);
-
+        enableReset = enabled;
+        getResetFieldBtn().setVisible(enabled && active);
     }
 
     @Override
