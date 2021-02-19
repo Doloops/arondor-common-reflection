@@ -16,14 +16,18 @@ import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeN
 import com.arondor.common.reflection.gwt.client.view.ImplementingClassView;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.OpenEvent;
+import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 
+import gwt.material.design.client.constants.IconType;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialDialog;
-import gwt.material.design.client.ui.MaterialDialogContent;
-import gwt.material.design.client.ui.MaterialDialogFooter;
 import gwt.material.design.client.ui.MaterialTextBox;
 import gwt.material.design.client.ui.MaterialTitle;
 
@@ -49,6 +53,8 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
 
     private final MaterialTextBox keyNameTextBox = new MaterialTextBox();
 
+    private static final String ALLOWED_FOR_NAME = "^[a-zA-Z0-9-_]+$";
+
     public NClassNodeView()
     {
         getElement().addClassName(CssBundle.INSTANCE.css().classNode());
@@ -72,35 +78,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
             }
         });
 
-        convertTaskDialog.getElement().addClassName(CssBundle.INSTANCE.css().convertTaskDialog());
-
-        MaterialDialogContent dialogContent = new MaterialDialogContent();
-        dialogContent.getElement().addClassName(CssBundle.INSTANCE.css().dialogContent());
-
-        MaterialTitle title = new MaterialTitle();
-        title.setTitle("Convert to shared object");
-
-        keyNameTextBox.setClass("outlined");
-        keyNameTextBox.setLabel("Shared object name");
-        keyNameTextBox.setFocus(true);
-
-        dialogContent.add(title);
-        dialogContent.add(keyNameTextBox);
-
-        convertTaskDialog.add(dialogContent);
-
-        MaterialDialogFooter dialogFooter = new MaterialDialogFooter();
-
-        btnCancelConversion.getElement().addClassName(CssBundle.INSTANCE.css().cancelConversionBtn());
-        btnCancelConversion.setText("Cancel conversion");
-
-        btnConvertTask.getElement().addClassName(CssBundle.INSTANCE.css().doConversionBtn());
-        btnConvertTask.setText("Convert to map shared object");
-
-        dialogFooter.add(btnCancelConversion);
-        dialogFooter.add(btnConvertTask);
-
-        convertTaskDialog.add(dialogFooter);
+        buildConvertTaskDialog();
 
         contentGroup.getElement().addClassName(CssBundle.INSTANCE.css().classContentGroup());
         contentGroup.getElement().addClassName("col-12");
@@ -123,6 +101,36 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         bind();
     }
 
+    private void buildConvertTaskDialog()
+    {
+        convertTaskDialog.getElement().addClassName(CssBundle.INSTANCE.css().convertTaskDialog());
+        convertTaskDialog.getElement().addClassName("popupDialog");
+
+        MaterialTitle title = new MaterialTitle();
+        title.setTitle("Convert to shared object");
+        title.setMarginTop(20);
+        title.setMarginLeft(10);
+
+        keyNameTextBox.setClass("outlined");
+        keyNameTextBox.setMargin(10);
+        keyNameTextBox.setLabel("Name");
+
+        btnCancelConversion.getElement().addClassName("dismissPopup");
+
+        // prevent bootstrap overstyle
+        btnCancelConversion.getElement().removeClassName("btn");
+        btnCancelConversion.setIconType(IconType.CANCEL);
+
+        btnConvertTask.getElement().addClassName(CssBundle.INSTANCE.css().doConversionBtn());
+        btnConvertTask.setText("Convert to map shared object");
+        btnConvertTask.setEnabled(false);
+
+        convertTaskDialog.add(btnCancelConversion);
+        convertTaskDialog.add(title);
+        convertTaskDialog.add(keyNameTextBox);
+        convertTaskDialog.add(btnConvertTask);
+    }
+
     protected FlowPanel getSelectGroup()
     {
         return selectGroup;
@@ -131,6 +139,37 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     protected void bind()
     {
         RootPanel.get().add(convertTaskDialog);
+
+        convertTaskDialog.addOpenHandler(new OpenHandler<MaterialDialog>()
+        {
+            @Override
+            public void onOpen(OpenEvent<MaterialDialog> event)
+            {
+                keyNameTextBox.setFocus(true);
+            }
+        });
+
+        keyNameTextBox.addKeyUpHandler(new KeyUpHandler()
+        {
+            @Override
+            public void onKeyUp(KeyUpEvent event)
+            {
+                String newName = keyNameTextBox.getText();
+                boolean nameIsAuthorized;
+
+                if (!RegExp.compile(ALLOWED_FOR_NAME).test(newName))
+                {
+                    keyNameTextBox.setErrorText("Allowed : a-z, A-Z, 0-9, -, _");
+                    nameIsAuthorized = false;
+                }
+                else
+                {
+                    keyNameTextBox.clearErrorText();
+                    nameIsAuthorized = true;
+                }
+                btnConvertTask.setEnabled(!newName.isEmpty() && nameIsAuthorized);
+            }
+        });
 
         selectGroup.add(implementingClassView);
         selectGroup.add(getResetFieldBtn());

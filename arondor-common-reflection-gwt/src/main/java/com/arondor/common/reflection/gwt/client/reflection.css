@@ -219,9 +219,11 @@
 	padding-bottom: 10px;
 }
 
+/* Convert-to-object popup */
 .classNode .convertTaskDialog{
 	width: fit-content!important;
 	height: fit-content;
+	background-color: white!important;
 }
 
 .classNode .dialogContent{
