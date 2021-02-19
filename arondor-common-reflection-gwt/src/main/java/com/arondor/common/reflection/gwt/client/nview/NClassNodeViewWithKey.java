@@ -45,7 +45,7 @@ public class NClassNodeViewWithKey extends NClassNodeView implements MapPairDisp
     }
 
     @Override
-    protected void bind()
+    protected void attachChildren()
     {
         if (keyTextBox != null)
         {
@@ -56,7 +56,7 @@ public class NClassNodeViewWithKey extends NClassNodeView implements MapPairDisp
             // add on value change
             add(deleteRowBtn);
         }
-        super.bind();
+        super.attachChildren();
     }
 
     @Override

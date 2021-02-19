@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 import com.arondor.common.reflection.gwt.client.AccessibleClassPresenterFactory;
@@ -40,7 +41,6 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import gwt.material.design.client.ui.MaterialDialog;
 import gwt.material.design.client.ui.MaterialToast;
 
 public class ClassTreeNodePresenter implements TreeNodePresenter
@@ -53,19 +53,9 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
 
         HandlerRegistration onReset(ClickHandler handler);
 
-        HandlerRegistration onShare(ClickHandler handler);
+        void onShare(Consumer<String> onShare);
 
         HandlerRegistration forwardToSharedObject(ClickHandler handler);
-
-        String getKeyName();
-
-        void clearKeyName();
-
-        MaterialDialog getConvertTaskDialog();
-
-        HandlerRegistration onCancelShare(ClickHandler handler);
-
-        HandlerRegistration onDoShare(ClickHandler handler);
 
         void enableReset(boolean enabled);
     }
@@ -132,30 +122,12 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
             }
         });
 
-        display.onShare(new ClickHandler()
+        display.onShare(new Consumer<String>()
         {
-            @Override
-            public void onClick(ClickEvent event)
-            {
-                display.getConvertTaskDialog().open();
-            }
-        });
 
-        display.onCancelShare(new ClickHandler()
-        {
             @Override
-            public void onClick(ClickEvent event)
+            public void accept(String name)
             {
-                display.getConvertTaskDialog().close();
-            }
-        });
-
-        display.onDoShare(new ClickHandler()
-        {
-            @Override
-            public void onClick(ClickEvent event)
-            {
-                String name = display.getKeyName();
                 if (!name.isEmpty())
                 {
                     objectReferencesProvider.share(getObjectConfiguration(), name,
@@ -173,17 +145,14 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
                                     clearFields();
                                     implementingClassPresenter.setImplementingClass(result);
                                     display.setActive(true);
-                                    display.getConvertTaskDialog().close();
                                 }
                             });
-                    display.clearKeyName();
                 }
                 else
                 {
                     MaterialToast.fireToast("Enter the name of your shared object");
                 }
             }
-
         });
 
         display.forwardToSharedObject(new ClickHandler()

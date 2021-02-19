@@ -1,5 +1,7 @@
 package com.arondor.common.reflection.gwt.client.nview;
 
+import java.util.function.Consumer;
+
 import com.arondor.common.reflection.gwt.client.CssBundle;
 import com.arondor.common.reflection.gwt.client.nview.prim.NBooleanView;
 import com.arondor.common.reflection.gwt.client.nview.prim.NIntView;
@@ -16,6 +18,9 @@ import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeN
 import com.arondor.common.reflection.gwt.client.view.ImplementingClassView;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
@@ -55,6 +60,8 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
 
     private static final String ALLOWED_FOR_NAME = "^[a-zA-Z0-9-_]+$";
 
+    private boolean hasChildren;
+
     public NClassNodeView()
     {
         getElement().addClassName(CssBundle.INSTANCE.css().classNode());
@@ -66,17 +73,6 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         getResetFieldBtn().getElement().addClassName("input-group-append");
         getResetFieldBtn().getElement().addClassName(CssBundle.INSTANCE.css().resetBtn());
         getResetFieldBtn().getElement().setInnerHTML("<i></i>");
-
-        getResetFieldBtn().addClickHandler(new ClickHandler()
-        {
-            @Override
-            public void onClick(ClickEvent event)
-            {
-                implementingClassView.reset();
-                setActive(false);
-                clear();
-            }
-        });
 
         buildConvertTaskDialog();
 
@@ -99,6 +95,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         optionalChildren.getElement().addClassName("collapse");
 
         bind();
+        attachChildren();
     }
 
     private void buildConvertTaskDialog()
@@ -138,8 +135,6 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
 
     protected void bind()
     {
-        RootPanel.get().add(convertTaskDialog);
-
         convertTaskDialog.addOpenHandler(new OpenHandler<MaterialDialog>()
         {
             @Override
@@ -155,22 +150,47 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
             public void onKeyUp(KeyUpEvent event)
             {
                 String newName = keyNameTextBox.getText();
-                boolean nameIsAuthorized;
 
-                if (!RegExp.compile(ALLOWED_FOR_NAME).test(newName))
-                {
-                    keyNameTextBox.setErrorText("Allowed : a-z, A-Z, 0-9, -, _");
-                    nameIsAuthorized = false;
-                }
-                else
-                {
-                    keyNameTextBox.clearErrorText();
-                    nameIsAuthorized = true;
-                }
-                btnConvertTask.setEnabled(!newName.isEmpty() && nameIsAuthorized);
+                btnConvertTask.setEnabled(!newName.isEmpty() && isNameAuthorized(newName));
             }
         });
 
+        implementingClassView.getSharedObjectCreatePanel().addClickHandler(new ClickHandler()
+        {
+            @Override
+            public void onClick(ClickEvent event)
+            {
+                keyNameTextBox.clear();
+                RootPanel.get().add(convertTaskDialog);
+                convertTaskDialog.open();
+            }
+        });
+
+        btnCancelConversion.addClickHandler(new ClickHandler()
+        {
+            @Override
+            public void onClick(ClickEvent event)
+            {
+                convertTaskDialog.close();
+                RootPanel.get().remove(convertTaskDialog);
+                keyNameTextBox.clear();
+            }
+        });
+
+        getResetFieldBtn().addClickHandler(new ClickHandler()
+        {
+            @Override
+            public void onClick(ClickEvent event)
+            {
+                implementingClassView.reset();
+                setActive(false);
+                clear();
+            }
+        });
+    }
+
+    protected void attachChildren()
+    {
         selectGroup.add(implementingClassView);
         selectGroup.add(getResetFieldBtn());
         add(selectGroup);
@@ -185,30 +205,6 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     protected FlowPanel getOptionsArea()
     {
         return optionsArea;
-    }
-
-    /**
-     * @return name fill in the pop-up
-     */
-    @Override
-    public String getKeyName()
-    {
-        return keyNameTextBox.getText();
-    }
-
-    /*
-     * Clear pop-up name field
-     */
-    @Override
-    public void clearKeyName()
-    {
-        keyNameTextBox.setText("");
-    }
-
-    @Override
-    public MaterialDialog getConvertTaskDialog()
-    {
-        return convertTaskDialog;
     }
 
     private void addChildView(boolean isMandatory, NNodeView childView)
@@ -233,6 +229,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     @Override
     public ClassTreeNodePresenter.ClassDisplay createClassChild(boolean isMandatory)
     {
+        hasChildren = true;
         NClassNodeView childView = new NClassNodeView();
         childView.enableReset(!isMandatory);
         addChildView(isMandatory, childView);
@@ -328,8 +325,10 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         super.clear();
         mandatoryChildren.clear();
         optionalChildren.clear();
+        hasChildren = false;
         optionalChildren.getElement().removeClassName("show");
-        bind();
+        advancedSettings.getElement().addClassName(CssBundle.INSTANCE.css().hideAdvancedSettings());
+        attachChildren();
     }
 
     @Override
@@ -342,9 +341,53 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
      * Add the click handler on share button
      */
     @Override
-    public HandlerRegistration onShare(ClickHandler handler)
+    public void onShare(Consumer<String> onShare)
     {
-        return implementingClassView.getSharedObjectCreatePanel().addClickHandler(handler);
+        btnConvertTask.addClickHandler(new ClickHandler()
+        {
+            @Override
+            public void onClick(ClickEvent event)
+            {
+                closeDialogAndSave(onShare);
+            }
+        });
+        keyNameTextBox.addKeyDownHandler(new KeyDownHandler()
+        {
+
+            @Override
+            public void onKeyDown(KeyDownEvent event)
+            {
+                if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER && isNameAuthorized(keyNameTextBox.getText()))
+                {
+                    closeDialogAndSave(onShare);
+                }
+
+            }
+        });
+        keyNameTextBox.addKeyUpHandler(new KeyUpHandler()
+        {
+            @Override
+            public void onKeyUp(KeyUpEvent event)
+            {
+                String newName = keyNameTextBox.getText();
+
+                btnConvertTask.setEnabled(!newName.isEmpty() && isNameAuthorized(newName));
+            }
+        });
+    }
+
+    private boolean isNameAuthorized(String name)
+    {
+        if (!RegExp.compile(ALLOWED_FOR_NAME).test(name))
+        {
+            keyNameTextBox.setErrorText("Allowed : a-z, A-Z, 0-9, -, _");
+            return false;
+        }
+        else
+        {
+            keyNameTextBox.clearErrorText();
+            return true;
+        }
     }
 
     /**
@@ -356,28 +399,10 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         return implementingClassView.getSharedObjectForwardPanel().addClickHandler(handler);
     }
 
-    /**
-     * Add the click handler on the pop-up cancel sharing button
-     */
-    @Override
-    public HandlerRegistration onCancelShare(ClickHandler handler)
-    {
-        return btnCancelConversion.addClickHandler(handler);
-    }
-
     @Override
     public HandlerRegistration onReset(ClickHandler handler)
     {
         return getResetFieldBtn().addClickHandler(handler);
-    }
-
-    /**
-     * Add the click handler on the pop-up share button
-     */
-    @Override
-    public HandlerRegistration onDoShare(ClickHandler handler)
-    {
-        return btnConvertTask.addClickHandler(handler);
     }
 
     @Override
@@ -386,15 +411,23 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         super.setActive(active);
         if (active)
         {
-            advancedSettings.getElement().removeClassName(CssBundle.INSTANCE.css().hideAdvancedSettings());
-            getElement().addClassName(CssBundle.INSTANCE.css().active());
+            if (hasChildren)
+                getElement().addClassName(CssBundle.INSTANCE.css().active());
         }
         else
         {
             getElement().removeClassName(CssBundle.INSTANCE.css().active());
-            advancedSettings.getElement().getElementsByTagName("a").getItem(0).setClassName("collapsed");
             advancedSettings.getElement().addClassName(CssBundle.INSTANCE.css().hideAdvancedSettings());
         }
+        advancedSettings.getElement().getElementsByTagName("a").getItem(0).setClassName("collapsed");
+    }
+
+    private void closeDialogAndSave(Consumer<String> onShare)
+    {
+        String name = keyNameTextBox.getText();
+        convertTaskDialog.close();
+
+        onShare.accept(name);
     }
 
 }
