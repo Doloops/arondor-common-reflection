@@ -218,6 +218,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
             advancedSettings.getElement().removeClassName(CssBundle.INSTANCE.css().hideAdvancedSettings());
             optionalChildren.add(childView);
         }
+        getElement().addClassName(CssBundle.INSTANCE.css().active());
     }
 
     @Override
@@ -229,10 +230,10 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     @Override
     public ClassTreeNodePresenter.ClassDisplay createClassChild(boolean isMandatory)
     {
-        hasChildren = true;
         NClassNodeView childView = new NClassNodeView();
         childView.enableReset(!isMandatory);
         addChildView(isMandatory, childView);
+
         return childView;
     }
 
@@ -325,7 +326,8 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         super.clear();
         mandatoryChildren.clear();
         optionalChildren.clear();
-        hasChildren = false;
+        getElement().removeClassName(CssBundle.INSTANCE.css().active());
+
         optionalChildren.getElement().removeClassName("show");
         advancedSettings.getElement().addClassName(CssBundle.INSTANCE.css().hideAdvancedSettings());
         attachChildren();
@@ -409,13 +411,9 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     public void setActive(boolean active)
     {
         super.setActive(active);
-        if (active)
+        if (!active)
         {
-            if (hasChildren)
-                getElement().addClassName(CssBundle.INSTANCE.css().active());
-        }
-        else
-        {
+            // getElement().addClassName(CssBundle.INSTANCE.css().active());
             getElement().removeClassName(CssBundle.INSTANCE.css().active());
             advancedSettings.getElement().addClassName(CssBundle.INSTANCE.css().hideAdvancedSettings());
         }
