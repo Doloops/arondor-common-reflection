@@ -21,11 +21,11 @@ public class NScopeClassView extends NClassNodeViewWithKey implements MapPairDis
     }
 
     @Override
-    protected void bind()
+    protected void attachChildren()
     {
         if (scopeBox != null)
             add(scopeBox);
-        super.bind();
+        super.attachChildren();
     }
 
     @Override

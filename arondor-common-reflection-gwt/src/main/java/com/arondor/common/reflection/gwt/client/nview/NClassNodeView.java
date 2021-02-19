@@ -1,5 +1,7 @@
 package com.arondor.common.reflection.gwt.client.nview;
 
+import java.util.function.Consumer;
+
 import com.arondor.common.reflection.gwt.client.CssBundle;
 import com.arondor.common.reflection.gwt.client.nview.prim.NBooleanView;
 import com.arondor.common.reflection.gwt.client.nview.prim.NIntView;
@@ -16,14 +18,21 @@ import com.arondor.common.reflection.gwt.client.presenter.fields.StringListTreeN
 import com.arondor.common.reflection.gwt.client.view.ImplementingClassView;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.OpenEvent;
+import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 
+import gwt.material.design.client.constants.IconType;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialDialog;
-import gwt.material.design.client.ui.MaterialDialogContent;
-import gwt.material.design.client.ui.MaterialDialogFooter;
 import gwt.material.design.client.ui.MaterialTextBox;
 import gwt.material.design.client.ui.MaterialTitle;
 
@@ -49,6 +58,10 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
 
     private final MaterialTextBox keyNameTextBox = new MaterialTextBox();
 
+    private static final String ALLOWED_FOR_NAME = "^[a-zA-Z0-9-_]+$";
+
+    private boolean hasChildren;
+
     public NClassNodeView()
     {
         getElement().addClassName(CssBundle.INSTANCE.css().classNode());
@@ -61,46 +74,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         getResetFieldBtn().getElement().addClassName(CssBundle.INSTANCE.css().resetBtn());
         getResetFieldBtn().getElement().setInnerHTML("<i></i>");
 
-        getResetFieldBtn().addClickHandler(new ClickHandler()
-        {
-            @Override
-            public void onClick(ClickEvent event)
-            {
-                implementingClassView.reset();
-                setActive(false);
-                clear();
-            }
-        });
-
-        convertTaskDialog.getElement().addClassName(CssBundle.INSTANCE.css().convertTaskDialog());
-
-        MaterialDialogContent dialogContent = new MaterialDialogContent();
-        dialogContent.getElement().addClassName(CssBundle.INSTANCE.css().dialogContent());
-
-        MaterialTitle title = new MaterialTitle();
-        title.setTitle("Convert to shared object");
-
-        keyNameTextBox.setClass("outlined");
-        keyNameTextBox.setLabel("Shared object name");
-        keyNameTextBox.setFocus(true);
-
-        dialogContent.add(title);
-        dialogContent.add(keyNameTextBox);
-
-        convertTaskDialog.add(dialogContent);
-
-        MaterialDialogFooter dialogFooter = new MaterialDialogFooter();
-
-        btnCancelConversion.getElement().addClassName(CssBundle.INSTANCE.css().cancelConversionBtn());
-        btnCancelConversion.setText("Cancel conversion");
-
-        btnConvertTask.getElement().addClassName(CssBundle.INSTANCE.css().doConversionBtn());
-        btnConvertTask.setText("Convert to map shared object");
-
-        dialogFooter.add(btnCancelConversion);
-        dialogFooter.add(btnConvertTask);
-
-        convertTaskDialog.add(dialogFooter);
+        buildConvertTaskDialog();
 
         contentGroup.getElement().addClassName(CssBundle.INSTANCE.css().classContentGroup());
         contentGroup.getElement().addClassName("col-12");
@@ -121,6 +95,37 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         optionalChildren.getElement().addClassName("collapse");
 
         bind();
+        attachChildren();
+    }
+
+    private void buildConvertTaskDialog()
+    {
+        convertTaskDialog.getElement().addClassName(CssBundle.INSTANCE.css().convertTaskDialog());
+        convertTaskDialog.getElement().addClassName("popupDialog");
+
+        MaterialTitle title = new MaterialTitle();
+        title.setTitle("Convert to shared object");
+        title.setMarginTop(20);
+        title.setMarginLeft(10);
+
+        keyNameTextBox.setClass("outlined");
+        keyNameTextBox.setMargin(10);
+        keyNameTextBox.setLabel("Name");
+
+        btnCancelConversion.getElement().addClassName("dismissPopup");
+
+        // prevent bootstrap overstyle
+        btnCancelConversion.getElement().removeClassName("btn");
+        btnCancelConversion.setIconType(IconType.CANCEL);
+
+        btnConvertTask.getElement().addClassName(CssBundle.INSTANCE.css().doConversionBtn());
+        btnConvertTask.setText("Convert to map shared object");
+        btnConvertTask.setEnabled(false);
+
+        convertTaskDialog.add(btnCancelConversion);
+        convertTaskDialog.add(title);
+        convertTaskDialog.add(keyNameTextBox);
+        convertTaskDialog.add(btnConvertTask);
     }
 
     protected FlowPanel getSelectGroup()
@@ -130,8 +135,62 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
 
     protected void bind()
     {
-        RootPanel.get().add(convertTaskDialog);
+        convertTaskDialog.addOpenHandler(new OpenHandler<MaterialDialog>()
+        {
+            @Override
+            public void onOpen(OpenEvent<MaterialDialog> event)
+            {
+                keyNameTextBox.setFocus(true);
+            }
+        });
 
+        keyNameTextBox.addKeyUpHandler(new KeyUpHandler()
+        {
+            @Override
+            public void onKeyUp(KeyUpEvent event)
+            {
+                String newName = keyNameTextBox.getText();
+
+                btnConvertTask.setEnabled(!newName.isEmpty() && isNameAuthorized(newName));
+            }
+        });
+
+        implementingClassView.getSharedObjectCreatePanel().addClickHandler(new ClickHandler()
+        {
+            @Override
+            public void onClick(ClickEvent event)
+            {
+                keyNameTextBox.clear();
+                RootPanel.get().add(convertTaskDialog);
+                convertTaskDialog.open();
+            }
+        });
+
+        btnCancelConversion.addClickHandler(new ClickHandler()
+        {
+            @Override
+            public void onClick(ClickEvent event)
+            {
+                convertTaskDialog.close();
+                RootPanel.get().remove(convertTaskDialog);
+                keyNameTextBox.clear();
+            }
+        });
+
+        getResetFieldBtn().addClickHandler(new ClickHandler()
+        {
+            @Override
+            public void onClick(ClickEvent event)
+            {
+                implementingClassView.reset();
+                setActive(false);
+                clear();
+            }
+        });
+    }
+
+    protected void attachChildren()
+    {
         selectGroup.add(implementingClassView);
         selectGroup.add(getResetFieldBtn());
         add(selectGroup);
@@ -148,30 +207,6 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         return optionsArea;
     }
 
-    /**
-     * @return name fill in the pop-up
-     */
-    @Override
-    public String getKeyName()
-    {
-        return keyNameTextBox.getText();
-    }
-
-    /*
-     * Clear pop-up name field
-     */
-    @Override
-    public void clearKeyName()
-    {
-        keyNameTextBox.setText("");
-    }
-
-    @Override
-    public MaterialDialog getConvertTaskDialog()
-    {
-        return convertTaskDialog;
-    }
-
     private void addChildView(boolean isMandatory, NNodeView childView)
     {
         if (isMandatory)
@@ -183,6 +218,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
             advancedSettings.getElement().removeClassName(CssBundle.INSTANCE.css().hideAdvancedSettings());
             optionalChildren.add(childView);
         }
+        getElement().addClassName(CssBundle.INSTANCE.css().active());
     }
 
     @Override
@@ -197,6 +233,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         NClassNodeView childView = new NClassNodeView();
         childView.enableReset(!isMandatory);
         addChildView(isMandatory, childView);
+
         return childView;
     }
 
@@ -289,8 +326,11 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         super.clear();
         mandatoryChildren.clear();
         optionalChildren.clear();
+        getElement().removeClassName(CssBundle.INSTANCE.css().active());
+
         optionalChildren.getElement().removeClassName("show");
-        bind();
+        advancedSettings.getElement().addClassName(CssBundle.INSTANCE.css().hideAdvancedSettings());
+        attachChildren();
     }
 
     @Override
@@ -303,9 +343,53 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
      * Add the click handler on share button
      */
     @Override
-    public HandlerRegistration onShare(ClickHandler handler)
+    public void onShare(Consumer<String> onShare)
     {
-        return implementingClassView.getSharedObjectCreatePanel().addClickHandler(handler);
+        btnConvertTask.addClickHandler(new ClickHandler()
+        {
+            @Override
+            public void onClick(ClickEvent event)
+            {
+                closeDialogAndSave(onShare);
+            }
+        });
+        keyNameTextBox.addKeyDownHandler(new KeyDownHandler()
+        {
+
+            @Override
+            public void onKeyDown(KeyDownEvent event)
+            {
+                if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER && isNameAuthorized(keyNameTextBox.getText()))
+                {
+                    closeDialogAndSave(onShare);
+                }
+
+            }
+        });
+        keyNameTextBox.addKeyUpHandler(new KeyUpHandler()
+        {
+            @Override
+            public void onKeyUp(KeyUpEvent event)
+            {
+                String newName = keyNameTextBox.getText();
+
+                btnConvertTask.setEnabled(!newName.isEmpty() && isNameAuthorized(newName));
+            }
+        });
+    }
+
+    private boolean isNameAuthorized(String name)
+    {
+        if (!RegExp.compile(ALLOWED_FOR_NAME).test(name))
+        {
+            keyNameTextBox.setErrorText("Allowed : a-z, A-Z, 0-9, -, _");
+            return false;
+        }
+        else
+        {
+            keyNameTextBox.clearErrorText();
+            return true;
+        }
     }
 
     /**
@@ -317,45 +401,31 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         return implementingClassView.getSharedObjectForwardPanel().addClickHandler(handler);
     }
 
-    /**
-     * Add the click handler on the pop-up cancel sharing button
-     */
-    @Override
-    public HandlerRegistration onCancelShare(ClickHandler handler)
-    {
-        return btnCancelConversion.addClickHandler(handler);
-    }
-
     @Override
     public HandlerRegistration onReset(ClickHandler handler)
     {
         return getResetFieldBtn().addClickHandler(handler);
     }
 
-    /**
-     * Add the click handler on the pop-up share button
-     */
-    @Override
-    public HandlerRegistration onDoShare(ClickHandler handler)
-    {
-        return btnConvertTask.addClickHandler(handler);
-    }
-
     @Override
     public void setActive(boolean active)
     {
         super.setActive(active);
-        if (active)
+        if (!active)
         {
-            advancedSettings.getElement().removeClassName(CssBundle.INSTANCE.css().hideAdvancedSettings());
-            getElement().addClassName(CssBundle.INSTANCE.css().active());
-        }
-        else
-        {
+            // getElement().addClassName(CssBundle.INSTANCE.css().active());
             getElement().removeClassName(CssBundle.INSTANCE.css().active());
-            advancedSettings.getElement().getElementsByTagName("a").getItem(0).setClassName("collapsed");
             advancedSettings.getElement().addClassName(CssBundle.INSTANCE.css().hideAdvancedSettings());
         }
+        advancedSettings.getElement().getElementsByTagName("a").getItem(0).setClassName("collapsed");
+    }
+
+    private void closeDialogAndSave(Consumer<String> onShare)
+    {
+        String name = keyNameTextBox.getText();
+        convertTaskDialog.close();
+
+        onShare.accept(name);
     }
 
 }
