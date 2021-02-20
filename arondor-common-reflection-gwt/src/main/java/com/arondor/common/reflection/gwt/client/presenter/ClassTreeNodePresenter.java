@@ -25,6 +25,7 @@ import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 import com.arondor.common.reflection.gwt.client.AccessibleClassPresenterFactory;
+import com.arondor.common.reflection.gwt.client.event.ClassChangeEvent;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
@@ -252,6 +253,7 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
         {
             display.setActive(false);
         }
+        fireClassChange(accessibleClass, null);
     }
 
     private void buildTree(AccessibleClass accessibleClass)
@@ -392,12 +394,56 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
             implementingClassPresenter
                     .setImplementingClass(new ImplementingClass(true, null, referenceConfiguration.getReferenceName()));
             display.setActive(true);
+            fireClassChange(null, referenceConfiguration.getReferenceName());
         }
     }
 
     public ImplementingClass getImplementingClass()
     {
         return implementingClassPresenter.getImplementingClass();
+    }
+
+    private final List<ClassChangeEvent.Handler> classChangeHandlers = new ArrayList<ClassChangeEvent.Handler>();
+
+    private void fireClassChange(AccessibleClass accessibleClass, String reference)
+    {
+        ClassChangeEvent event = new ClassChangeEvent(accessibleClass, reference);
+        classChangeHandlers.forEach(h -> h.onClassChange(event));
+    }
+
+    public HandlerRegistration addClassChangeHandler(ClassChangeEvent.Handler handler)
+    {
+        classChangeHandlers.add(handler);
+        return new HandlerRegistration()
+        {
+            @Override
+            public void removeHandler()
+            {
+                classChangeHandlers.remove(handler);
+            }
+        };
+        /*
+         * return implementingClassPresenter.addValueChangeHandler(new
+         * ValueChangeHandler<ImplementingClass>() {
+         * 
+         * @Override public void
+         * onValueChange(ValueChangeEvent<ImplementingClass> event) {
+         * LOG.warning("onValueChange(" + event.getValue() + ")"); if
+         * (event.getValue().isReference()) { ClassChangeEvent classChangeEvent
+         * = new ClassChangeEvent(null, event.getValue().getDisplayName());
+         * handler.onClassChange(classChangeEvent); } else if
+         * (event.getValue().getClassName() != null) {
+         * rpcService.getAccessibleClass(event.getValue().getClassName(), new
+         * AsyncCallback<AccessibleClass>() {
+         * 
+         * @Override public void onFailure(Throwable caught) { }
+         * 
+         * @Override public void onSuccess(AccessibleClass result) {
+         * ClassChangeEvent classChangeEvent = new ClassChangeEvent(result,
+         * null); handler.onClassChange(classChangeEvent); } }); } else {
+         * ClassChangeEvent classChangeEvent = new ClassChangeEvent(null, null);
+         * handler.onClassChange(classChangeEvent); } } });
+         */
     }
 
 }

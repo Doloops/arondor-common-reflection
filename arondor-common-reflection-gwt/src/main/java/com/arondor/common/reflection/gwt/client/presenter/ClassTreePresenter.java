@@ -15,7 +15,9 @@
  */
 package com.arondor.common.reflection.gwt.client.presenter;
 
+import com.arondor.common.reflection.gwt.client.event.ClassChangeEvent.Handler;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.HasVisibility;
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -26,7 +28,7 @@ public class ClassTreePresenter
         ClassTreeNodePresenter.ClassDisplay getRootView();
     }
 
-    private TreeNodePresenter rootNodePresenter;
+    private final ClassTreeNodePresenter rootNodePresenter;
 
     private final Display display;
 
@@ -35,8 +37,8 @@ public class ClassTreePresenter
     {
         this.display = view;
 
-        setRootNodePresenter(
-                new ClassTreeNodePresenter(rpcService, objectReferencesProvider, baseClassName, display.getRootView()));
+        rootNodePresenter = new ClassTreeNodePresenter(rpcService, objectReferencesProvider, baseClassName,
+                display.getRootView());
 
         if (getRootNodePresenter().getDisplay() instanceof HasVisibility)
         {
@@ -55,11 +57,6 @@ public class ClassTreePresenter
         return rootNodePresenter;
     }
 
-    public void setRootNodePresenter(ClassTreeNodePresenter rootNodePresenter)
-    {
-        this.rootNodePresenter = rootNodePresenter;
-    }
-
     public Display getDisplay()
     {
         return display;
@@ -68,5 +65,10 @@ public class ClassTreePresenter
     public IsWidget getDisplayWidget()
     {
         return getDisplay();
+    }
+
+    public HandlerRegistration addClassChangeHandler(Handler handler)
+    {
+        return rootNodePresenter.addClassChangeHandler(handler);
     }
 }

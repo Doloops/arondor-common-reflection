@@ -19,11 +19,13 @@ import java.util.logging.Logger;
 
 import com.arondor.common.reflection.gwt.client.AccessibleClassPresenterFactory;
 import com.arondor.common.reflection.gwt.client.api.AccessibleClassPresenter;
+import com.arondor.common.reflection.gwt.client.event.ClassChangeEvent;
 import com.arondor.common.reflection.gwt.client.service.GWTReflectionServiceAsync;
 import com.arondor.common.reflection.model.config.ElementConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
 import com.arondor.common.reflection.model.config.ObjectConfigurationFactory;
 import com.arondor.common.reflection.model.config.ReferenceConfiguration;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.IsWidget;
 
 public class HierarchicAccessibleClassPresenter implements AccessibleClassPresenter
@@ -97,5 +99,11 @@ public class HierarchicAccessibleClassPresenter implements AccessibleClassPresen
     public void enableReset(boolean enabled)
     {
         display.getClassTreeDisplay().getRootView().enableReset(enabled);
+    }
+
+    @Override
+    public HandlerRegistration addClassChangeHandler(ClassChangeEvent.Handler handler)
+    {
+        return classTreePresenter.addClassChangeHandler(handler);
     }
 }

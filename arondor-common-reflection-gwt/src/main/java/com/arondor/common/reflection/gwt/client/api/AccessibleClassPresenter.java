@@ -15,7 +15,9 @@
  */
 package com.arondor.common.reflection.gwt.client.api;
 
+import com.arondor.common.reflection.gwt.client.event.ClassChangeEvent;
 import com.arondor.common.reflection.model.config.ObjectConfiguration;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.IsWidget;
 
 public interface AccessibleClassPresenter
@@ -27,4 +29,6 @@ public interface AccessibleClassPresenter
     IsWidget getDisplayWidget();
 
     void enableReset(boolean enabled);
+
+    HandlerRegistration addClassChangeHandler(ClassChangeEvent.Handler handler);
 }
