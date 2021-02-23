@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.arondor.common</groupId>
 		<artifactId>arondor-common-reflection</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.0-rc14</version>
 	</parent>
 	<groupId>com.arondor.common.reflection</groupId>
 	<artifactId>arondor-common-reflection-api</artifactId>
@@ -15,7 +15,7 @@
 		<dependency>
 			<groupId>com.arondor.common.reflection</groupId>
 			<artifactId>arondor-common-reflection-model</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>1.0.0-rc14</version>
 		</dependency>
 	</dependencies>
 
