@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -18,14 +19,11 @@ import com.arondor.common.management.mbean.MBeanObject;
 /**
  * Statistics class aggregator
  * 
- * @author francois
+ * @author Francois Barre
  * 
  */
 public class Statistics extends MBeanObject implements Serializable
 {
-    /**
-   * 
-   */
     private static final long serialVersionUID = -6655570213872337647L;
 
     /**
@@ -33,10 +31,7 @@ public class Statistics extends MBeanObject implements Serializable
      */
     private static final Logger LOG = Logger.getLogger(Statistics.class);
 
-    /**
-   * 
-   */
-    private static Statistics SINGLETON = null;
+    private static final Statistics SINGLETON = new Statistics();
 
     /**
      * Statistics : time when Statistics started
@@ -48,13 +43,8 @@ public class Statistics extends MBeanObject implements Serializable
      */
     private int instantSpeedNumber = 32;
 
-    /**
-   * 
-   */
-    public static synchronized Statistics getInstance()
+    public static Statistics getInstance()
     {
-        if (SINGLETON == null)
-            SINGLETON = new Statistics();
         return SINGLETON;
     }
 
@@ -84,8 +74,6 @@ public class Statistics extends MBeanObject implements Serializable
     /**
      * Simple class to store stat information
      * 
-     * @author Francois Barre
-     * 
      */
     public class StatInfo extends MBeanObject
     {
@@ -94,39 +82,18 @@ public class Statistics extends MBeanObject implements Serializable
          */
         private final Class<?> clazz;
 
-        /**
-     * 
-     */
         private String name;
 
-        /**
-     * 
-     */
         private long number = 0;
 
-        /**
-     * 
-     */
         private long total = 0;
 
-        /**
-     * 
-     */
         private long min = Long.MAX_VALUE;
 
-        /**
-     * 
-     */
         private long max = Long.MIN_VALUE;
 
-        /**
-     * 
-     */
         private Queue<Long> instantValues = new LinkedList<Long>();
 
-        /**
-     * 
-     */
         private Queue<Long> instantStartPoints = new LinkedList<Long>();
 
         /**
@@ -148,7 +115,7 @@ public class Statistics extends MBeanObject implements Serializable
          * @param statPoint
          *            time spent, in milliseconds
          */
-        public synchronized void update(StatPoint statPoint)
+        protected synchronized void update(StatPoint statPoint)
         {
             number += statPoint.getNumber();
             long duration = statPoint.getDuration();
@@ -166,13 +133,13 @@ public class Statistics extends MBeanObject implements Serializable
 
         public float getTheoreticalRate()
         {
-            return (total > 0 ? ((float) number * 1000 / (float) total) : 0);
+            return (total > 0 ? ((float) number * 1000 / total) : 0);
         }
 
         public float getEffectiveRate()
         {
             long runtime = (System.currentTimeMillis() - startTime);
-            return (runtime > 0 ? ((float) number * 1000 / (float) runtime) : 0);
+            return (runtime > 0 ? ((float) number * 1000 / runtime) : 0);
         }
 
         public synchronized float getInstantDuration()
@@ -190,7 +157,7 @@ public class Statistics extends MBeanObject implements Serializable
 
         public float getInstantTheoreticalRate()
         {
-            return ((float) 1000) / getInstantDuration();
+            return (1000) / getInstantDuration();
         }
 
         public synchronized float getInstantEffectiveRate()
@@ -247,6 +214,7 @@ public class Statistics extends MBeanObject implements Serializable
         /**
          * To String
          */
+        @Override
         public String toString()
         {
             return clazz.getName() + "." + name + "[total=" + prettyPrint(total) + ",calls=" + number + ",min="
@@ -267,59 +235,22 @@ public class Statistics extends MBeanObject implements Serializable
     private Map<String, StatInfo> statInfoMap = new HashMap<String, StatInfo>();
 
     /**
-   * 
-   */
-    private Thread periodicThread;
-
-    /**
      * 
      * @param statsInterval
      *            At which interval shall we dump statistics
      */
-    public synchronized void startStatThread(final int statsInterval)
+    public void startStatThread(final int statsInterval)
     {
-        long newStartTime = System.currentTimeMillis();
-        LOG.info("Setting Processing Statistics to start Now ! (gap=" + (newStartTime - startTime)
-                + "ms), statsInterval=" + statsInterval + "s");
-        startTime = newStartTime;
-        if (statsInterval > 0)
-        {
-            periodicThread = new Thread("Statistics")
-            {
-                @Override
-                public void run()
-                {
-                    LOG.info("Starting Statistics PeriodicThread");
-                    while (true)
-                    {
-                        try
-                        {
-                            Thread.sleep(statsInterval * 1000);
-                        }
-                        catch (InterruptedException e)
-                        {
-                            LOG.debug("Interrupted StatInfo Thread.");
-                            break;
-                        }
-                        showStatistics();
-                    }
-                }
-            };
-            periodicThread.start();
-        }
+        LOG.warn("No longer supported: Statistics.startStatThread()");
     }
 
-    public synchronized void stopStatThread()
+    public void stopStatThread()
     {
-        if (periodicThread != null)
-        {
-            periodicThread.interrupt();
-        }
+        LOG.warn("No longer supported: Statistics.stopStatThread()");
     }
 
     public static void stopStatistics()
     {
-        getInstance().stopStatThread();
         getInstance().showStatistics();
     }
 
@@ -349,8 +280,8 @@ public class Statistics extends MBeanObject implements Serializable
     }
 
     /**
-   * 
-   */
+    * 
+    */
     public synchronized void showStatistics()
     {
         String msg = "Stats : (running for " + getRunningTime() + "ms)";
@@ -369,10 +300,15 @@ public class Statistics extends MBeanObject implements Serializable
         for (StatInfo statInfo : statInfoMap.values())
         {
             writer.write(statInfo.getClazz().getName() + ";" + statInfo.getName() + ";" + statInfo.getTotal() + ";"
-                    + statInfo.getTotalCalls() + ";" + statInfo.getMinDuration() + ";" + statInfo.getMaxDuration()
-                    + ";" + statInfo.getAverageDuration() + ";" + statInfo.getTheoreticalRate() + ";"
+                    + statInfo.getTotalCalls() + ";" + statInfo.getMinDuration() + ";" + statInfo.getMaxDuration() + ";"
+                    + statInfo.getAverageDuration() + ";" + statInfo.getTheoreticalRate() + ";"
                     + statInfo.getEffectiveRate() + "\n");
         }
+    }
+
+    public Collection<StatInfo> getAllStats()
+    {
+        return statInfoMap.values();
     }
 
     public Long getRunningTime()
