@@ -73,7 +73,7 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
         }
 
         @Override
-        public void share(ObjectConfiguration objectConfiguration, String name,
+        public void share(ObjectConfiguration objectConfiguration, String name, String scope,
                 AsyncCallback<ImplementingClass> callback)
         {
             // TODO Auto-generated method stub
@@ -116,7 +116,7 @@ public class SimpleObjectConfigurationMapPresenter extends MapTreeNodePresenter
         }
 
         @Override
-        public void share(ObjectConfiguration objectConfiguration, String name,
+        public void share(ObjectConfiguration objectConfiguration, String name, String scope,
                 AsyncCallback<ImplementingClass> callback)
         {
             // TODO Auto-generated method stub

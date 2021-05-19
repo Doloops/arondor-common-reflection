@@ -54,7 +54,8 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
 
     private final MaterialDialog convertTaskDialog = new MaterialDialog();
 
-    private final MaterialButton btnCancelConversion = new MaterialButton(), btnConvertTask = new MaterialButton();
+    private final MaterialButton btnCancelConversion = new MaterialButton(),
+            btnConvertTaskToScopeMap = new MaterialButton(), btnConvertTaskToScopeGlobal = new MaterialButton();
 
     private final MaterialTextBox keyNameTextBox = new MaterialTextBox();
 
@@ -118,14 +119,19 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         btnCancelConversion.getElement().removeClassName("btn");
         btnCancelConversion.setIconType(IconType.CANCEL);
 
-        btnConvertTask.getElement().addClassName(CssBundle.INSTANCE.css().doConversionBtn());
-        btnConvertTask.setText("Convert to map shared object");
-        btnConvertTask.setEnabled(false);
+        btnConvertTaskToScopeMap.getElement().addClassName(CssBundle.INSTANCE.css().doConversionBtn());
+        btnConvertTaskToScopeMap.setText("Convert to map shared object");
+        btnConvertTaskToScopeMap.setEnabled(false);
+
+        btnConvertTaskToScopeGlobal.getElement().addClassName(CssBundle.INSTANCE.css().doConversionBtn());
+        btnConvertTaskToScopeGlobal.setText("Convert to global shared object");
+        btnConvertTaskToScopeGlobal.setEnabled(false);
 
         convertTaskDialog.add(btnCancelConversion);
         convertTaskDialog.add(title);
         convertTaskDialog.add(keyNameTextBox);
-        convertTaskDialog.add(btnConvertTask);
+        convertTaskDialog.add(btnConvertTaskToScopeMap);
+        convertTaskDialog.add(btnConvertTaskToScopeGlobal);
     }
 
     protected FlowPanel getSelectGroup()
@@ -151,7 +157,8 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
             {
                 String newName = keyNameTextBox.getText();
 
-                btnConvertTask.setEnabled(!newName.isEmpty() && isNameAuthorized(newName));
+                btnConvertTaskToScopeMap.setEnabled(!newName.isEmpty() && isNameAuthorized(newName));
+                btnConvertTaskToScopeGlobal.setEnabled(!newName.isEmpty() && isNameAuthorized(newName));
             }
         });
 
@@ -345,14 +352,24 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     @Override
     public void onShare(Consumer<String> onShare)
     {
-        btnConvertTask.addClickHandler(new ClickHandler()
+        btnConvertTaskToScopeMap.addClickHandler(new ClickHandler()
         {
             @Override
             public void onClick(ClickEvent event)
             {
-                closeDialogAndSave(onShare);
+                onShare.accept("Map");
             }
         });
+
+        btnConvertTaskToScopeGlobal.addClickHandler(new ClickHandler()
+        {
+            @Override
+            public void onClick(ClickEvent event)
+            {
+                onShare.accept("Global");
+            }
+        });
+
         keyNameTextBox.addKeyDownHandler(new KeyDownHandler()
         {
 
@@ -361,7 +378,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
             {
                 if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER && isNameAuthorized(keyNameTextBox.getText()))
                 {
-                    closeDialogAndSave(onShare);
+                    onShare.accept("Map");
                 }
 
             }
@@ -373,7 +390,8 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
             {
                 String newName = keyNameTextBox.getText();
 
-                btnConvertTask.setEnabled(!newName.isEmpty() && isNameAuthorized(newName));
+                btnConvertTaskToScopeMap.setEnabled(!newName.isEmpty() && isNameAuthorized(newName));
+                btnConvertTaskToScopeGlobal.setEnabled(!newName.isEmpty() && isNameAuthorized(newName));
             }
         });
     }
@@ -420,12 +438,15 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         advancedSettings.getElement().getElementsByTagName("a").getItem(0).setClassName("collapsed");
     }
 
-    private void closeDialogAndSave(Consumer<String> onShare)
+    @Override
+    public void closeDialog()
     {
-        String name = keyNameTextBox.getText();
         convertTaskDialog.close();
-
-        onShare.accept(name);
     }
 
+    @Override
+    public String getKeyName()
+    {
+        return keyNameTextBox.getText();
+    }
 }

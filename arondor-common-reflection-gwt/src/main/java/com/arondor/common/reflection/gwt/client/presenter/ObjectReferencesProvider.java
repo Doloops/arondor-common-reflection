@@ -9,7 +9,8 @@ public interface ObjectReferencesProvider
 {
     void provide(AsyncCallback<Collection<ImplementingClass>> callback);
 
-    void share(ObjectConfiguration objectConfiguration, String name, AsyncCallback<ImplementingClass> callback);
+    void share(ObjectConfiguration objectConfiguration, String name, String scope,
+            AsyncCallback<ImplementingClass> callback);
 
     void forward(String key, AsyncCallback<ImplementingClass> callback);
 }

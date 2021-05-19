@@ -59,6 +59,11 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
         HandlerRegistration forwardToSharedObject(ClickHandler handler);
 
         void enableReset(boolean enabled);
+
+        void closeDialog();
+
+        String getKeyName();
+
     }
 
     private final Map<String, TreeNodePresenter> classTreeNodePresenterMap = new HashMap<String, TreeNodePresenter>();
@@ -127,32 +132,9 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
         {
 
             @Override
-            public void accept(String name)
+            public void accept(String scope)
             {
-                if (!name.isEmpty())
-                {
-                    objectReferencesProvider.share(getObjectConfiguration(), name,
-                            new AsyncCallback<ImplementingClass>()
-                            {
-                                @Override
-                                public void onFailure(Throwable caught)
-                                {
-                                    LOG.info("Could not get reference configuration");
-                                }
-
-                                @Override
-                                public void onSuccess(ImplementingClass result)
-                                {
-                                    clearFields();
-                                    implementingClassPresenter.setImplementingClass(result);
-                                    display.setActive(true);
-                                }
-                            });
-                }
-                else
-                {
-                    MaterialToast.fireToast("Enter the name of your shared object");
-                }
+                share(scope);
             }
         });
 
@@ -183,6 +165,35 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
 
             }
         });
+    }
+
+    private void share(String scope)
+    {
+        String name = display.getKeyName();
+        if (!name.isEmpty())
+        {
+            objectReferencesProvider.share(getObjectConfiguration(), name, scope, new AsyncCallback<ImplementingClass>()
+            {
+                @Override
+                public void onFailure(Throwable caught)
+                {
+                    LOG.info("Could not get reference configuration");
+                }
+
+                @Override
+                public void onSuccess(ImplementingClass result)
+                {
+                    clearFields();
+                    implementingClassPresenter.setImplementingClass(result);
+                    display.setActive(true);
+                    display.closeDialog();
+                }
+            });
+        }
+        else
+        {
+            MaterialToast.fireToast("Enter the name of your shared object");
+        }
     }
 
     private void updateAccessibleClass(String className, final ObjectConfiguration objectConfiguration)
