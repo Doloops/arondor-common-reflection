@@ -64,6 +64,8 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
 
         String getKeyName();
 
+        void clearKeyName();
+
     }
 
     private final Map<String, TreeNodePresenter> classTreeNodePresenterMap = new HashMap<String, TreeNodePresenter>();
@@ -177,7 +179,8 @@ public class ClassTreeNodePresenter implements TreeNodePresenter
                 @Override
                 public void onFailure(Throwable caught)
                 {
-                    LOG.info("Could not get reference configuration");
+                    LOG.info("Could not share reference configuration because " + caught.getMessage());
+                    display.clearKeyName();
                 }
 
                 @Override

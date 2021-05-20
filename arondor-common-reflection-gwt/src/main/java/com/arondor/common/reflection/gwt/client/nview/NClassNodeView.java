@@ -33,6 +33,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import gwt.material.design.client.constants.IconType;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialDialog;
+import gwt.material.design.client.ui.MaterialListValueBox;
 import gwt.material.design.client.ui.MaterialTextBox;
 import gwt.material.design.client.ui.MaterialTitle;
 
@@ -54,12 +55,17 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
 
     private final MaterialDialog convertTaskDialog = new MaterialDialog();
 
-    private final MaterialButton btnCancelConversion = new MaterialButton(),
-            btnConvertTaskToScopeMap = new MaterialButton(), btnConvertTaskToScopeGlobal = new MaterialButton();
+    private final MaterialButton btnCancelConversion = new MaterialButton(), btnConvertTask = new MaterialButton();
+
+    private final MaterialListValueBox<String> scopeList = new MaterialListValueBox<String>();
 
     private final MaterialTextBox keyNameTextBox = new MaterialTextBox();
 
     private static final String ALLOWED_FOR_NAME = "^[a-zA-Z0-9-_]+$";
+
+    public static final String SCOPE_MAP = "Map";
+
+    public static final String SCOPE_GLOBAL = "Global";
 
     private boolean hasChildren;
 
@@ -105,7 +111,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         convertTaskDialog.getElement().addClassName("popupDialog");
 
         MaterialTitle title = new MaterialTitle();
-        title.setTitle("Convert to shared object");
+        title.setTitle("Convert task configuration to shared object ? ");
         title.setMarginTop(20);
         title.setMarginLeft(10);
 
@@ -113,25 +119,26 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         keyNameTextBox.setMargin(10);
         keyNameTextBox.setLabel("Name");
 
+        scopeList.addItem(SCOPE_MAP);
+        scopeList.addItem(SCOPE_GLOBAL);
+        scopeList.setPlaceholder("Scope");
+        scopeList.getElement().addClassName(CssBundle.INSTANCE.css().scopeSelector());
+
         btnCancelConversion.getElement().addClassName("dismissPopup");
 
         // prevent bootstrap overstyle
         btnCancelConversion.getElement().removeClassName("btn");
         btnCancelConversion.setIconType(IconType.CANCEL);
 
-        btnConvertTaskToScopeMap.getElement().addClassName(CssBundle.INSTANCE.css().doConversionBtn());
-        btnConvertTaskToScopeMap.setText("Convert to map shared object");
-        btnConvertTaskToScopeMap.setEnabled(false);
-
-        btnConvertTaskToScopeGlobal.getElement().addClassName(CssBundle.INSTANCE.css().doConversionBtn());
-        btnConvertTaskToScopeGlobal.setText("Convert to global shared object");
-        btnConvertTaskToScopeGlobal.setEnabled(false);
+        btnConvertTask.getElement().addClassName(CssBundle.INSTANCE.css().doConversionBtn());
+        btnConvertTask.setText("Convert to shared object");
+        btnConvertTask.setEnabled(false);
 
         convertTaskDialog.add(btnCancelConversion);
         convertTaskDialog.add(title);
         convertTaskDialog.add(keyNameTextBox);
-        convertTaskDialog.add(btnConvertTaskToScopeMap);
-        convertTaskDialog.add(btnConvertTaskToScopeGlobal);
+        convertTaskDialog.add(scopeList);
+        convertTaskDialog.add(btnConvertTask);
     }
 
     protected FlowPanel getSelectGroup()
@@ -157,8 +164,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
             {
                 String newName = keyNameTextBox.getText();
 
-                btnConvertTaskToScopeMap.setEnabled(!newName.isEmpty() && isNameAuthorized(newName));
-                btnConvertTaskToScopeGlobal.setEnabled(!newName.isEmpty() && isNameAuthorized(newName));
+                btnConvertTask.setEnabled(!newName.isEmpty() && isNameAuthorized(newName));
             }
         });
 
@@ -352,21 +358,12 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     @Override
     public void onShare(Consumer<String> onShare)
     {
-        btnConvertTaskToScopeMap.addClickHandler(new ClickHandler()
+        btnConvertTask.addClickHandler(new ClickHandler()
         {
             @Override
             public void onClick(ClickEvent event)
             {
-                onShare.accept("Map");
-            }
-        });
-
-        btnConvertTaskToScopeGlobal.addClickHandler(new ClickHandler()
-        {
-            @Override
-            public void onClick(ClickEvent event)
-            {
-                onShare.accept("Global");
+                onShare.accept(scopeList.getSelectedItemText());
             }
         });
 
@@ -378,7 +375,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
             {
                 if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER && isNameAuthorized(keyNameTextBox.getText()))
                 {
-                    onShare.accept("Map");
+                    onShare.accept(SCOPE_MAP);
                 }
 
             }
@@ -390,8 +387,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
             {
                 String newName = keyNameTextBox.getText();
 
-                btnConvertTaskToScopeMap.setEnabled(!newName.isEmpty() && isNameAuthorized(newName));
-                btnConvertTaskToScopeGlobal.setEnabled(!newName.isEmpty() && isNameAuthorized(newName));
+                btnConvertTask.setEnabled(!newName.isEmpty() && isNameAuthorized(newName));
             }
         });
     }
@@ -449,4 +445,12 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
     {
         return keyNameTextBox.getText();
     }
+
+    @Override
+    public void clearKeyName()
+    {
+        keyNameTextBox.clear();
+        keyNameTextBox.setFocus(true);
+    }
+
 }
