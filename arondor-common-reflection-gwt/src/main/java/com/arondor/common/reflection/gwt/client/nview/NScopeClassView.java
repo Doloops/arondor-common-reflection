@@ -18,6 +18,7 @@ public class NScopeClassView extends NClassNodeViewWithKey implements MapPairDis
         scopeBox.getElement().setClassName("outlined col-1 pl-0");
         scopeBox.getElement().addClassName(CssBundle.INSTANCE.css().scopeSelector());
         scopeBox.setLabel("Scope");
+        scopeBox.setHideSearch(true);
     }
 
     @Override

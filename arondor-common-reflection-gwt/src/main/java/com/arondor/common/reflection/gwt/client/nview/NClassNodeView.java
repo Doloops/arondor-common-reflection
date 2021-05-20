@@ -30,10 +30,10 @@ import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 
+import gwt.material.design.addins.client.combobox.MaterialComboBox;
 import gwt.material.design.client.constants.IconType;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialDialog;
-import gwt.material.design.client.ui.MaterialListValueBox;
 import gwt.material.design.client.ui.MaterialTextBox;
 import gwt.material.design.client.ui.MaterialTitle;
 
@@ -57,7 +57,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
 
     private final MaterialButton btnCancelConversion = new MaterialButton(), btnConvertTask = new MaterialButton();
 
-    private final MaterialListValueBox<String> scopeList = new MaterialListValueBox<String>();
+    private final MaterialComboBox<String> scopeList = new MaterialComboBox<String>();
 
     private final MaterialTextBox keyNameTextBox = new MaterialTextBox();
 
@@ -122,6 +122,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         scopeList.addItem(SCOPE_MAP);
         scopeList.addItem(SCOPE_GLOBAL);
         scopeList.setPlaceholder("Scope");
+        scopeList.setHideSearch(true);
         scopeList.getElement().addClassName(CssBundle.INSTANCE.css().scopeSelector());
 
         btnCancelConversion.getElement().addClassName("dismissPopup");
@@ -363,7 +364,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
             @Override
             public void onClick(ClickEvent event)
             {
-                onShare.accept(scopeList.getSelectedItemText());
+                onShare.accept(scopeList.getSelectedValue().get(0));
             }
         });
 
