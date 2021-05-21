@@ -1,5 +1,6 @@
 package com.arondor.common.reflection.gwt.client.nview;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 import com.arondor.common.reflection.gwt.client.CssBundle;
@@ -63,9 +64,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
 
     private static final String ALLOWED_FOR_NAME = "^[a-zA-Z0-9-_]+$";
 
-    public static final String SCOPE_MAP = "Map";
-
-    public static final String SCOPE_GLOBAL = "Global";
+    private List<String> availableScopes;
 
     private boolean hasChildren;
 
@@ -81,7 +80,8 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         getResetFieldBtn().getElement().addClassName(CssBundle.INSTANCE.css().resetBtn());
         getResetFieldBtn().getElement().setInnerHTML("<i></i>");
 
-        buildConvertTaskDialog();
+        // setAvailableScopes(scopes);
+        // buildConvertTaskDialog();
 
         contentGroup.getElement().addClassName(CssBundle.INSTANCE.css().classContentGroup());
         contentGroup.getElement().addClassName("col-12");
@@ -105,6 +105,16 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         attachChildren();
     }
 
+    public List<String> getAvailableScopes()
+    {
+        return availableScopes;
+    }
+
+    public void setAvailableScopes(List<String> availableScopes)
+    {
+        this.availableScopes = availableScopes;
+    }
+
     private void buildConvertTaskDialog()
     {
         convertTaskDialog.getElement().addClassName(CssBundle.INSTANCE.css().convertTaskDialog());
@@ -119,8 +129,8 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         keyNameTextBox.setMargin(10);
         keyNameTextBox.setLabel("Name");
 
-        scopeList.addItem(SCOPE_MAP);
-        scopeList.addItem(SCOPE_GLOBAL);
+        for (String scope : availableScopes)
+            scopeList.addItem(scope);
         scopeList.setPlaceholder("Scope");
         scopeList.setHideSearch(true);
         scopeList.getElement().addClassName(CssBundle.INSTANCE.css().scopeSelector());
@@ -176,6 +186,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
             {
                 keyNameTextBox.clear();
                 RootPanel.get().add(convertTaskDialog);
+                buildConvertTaskDialog();
                 convertTaskDialog.open();
             }
         });
@@ -376,7 +387,7 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
             {
                 if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER && isNameAuthorized(keyNameTextBox.getText()))
                 {
-                    onShare.accept(SCOPE_MAP);
+                    onShare.accept(scopeList.getSelectedValue().get(0));
                 }
 
             }

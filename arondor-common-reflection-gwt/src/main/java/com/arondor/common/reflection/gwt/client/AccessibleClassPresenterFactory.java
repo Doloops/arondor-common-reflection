@@ -57,10 +57,10 @@ public class AccessibleClassPresenterFactory
     private static final ViewFactory FACTORY = new NViewFactory();
 
     public static AccessibleClassPresenter createAccessibleClassPresenter(GWTReflectionServiceAsync rpcService,
-            ObjectReferencesProvider objectReferencesProvider, String baseClassName)
+            ObjectReferencesProvider objectReferencesProvider, String baseClassName, List<String> availableScopes)
     {
         return new HierarchicAccessibleClassPresenter(rpcService, objectReferencesProvider, baseClassName,
-                FACTORY.createClassDisplay());
+                FACTORY.createClassDisplay(availableScopes));
     }
 
     public static ObjectConfigurationMapPresenter createObjectConfigurationMapPresenter(

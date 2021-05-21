@@ -1,5 +1,7 @@
 package com.arondor.common.reflection.gwt.client.nview;
 
+import java.util.List;
+
 import com.arondor.common.reflection.gwt.client.CssBundle;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreeNodePresenter;
 import com.arondor.common.reflection.gwt.client.presenter.ClassTreePresenter;
@@ -9,11 +11,12 @@ import com.google.gwt.user.client.ui.FlowPanel;
 public class NClassTreeView extends FlowPanel
         implements ClassTreePresenter.Display, HierarchicAccessibleClassPresenter.Display
 {
-    private final NClassNodeView rootView = new NClassNodeView();
+    private final NClassNodeView rootView = new NClassNodeView();;
 
-    public NClassTreeView()
+    public NClassTreeView(List<String> availableScopes)
     {
         getElement().addClassName(CssBundle.INSTANCE.css().rootTreeNode());
+        rootView.setAvailableScopes(availableScopes);
         add(rootView);
     }
 
