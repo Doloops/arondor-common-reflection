@@ -80,9 +80,6 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
         getResetFieldBtn().getElement().addClassName(CssBundle.INSTANCE.css().resetBtn());
         getResetFieldBtn().getElement().setInnerHTML("<i></i>");
 
-        // setAvailableScopes(scopes);
-        // buildConvertTaskDialog();
-
         contentGroup.getElement().addClassName(CssBundle.INSTANCE.css().classContentGroup());
         contentGroup.getElement().addClassName("col-12");
 
