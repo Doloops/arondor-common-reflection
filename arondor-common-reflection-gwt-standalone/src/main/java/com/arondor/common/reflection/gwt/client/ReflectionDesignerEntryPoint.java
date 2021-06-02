@@ -84,7 +84,7 @@ public class ReflectionDesignerEntryPoint implements EntryPoint
             baseClassName = "com.arondor.fast2p8.model.task.Task";
         }
         rootPresenter = AccessibleClassPresenterFactory.createAccessibleClassPresenter(reflectionService,
-                objectReferencesProvider, baseClassName);
+                objectReferencesProvider, baseClassName, null);
 
         RootPanel.get().clear();
         RootPanel.get().add(rootPresenter.getDisplayWidget());
