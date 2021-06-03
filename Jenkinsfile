@@ -7,7 +7,9 @@ def DEVELOP_BRANCH = "master"
 def BUILD_CMD = "clean install -DskipITs -fn"
 
 pipeline {
-    agent any
+	agent {
+		label 'maven'
+	}
     stages {
         stage('Preparation') {
             steps {
