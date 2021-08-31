@@ -61,8 +61,6 @@ public interface TreeNodePresenter
         boolean isActive();
 
         void clear();
-
-        void setIsPassword();
     }
 
     public interface ValueDisplay<T> extends Display
@@ -98,6 +96,8 @@ public interface TreeNodePresenter
         ListTreeNodePresenter.ListRootDisplay createListChild(boolean isMandatory);
 
         PrimitiveDisplay createScriptChild(String scriptType, boolean isMandatory);
+
+        PrimitiveDisplay createPasswordChild(String fieldClassName, boolean isMandatory);
     }
 
     ElementConfiguration getElementConfiguration();

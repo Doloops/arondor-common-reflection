@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 import com.arondor.common.reflection.gwt.client.CssBundle;
 import com.arondor.common.reflection.gwt.client.nview.prim.NBooleanView;
 import com.arondor.common.reflection.gwt.client.nview.prim.NIntView;
+import com.arondor.common.reflection.gwt.client.nview.prim.NPasswordView;
 import com.arondor.common.reflection.gwt.client.nview.prim.NScriptView;
 import com.arondor.common.reflection.gwt.client.nview.prim.NStringListView;
 import com.arondor.common.reflection.gwt.client.nview.prim.NStringView;
@@ -298,6 +299,14 @@ public class NClassNodeView extends NNodeView implements ClassTreeNodePresenter.
             view = new NStringView();
         }
 
+        addChildView(isMandatory, view);
+        return (PrimitiveDisplay) view;
+    }
+
+    @Override
+    public PrimitiveDisplay createPasswordChild(String fieldClassName, boolean isMandatory)
+    {
+        NNodeView view = new NPasswordView();
         addChildView(isMandatory, view);
         return (PrimitiveDisplay) view;
     }
