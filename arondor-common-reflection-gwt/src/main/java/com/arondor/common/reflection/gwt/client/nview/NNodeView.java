@@ -41,11 +41,6 @@ public abstract class NNodeView extends FlowPanel implements TreeNodePresenter.D
     }
 
     @Override
-    public void setIsPassword()
-    {
-    }
-
-    @Override
     public void setNodeLongDescription(String longDescription)
     {
         this.helperTextContent = longDescription;

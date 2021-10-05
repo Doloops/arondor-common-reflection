@@ -65,6 +65,8 @@ public class TreeNodePresenterFactory
             String scriptType = isScriptFieldType(accessibleField);
             if (scriptType != null)
                 primitiveDisplay = display.createScriptChild(scriptType, isMandatory);
+            else if (accessibleField.isPassword())
+                primitiveDisplay = display.createPasswordChild(fieldClassName, isMandatory);
             else
                 primitiveDisplay = display.createPrimitiveChild(fieldClassName, isMandatory);
             childPresenter = new PrimitiveTreeNodePresenter(primitiveDisplay);
@@ -204,10 +206,6 @@ public class TreeNodePresenterFactory
         if (accessibleField.getLongDescription() != null)
         {
             childPresenter.getDisplay().setNodeLongDescription(accessibleField.getLongDescription());
-        }
-        if (accessibleField.isPassword())
-        {
-            childPresenter.getDisplay().setIsPassword();
         }
     }
 

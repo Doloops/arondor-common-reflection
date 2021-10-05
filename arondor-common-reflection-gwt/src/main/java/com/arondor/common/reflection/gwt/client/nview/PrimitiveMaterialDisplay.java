@@ -84,13 +84,6 @@ public class PrimitiveMaterialDisplay implements PrimitiveDisplay, ErrorDisplay
 
     }
 
-    @Override
-    public void setIsPassword()
-    {
-        // TODO Auto-generated method stub
-
-    }
-
     private String initialLabel;
 
     @Override

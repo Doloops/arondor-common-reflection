@@ -40,6 +40,7 @@ import com.arondor.common.reflection.model.java.AccessibleClass;
 import com.arondor.common.reflection.model.java.AccessibleField;
 import com.arondor.common.reflection.parser.java.JavaAccessibleClassParser;
 import com.arondor.common.reflection.reflect.runtime.SimpleInstantiationContext;
+import com.arondor.common.reflection.util.PasswordCipher;
 import com.arondor.common.reflection.util.StrongReference;
 
 /**
@@ -392,7 +393,11 @@ public class ReflectionInstantiatorReflect implements ReflectionInstantiator
 
             try
             {
-                T fieldObject = (T) instantiateElementConfiguration(fieldConfiguration, fieldClassName, context);
+                Object fieldObject;
+                if (accessibleField.isPassword() && fieldConfiguration instanceof PrimitiveConfiguration)
+                    fieldObject = new PasswordCipher().decode(((PrimitiveConfiguration) fieldConfiguration).getValue());
+                else
+                    fieldObject = instantiateElementConfiguration(fieldConfiguration, fieldClassName, context);
                 setterMethod.invoke(object, fieldObject);
             }
             catch (RuntimeException e)
