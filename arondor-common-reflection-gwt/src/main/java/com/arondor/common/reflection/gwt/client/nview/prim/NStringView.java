@@ -23,7 +23,6 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
 
-import gwt.material.design.client.constants.InputType;
 import gwt.material.design.client.constants.TextAlign;
 import gwt.material.design.client.ui.MaterialTextBox;
 
@@ -67,12 +66,6 @@ public class NStringView extends NNodeView implements PrimitiveDisplay
     public void setNodeDescription(String label)
     {
         textBox.setLabel(label);
-    }
-
-    @Override
-    public void setIsPassword()
-    {
-        textBox.setType(InputType.PASSWORD);
     }
 
     private void attachHandlers()
